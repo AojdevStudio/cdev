@@ -1,0 +1,6 @@
+CREATE: lib/operations/write-operations.ts
+CREATE: lib/operations/file-writer.ts
+CREATE: lib/validation/write-validation.ts
+CREATE: components/forms/DynamicForm.tsx
+CREATE: lib/form-validation.ts
+CREATE: hooks/useFormState.ts

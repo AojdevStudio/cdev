@@ -1,0 +1,297 @@
+{
+  "agentId": "custom_feature_agent",
+  "taskId": "AOJ-100",
+  "taskTitle": "Parallel Claude Development Workflow - NPX Package Distribution Plan",
+  "branchName": "AOJ-100-custom_feature_agent",
+  "workTreePath": "../paralell-development-claude-work-trees/AOJ-100-custom_feature_agent",
+  "agentInstances": [
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Template Copy**: Copy entire `workflows/paralell-development-claude` structure",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Script Permissions**: Make all `.sh` scripts executable (`chmod +x`)",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Directory Creation**: Create `shared/`, `.linear-cache/`, coordination directories",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [
+        "lib/operations/write-operations.ts",
+        "lib/operations/file-writer.ts",
+        "lib/validation/write-validation.ts"
+      ],
+      "filesToModify": [],
+      "testContracts": [
+        "operations/write-operations.test.ts",
+        "operations/file-validation.test.ts",
+        "integration/write-flow.test.ts"
+      ],
+      "validationCriteria": [
+        "Write operations complete without data loss",
+        "File permissions are properly validated",
+        "Concurrent write operations are handled safely",
+        "Write operation rollback works when needed",
+        "New functionality is created and accessible"
+      ],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Dependency Check**: Verify Node.js, Git, Claude Code availability",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Permission denied**: Run `chmod +x workflows/paralell-development-claude/scripts/*.sh`",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Git worktree errors**: Ensure clean git repository",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Zero Installation Friction**: Users run one command",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Automatic Updates**: Always gets latest version",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [
+        "lib/operations/write-operations.ts",
+        "lib/operations/file-writer.ts",
+        "lib/validation/write-validation.ts"
+      ],
+      "filesToModify": [],
+      "testContracts": [
+        "operations/write-operations.test.ts",
+        "operations/file-validation.test.ts",
+        "integration/write-flow.test.ts"
+      ],
+      "validationCriteria": [
+        "Write operations complete without data loss",
+        "File permissions are properly validated",
+        "Concurrent write operations are handled safely",
+        "Write operation rollback works when needed"
+      ],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Cross-Platform**: Works on any system with Node.js",
+      "focusArea": "Custom Feature",
+      "dependencies": [
+        "backend_integration_agent"
+      ],
+      "filesToCreate": [
+        "components/forms/DynamicForm.tsx",
+        "lib/form-validation.ts",
+        "hooks/useFormState.ts"
+      ],
+      "filesToModify": [],
+      "testContracts": [
+        "components/forms.test.tsx",
+        "validation/form-validation.test.ts",
+        "integration/form-submission.test.ts"
+      ],
+      "validationCriteria": [
+        "Form validation rules work correctly",
+        "Dynamic form generation functions properly",
+        "Form submission triggers expected actions",
+        "Error states are displayed to users"
+      ],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": false,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Industry Standard**: Same pattern as `create-react-app`, `create-next-app`",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [
+        "lib/operations/write-operations.ts",
+        "lib/operations/file-writer.ts",
+        "lib/validation/write-validation.ts"
+      ],
+      "filesToModify": [],
+      "testContracts": [
+        "operations/write-operations.test.ts",
+        "operations/file-validation.test.ts",
+        "integration/write-flow.test.ts"
+      ],
+      "validationCriteria": [
+        "Write operations complete without data loss",
+        "File permissions are properly validated",
+        "Concurrent write operations are handled safely",
+        "Write operation rollback works when needed",
+        "New functionality is created and accessible"
+      ],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    },
+    {
+      "agentId": "custom_feature_agent",
+      "agentRole": "Custom Feature: **Professional Distribution**: Proper versioning, publishing, CI/CD",
+      "focusArea": "Custom Feature",
+      "dependencies": [],
+      "filesToCreate": [],
+      "filesToModify": [],
+      "testContracts": [],
+      "validationCriteria": [],
+      "estimatedTime": "18 minutes",
+      "canStartImmediately": true,
+      "workspaceSetup": {
+        "contextFile": "workspaces/custom_feature_agent/agent_context.json",
+        "fileList": "workspaces/custom_feature_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/custom_feature_agent/test_contracts.txt",
+        "checklist": "workspaces/custom_feature_agent/validation_checklist.txt"
+      }
+    }
+  ],
+  "dependencies": [
+    "backend_integration_agent"
+  ],
+  "allFilesToCreate": [
+    "lib/operations/write-operations.ts",
+    "lib/operations/file-writer.ts",
+    "lib/validation/write-validation.ts",
+    "components/forms/DynamicForm.tsx",
+    "lib/form-validation.ts",
+    "hooks/useFormState.ts"
+  ],
+  "allFilesToModify": [],
+  "allTestContracts": [
+    "operations/write-operations.test.ts",
+    "operations/file-validation.test.ts",
+    "integration/write-flow.test.ts",
+    "components/forms.test.tsx",
+    "validation/form-validation.test.ts",
+    "integration/form-submission.test.ts"
+  ],
+  "allValidationCriteria": [
+    "Write operations complete without data loss",
+    "File permissions are properly validated",
+    "Concurrent write operations are handled safely",
+    "Write operation rollback works when needed",
+    "New functionality is created and accessible",
+    "Form validation rules work correctly",
+    "Dynamic form generation functions properly",
+    "Form submission triggers expected actions",
+    "Error states are displayed to users"
+  ],
+  "canStartImmediately": false,
+  "estimatedTime": 198,
+  "createdAt": "2025-07-08T22:18:33.749Z"
+}
