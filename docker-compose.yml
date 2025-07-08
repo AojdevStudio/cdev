@@ -1,0 +1,243 @@
+version: '3.8'
+
+services:
+  # Main application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - LINEAR_API_KEY=${LINEAR_API_KEY}
+      - PORT=3000
+    volumes:
+      - .linear-cache:/app/.linear-cache
+      - ./shared:/app/shared
+      - ./workspaces:/app/workspaces
+      - worktrees:/app/../worktrees
+    networks:
+      - claude-network
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Development service
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - LINEAR_API_KEY=${LINEAR_API_KEY}
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - .linear-cache:/app/.linear-cache
+      - ./shared:/app/shared
+      - ./workspaces:/app/workspaces
+      - worktrees:/app/../worktrees
+    networks:
+      - claude-network
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    profiles:
+      - dev
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - claude-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # PostgreSQL for persistent storage
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=claude_workflow
+      - POSTGRES_USER=claude
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-claudepassword}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - claude-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U claude -d claude_workflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - claude-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # Agent monitoring service
+  agent-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    command: ["node", "scripts/monitor-agents.js"]
+    environment:
+      - NODE_ENV=production
+      - MONITORING_INTERVAL=30000
+    volumes:
+      - ./shared:/app/shared
+      - ./workspaces:/app/workspaces
+      - worktrees:/app/../worktrees
+    networks:
+      - claude-network
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
+  # Git worktree manager
+  worktree-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    command: ["node", "scripts/worktree-manager.js"]
+    environment:
+      - NODE_ENV=production
+      - CLEANUP_INTERVAL=3600000
+    volumes:
+      - ./shared:/app/shared
+      - ./workspaces:/app/workspaces
+      - worktrees:/app/../worktrees
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - claude-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # Linear issue cache service
+  linear-cache:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    command: ["node", "scripts/linear-cache-service.js"]
+    environment:
+      - NODE_ENV=production
+      - LINEAR_API_KEY=${LINEAR_API_KEY}
+      - CACHE_REFRESH_INTERVAL=300000
+    volumes:
+      - .linear-cache:/app/.linear-cache
+    networks:
+      - claude-network
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # Health check service
+  healthcheck:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    command: ["node", "scripts/health-monitor.js"]
+    environment:
+      - NODE_ENV=production
+      - HEALTH_CHECK_INTERVAL=60000
+    networks:
+      - claude-network
+    depends_on:
+      - app
+      - redis
+      - postgres
+    restart: unless-stopped
+
+networks:
+  claude-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:
+  worktrees:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/../worktrees
+
+# Environment-specific overrides
+---
+# Development override
+version: '3.8'
+services:
+  app-dev:
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+# Production override  
+---
+version: '3.8'
+services:
+  app:
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - LINEAR_API_KEY=${LINEAR_API_KEY}
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://claude:${POSTGRES_PASSWORD:-claudepassword}@postgres:5432/claude_workflow
