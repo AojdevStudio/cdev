@@ -1,0 +1,20 @@
+[
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use List"
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use List"
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
+  }
+]

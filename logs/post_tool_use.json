@@ -1,0 +1,957 @@
+[
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "**/*openai_tts.py"
+    },
+    "tool_response": {
+      "filenames": [],
+      "durationMs": 45,
+      "numFiles": 0,
+      "truncated": false
+    }
+  },
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "**/*tts*"
+    },
+    "tool_response": {
+      "filenames": [],
+      "durationMs": 48,
+      "numFiles": 0,
+      "truncated": false
+    }
+  },
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py"
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+        "content": "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.8\"\n# dependencies = [\n#     \"openai\",\n#     \"openai[voice_helpers]\",\n#     \"python-dotenv\",\n# ]\n# ///\n\nimport os\nimport sys\nimport asyncio\nfrom pathlib import Path\nfrom dotenv import load_dotenv\n\n\nasync def main():\n    \"\"\"\n    OpenAI TTS Script\n\n    Uses OpenAI's latest TTS model for high-quality text-to-speech.\n    Accepts optional text prompt as command-line argument.\n\n    Usage:\n    - ./openai_tts.py                    # Uses default text\n    - ./openai_tts.py \"Your custom text\" # Uses provided text\n\n    Features:\n    - OpenAI gpt-4o-mini-tts model (latest)\n    - Nova voice (engaging and warm)\n    - Streaming audio with instructions support\n    - Live audio playback via LocalAudioPlayer\n    \"\"\"\n\n    # Load environment variables\n    load_dotenv()\n\n    # Get API key from environment\n    api_key = os.getenv(\"OPENAI_API_KEY\")\n    if not api_key:\n        print(\"\u274c Error: OPENAI_API_KEY not found in environment variables\")\n        print(\"Please add your OpenAI API key to .env file:\")\n        print(\"OPENAI_API_KEY=your_api_key_here\")\n        sys.exit(1)\n\n    try:\n        from openai import AsyncOpenAI\n        from openai.helpers import LocalAudioPlayer\n\n        # Initialize OpenAI client\n        openai = AsyncOpenAI(api_key=api_key)\n\n        print(\"\ud83c\udf99\ufe0f  OpenAI TTS\")\n        print(\"=\" * 20)\n\n        # Get text from command line argument or use default\n        if len(sys.argv) > 1:\n            text = \" \".join(sys.argv[1:])  # Join all arguments as text\n        else:\n            text = \"Today is a wonderful day to build something people love!\"\n\n        print(f\"\ud83c\udfaf Text: {text}\")\n        print(\"\ud83d\udd0a Generating and streaming...\")\n\n        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")\n\n        except Exception as e:\n            print(f\"\u274c Error: {e}\")\n\n    except ImportError as e:\n        print(\"\u274c Error: Required package not installed\")\n        print(\"This script uses UV to auto-install dependencies.\")\n        print(\"Make sure UV is installed: https://docs.astral.sh/uv/\")\n        sys.exit(1)\n    except Exception as e:\n        print(f\"\u274c Unexpected error: {e}\")\n        sys.exit(1)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+        "numLines": 94,
+        "startLine": 1,
+        "totalLines": 94
+      }
+    }
+  },
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "old_string": "import os\nimport sys\nimport asyncio\nfrom pathlib import Path\nfrom dotenv import load_dotenv",
+      "new_string": "import os\nimport sys\nimport asyncio\nimport subprocess\nimport tempfile\nfrom pathlib import Path\nfrom dotenv import load_dotenv"
+    },
+    "tool_response": {
+      "filePath": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "oldString": "import os\nimport sys\nimport asyncio\nfrom pathlib import Path\nfrom dotenv import load_dotenv",
+      "newString": "import os\nimport sys\nimport asyncio\nimport subprocess\nimport tempfile\nfrom pathlib import Path\nfrom dotenv import load_dotenv",
+      "originalFile": "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.8\"\n# dependencies = [\n#     \"openai\",\n#     \"openai[voice_helpers]\",\n#     \"python-dotenv\",\n# ]\n# ///\n\nimport os\nimport sys\nimport asyncio\nfrom pathlib import Path\nfrom dotenv import load_dotenv\n\n\nasync def main():\n    \"\"\"\n    OpenAI TTS Script\n\n    Uses OpenAI's latest TTS model for high-quality text-to-speech.\n    Accepts optional text prompt as command-line argument.\n\n    Usage:\n    - ./openai_tts.py                    # Uses default text\n    - ./openai_tts.py \"Your custom text\" # Uses provided text\n\n    Features:\n    - OpenAI gpt-4o-mini-tts model (latest)\n    - Nova voice (engaging and warm)\n    - Streaming audio with instructions support\n    - Live audio playback via LocalAudioPlayer\n    \"\"\"\n\n    # Load environment variables\n    load_dotenv()\n\n    # Get API key from environment\n    api_key = os.getenv(\"OPENAI_API_KEY\")\n    if not api_key:\n        print(\"\u274c Error: OPENAI_API_KEY not found in environment variables\")\n        print(\"Please add your OpenAI API key to .env file:\")\n        print(\"OPENAI_API_KEY=your_api_key_here\")\n        sys.exit(1)\n\n    try:\n        from openai import AsyncOpenAI\n        from openai.helpers import LocalAudioPlayer\n\n        # Initialize OpenAI client\n        openai = AsyncOpenAI(api_key=api_key)\n\n        print(\"\ud83c\udf99\ufe0f  OpenAI TTS\")\n        print(\"=\" * 20)\n\n        # Get text from command line argument or use default\n        if len(sys.argv) > 1:\n            text = \" \".join(sys.argv[1:])  # Join all arguments as text\n        else:\n            text = \"Today is a wonderful day to build something people love!\"\n\n        print(f\"\ud83c\udfaf Text: {text}\")\n        print(\"\ud83d\udd0a Generating and streaming...\")\n\n        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")\n\n        except Exception as e:\n            print(f\"\u274c Error: {e}\")\n\n    except ImportError as e:\n        print(\"\u274c Error: Required package not installed\")\n        print(\"This script uses UV to auto-install dependencies.\")\n        print(\"Make sure UV is installed: https://docs.astral.sh/uv/\")\n        sys.exit(1)\n    except Exception as e:\n        print(f\"\u274c Unexpected error: {e}\")\n        sys.exit(1)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+      "structuredPatch": [
+        {
+          "oldStart": 11,
+          "oldLines": 6,
+          "newStart": 11,
+          "newLines": 8,
+          "lines": [
+            " import os",
+            " import sys",
+            " import asyncio",
+            "+import subprocess",
+            "+import tempfile",
+            " from pathlib import Path",
+            " from dotenv import load_dotenv",
+            " "
+          ]
+        }
+      ],
+      "userModified": false,
+      "replaceAll": false
+    }
+  },
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "old_string": "    - Live audio playback via LocalAudioPlayer",
+      "new_string": "    - Live audio playback via afplay (macOS)"
+    },
+    "tool_response": {
+      "filePath": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "oldString": "    - Live audio playback via LocalAudioPlayer",
+      "newString": "    - Live audio playback via afplay (macOS)",
+      "originalFile": "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.8\"\n# dependencies = [\n#     \"openai\",\n#     \"openai[voice_helpers]\",\n#     \"python-dotenv\",\n# ]\n# ///\n\nimport os\nimport sys\nimport asyncio\nimport subprocess\nimport tempfile\nfrom pathlib import Path\nfrom dotenv import load_dotenv\n\n\nasync def main():\n    \"\"\"\n    OpenAI TTS Script\n\n    Uses OpenAI's latest TTS model for high-quality text-to-speech.\n    Accepts optional text prompt as command-line argument.\n\n    Usage:\n    - ./openai_tts.py                    # Uses default text\n    - ./openai_tts.py \"Your custom text\" # Uses provided text\n\n    Features:\n    - OpenAI gpt-4o-mini-tts model (latest)\n    - Nova voice (engaging and warm)\n    - Streaming audio with instructions support\n    - Live audio playback via LocalAudioPlayer\n    \"\"\"\n\n    # Load environment variables\n    load_dotenv()\n\n    # Get API key from environment\n    api_key = os.getenv(\"OPENAI_API_KEY\")\n    if not api_key:\n        print(\"\u274c Error: OPENAI_API_KEY not found in environment variables\")\n        print(\"Please add your OpenAI API key to .env file:\")\n        print(\"OPENAI_API_KEY=your_api_key_here\")\n        sys.exit(1)\n\n    try:\n        from openai import AsyncOpenAI\n        from openai.helpers import LocalAudioPlayer\n\n        # Initialize OpenAI client\n        openai = AsyncOpenAI(api_key=api_key)\n\n        print(\"\ud83c\udf99\ufe0f  OpenAI TTS\")\n        print(\"=\" * 20)\n\n        # Get text from command line argument or use default\n        if len(sys.argv) > 1:\n            text = \" \".join(sys.argv[1:])  # Join all arguments as text\n        else:\n            text = \"Today is a wonderful day to build something people love!\"\n\n        print(f\"\ud83c\udfaf Text: {text}\")\n        print(\"\ud83d\udd0a Generating and streaming...\")\n\n        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")\n\n        except Exception as e:\n            print(f\"\u274c Error: {e}\")\n\n    except ImportError as e:\n        print(\"\u274c Error: Required package not installed\")\n        print(\"This script uses UV to auto-install dependencies.\")\n        print(\"Make sure UV is installed: https://docs.astral.sh/uv/\")\n        sys.exit(1)\n    except Exception as e:\n        print(f\"\u274c Unexpected error: {e}\")\n        sys.exit(1)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+      "structuredPatch": [
+        {
+          "oldStart": 32,
+          "oldLines": 7,
+          "newStart": 32,
+          "newLines": 7,
+          "lines": [
+            "     - OpenAI gpt-4o-mini-tts model (latest)",
+            "     - Nova voice (engaging and warm)",
+            "     - Streaming audio with instructions support",
+            "-    - Live audio playback via LocalAudioPlayer",
+            "+    - Live audio playback via afplay (macOS)",
+            "     \"\"\"",
+            " ",
+            "     # Load environment variables"
+          ]
+        }
+      ],
+      "userModified": false,
+      "replaceAll": false
+    }
+  },
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "old_string": "    try:\n        from openai import AsyncOpenAI\n        from openai.helpers import LocalAudioPlayer",
+      "new_string": "    try:\n        from openai import AsyncOpenAI"
+    },
+    "tool_response": {
+      "filePath": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "oldString": "    try:\n        from openai import AsyncOpenAI\n        from openai.helpers import LocalAudioPlayer",
+      "newString": "    try:\n        from openai import AsyncOpenAI",
+      "originalFile": "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.8\"\n# dependencies = [\n#     \"openai\",\n#     \"openai[voice_helpers]\",\n#     \"python-dotenv\",\n# ]\n# ///\n\nimport os\nimport sys\nimport asyncio\nimport subprocess\nimport tempfile\nfrom pathlib import Path\nfrom dotenv import load_dotenv\n\n\nasync def main():\n    \"\"\"\n    OpenAI TTS Script\n\n    Uses OpenAI's latest TTS model for high-quality text-to-speech.\n    Accepts optional text prompt as command-line argument.\n\n    Usage:\n    - ./openai_tts.py                    # Uses default text\n    - ./openai_tts.py \"Your custom text\" # Uses provided text\n\n    Features:\n    - OpenAI gpt-4o-mini-tts model (latest)\n    - Nova voice (engaging and warm)\n    - Streaming audio with instructions support\n    - Live audio playback via afplay (macOS)\n    \"\"\"\n\n    # Load environment variables\n    load_dotenv()\n\n    # Get API key from environment\n    api_key = os.getenv(\"OPENAI_API_KEY\")\n    if not api_key:\n        print(\"\u274c Error: OPENAI_API_KEY not found in environment variables\")\n        print(\"Please add your OpenAI API key to .env file:\")\n        print(\"OPENAI_API_KEY=your_api_key_here\")\n        sys.exit(1)\n\n    try:\n        from openai import AsyncOpenAI\n        from openai.helpers import LocalAudioPlayer\n\n        # Initialize OpenAI client\n        openai = AsyncOpenAI(api_key=api_key)\n\n        print(\"\ud83c\udf99\ufe0f  OpenAI TTS\")\n        print(\"=\" * 20)\n\n        # Get text from command line argument or use default\n        if len(sys.argv) > 1:\n            text = \" \".join(sys.argv[1:])  # Join all arguments as text\n        else:\n            text = \"Today is a wonderful day to build something people love!\"\n\n        print(f\"\ud83c\udfaf Text: {text}\")\n        print(\"\ud83d\udd0a Generating and streaming...\")\n\n        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")\n\n        except Exception as e:\n            print(f\"\u274c Error: {e}\")\n\n    except ImportError as e:\n        print(\"\u274c Error: Required package not installed\")\n        print(\"This script uses UV to auto-install dependencies.\")\n        print(\"Make sure UV is installed: https://docs.astral.sh/uv/\")\n        sys.exit(1)\n    except Exception as e:\n        print(f\"\u274c Unexpected error: {e}\")\n        sys.exit(1)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+      "structuredPatch": [
+        {
+          "oldStart": 48,
+          "oldLines": 7,
+          "newStart": 48,
+          "newLines": 6,
+          "lines": [
+            " ",
+            "     try:",
+            "         from openai import AsyncOpenAI",
+            "-        from openai.helpers import LocalAudioPlayer",
+            " ",
+            "         # Initialize OpenAI client",
+            "         openai = AsyncOpenAI(api_key=api_key)"
+          ]
+        }
+      ],
+      "userModified": false,
+      "replaceAll": false
+    }
+  },
+  {
+    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "old_string": "        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")",
+      "new_string": "        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                # Create a temporary file to store the audio\n                with tempfile.NamedTemporaryFile(delete=False, suffix=\".mp3\") as temp_file:\n                    # Write the audio stream to the temporary file\n                    async for chunk in response.iter_bytes():\n                        temp_file.write(chunk)\n                    temp_file_path = temp_file.name\n                \n                try:\n                    # Play the audio using afplay\n                    subprocess.run([\"afplay\", temp_file_path], check=True)\n                    print(\"\u2705 Playback complete!\")\n                finally:\n                    # Clean up the temporary file\n                    os.unlink(temp_file_path)"
+    },
+    "tool_response": {
+      "filePath": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows/paralell-development-claude/.claude/hooks/utils/tts/openai_tts.py",
+      "oldString": "        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")",
+      "newString": "        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                # Create a temporary file to store the audio\n                with tempfile.NamedTemporaryFile(delete=False, suffix=\".mp3\") as temp_file:\n                    # Write the audio stream to the temporary file\n                    async for chunk in response.iter_bytes():\n                        temp_file.write(chunk)\n                    temp_file_path = temp_file.name\n                \n                try:\n                    # Play the audio using afplay\n                    subprocess.run([\"afplay\", temp_file_path], check=True)\n                    print(\"\u2705 Playback complete!\")\n                finally:\n                    # Clean up the temporary file\n                    os.unlink(temp_file_path)",
+      "originalFile": "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.8\"\n# dependencies = [\n#     \"openai\",\n#     \"openai[voice_helpers]\",\n#     \"python-dotenv\",\n# ]\n# ///\n\nimport os\nimport sys\nimport asyncio\nimport subprocess\nimport tempfile\nfrom pathlib import Path\nfrom dotenv import load_dotenv\n\n\nasync def main():\n    \"\"\"\n    OpenAI TTS Script\n\n    Uses OpenAI's latest TTS model for high-quality text-to-speech.\n    Accepts optional text prompt as command-line argument.\n\n    Usage:\n    - ./openai_tts.py                    # Uses default text\n    - ./openai_tts.py \"Your custom text\" # Uses provided text\n\n    Features:\n    - OpenAI gpt-4o-mini-tts model (latest)\n    - Nova voice (engaging and warm)\n    - Streaming audio with instructions support\n    - Live audio playback via afplay (macOS)\n    \"\"\"\n\n    # Load environment variables\n    load_dotenv()\n\n    # Get API key from environment\n    api_key = os.getenv(\"OPENAI_API_KEY\")\n    if not api_key:\n        print(\"\u274c Error: OPENAI_API_KEY not found in environment variables\")\n        print(\"Please add your OpenAI API key to .env file:\")\n        print(\"OPENAI_API_KEY=your_api_key_here\")\n        sys.exit(1)\n\n    try:\n        from openai import AsyncOpenAI\n\n        # Initialize OpenAI client\n        openai = AsyncOpenAI(api_key=api_key)\n\n        print(\"\ud83c\udf99\ufe0f  OpenAI TTS\")\n        print(\"=\" * 20)\n\n        # Get text from command line argument or use default\n        if len(sys.argv) > 1:\n            text = \" \".join(sys.argv[1:])  # Join all arguments as text\n        else:\n            text = \"Today is a wonderful day to build something people love!\"\n\n        print(f\"\ud83c\udfaf Text: {text}\")\n        print(\"\ud83d\udd0a Generating and streaming...\")\n\n        try:\n            # Generate and stream audio using OpenAI TTS\n            async with openai.audio.speech.with_streaming_response.create(\n                model=\"gpt-4o-mini-tts\",\n                voice=\"nova\",\n                input=text,\n                instructions=\"Speak in a cheerful, positive yet professional tone.\",\n                response_format=\"mp3\",\n            ) as response:\n                await LocalAudioPlayer().play(response)\n\n            print(\"\u2705 Playback complete!\")\n\n        except Exception as e:\n            print(f\"\u274c Error: {e}\")\n\n    except ImportError as e:\n        print(\"\u274c Error: Required package not installed\")\n        print(\"This script uses UV to auto-install dependencies.\")\n        print(\"Make sure UV is installed: https://docs.astral.sh/uv/\")\n        sys.exit(1)\n    except Exception as e:\n        print(f\"\u274c Unexpected error: {e}\")\n        sys.exit(1)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+      "structuredPatch": [
+        {
+          "oldStart": 73,
+          "oldLines": 10,
+          "newStart": 73,
+          "newLines": 21,
+          "lines": [
+            "                 instructions=\"Speak in a cheerful, positive yet professional tone.\",",
+            "                 response_format=\"mp3\",",
+            "             ) as response:",
+            "-                await LocalAudioPlayer().play(response)",
+            "+                # Create a temporary file to store the audio",
+            "+                with tempfile.NamedTemporaryFile(delete=False, suffix=\".mp3\") as temp_file:",
+            "+                    # Write the audio stream to the temporary file",
+            "+                    async for chunk in response.iter_bytes():",
+            "+                        temp_file.write(chunk)",
+            "+                    temp_file_path = temp_file.name",
+            "+                ",
+            "+                try:",
+            "+                    # Play the audio using afplay",
+            "+                    subprocess.run([\"afplay\", temp_file_path], check=True)",
+            "+                    print(\"\u2705 Playback complete!\")",
+            "+                finally:",
+            "+                    # Clean up the temporary file",
+            "+                    os.unlink(temp_file_path)",
+            " ",
+            "-            print(\"\u2705 Playback complete!\")",
+            "-",
+            "         except Exception as e:",
+            "             print(f\"\u274c Error: {e}\")",
+            " "
+          ]
+        }
+      ],
+      "userModified": false,
+      "replaceAll": false
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "pending",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "pending",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    },
+    "tool_response": {
+      "oldTodos": [],
+      "newTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "pending",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "pending",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "pending",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    },
+    "tool_response": {
+      "oldTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "pending",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "pending",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ],
+      "newTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "pending",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "LS",
+    "tool_input": {
+      "path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude"
+    },
+    "tool_response": "- /Users/ossieirondi/Projects/dev-utils/paralell-development-claude/\n  - CLAUDE.md\n  - PLAN.md\n  - README.md\n  - ai_docs/\n    - astral-uv-scripting-documentation.md\n    - claude-code-hooks-documentation.md\n  - logs/\n    - chat.json\n    - notification.json\n    - post_tool_use.json\n    - pre_tool_use.json\n    - stop.json\n  - scripts/\n    - cache-linear-issue.sh\n    - decompose-parallel.cjs\n    - integrate-parallel-work.sh\n    - intelligent-agent-generator.js\n    - monitor-agents.sh\n    - spawn-agents.sh\n    - validate-parallel-work.sh\n  - shared/\n    - deployment-plans/\n      - aoj-100-deployment-plan.json\n"
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find /Users/ossieirondi/Projects/dev-utils/paralell-development-claude -name \"workspaces\" -type d",
+      "description": "Search for workspaces directory"
+    },
+    "tool_response": {
+      "stdout": "",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find /Users/ossieirondi/Projects/dev-utils -name \"*work*\" -type d",
+      "description": "Search for work-related directories"
+    },
+    "tool_response": {
+      "stdout": "/Users/ossieirondi/Projects/dev-utils/desktop-commander/workflows\n/Users/ossieirondi/Projects/dev-utils/desktop-commander/docs/unified-dental/frameworks\n/Users/ossieirondi/Projects/dev-utils/desktop-commander/.git/worktrees\n/Users/ossieirondi/Projects/dev-utils/AojdevStudio/Claude/consulting-framework\n/Users/ossieirondi/Projects/dev-utils/scraping-service/.bmad-core/workflows\n/Users/ossieirondi/Projects/dev-utils/desktop-commander-work-trees\n/Users/ossieirondi/Projects/dev-utils/desktop-commander-work-trees/AOJ-99-backend_forms_agent/workspaces\n/Users/ossieirondi/Projects/dev-utils/desktop-commander-work-trees/AOJ-99-custom_authentication_agent/workspaces\n/Users/ossieirondi/Projects/dev-utils/desktop-commander-work-trees/AOJ-99-infrastructure_authentication_agent/workspaces\n/Users/ossieirondi/Projects/dev-utils/desktop-commander-work-trees/AOJ-99-custom_feature_agent/workspaces\n/Users/ossieirondi/Projects/dev-utils/shotgun_code/frontend/node_modules/reusify/.github/workflows\n/Users/ossieirondi/Projects/dev-utils/shotgun_code/frontend/node_modules/fastq/.github/workflows\n/Users/ossieirondi/Projects/dev-utils/shotgun_code/.github/workflows",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "completed",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    },
+    "tool_response": {
+      "oldTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "pending",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ],
+      "newTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "completed",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "mkdir -p .claude/commands",
+      "description": "Create commands directory"
+    },
+    "tool_response": {
+      "stdout": "",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md"
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+        "content": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\n!`git add .`\n!`git commit -m \"$GENERATED_MESSAGE\"`\n!`git checkout main`\n!`git pull origin main`\n!`git merge $AGENT_BRANCH --no-ff`\n!`git push origin main`\n!`git worktree remove $WORKTREE_PATH`\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`\n",
+        "numLines": 40,
+        "startLine": 1,
+        "totalLines": 40
+      }
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "old_string": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\n!`git add .`\n!`git commit -m \"$GENERATED_MESSAGE\"`\n!`git checkout main`\n!`git pull origin main`\n!`git merge $AGENT_BRANCH --no-ff`\n!`git push origin main`\n!`git worktree remove $WORKTREE_PATH`\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`",
+      "new_string": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with Claude Code\nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```"
+    },
+    "tool_response": {
+      "filePath": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "oldString": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\n!`git add .`\n!`git commit -m \"$GENERATED_MESSAGE\"`\n!`git checkout main`\n!`git pull origin main`\n!`git merge $AGENT_BRANCH --no-ff`\n!`git push origin main`\n!`git worktree remove $WORKTREE_PATH`\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`",
+      "newString": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with Claude Code\nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```",
+      "originalFile": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\n!`git add .`\n!`git commit -m \"$GENERATED_MESSAGE\"`\n!`git checkout main`\n!`git pull origin main`\n!`git merge $AGENT_BRANCH --no-ff`\n!`git push origin main`\n!`git worktree remove $WORKTREE_PATH`\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`\n",
+      "structuredPatch": [
+        {
+          "oldStart": 1,
+          "oldLines": 39,
+          "newStart": 1,
+          "newLines": 58,
+          "lines": [
+            "-# Agent Commit & Merge Command",
+            "+# Agent Commit & Merge",
+            " ",
+            "-Commit agent work and merge the worktree back to main branch.",
+            "+Commit completed agent work and merge back to main branch.",
+            " ",
+            "-Parse the agent context from $ARGUMENTS (workspace path) to:",
+            "+## Usage",
+            "+```bash",
+            "+/agent-commit [workspace-path] [custom-message]",
+            "+```",
+            " ",
+            "-1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]",
+            "-2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified",
+            "-3. **Generate Commit**: Auto-create commit message from agent context if none provided",
+            "-4. **Git Operations**: Add all changes, commit, switch to main, merge, and push",
+            "-5. **Cleanup**: Remove worktree directory and provide completion summary",
+            "+## What it does",
+            "+1. **Validates Completion**: Checks that all validation criteria are marked as complete",
+            "+2. **Verifies Files**: Ensures all required files were created/modified",
+            "+3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message",
+            "+4. **Merges to Main**: Switches to main branch and merges the agent's work",
+            "+5. **Cleans Up**: Removes the worktree and provides completion summary",
+            " ",
+            "-## Context Files Used",
+            "-- @workspaces/*/agent_context.json - Extract agent info and task details",
+            "-- @workspaces/*/validation_checklist.txt - Verify completion status",
+            "-- @workspaces/*/files_to_work_on.txt - Confirm file changes",
+            "+## Parameters",
+            "+- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory",
+            "+- `custom-message` (optional): Custom commit message instead of auto-generated one",
+            " ",
+            "-## Git Commands Executed",
+            "-```bash",
+            "-!`git add .`",
+            "-!`git commit -m \"$GENERATED_MESSAGE\"`",
+            "-!`git checkout main`",
+            "-!`git pull origin main`",
+            "-!`git merge $AGENT_BRANCH --no-ff`",
+            "-!`git push origin main`",
+            "-!`git worktree remove $WORKTREE_PATH`",
+            "-```",
+            "+## Context Files Read",
+            "+- `workspaces/{agent_id}/agent_context.json` - Agent details and task information",
+            "+- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification",
+            "+- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements",
+            " ",
+            "-## Auto-Generated Commit Format",
+            "+## Auto-Generated Commit Message Format",
+            " ```",
+            "-feat(${agentId}): ${taskTitle}",
+            "+feat({agentId}): {taskTitle}",
+            " ",
+            "-- ${completedValidationCriteria}",
+            "-- Agent: ${agentRole}",
+            "-- Files: ${filesCreated.length} created, ${filesModified.length} modified",
+            "-- Task: ${taskId}",
+            "+- {completed validation criteria}",
+            "+- Agent: {agentRole}",
+            "+- Files: {filesCreated} created, {filesModified} modified",
+            "+- Task: {taskId}",
+            "+",
+            "+\ud83e\udd16 Generated with Claude Code",
+            "+Co-Authored-By: Claude <noreply@anthropic.com>",
+            " ```",
+            " ",
+            "-Usage: `/agent-commit [workspace-path] [custom-message]`",
+            "+## Git Operations Performed",
+            "+1. `git add .` - Stage all changes",
+            "+2. `git commit -m \"...\"` - Commit with generated message",
+            "+3. `git checkout main` - Switch to main branch",
+            "+4. `git merge {branch-name}` - Merge agent's work",
+            "+5. `git push` - Push changes to remote",
+            "+6. `git worktree remove {path}` - Clean up worktree",
+            "+7. `git branch -d {branch-name}` - Delete feature branch",
+            "+",
+            "+## Example",
+            "+```bash",
+            "+# From within an agent worktree",
+            "+/agent-commit",
+            "+",
+            "+# With custom message",
+            "+/agent-commit . \"Custom commit message for this agent\"",
+            "+",
+            "+# Specifying workspace path",
+            "+/agent-commit ../project-work-trees/TASK-123-backend_agent",
+            "+```"
+          ]
+        }
+      ],
+      "userModified": false,
+      "replaceAll": false
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "completed",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "completed",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "completed",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "completed",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "completed",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    },
+    "tool_response": {
+      "oldTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "completed",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "in_progress",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "pending",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "pending",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "pending",
+          "priority": "low",
+          "id": "5"
+        }
+      ],
+      "newTodos": [
+        {
+          "content": "Examine current workspace structure and identify agent context files",
+          "status": "completed",
+          "priority": "high",
+          "id": "1"
+        },
+        {
+          "content": "Create agent-commit command implementation",
+          "status": "completed",
+          "priority": "high",
+          "id": "2"
+        },
+        {
+          "content": "Implement validation checklist verification",
+          "status": "completed",
+          "priority": "medium",
+          "id": "3"
+        },
+        {
+          "content": "Add git operations for commit and merge workflow",
+          "status": "completed",
+          "priority": "medium",
+          "id": "4"
+        },
+        {
+          "content": "Test the implementation",
+          "status": "completed",
+          "priority": "low",
+          "id": "5"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/README.md",
+      "offset": 210,
+      "limit": 20
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/README.md",
+        "content": "- **Generates agent-specific workspaces** with context files, file lists, and validation criteria\n- **Sets up coordination system** to track progress across all agents\n- **Copies essential configuration** (.env, .claude, .cursor) to each worktree\n- **\ud83d\ude80 Automatically opens Cursor** in each agent's worktree for immediate development\n\n**Example output**:\n```\n\ud83d\ude80 Enhanced Parallel Agent Spawning System\n\ud83d\udccb Reading deployment plan: shared/deployment-plans/proj-123-deployment-plan.json\n\ud83c\udfaf Task: PROJ-123 - Enhanced Google Drive MCP Server\n\ud83e\udd16 Found 4 unique agents to spawn: backend_server_agent data_storage_agent forms_validation_agent auth_agent\n\n\ud83c\udf3f Creating Git worktrees for each agent...\n\n\ud83d\udd04 Processing agent: backend_server_agent\n   \ud83d\udccd Branch: PROJ-123-backend_server_agent\n   \ud83d\udcc2 Path: ../your-project-work-trees/PROJ-123-backend_server_agent\n   \ud83c\udf31 Creating worktree...\n   \ud83d\udccb Setting up agent workspace...\n   \ud83d\udcc4 Copying configuration files...",
+        "numLines": 20,
+        "startLine": 210,
+        "totalLines": 604
+      }
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md"
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+        "content": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```\n",
+        "numLines": 59,
+        "startLine": 1,
+        "totalLines": 59
+      }
+    }
+  },
+  {
+    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "old_string": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```",
+      "new_string": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\ngit add .\ngit commit -m \"$GENERATED_MESSAGE\"\ngit checkout main\ngit pull origin main\ngit merge $AGENT_BRANCH --no-ff\ngit push origin main\ngit worktree remove $WORKTREE_PATH\ngit branch -d $AGENT_BRANCH\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`"
+    },
+    "tool_response": {
+      "filePath": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "oldString": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```",
+      "newString": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\ngit add .\ngit commit -m \"$GENERATED_MESSAGE\"\ngit checkout main\ngit pull origin main\ngit merge $AGENT_BRANCH --no-ff\ngit push origin main\ngit worktree remove $WORKTREE_PATH\ngit branch -d $AGENT_BRANCH\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`",
+      "originalFile": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```\n",
+      "structuredPatch": [
+        {
+          "oldStart": 1,
+          "oldLines": 58,
+          "newStart": 1,
+          "newLines": 43,
+          "lines": [
+            "-# Agent Commit & Merge",
+            "+# Agent Commit & Merge Command",
+            " ",
+            "-Commit completed agent work and merge back to main branch.",
+            "+Commit agent work and merge the worktree back to main branch.",
+            " ",
+            "-## Usage",
+            "-```bash",
+            "-/agent-commit [workspace-path] [custom-message]",
+            "-```",
+            "+Parse the agent context from $ARGUMENTS (workspace path) to:",
+            " ",
+            "-## What it does",
+            "-1. **Validates Completion**: Checks that all validation criteria are marked as complete",
+            "-2. **Verifies Files**: Ensures all required files were created/modified",
+            "-3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message",
+            "-4. **Merges to Main**: Switches to main branch and merges the agent's work",
+            "-5. **Cleans Up**: Removes the worktree and provides completion summary",
+            "+1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]",
+            "+2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified",
+            "+3. **Generate Commit**: Auto-create commit message from agent context if none provided",
+            "+4. **Git Operations**: Add all changes, commit, switch to main, merge, and push",
+            "+5. **Cleanup**: Remove worktree directory and provide completion summary",
+            " ",
+            "-## Parameters",
+            "-- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory",
+            "-- `custom-message` (optional): Custom commit message instead of auto-generated one",
+            "+## Context Files Used",
+            "+- @workspaces/*/agent_context.json - Extract agent info and task details",
+            "+- @workspaces/*/validation_checklist.txt - Verify completion status",
+            "+- @workspaces/*/files_to_work_on.txt - Confirm file changes",
+            " ",
+            "-## Context Files Read",
+            "-- `workspaces/{agent_id}/agent_context.json` - Agent details and task information",
+            "-- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification",
+            "-- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements",
+            "+## Git Commands Executed",
+            "+```bash",
+            "+git add .",
+            "+git commit -m \"$GENERATED_MESSAGE\"",
+            "+git checkout main",
+            "+git pull origin main",
+            "+git merge $AGENT_BRANCH --no-ff",
+            "+git push origin main",
+            "+git worktree remove $WORKTREE_PATH",
+            "+git branch -d $AGENT_BRANCH",
+            "+```",
+            " ",
+            "-## Auto-Generated Commit Message Format",
+            "+## Auto-Generated Commit Format",
+            " ```",
+            "-feat({agentId}): {taskTitle}",
+            "+feat(${agentId}): ${taskTitle}",
+            " ",
+            "-- {completed validation criteria}",
+            "-- Agent: {agentRole}",
+            "-- Files: {filesCreated} created, {filesModified} modified",
+            "-- Task: {taskId}",
+            "+- ${completedValidationCriteria}",
+            "+- Agent: ${agentRole}",
+            "+- Files: ${filesCreated.length} created, ${filesModified.length} modified",
+            "+- Task: ${taskId}",
+            " ",
+            " \ud83e\udd16 Generated with AOJDevStudio ",
+            " Co-Authored-By: Claude <noreply@anthropic.com>",
+            " ```",
+            " ",
+            "-## Git Operations Performed",
+            "-1. `git add .` - Stage all changes",
+            "-2. `git commit -m \"...\"` - Commit with generated message",
+            "-3. `git checkout main` - Switch to main branch",
+            "-4. `git merge {branch-name}` - Merge agent's work",
+            "-5. `git push` - Push changes to remote",
+            "-6. `git worktree remove {path}` - Clean up worktree",
+            "-7. `git branch -d {branch-name}` - Delete feature branch",
+            "-",
+            "-## Example",
+            "-```bash",
+            "-# From within an agent worktree",
+            "-/agent-commit",
+            "-",
+            "-# With custom message",
+            "-/agent-commit . \"Custom commit message for this agent\"",
+            "-",
+            "-# Specifying workspace path",
+            "-/agent-commit ../project-work-trees/TASK-123-backend_agent",
+            "-```",
+            "+Usage: `/agent-commit [workspace-path] [custom-message]`"
+          ]
+        }
+      ],
+      "userModified": false,
+      "replaceAll": false
+    }
+  }
+]
