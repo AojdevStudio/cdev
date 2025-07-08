@@ -44,5 +44,11 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
+  },
+  {
+    "session_id": "d01be2af-46a1-4ac2-8ce2-94f2befa25ec",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-backend-api-agent/d01be2af-46a1-4ac2-8ce2-94f2befa25ec.jsonl",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false
   }
 ]

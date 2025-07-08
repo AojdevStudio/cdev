@@ -1,0 +1,65 @@
+{
+  "agentId": "backend_api_agent",
+  "taskId": "AOJ-100",
+  "taskTitle": "Parallel Claude Development Workflow - NPX Package Distribution Plan",
+  "branchName": "AOJ-100-backend_api_agent",
+  "workTreePath": "../paralell-development-claude-work-trees/AOJ-100-backend_api_agent",
+  "agentInstances": [
+    {
+      "agentId": "backend_api_agent",
+      "agentRole": "Backend & API: **Linear API key**: Set `export LINEAR_API_KEY=\"your_key\"`",
+      "focusArea": "Backend & API",
+      "dependencies": [
+        "infrastructure_agent"
+      ],
+      "filesToCreate": [
+        "lib/api/client.ts",
+        "lib/integrations/external-service.ts",
+        "types/api-responses.ts"
+      ],
+      "filesToModify": [],
+      "testContracts": [
+        "api/client.test.ts",
+        "integration/external-service.test.ts",
+        "api/error-handling.test.ts"
+      ],
+      "validationCriteria": [
+        "External API calls return expected responses",
+        "Error handling works for network failures",
+        "Rate limiting is respected",
+        "Integration endpoints are accessible"
+      ],
+      "estimatedTime": "21 minutes",
+      "canStartImmediately": false,
+      "workspaceSetup": {
+        "contextFile": "workspaces/backend_api_agent/agent_context.json",
+        "fileList": "workspaces/backend_api_agent/files_to_work_on.txt",
+        "testContracts": "workspaces/backend_api_agent/test_contracts.txt",
+        "checklist": "workspaces/backend_api_agent/validation_checklist.txt"
+      }
+    }
+  ],
+  "dependencies": [
+    "infrastructure_agent"
+  ],
+  "allFilesToCreate": [
+    "lib/api/client.ts",
+    "lib/integrations/external-service.ts",
+    "types/api-responses.ts"
+  ],
+  "allFilesToModify": [],
+  "allTestContracts": [
+    "api/client.test.ts",
+    "integration/external-service.test.ts",
+    "api/error-handling.test.ts"
+  ],
+  "allValidationCriteria": [
+    "External API calls return expected responses",
+    "Error handling works for network failures",
+    "Rate limiting is respected",
+    "Integration endpoints are accessible"
+  ],
+  "canStartImmediately": false,
+  "estimatedTime": 21,
+  "createdAt": "2025-07-08T22:18:36.087Z"
+}
