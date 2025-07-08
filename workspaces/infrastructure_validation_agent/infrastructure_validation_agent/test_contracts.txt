@@ -1,0 +1,5 @@
+components/forms.test.tsx
+validation/form-validation.test.ts
+integration/form-submission.test.ts
+infrastructure/docker.test.ts
+infrastructure/deployment.test.ts
