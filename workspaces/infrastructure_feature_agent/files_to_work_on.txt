@@ -1,0 +1,6 @@
+CREATE: Dockerfile
+CREATE: docker-compose.yml
+CREATE: scripts/deploy.sh
+CREATE: lib/operations/write-operations.ts
+CREATE: lib/operations/file-writer.ts
+CREATE: lib/validation/write-validation.ts

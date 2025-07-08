@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # Main application service
+  parallel-claude-workflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: parallel-claude-workflow
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./shared:/app/shared
+      - ./scripts:/app/scripts
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/root/.ssh:ro
+    environment:
+      - NODE_ENV=production
+      - LINEAR_API_KEY=${LINEAR_API_KEY}
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY}
+    networks:
+      - parallel-dev-network
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+
+  # Redis for caching and coordination
+  redis:
+    image: redis:7-alpine
+    container_name: parallel-claude-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - parallel-dev-network
+    restart: unless-stopped
+
+  # PostgreSQL for agent coordination and results
+  postgres:
+    image: postgres:15-alpine
+    container_name: parallel-claude-postgres
+    environment:
+      - POSTGRES_DB=parallel_claude_db
+      - POSTGRES_USER=parallel_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-parallel_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - parallel-dev-network
+    restart: unless-stopped
+
+  # Monitoring and health checks
+  healthcheck:
+    image: curlimages/curl:latest
+    container_name: parallel-claude-healthcheck
+    depends_on:
+      - parallel-claude-workflow
+    networks:
+      - parallel-dev-network
+    command: >
+      sh -c "
+        while true; do
+          curl -f http://parallel-claude-workflow:3000/health || exit 1;
+          sleep 30;
+        done
+      "
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  parallel-dev-network:
+    driver: bridge
