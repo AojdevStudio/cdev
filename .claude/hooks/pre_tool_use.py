@@ -54,28 +54,35 @@ def is_dangerous_rm_command(command):
 def is_env_file_access(tool_name, tool_input):
     """
     Check if any tool is trying to access .env files containing sensitive data.
+    Allows reading .env files but blocks editing/writing operations.
+    Also allows access to .env.sample and .env.example files.
     """
     if tool_name in ['Read', 'Edit', 'MultiEdit', 'Write', 'Bash']:
         # Check file paths for file-based tools
-        if tool_name in ['Read', 'Edit', 'MultiEdit', 'Write']:
+        if tool_name in ['Edit', 'MultiEdit', 'Write']:  # Only block edit operations, allow Read
             file_path = tool_input.get('file_path', '')
-            if '.env' in file_path and not file_path.endswith('.env.sample'):
+            if '.env' in file_path and not (file_path.endswith('.env.sample') or file_path.endswith('.env.example')):
                 return True
         
         # Check bash commands for .env file access
         elif tool_name == 'Bash':
             command = tool_input.get('command', '')
-            # Pattern to detect .env file access (but allow .env.sample)
-            env_patterns = [
-                r'\b\.env\b(?!\.sample)',  # .env but not .env.sample
-                r'cat\s+.*\.env\b(?!\.sample)',  # cat .env
-                r'echo\s+.*>\s*\.env\b(?!\.sample)',  # echo > .env
-                r'touch\s+.*\.env\b(?!\.sample)',  # touch .env
-                r'cp\s+.*\.env\b(?!\.sample)',  # cp .env
-                r'mv\s+.*\.env\b(?!\.sample)',  # mv .env
+            # Pattern to detect .env file write/edit operations (but allow .env.sample and .env.example)
+            # Allow cat/read operations but block write operations
+            env_write_patterns = [
+                r'echo\s+.*>\s*\.env\b(?!\.sample|\.example)',  # echo > .env
+                r'touch\s+.*\.env\b(?!\.sample|\.example)',  # touch .env
+                r'cp\s+.*\.env\b(?!\.sample|\.example)',  # cp .env (as destination)
+                r'mv\s+.*\.env\b(?!\.sample|\.example)',  # mv .env (as destination)
+                r'>\s*\.env\b(?!\.sample|\.example)',  # any redirection to .env
+                r'>>\s*\.env\b(?!\.sample|\.example)',  # any append to .env
+                r'vim\s+.*\.env\b(?!\.sample|\.example)',  # vim .env
+                r'nano\s+.*\.env\b(?!\.sample|\.example)',  # nano .env
+                r'emacs\s+.*\.env\b(?!\.sample|\.example)',  # emacs .env
+                r'sed\s+.*-i.*\.env\b(?!\.sample|\.example)',  # sed -i .env (in-place edit)
             ]
             
-            for pattern in env_patterns:
+            for pattern in env_write_patterns:
                 if re.search(pattern, command):
                     return True
     
