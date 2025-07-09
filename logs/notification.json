@@ -28,5 +28,29 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-custom-feature-agent/aed0b927-bb30-443c-a799-f61486759eb5.jsonl",
     "hook_event_name": "Notification",
     "message": "Claude needs your permission to use Bash"
+  },
+  {
+    "session_id": "aed0b927-bb30-443c-a799-f61486759eb5",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-custom-feature-agent/aed0b927-bb30-443c-a799-f61486759eb5.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Bash"
+  },
+  {
+    "session_id": "aed0b927-bb30-443c-a799-f61486759eb5",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-custom-feature-agent/aed0b927-bb30-443c-a799-f61486759eb5.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Bash"
+  },
+  {
+    "session_id": "2758968a-e8b8-4da5-a756-8ab75813347f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-custom-feature-agent/2758968a-e8b8-4da5-a756-8ab75813347f.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude Code login successful"
+  },
+  {
+    "session_id": "2758968a-e8b8-4da5-a756-8ab75813347f",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-custom-feature-agent/2758968a-e8b8-4da5-a756-8ab75813347f.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
   }
 ]
