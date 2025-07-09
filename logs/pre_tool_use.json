@@ -337,5 +337,345 @@
       "old_string": "# Agent Commit & Merge\n\nCommit completed agent work and merge back to main branch.\n\n## Usage\n```bash\n/agent-commit [workspace-path] [custom-message]\n```\n\n## What it does\n1. **Validates Completion**: Checks that all validation criteria are marked as complete\n2. **Verifies Files**: Ensures all required files were created/modified\n3. **Commits Changes**: Adds all changes and creates a commit with auto-generated message\n4. **Merges to Main**: Switches to main branch and merges the agent's work\n5. **Cleans Up**: Removes the worktree and provides completion summary\n\n## Parameters\n- `workspace-path` (optional): Path to the agent workspace directory. If not provided, uses current directory\n- `custom-message` (optional): Custom commit message instead of auto-generated one\n\n## Context Files Read\n- `workspaces/{agent_id}/agent_context.json` - Agent details and task information\n- `workspaces/{agent_id}/validation_checklist.txt` - Completion verification\n- `workspaces/{agent_id}/files_to_work_on.txt` - File modification requirements\n\n## Auto-Generated Commit Message Format\n```\nfeat({agentId}): {taskTitle}\n\n- {completed validation criteria}\n- Agent: {agentRole}\n- Files: {filesCreated} created, {filesModified} modified\n- Task: {taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\n## Git Operations Performed\n1. `git add .` - Stage all changes\n2. `git commit -m \"...\"` - Commit with generated message\n3. `git checkout main` - Switch to main branch\n4. `git merge {branch-name}` - Merge agent's work\n5. `git push` - Push changes to remote\n6. `git worktree remove {path}` - Clean up worktree\n7. `git branch -d {branch-name}` - Delete feature branch\n\n## Example\n```bash\n# From within an agent worktree\n/agent-commit\n\n# With custom message\n/agent-commit . \"Custom commit message for this agent\"\n\n# Specifying workspace path\n/agent-commit ../project-work-trees/TASK-123-backend_agent\n```",
       "new_string": "# Agent Commit & Merge Command\n\nCommit agent work and merge the worktree back to main branch.\n\nParse the agent context from $ARGUMENTS (workspace path) to:\n\n1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]\n2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified\n3. **Generate Commit**: Auto-create commit message from agent context if none provided\n4. **Git Operations**: Add all changes, commit, switch to main, merge, and push\n5. **Cleanup**: Remove worktree directory and provide completion summary\n\n## Context Files Used\n- @workspaces/*/agent_context.json - Extract agent info and task details\n- @workspaces/*/validation_checklist.txt - Verify completion status\n- @workspaces/*/files_to_work_on.txt - Confirm file changes\n\n## Git Commands Executed\n```bash\ngit add .\ngit commit -m \"$GENERATED_MESSAGE\"\ngit checkout main\ngit pull origin main\ngit merge $AGENT_BRANCH --no-ff\ngit push origin main\ngit worktree remove $WORKTREE_PATH\ngit branch -d $AGENT_BRANCH\n```\n\n## Auto-Generated Commit Format\n```\nfeat(${agentId}): ${taskTitle}\n\n- ${completedValidationCriteria}\n- Agent: ${agentRole}\n- Files: ${filesCreated.length} created, ${filesModified.length} modified\n- Task: ${taskId}\n\n\ud83e\udd16 Generated with AOJDevStudio \nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\nUsage: `/agent-commit [workspace-path] [custom-message]`"
     }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find . -maxdepth 3 -type d -name \"workspaces\" 2>/dev/null | head -20",
+      "description": "Find agent workspace directories"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find ../paralell-development-claude-work-trees -type d -name \"workspaces\" 2>/dev/null | head -20",
+      "description": "Find agent workspaces in work trees directory"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/",
+      "description": "List all agent work trees"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "../paralell-development-claude-work-trees/coordination/parallel-agent-status.json"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Task",
+    "tool_input": {
+      "description": "Analyze agent progress",
+      "prompt": "I need to analyze the progress of 5 agents working on task AOJ-100. Check each agent's workspace for:\n\n1. Read agent_context.json to understand their role\n2. Read validation_checklist.txt to check completion status\n3. Check git status in each worktree\n4. Look at files_to_work_on.txt to understand scope\n\nAgent directories:\n- ../paralell-development-claude-work-trees/AOJ-100-backend_api_agent\n- ../paralell-development-claude-work-trees/AOJ-100-custom_feature_agent\n- ../paralell-development-claude-work-trees/AOJ-100-custom_validation_agent\n- ../paralell-development-claude-work-trees/AOJ-100-infrastructure_feature_agent\n- ../paralell-development-claude-work-trees/AOJ-100-infrastructure_validation_agent\n\nFor each agent, provide:\n- Agent role and focus area\n- Progress percentage (completed validation criteria)\n- Git status (clean/dirty/commits)\n- Files created/modified\n- Dependencies status\n\nReturn a structured report with completion status and next actions."
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-backend_api_agent/workspaces/backend_api_agent/agent_context.json"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-backend_api_agent/workspaces/backend_api_agent/validation_checklist.txt"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-backend_api_agent/workspaces/backend_api_agent/files_to_work_on.txt"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git status ../paralell-development-claude-work-trees/AOJ-100-backend_api_agent/",
+      "description": "Check git status for backend_api_agent worktree"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git worktree list",
+      "description": "List all worktrees to check their status"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/AOJ-100-backend_api_agent/lib/",
+      "description": "Check if backend_api_agent has created lib directory"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/AOJ-100-backend_api_agent/types/",
+      "description": "Check if backend_api_agent has created types directory"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-custom_feature_agent/workspaces/custom_feature_agent/agent_context.json"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-custom_feature_agent/workspaces/custom_feature_agent/validation_checklist.txt"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-custom_validation_agent/workspaces/custom_validation_agent/agent_context.json"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-custom_validation_agent/workspaces/custom_validation_agent/validation_checklist.txt"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-infrastructure_feature_agent/workspaces/infrastructure_feature_agent/agent_context.json"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-infrastructure_feature_agent/workspaces/infrastructure_feature_agent/validation_checklist.txt"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-infrastructure_validation_agent/workspaces/infrastructure_validation_agent/agent_context.json"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude-work-trees/AOJ-100-infrastructure_validation_agent/workspaces/infrastructure_validation_agent/validation_checklist.txt"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git log --oneline AOJ-100-backend_api_agent",
+      "description": "Check commits on backend_api_agent branch"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git log --oneline AOJ-100-infrastructure_validation_agent",
+      "description": "Check commits on infrastructure_validation_agent branch"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git log --oneline AOJ-100-custom_feature_agent",
+      "description": "Check commits on custom_feature_agent branch"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/AOJ-100-infrastructure_validation_agent/",
+      "description": "Check files in infrastructure_validation_agent worktree"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/AOJ-100-custom_feature_agent/lib/",
+      "description": "Check if custom_feature_agent has created files"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/AOJ-100-custom_validation_agent/components/",
+      "description": "Check if custom_validation_agent has created files"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la ../paralell-development-claude-work-trees/AOJ-100-infrastructure_feature_agent/scripts/",
+      "description": "Check if infrastructure_feature_agent has created files"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "for branch in AOJ-100-backend_api_agent AOJ-100-custom_feature_agent AOJ-100-custom_validation_agent AOJ-100-infrastructure_feature_agent AOJ-100-infrastructure_validation_agent; do echo \"=== $branch ===\"; git log --oneline $branch | head -3; echo; done",
+      "description": "Check recent commits on all agent branches"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find ../paralell-development-claude-work-trees/AOJ-100-backend_api_agent/ -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.js\" -o -name \"*.jsx\" | grep -E \"\\.(ts|tsx|js|jsx)$\" | head -10",
+      "description": "Find new/modified files in backend_api_agent"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "grep -r \"\\.claude\" ../paralell-development-claude-work-trees/*/workspaces/*/files_to_work_on.txt 2>/dev/null || echo \"No .claude files found in agent work scopes\"",
+      "description": "Check if agents are working on .claude files"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "content": "# Agent Commit & Merge Command\n\nCommit completed agent work and merge the worktree back to main branch with comprehensive validation and safety checks.\n\n## Variables\nWORKSPACE_PATH: $ARGUMENTS[0]\nCUSTOM_MESSAGE: $ARGUMENTS[1] (optional)\n\n## Execute these tasks\n\n**VALIDATE PREREQUISITES**\n\nVERIFY workspace exists and is valid:\n- CHECK `$WORKSPACE_PATH` directory exists\n- VERIFY it's a git worktree: `git -C \"$WORKSPACE_PATH\" rev-parse --is-inside-work-tree`\n- EXTRACT current branch: `AGENT_BRANCH=$(git -C \"$WORKSPACE_PATH\" rev-parse --abbrev-ref HEAD)`\n- EXIT with error if not a valid git worktree\n\n**VALIDATE COMPLETION**\n\nCHECK validation checklist completion:\n- READ `$WORKSPACE_PATH/validation_checklist.txt`\n- COUNT completed items: `COMPLETED=$(grep -c \"^\\s*[0-9]*\\.\\s*\\[x\\]\" \"$WORKSPACE_PATH/validation_checklist.txt\")`\n- COUNT total items: `TOTAL=$(grep -c \"^\\s*[0-9]*\\.\\s*\\[[x ]\\]\" \"$WORKSPACE_PATH/validation_checklist.txt\")`\n- IF counts don't match, EXIT with error: \"\u274c Validation incomplete: $COMPLETED/$TOTAL criteria completed\"\n\nVERIFY required files exist:\n- CHECK `$WORKSPACE_PATH/agent_context.json` exists\n- CHECK `$WORKSPACE_PATH/files_to_work_on.txt` exists\n- VERIFY git status shows changes: `git -C \"$WORKSPACE_PATH\" diff --quiet HEAD || echo \"Changes detected\"`\n\n**EXTRACT AGENT CONTEXT**\n\nREAD agent details from `$WORKSPACE_PATH/agent_context.json`:\n- EXTRACT `agentId`, `agentRole`, `taskTitle`, `taskId`\n- GET file statistics from git:\n  - `FILES_CREATED=$(git -C \"$WORKSPACE_PATH\" diff --name-only --diff-filter=A HEAD~1 | wc -l)`\n  - `FILES_MODIFIED=$(git -C \"$WORKSPACE_PATH\" diff --name-only --diff-filter=M HEAD~1 | wc -l)`\n  - `FILES_DELETED=$(git -C \"$WORKSPACE_PATH\" diff --name-only --diff-filter=D HEAD~1 | wc -l)`\n\n**SAFETY CHECKS**\n\nVERIFY main branch is clean:\n- STASH any uncommitted changes in main: `git stash push -m \"Auto-stash before agent merge\"`\n- CHECK main branch status: `git status --porcelain`\n- PULL latest changes: `git pull origin main`\n\nCHECK for potential conflicts:\n- PREVIEW merge: `git merge-tree $(git merge-base main \"$AGENT_BRANCH\") main \"$AGENT_BRANCH\"`\n- WARN if conflicts detected but continue (user can resolve)\n\n**GENERATE COMMIT MESSAGE**\n\nCREATE structured commit message (unless custom provided):\n```\nfeat(${agentId}): ${taskTitle}\n\nCompleted validation criteria:\n${completedValidationCriteria}\n\n- Agent: ${agentRole}  \n- Files: ${filesCreated} created, ${filesModified} modified, ${filesDeleted} deleted\n- Task: ${taskId}\n- Branch: ${agentBranch}\n\n\ud83e\udd16 Generated with AOJDevStudio\nCo-Authored-By: Claude <noreply@anthropic.com>\n```\n\nUSE custom message if provided:\n- IF `$CUSTOM_MESSAGE` is not empty, use it instead of generated message\n- APPEND AOJDevStudio signature to custom messages\n\n**EXECUTE GIT OPERATIONS**\n\nSWITCH to agent worktree:\n- RUN `cd \"$WORKSPACE_PATH\"`\n\nSTAGE and commit changes:\n- RUN `git add .`\n- RUN `git commit -m \"$FINAL_MESSAGE\" --no-edit`\n- CAPTURE commit hash: `COMMIT_HASH=$(git rev-parse HEAD)`\n\n**RUN OPTIONAL TESTS**\n\nIF package.json exists in workspace:\n- RUN `npm test` or configured test command\n- IF tests fail, offer option to continue or abort\n- RECORD test results in commit message\n\n**MERGE TO MAIN**\n\nSWITCH to main branch:\n- RUN `git checkout main`\n- ENSURE we're on main: `git symbolic-ref HEAD refs/heads/main`\n\nMERGE agent work:\n- RUN `git merge \"$AGENT_BRANCH\" --no-ff --no-edit -m \"Merge agent work: $agentRole\"`\n- IF merge fails:\n  - RUN `git reset --hard HEAD~1`\n  - RUN `git worktree add \"$WORKSPACE_PATH\" \"$AGENT_BRANCH\"`\n  - EXIT with error: \"\u274c Merge failed. Worktree restored for conflict resolution.\"\n\nPUSH to remote:\n- CHECK if remote exists: `git remote get-url origin`\n- RUN `git push origin main`\n\n**UPDATE COORDINATION**\n\nUPDATE agent status in coordination file:\n- READ `../paralell-development-claude-work-trees/coordination/parallel-agent-status.json`\n- MARK agent as \"completed\" with timestamp\n- UPDATE `completedAt` field\n- WRITE back to coordination file\n\n**CLEANUP WORKTREE**\n\nREMOVE worktree directory:\n- RUN `git worktree remove \"$WORKSPACE_PATH\" --force`\n\nDELETE agent branch:\n- RUN `git branch -d \"$AGENT_BRANCH\"`\n- IF branch not fully merged, use `-D` flag\n\n**PROVIDE COMPLETION SUMMARY**\n\nOUTPUT detailed success message:\n```\n\u2705 Agent Commit Complete\n  ${agentRole} work has been successfully completed and committed!\n  \n  \ud83d\udccb Validation Results\n  - All ${validationCount} validation criteria completed \u2705\n  - Git operations completed successfully \u2705\n  - No conflicts detected \u2705\n  \n  \ud83c\udfaf Delivered Features\n  - ${taskTitle}\n  \n  \ud83d\udcbe Git Operations\n  - Branch: ${agentBranch}\n  - Commit: ${commitHash}\n  - Status: Successfully merged to main branch\n  - Remote: Pushed to origin/main\n  \n  \ud83d\udcca File Changes\n  - Created: ${filesCreated} files\n  - Modified: ${filesModified} files  \n  - Deleted: ${filesDeleted} files\n  \n  \ud83d\udd04 Integration Status\n  The agent work is complete and integrated into main branch.\n  Other agents depending on this work can now proceed.\n  \n  \ud83d\ude80 The ${agentRole} has successfully completed its mission!\n```\n\n**ERROR HANDLING**\n\nFOR any step failure:\n- CAPTURE error message and step\n- PROVIDE recovery instructions\n- PRESERVE agent worktree for manual fixes\n- SUGGEST next steps for resolution\n\n**ROLLBACK CAPABILITY**\n\nIF --rollback flag provided:\n- FIND last agent merge commit\n- RUN `git reset --hard HEAD~1`\n- RECREATE agent worktree\n- RESTORE agent branch\n\n**USAGE EXAMPLES**\n```bash\n# Standard commit with auto-generated message\nclaude /project:agent-commit workspaces/AOJ-100-infrastructure_validation_agent\n\n# Custom commit message\nclaude /project:agent-commit workspaces/AOJ-100-backend_api_agent \"feat: custom backend integration\"\n\n# Dry run (validate only, no commit)\nclaude /project:agent-commit workspaces/AOJ-100-custom_feature_agent --dry-run\n\n# Rollback previous agent commit\nclaude /project:agent-commit --rollback AOJ-100-infrastructure_validation_agent\n```\n\n**DEPENDENCY AWARENESS**\n\nCHECK other agents waiting for this completion:\n- READ coordination file for dependent agents\n- NOTIFY about agents that can now start\n- SUGGEST optimal next agent to work on\n- PROVIDE agent startup commands for ready agents"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "old_string": "PUSH to remote:\n- CHECK if remote exists: `git remote get-url origin`\n- RUN `git push origin main`",
+      "new_string": "SKIP remote push:\n- LOCAL merge only - no automatic push to remote\n- USER can manually push when ready: `git push origin main`"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "old_string": "  - Status: Successfully merged to main branch\n  - Remote: Pushed to origin/main",
+      "new_string": "  - Status: Successfully merged to main branch\n  - Remote: Ready to push (manual step required)"
+    }
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.claude/commands/agent-commit.md",
+      "old_string": "  \ud83d\udd04 Integration Status\n  The agent work is complete and integrated into main branch.\n  Other agents depending on this work can now proceed.\n  \n  \ud83d\ude80 The ${agentRole} has successfully completed its mission!",
+      "new_string": "  \ud83d\udd04 Integration Status\n  The agent work is complete and integrated into main branch.\n  Other agents depending on this work can now proceed.\n  \n  \ud83d\udce4 Next Steps\n  To share your changes: git push origin main\n  \n  \ud83d\ude80 The ${agentRole} has successfully completed its mission!"
+    }
   }
 ]

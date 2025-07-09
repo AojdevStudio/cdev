@@ -16,5 +16,41 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
     "hook_event_name": "Notification",
     "message": "Claude is waiting for your input"
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Read"
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Read"
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Bash"
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Read"
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude needs your permission to use Bash"
+  },
+  {
+    "session_id": "34357b7d-760b-4566-b06a-6eae50b4b810",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/34357b7d-760b-4566-b06a-6eae50b4b810.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
   }
 ]
