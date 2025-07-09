@@ -1,158 +1,136 @@
 import React, { useState, useEffect } from 'react';
+import { FormConfig, FormField, FormValidationResult } from '../../lib/types/write-types';
 import { useFormState } from '../../hooks/useFormState';
-import { validateForm, ValidationRule } from '../../lib/form-validation';
-
-interface FormField {
-  id: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'textarea' | 'checkbox' | 'radio';
-  label: string;
-  placeholder?: string;
-  required?: boolean;
-  options?: Array<{ value: string; label: string }>;
-  validationRules?: ValidationRule[];
-  defaultValue?: string | number | boolean;
-  disabled?: boolean;
-  description?: string;
-}
+import { validateForm } from '../../lib/form-validation';
 
 interface DynamicFormProps {
-  fields: FormField[];
-  onSubmit: (data: Record<string, unknown>) => void | Promise<void>;
-  submitLabel?: string;
+  config: FormConfig;
+  onSubmit?: (data: Record<string, unknown>) => void | Promise<void>;
+  onValidationChange?: (isValid: boolean, errors: Record<string, string>) => void;
   className?: string;
-  isLoading?: boolean;
-  resetOnSubmit?: boolean;
-  validationMode?: 'onChange' | 'onBlur' | 'onSubmit';
+  disabled?: boolean;
 }
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
-  fields,
+  config,
   onSubmit,
-  submitLabel = 'Submit',
+  onValidationChange,
   className = '',
-  isLoading = false,
-  resetOnSubmit = false,
-  validationMode = 'onBlur'
+  disabled = false
 }) => {
   const {
     formData,
     errors,
+    touched,
     isSubmitting,
     updateField,
     validateField,
-    validateForm: validateFormData,
     resetForm,
-    setFormData
-  } = useFormState();
+    setSubmitting
+  } = useFormState(config);
 
-  // Initialize form data with default values
+  const [validationResult, setValidationResult] = useState<FormValidationResult>({
+    isValid: false,
+    errors: {}
+  });
+
   useEffect(() => {
-    const initialData: Record<string, unknown> = {};
-    fields.forEach(field => {
-      if (field.defaultValue !== undefined) {
-        initialData[field.id] = field.defaultValue;
-      }
-    });
-    setFormData(initialData);
-  }, [fields, setFormData]);
-
-  const handleFieldChange = (fieldId: string, value: unknown) => {
-    updateField(fieldId, value);
-    
-    if (validationMode === 'onChange') {
-      const field = fields.find(f => f.id === fieldId);
-      if (field?.validationRules) {
-        validateField(fieldId, value, field.validationRules);
-      }
-    }
-  };
-
-  const handleFieldBlur = (fieldId: string) => {
-    if (validationMode === 'onBlur') {
-      const field = fields.find(f => f.id === fieldId);
-      if (field?.validationRules) {
-        validateField(fieldId, formData[fieldId], field.validationRules);
-      }
-    }
-  };
+    const result = validateForm(formData, config.validation || []);
+    setValidationResult(result);
+    onValidationChange?.(result.isValid, result.errors);
+  }, [formData, config.validation, onValidationChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isSubmitting || isLoading) return;
+    if (disabled || isSubmitting) return;
 
     // Validate all fields
-    const validation = validateForm(formData, fields);
+    const finalValidation = validateForm(formData, config.validation || []);
     
-    if (!validation.isValid) {
-      validateFormData(validation.errors);
+    if (!finalValidation.isValid) {
+      setValidationResult(finalValidation);
       return;
     }
 
     try {
-      await onSubmit(formData);
+      setSubmitting(true);
       
-      if (resetOnSubmit) {
-        resetForm();
+      if (config.onSubmit) {
+        await config.onSubmit(formData);
+      }
+      
+      if (onSubmit) {
+        await onSubmit(formData);
       }
     } catch (error) {
       console.error('Form submission error:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReset = () => {
+    resetForm();
+    if (config.onReset) {
+      config.onReset();
     }
   };
 
   const renderField = (field: FormField) => {
-    const fieldError = errors[field.id];
-    const fieldValue = formData[field.id];
-    
+    const fieldValue = formData[field.name];
+    const fieldError = errors[field.name] || validationResult.errors[field.name];
+    const isFieldTouched = touched[field.name];
+
     const commonProps = {
-      id: field.id,
-      name: field.id,
-      disabled: field.disabled || isLoading,
-      className: `form-input ${fieldError ? 'error' : ''}`,
-      onBlur: () => handleFieldBlur(field.id)
+      id: field.name,
+      name: field.name,
+      required: field.required,
+      disabled: disabled || isSubmitting,
+      className: `form-field ${fieldError ? 'error' : ''} ${isFieldTouched ? 'touched' : ''}`,
+      onBlur: () => validateField(field.name),
+      'aria-invalid': !!fieldError,
+      'aria-describedby': fieldError ? `${field.name}-error` : undefined
     };
 
-    let fieldElement: React.ReactElement;
+    const handleChange = (value: unknown) => {
+      updateField(field.name, value);
+    };
 
     switch (field.type) {
       case 'text':
       case 'email':
       case 'password':
       case 'number':
-        fieldElement = (
+        return (
           <input
             {...commonProps}
             type={field.type}
             value={fieldValue as string || ''}
             placeholder={field.placeholder}
-            onChange={(e) => handleFieldChange(field.id, e.target.value)}
-            required={field.required}
+            onChange={(e) => handleChange(e.target.value)}
           />
         );
-        break;
 
       case 'textarea':
-        fieldElement = (
+        return (
           <textarea
             {...commonProps}
             value={fieldValue as string || ''}
             placeholder={field.placeholder}
+            onChange={(e) => handleChange(e.target.value)}
             rows={4}
-            onChange={(e) => handleFieldChange(field.id, e.target.value)}
-            required={field.required}
           />
         );
-        break;
 
       case 'select':
-        fieldElement = (
+        return (
           <select
             {...commonProps}
             value={fieldValue as string || ''}
-            onChange={(e) => handleFieldChange(field.id, e.target.value)}
-            required={field.required}
+            onChange={(e) => handleChange(e.target.value)}
           >
-            <option value="">Select an option</option>
+            <option value="">{field.placeholder || 'Select an option'}</option>
             {field.options?.map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -160,85 +138,82 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             ))}
           </select>
         );
-        break;
 
       case 'checkbox':
-        fieldElement = (
+        return (
           <input
             {...commonProps}
             type="checkbox"
             checked={fieldValue as boolean || false}
-            onChange={(e) => handleFieldChange(field.id, e.target.checked)}
-            className="form-checkbox"
+            onChange={(e) => handleChange(e.target.checked)}
           />
         );
-        break;
 
       case 'radio':
-        fieldElement = (
+        return (
           <div className="radio-group">
             {field.options?.map(option => (
-              <label key={option.value} className="radio-label">
+              <label key={option.value} className="radio-option">
                 <input
                   type="radio"
-                  name={field.id}
+                  name={field.name}
                   value={option.value}
                   checked={fieldValue === option.value}
-                  onChange={(e) => handleFieldChange(field.id, e.target.value)}
-                  disabled={field.disabled || isLoading}
-                  className="form-radio"
+                  onChange={(e) => handleChange(e.target.value)}
+                  disabled={disabled || isSubmitting}
                 />
                 {option.label}
               </label>
             ))}
           </div>
         );
-        break;
 
       default:
-        fieldElement = (
-          <input
-            {...commonProps}
-            type="text"
-            value={fieldValue as string || ''}
-            onChange={(e) => handleFieldChange(field.id, e.target.value)}
-          />
-        );
+        return null;
     }
-
-    return (
-      <div key={field.id} className="form-field">
-        <label htmlFor={field.id} className="form-label">
-          {field.label}
-          {field.required && <span className="required">*</span>}
-        </label>
-        
-        {field.description && (
-          <p className="field-description">{field.description}</p>
-        )}
-        
-        {fieldElement}
-        
-        {fieldError && (
-          <div className="error-message" role="alert">
-            {fieldError}
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
     <form onSubmit={handleSubmit} className={`dynamic-form ${className}`}>
-      {fields.map(renderField)}
-      
-      <button
-        type="submit"
-        disabled={isSubmitting || isLoading}
-        className="submit-button"
-      >
-        {isSubmitting || isLoading ? 'Submitting...' : submitLabel}
-      </button>
+      {config.fields.map(field => (
+        <div key={field.name} className="form-group">
+          <label htmlFor={field.name} className="form-label">
+            {field.label}
+            {field.required && <span className="required">*</span>}
+          </label>
+          
+          {renderField(field)}
+          
+          {(errors[field.name] || validationResult.errors[field.name]) && (
+            <div 
+              id={`${field.name}-error`}
+              className="form-error"
+              role="alert"
+            >
+              {errors[field.name] || validationResult.errors[field.name]}
+            </div>
+          )}
+        </div>
+      ))}
+
+      <div className="form-actions">
+        <button
+          type="submit"
+          disabled={disabled || isSubmitting || !validationResult.isValid}
+          className="submit-button"
+        >
+          {isSubmitting ? 'Submitting...' : (config.submitLabel || 'Submit')}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleReset}
+          disabled={disabled || isSubmitting}
+          className="reset-button"
+        >
+          {config.resetLabel || 'Reset'}
+        </button>
+      </div>
     </form>
   );
 };

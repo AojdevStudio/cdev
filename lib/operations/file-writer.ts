@@ -1,306 +1,220 @@
 import { promises as fs } from 'fs';
-import path from 'path';
-import { createWriteStream } from 'fs';
-import { Readable } from 'stream';
-import { promisify } from 'util';
-import { pipeline } from 'stream';
-
-const pipelineAsync = promisify(pipeline);
-
-export interface FileWriterOptions {
-  encoding?: BufferEncoding;
-  mode?: number;
-  flag?: string;
-  createDirectories?: boolean;
-}
-
-export interface StreamWriteOptions extends FileWriterOptions {
-  highWaterMark?: number;
-  autoClose?: boolean;
-}
+import { join, dirname, basename, extname } from 'path';
+import { WriteOperationOptions, WriteOperationResult } from '../types/write-types';
+import { writeOperations } from './write-operations';
 
 export class FileWriter {
-  private defaultOptions: FileWriterOptions = {
-    encoding: 'utf8',
-    mode: 0o644,
-    flag: 'w',
-    createDirectories: true
-  };
+  private static readonly SAFE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.json', '.md', '.txt', '.yml', '.yaml'];
+  private static readonly MAX_FILE_SIZE = 1024 * 1024 * 5; // 5MB default limit
 
-  async writeFile(
+  async writeTextFile(
     filePath: string,
     content: string,
-    encoding?: BufferEncoding,
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options };
-    
-    if (encoding) {
-      resolvedOptions.encoding = encoding;
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
+    const safeOptions = {
+      ...options,
+      maxFileSize: options.maxFileSize || FileWriter.MAX_FILE_SIZE,
+      createBackup: options.createBackup !== false, // Default to true
+      preventConcurrentWrites: options.preventConcurrentWrites !== false // Default to true
+    };
+
+    if (!this.isFileExtensionSafe(filePath)) {
+      return {
+        success: false,
+        transactionId: options.transactionId || 'unknown',
+        error: 'File extension not allowed for security reasons',
+        rollbackAvailable: false
+      };
     }
 
-    try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(filePath));
-      }
-
-      // Write the file
-      await fs.writeFile(filePath, content, {
-        encoding: resolvedOptions.encoding,
-        mode: resolvedOptions.mode,
-        flag: resolvedOptions.flag
-      });
-
-    } catch (error) {
-      throw new Error(`Failed to write file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-    }
+    return await writeOperations.writeFile(filePath, content, safeOptions);
   }
 
-  async writeFileBuffer(
-    filePath: string,
-    buffer: Buffer,
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options };
-
-    try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(filePath));
-      }
-
-      // Write the buffer
-      await fs.writeFile(filePath, buffer, {
-        mode: resolvedOptions.mode,
-        flag: resolvedOptions.flag
-      });
-
-    } catch (error) {
-      throw new Error(`Failed to write buffer to file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async writeStream(
-    filePath: string,
-    readable: Readable,
-    options: StreamWriteOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options };
-
-    try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(filePath));
-      }
-
-      // Create write stream
-      const writeStream = createWriteStream(filePath, {
-        encoding: resolvedOptions.encoding,
-        mode: resolvedOptions.mode,
-        flags: resolvedOptions.flag,
-        highWaterMark: options.highWaterMark,
-        autoClose: options.autoClose !== false
-      });
-
-      // Pipe readable to write stream
-      await pipelineAsync(readable, writeStream);
-
-    } catch (error) {
-      throw new Error(`Failed to write stream to file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async appendFile(
-    filePath: string,
-    content: string,
-    encoding?: BufferEncoding,
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options, flag: 'a' };
-    
-    if (encoding) {
-      resolvedOptions.encoding = encoding;
-    }
-
-    try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(filePath));
-      }
-
-      // Append to the file
-      await fs.appendFile(filePath, content, {
-        encoding: resolvedOptions.encoding,
-        mode: resolvedOptions.mode,
-        flag: resolvedOptions.flag
-      });
-
-    } catch (error) {
-      throw new Error(`Failed to append to file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async writeLines(
-    filePath: string,
-    lines: string[],
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const content = lines.join('\n');
-    await this.writeFile(filePath, content, undefined, options);
-  }
-
-  async writeJSON(
+  async writeJsonFile(
     filePath: string,
     data: unknown,
-    options: FileWriterOptions & { pretty?: boolean } = {}
-  ): Promise<void> {
-    const { pretty, ...fileOptions } = options;
-    
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
     try {
-      const content = pretty 
-        ? JSON.stringify(data, null, 2)
-        : JSON.stringify(data);
-
-      await this.writeFile(filePath, content, 'utf8', fileOptions);
-
+      const jsonContent = JSON.stringify(data, null, 2);
+      return await this.writeTextFile(filePath, jsonContent, options);
     } catch (error) {
-      throw new Error(`Failed to write JSON to file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        success: false,
+        transactionId: options.transactionId || 'unknown',
+        error: error instanceof Error ? error.message : 'JSON serialization failed',
+        rollbackAvailable: false
+      };
     }
   }
 
-  async ensureDirectoryExists(dirPath: string): Promise<void> {
-    try {
-      await fs.access(dirPath);
-    } catch {
-      // Directory doesn't exist, create it
-      await fs.mkdir(dirPath, { recursive: true });
+  async writeConfigFile(
+    filePath: string,
+    config: Record<string, unknown>,
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
+    const ext = extname(filePath).toLowerCase();
+    
+    switch (ext) {
+      case '.json':
+        return await this.writeJsonFile(filePath, config, options);
+      case '.yml':
+      case '.yaml':
+        return await this.writeYamlFile(filePath, config, options);
+      default:
+        return {
+          success: false,
+          transactionId: options.transactionId || 'unknown',
+          error: 'Unsupported config file format',
+          rollbackAvailable: false
+        };
     }
   }
 
-  async createSymlink(
-    targetPath: string,
-    linkPath: string,
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options };
-
+  async writeTemplateFile(
+    templatePath: string,
+    outputPath: string,
+    variables: Record<string, string>,
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
     try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(linkPath));
+      const templateContent = await fs.readFile(templatePath, 'utf8');
+      const processedContent = this.processTemplate(templateContent, variables);
+      return await this.writeTextFile(outputPath, processedContent, options);
+    } catch (error) {
+      return {
+        success: false,
+        transactionId: options.transactionId || 'unknown',
+        error: error instanceof Error ? error.message : 'Template processing failed',
+        rollbackAvailable: false
+      };
+    }
+  }
+
+  async appendToFile(
+    filePath: string,
+    content: string,
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
+    try {
+      let existingContent = '';
+      try {
+        existingContent = await fs.readFile(filePath, 'utf8');
+      } catch (error) {
+        // File doesn't exist, that's okay
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+          throw error;
+        }
       }
 
-      // Create symbolic link
-      await fs.symlink(targetPath, linkPath);
-
+      const newContent = existingContent + content;
+      return await this.writeTextFile(filePath, newContent, options);
     } catch (error) {
-      throw new Error(`Failed to create symlink ${linkPath} -> ${targetPath}: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        success: false,
+        transactionId: options.transactionId || 'unknown',
+        error: error instanceof Error ? error.message : 'Append operation failed',
+        rollbackAvailable: false
+      };
     }
   }
 
   async copyFile(
     sourcePath: string,
-    destPath: string,
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options };
-
+    destinationPath: string,
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
     try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(destPath));
-      }
-
-      // Copy file
-      await fs.copyFile(sourcePath, destPath);
-
-      // Set permissions if specified
-      if (resolvedOptions.mode) {
-        await fs.chmod(destPath, resolvedOptions.mode);
-      }
-
+      const content = await fs.readFile(sourcePath, 'utf8');
+      return await this.writeTextFile(destinationPath, content, options);
     } catch (error) {
-      throw new Error(`Failed to copy file ${sourcePath} -> ${destPath}: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        success: false,
+        transactionId: options.transactionId || 'unknown',
+        error: error instanceof Error ? error.message : 'File copy failed',
+        rollbackAvailable: false
+      };
     }
   }
 
-  async createTempFile(
-    prefix: string = 'temp',
-    suffix: string = '',
-    content?: string,
-    options: FileWriterOptions = {}
-  ): Promise<string> {
-    const timestamp = Date.now();
-    const randomId = Math.random().toString(36).substring(2, 15);
-    const tempFileName = `${prefix}_${timestamp}_${randomId}${suffix}`;
-    const tempDir = process.env.TMPDIR || '/tmp';
-    const tempPath = path.join(tempDir, tempFileName);
+  async writeMultipleFiles(
+    files: Array<{
+      filePath: string;
+      content: string;
+      options?: WriteOperationOptions;
+    }>,
+    globalOptions: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult[]> {
+    const operations = files.map(file => ({
+      filePath: file.filePath,
+      content: file.content,
+      options: { ...globalOptions, ...file.options }
+    }));
 
-    if (content !== undefined) {
-      await this.writeFile(tempPath, content, undefined, options);
-    }
-
-    return tempPath;
+    return await writeOperations.writeMultipleFiles(operations);
   }
 
-  async writeWithTemplate(
-    filePath: string,
-    template: string,
-    variables: Record<string, string>,
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    let content = template;
+  private isFileExtensionSafe(filePath: string): boolean {
+    const ext = extname(filePath).toLowerCase();
+    return FileWriter.SAFE_EXTENSIONS.includes(ext);
+  }
 
-    // Replace variables in template
+  private processTemplate(template: string, variables: Record<string, string>): string {
+    let processed = template;
+    
+    // Replace {{variable}} patterns
     for (const [key, value] of Object.entries(variables)) {
       const regex = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g');
-      content = content.replace(regex, value);
+      processed = processed.replace(regex, value);
     }
 
-    await this.writeFile(filePath, content, undefined, options);
+    return processed;
   }
 
-  async writeChunked(
+  private async writeYamlFile(
     filePath: string,
-    chunks: string[],
-    options: FileWriterOptions = {}
-  ): Promise<void> {
-    const resolvedOptions = { ...this.defaultOptions, ...options };
-
+    data: Record<string, unknown>,
+    options: WriteOperationOptions = {}
+  ): Promise<WriteOperationResult> {
     try {
-      // Ensure directory exists if createDirectories is true
-      if (resolvedOptions.createDirectories) {
-        await this.ensureDirectoryExists(path.dirname(filePath));
-      }
-
-      // Create write stream
-      const writeStream = createWriteStream(filePath, {
-        encoding: resolvedOptions.encoding,
-        mode: resolvedOptions.mode,
-        flags: resolvedOptions.flag
-      });
-
-      // Write chunks sequentially
-      for (const chunk of chunks) {
-        await new Promise<void>((resolve, reject) => {
-          writeStream.write(chunk, (error) => {
-            if (error) reject(error);
-            else resolve();
-          });
-        });
-      }
-
-      // Close the stream
-      await new Promise<void>((resolve, reject) => {
-        writeStream.end((error) => {
-          if (error) reject(error);
-          else resolve();
-        });
-      });
-
+      // Simple YAML serialization for basic objects
+      const yamlContent = this.simpleYamlStringify(data);
+      return await this.writeTextFile(filePath, yamlContent, options);
     } catch (error) {
-      throw new Error(`Failed to write chunked data to file ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        success: false,
+        transactionId: options.transactionId || 'unknown',
+        error: error instanceof Error ? error.message : 'YAML serialization failed',
+        rollbackAvailable: false
+      };
     }
+  }
+
+  private simpleYamlStringify(obj: Record<string, unknown>, indent = 0): string {
+    const spaces = '  '.repeat(indent);
+    let yaml = '';
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (value === null || value === undefined) {
+        yaml += `${spaces}${key}: null\n`;
+      } else if (typeof value === 'string') {
+        yaml += `${spaces}${key}: "${value}"\n`;
+      } else if (typeof value === 'number' || typeof value === 'boolean') {
+        yaml += `${spaces}${key}: ${value}\n`;
+      } else if (Array.isArray(value)) {
+        yaml += `${spaces}${key}:\n`;
+        value.forEach(item => {
+          yaml += `${spaces}  - ${typeof item === 'string' ? `"${item}"` : item}\n`;
+        });
+      } else if (typeof value === 'object') {
+        yaml += `${spaces}${key}:\n`;
+        yaml += this.simpleYamlStringify(value as Record<string, unknown>, indent + 1);
+      }
+    }
+
+    return yaml;
   }
 }
+
+export const fileWriter = new FileWriter();

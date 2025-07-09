@@ -1,7 +1,8 @@
-import { useState, useCallback, useReducer } from 'react';
-import { validateField, ValidationRule } from '../lib/form-validation';
+import { useState, useCallback, useEffect } from 'react';
+import { FormConfig, FormField, FormValidationRule } from '../lib/types/write-types';
+import { validateField } from '../lib/form-validation';
 
-export interface FormState {
+interface FormState {
   data: Record<string, unknown>;
   errors: Record<string, string>;
   touched: Record<string, boolean>;
@@ -9,288 +10,281 @@ export interface FormState {
   isDirty: boolean;
 }
 
-export interface FormAction {
-  type: 'SET_FIELD' | 'SET_ERROR' | 'SET_ERRORS' | 'SET_TOUCHED' | 'SET_SUBMITTING' | 'RESET_FORM' | 'SET_FORM_DATA';
-  payload?: Record<string, unknown> | { field: string; value: unknown } | { field: string; error: string } | boolean;
+interface UseFormStateReturn {
+  formData: Record<string, unknown>;
+  errors: Record<string, string>;
+  touched: Record<string, boolean>;
+  isSubmitting: boolean;
+  isDirty: boolean;
+  isValid: boolean;
+  updateField: (name: string, value: unknown) => void;
+  validateField: (name: string) => boolean;
+  validateForm: () => boolean;
+  resetForm: () => void;
+  setSubmitting: (submitting: boolean) => void;
+  setFieldError: (name: string, error: string) => void;
+  clearFieldError: (name: string) => void;
+  getFieldValue: (name: string) => unknown;
+  setFieldValue: (name: string, value: unknown) => void;
 }
 
-const initialState: FormState = {
-  data: {},
-  errors: {},
-  touched: {},
-  isSubmitting: false,
-  isDirty: false
-};
+export const useFormState = (config: FormConfig): UseFormStateReturn => {
+  const [formState, setFormState] = useState<FormState>(() => {
+    const initialData: Record<string, unknown> = {};
+    
+    config.fields.forEach(field => {
+      initialData[field.name] = field.defaultValue ?? getDefaultValueForFieldType(field.type);
+    });
 
-const formReducer = (state: FormState, action: FormAction): FormState => {
-  switch (action.type) {
-    case 'SET_FIELD':
-      const { field, value } = action.payload as { field: string; value: unknown };
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          [field]: value
-        },
-        isDirty: true,
-        // Clear error when field is updated
-        errors: {
-          ...state.errors,
-          [field]: ''
-        }
-      };
-
-    case 'SET_ERROR':
-      const { field: errorField, error } = action.payload as { field: string; error: string };
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          [errorField]: error
-        }
-      };
-
-    case 'SET_ERRORS':
-      return {
-        ...state,
-        errors: action.payload as Record<string, string>
-      };
-
-    case 'SET_TOUCHED':
-      const touchedField = action.payload as string;
-      return {
-        ...state,
-        touched: {
-          ...state.touched,
-          [touchedField]: true
-        }
-      };
-
-    case 'SET_SUBMITTING':
-      return {
-        ...state,
-        isSubmitting: action.payload as boolean
-      };
-
-    case 'SET_FORM_DATA':
-      return {
-        ...state,
-        data: action.payload as Record<string, unknown>,
-        isDirty: false
-      };
-
-    case 'RESET_FORM':
-      return initialState;
-
-    default:
-      return state;
-  }
-};
-
-export interface UseFormStateOptions {
-  initialData?: Record<string, unknown>;
-  onSubmit?: (data: Record<string, unknown>) => void | Promise<void>;
-  validateOnChange?: boolean;
-  validateOnBlur?: boolean;
-}
-
-export const useFormState = (options: UseFormStateOptions = {}) => {
-  const [state, dispatch] = useReducer(formReducer, {
-    ...initialState,
-    data: options.initialData || {}
+    return {
+      data: initialData,
+      errors: {},
+      touched: {},
+      isSubmitting: false,
+      isDirty: false
+    };
   });
 
-  const [validationCache, setValidationCache] = useState<Record<string, ValidationRule[]>>({});
+  // Calculate if form is valid
+  const isValid = Object.keys(formState.errors).length === 0;
 
-  // Update a single field
-  const updateField = useCallback((field: string, value: unknown) => {
-    dispatch({
-      type: 'SET_FIELD',
-      payload: { field, value }
-    });
-
-    // Auto-validate on change if enabled
-    if (options.validateOnChange && validationCache[field]) {
-      const error = validateField(value, validationCache[field]);
-      if (error) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: { field, error }
-        });
-      }
-    }
-  }, [options.validateOnChange, validationCache]);
-
-  // Set form data (useful for initialization)
-  const setFormData = useCallback((data: Record<string, unknown>) => {
-    dispatch({
-      type: 'SET_FORM_DATA',
-      payload: data
-    });
+  const updateField = useCallback((name: string, value: unknown) => {
+    setFormState(prev => ({
+      ...prev,
+      data: { ...prev.data, [name]: value },
+      isDirty: true,
+      touched: { ...prev.touched, [name]: true }
+    }));
   }, []);
 
-  // Update multiple fields at once
-  const updateFields = useCallback((fields: Record<string, unknown>) => {
-    Object.entries(fields).forEach(([field, value]) => {
-      updateField(field, value);
-    });
-  }, [updateField]);
+  const validateFieldInternal = useCallback((name: string): boolean => {
+    const field = config.fields.find(f => f.name === name);
+    if (!field) return true;
 
-  // Validate a single field
-  const validateField = useCallback((field: string, value: unknown, rules: ValidationRule[]) => {
-    // Cache validation rules for this field
-    setValidationCache(prev => ({
+    const value = formState.data[name];
+    const rules = field.validation || [];
+    
+    // Add implicit required rule if field is required
+    if (field.required && !rules.some(rule => rule.type === 'required')) {
+      rules.unshift({
+        field: name,
+        type: 'required',
+        message: `${field.label} is required`
+      });
+    }
+
+    const validationResult = validateField(value, rules);
+    
+    setFormState(prev => ({
       ...prev,
-      [field]: rules
+      errors: validationResult.isValid
+        ? { ...prev.errors, [name]: '' }
+        : { ...prev.errors, [name]: validationResult.error || 'Validation failed' }
     }));
 
-    const error = validateField(value, rules);
+    return validationResult.isValid;
+  }, [config.fields, formState.data]);
+
+  const validateForm = useCallback((): boolean => {
+    let isFormValid = true;
     
-    dispatch({
-      type: 'SET_ERROR',
-      payload: { field, error: error || '' }
-    });
-
-    return error;
-  }, []);
-
-  // Validate entire form
-  const validateForm = useCallback((errors: Record<string, string>) => {
-    dispatch({
-      type: 'SET_ERRORS',
-      payload: errors
-    });
-  }, []);
-
-  // Mark field as touched
-  const touchField = useCallback((field: string) => {
-    dispatch({
-      type: 'SET_TOUCHED',
-      payload: field
-    });
-
-    // Auto-validate on blur if enabled
-    if (options.validateOnBlur && validationCache[field]) {
-      const error = validateField(state.data[field], validationCache[field]);
-      if (error) {
-        dispatch({
-          type: 'SET_ERROR',
-          payload: { field, error }
-        });
+    config.fields.forEach(field => {
+      const fieldValid = validateFieldInternal(field.name);
+      if (!fieldValid) {
+        isFormValid = false;
       }
-    }
-  }, [options.validateOnBlur, validationCache, state.data]);
-
-  // Set submitting state
-  const setSubmitting = useCallback((isSubmitting: boolean) => {
-    dispatch({
-      type: 'SET_SUBMITTING',
-      payload: isSubmitting
     });
-  }, []);
 
-  // Reset form to initial state
+    return isFormValid;
+  }, [config.fields, validateFieldInternal]);
+
   const resetForm = useCallback(() => {
-    dispatch({ type: 'RESET_FORM' });
-    setValidationCache({});
+    const initialData: Record<string, unknown> = {};
+    
+    config.fields.forEach(field => {
+      initialData[field.name] = field.defaultValue ?? getDefaultValueForFieldType(field.type);
+    });
+
+    setFormState({
+      data: initialData,
+      errors: {},
+      touched: {},
+      isSubmitting: false,
+      isDirty: false
+    });
+  }, [config.fields]);
+
+  const setSubmitting = useCallback((submitting: boolean) => {
+    setFormState(prev => ({
+      ...prev,
+      isSubmitting: submitting
+    }));
   }, []);
 
-  // Get field value
-  const getFieldValue = useCallback((field: string) => {
-    return state.data[field];
-  }, [state.data]);
+  const setFieldError = useCallback((name: string, error: string) => {
+    setFormState(prev => ({
+      ...prev,
+      errors: { ...prev.errors, [name]: error }
+    }));
+  }, []);
 
-  // Get field error
-  const getFieldError = useCallback((field: string) => {
-    return state.errors[field];
-  }, [state.errors]);
+  const clearFieldError = useCallback((name: string) => {
+    setFormState(prev => ({
+      ...prev,
+      errors: { ...prev.errors, [name]: '' }
+    }));
+  }, []);
 
-  // Check if field is touched
-  const isFieldTouched = useCallback((field: string) => {
-    return state.touched[field] || false;
-  }, [state.touched]);
+  const getFieldValue = useCallback((name: string): unknown => {
+    return formState.data[name];
+  }, [formState.data]);
 
-  // Check if field has error
-  const hasFieldError = useCallback((field: string) => {
-    return Boolean(state.errors[field]);
-  }, [state.errors]);
+  const setFieldValue = useCallback((name: string, value: unknown) => {
+    setFormState(prev => ({
+      ...prev,
+      data: { ...prev.data, [name]: value },
+      isDirty: true
+    }));
+  }, []);
 
-  // Check if form is valid
-  const isFormValid = useCallback(() => {
-    return Object.values(state.errors).every(error => !error);
-  }, [state.errors]);
-
-  // Get all form errors
-  const getFormErrors = useCallback(() => {
-    return Object.entries(state.errors)
-      .filter(([, error]) => error)
-      .reduce((acc, [field, error]) => ({ ...acc, [field]: error }), {});
-  }, [state.errors]);
-
-  // Handle form submission
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    if (state.isSubmitting) {
-      return;
-    }
-
-    setSubmitting(true);
-
-    try {
-      if (options.onSubmit) {
-        await options.onSubmit(state.data);
+  // Auto-validate fields when they change
+  useEffect(() => {
+    Object.keys(formState.touched).forEach(fieldName => {
+      if (formState.touched[fieldName]) {
+        validateFieldInternal(fieldName);
       }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      throw error;
-    } finally {
-      setSubmitting(false);
-    }
-  }, [state.data, state.isSubmitting, options.onSubmit]);
-
-  // Create field props helper
-  const getFieldProps = useCallback((field: string) => {
-    return {
-      value: getFieldValue(field) || '',
-      error: getFieldError(field),
-      touched: isFieldTouched(field),
-      hasError: hasFieldError(field),
-      onChange: (value: unknown) => updateField(field, value),
-      onBlur: () => touchField(field)
-    };
-  }, [getFieldValue, getFieldError, isFieldTouched, hasFieldError, updateField, touchField]);
+    });
+  }, [formState.data, formState.touched, validateFieldInternal]);
 
   return {
-    // State
-    formData: state.data,
-    errors: state.errors,
-    touched: state.touched,
-    isSubmitting: state.isSubmitting,
-    isDirty: state.isDirty,
-    
-    // Actions
+    formData: formState.data,
+    errors: formState.errors,
+    touched: formState.touched,
+    isSubmitting: formState.isSubmitting,
+    isDirty: formState.isDirty,
+    isValid,
     updateField,
-    updateFields,
-    setFormData,
-    validateField,
+    validateField: validateFieldInternal,
     validateForm,
-    touchField,
-    setSubmitting,
     resetForm,
-    handleSubmit,
-    
-    // Getters
+    setSubmitting,
+    setFieldError,
+    clearFieldError,
     getFieldValue,
-    getFieldError,
-    isFieldTouched,
-    hasFieldError,
-    isFormValid,
-    getFormErrors,
-    getFieldProps
+    setFieldValue
   };
 };
 
-export default useFormState;
+// Helper function to get default values for different field types
+function getDefaultValueForFieldType(type: string): unknown {
+  switch (type) {
+    case 'text':
+    case 'email':
+    case 'password':
+    case 'textarea':
+    case 'select':
+      return '';
+    case 'number':
+      return 0;
+    case 'checkbox':
+      return false;
+    case 'radio':
+      return '';
+    default:
+      return '';
+  }
+}
+
+// Additional hook for form persistence
+export const useFormPersistence = (
+  formId: string,
+  formData: Record<string, unknown>,
+  options: { autoSave?: boolean; saveInterval?: number } = {}
+) => {
+  const { autoSave = true, saveInterval = 1000 } = options;
+
+  const saveToStorage = useCallback(() => {
+    try {
+      localStorage.setItem(`form_${formId}`, JSON.stringify(formData));
+    } catch (error) {
+      console.warn('Failed to save form data to localStorage:', error);
+    }
+  }, [formId, formData]);
+
+  const loadFromStorage = useCallback((): Record<string, unknown> | null => {
+    try {
+      const stored = localStorage.getItem(`form_${formId}`);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.warn('Failed to load form data from localStorage:', error);
+      return null;
+    }
+  }, [formId]);
+
+  const clearStorage = useCallback(() => {
+    try {
+      localStorage.removeItem(`form_${formId}`);
+    } catch (error) {
+      console.warn('Failed to clear form data from localStorage:', error);
+    }
+  }, [formId]);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!autoSave) return;
+
+    const timer = setTimeout(() => {
+      saveToStorage();
+    }, saveInterval);
+
+    return () => clearTimeout(timer);
+  }, [autoSave, saveInterval, saveToStorage]);
+
+  return {
+    saveToStorage,
+    loadFromStorage,
+    clearStorage
+  };
+};
+
+// Hook for handling form arrays (dynamic lists)
+export const useFormArray = (
+  name: string,
+  initialValue: unknown[] = []
+) => {
+  const [items, setItems] = useState<unknown[]>(initialValue);
+
+  const addItem = useCallback((item: unknown) => {
+    setItems(prev => [...prev, item]);
+  }, []);
+
+  const removeItem = useCallback((index: number) => {
+    setItems(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const updateItem = useCallback((index: number, item: unknown) => {
+    setItems(prev => prev.map((existing, i) => i === index ? item : existing));
+  }, []);
+
+  const moveItem = useCallback((fromIndex: number, toIndex: number) => {
+    setItems(prev => {
+      const newItems = [...prev];
+      const item = newItems.splice(fromIndex, 1)[0];
+      newItems.splice(toIndex, 0, item);
+      return newItems;
+    });
+  }, []);
+
+  const resetItems = useCallback(() => {
+    setItems(initialValue);
+  }, [initialValue]);
+
+  return {
+    items,
+    addItem,
+    removeItem,
+    updateItem,
+    moveItem,
+    resetItems
+  };
+};

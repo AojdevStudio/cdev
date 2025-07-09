@@ -1,316 +1,309 @@
-export interface ValidationRule {
-  type: 'required' | 'minLength' | 'maxLength' | 'pattern' | 'email' | 'number' | 'custom';
-  value?: string | number | RegExp;
-  message: string;
-  validator?: (value: unknown) => boolean;
+import { FormValidationRule, FormValidationResult } from './types/write-types';
+
+export class FormValidator {
+  private static readonly EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  private static readonly PHONE_REGEX = /^\+?[\d\s\-\(\)]+$/;
+  private static readonly URL_REGEX = /^https?:\/\/[^\s]+$/;
+
+  static validateField(
+    value: unknown,
+    rules: FormValidationRule[]
+  ): { isValid: boolean; error?: string } {
+    for (const rule of rules) {
+      const result = this.applyRule(value, rule);
+      if (!result.isValid) {
+        return result;
+      }
+    }
+    return { isValid: true };
+  }
+
+  static validateForm(
+    formData: Record<string, unknown>,
+    rules: FormValidationRule[]
+  ): FormValidationResult {
+    const errors: Record<string, string> = {};
+    const warnings: Record<string, string> = {};
+
+    for (const rule of rules) {
+      const value = formData[rule.field];
+      const result = this.applyRule(value, rule);
+      
+      if (!result.isValid && result.error) {
+        errors[rule.field] = result.error;
+      }
+    }
+
+    // Cross-field validation
+    this.validateCrossFields(formData, rules, errors, warnings);
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+      warnings: Object.keys(warnings).length > 0 ? warnings : undefined
+    };
+  }
+
+  private static applyRule(
+    value: unknown,
+    rule: FormValidationRule
+  ): { isValid: boolean; error?: string } {
+    switch (rule.type) {
+      case 'required':
+        return this.validateRequired(value, rule.message);
+      
+      case 'minLength':
+        return this.validateMinLength(value, rule.value as number, rule.message);
+      
+      case 'maxLength':
+        return this.validateMaxLength(value, rule.value as number, rule.message);
+      
+      case 'pattern':
+        return this.validatePattern(value, rule.value as RegExp, rule.message);
+      
+      case 'custom':
+        return this.validateCustom(value, rule.validator!, rule.message);
+      
+      default:
+        return { isValid: true };
+    }
+  }
+
+  private static validateRequired(
+    value: unknown,
+    message: string
+  ): { isValid: boolean; error?: string } {
+    const isEmpty = value === null || 
+                   value === undefined || 
+                   value === '' || 
+                   (Array.isArray(value) && value.length === 0);
+    
+    return {
+      isValid: !isEmpty,
+      error: isEmpty ? message : undefined
+    };
+  }
+
+  private static validateMinLength(
+    value: unknown,
+    minLength: number,
+    message: string
+  ): { isValid: boolean; error?: string } {
+    if (value === null || value === undefined) {
+      return { isValid: true };
+    }
+
+    const stringValue = String(value);
+    const isValid = stringValue.length >= minLength;
+    
+    return {
+      isValid,
+      error: isValid ? undefined : message
+    };
+  }
+
+  private static validateMaxLength(
+    value: unknown,
+    maxLength: number,
+    message: string
+  ): { isValid: boolean; error?: string } {
+    if (value === null || value === undefined) {
+      return { isValid: true };
+    }
+
+    const stringValue = String(value);
+    const isValid = stringValue.length <= maxLength;
+    
+    return {
+      isValid,
+      error: isValid ? undefined : message
+    };
+  }
+
+  private static validatePattern(
+    value: unknown,
+    pattern: RegExp,
+    message: string
+  ): { isValid: boolean; error?: string } {
+    if (value === null || value === undefined || value === '') {
+      return { isValid: true };
+    }
+
+    const stringValue = String(value);
+    const isValid = pattern.test(stringValue);
+    
+    return {
+      isValid,
+      error: isValid ? undefined : message
+    };
+  }
+
+  private static validateCustom(
+    value: unknown,
+    validator: (value: unknown) => boolean,
+    message: string
+  ): { isValid: boolean; error?: string } {
+    try {
+      const isValid = validator(value);
+      return {
+        isValid,
+        error: isValid ? undefined : message
+      };
+    } catch (error) {
+      return {
+        isValid: false,
+        error: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  private static validateCrossFields(
+    formData: Record<string, unknown>,
+    rules: FormValidationRule[],
+    errors: Record<string, string>,
+    warnings: Record<string, string>
+  ): void {
+    // Password confirmation validation
+    const password = formData.password;
+    const confirmPassword = formData.confirmPassword;
+    
+    if (password && confirmPassword && password !== confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+
+    // Email format validation
+    const email = formData.email;
+    if (email && typeof email === 'string' && !this.EMAIL_REGEX.test(email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    // Phone number validation
+    const phone = formData.phone;
+    if (phone && typeof phone === 'string' && !this.PHONE_REGEX.test(phone)) {
+      errors.phone = 'Please enter a valid phone number';
+    }
+
+    // URL validation
+    const url = formData.url || formData.website;
+    if (url && typeof url === 'string' && !this.URL_REGEX.test(url)) {
+      errors.url = 'Please enter a valid URL';
+    }
+
+    // Date range validation
+    const startDate = formData.startDate;
+    const endDate = formData.endDate;
+    
+    if (startDate && endDate) {
+      const start = new Date(startDate as string);
+      const end = new Date(endDate as string);
+      
+      if (start > end) {
+        errors.endDate = 'End date must be after start date';
+      }
+    }
+  }
 }
 
-export interface ValidationResult {
-  isValid: boolean;
-  errors: Record<string, string>;
-}
-
-export interface FormField {
-  id: string;
-  type: string;
-  label: string;
-  required?: boolean;
-  validationRules?: ValidationRule[];
-}
-
-/**
- * Validates a single field value against its validation rules
- */
-export const validateField = (value: unknown, rules: ValidationRule[] = []): string | null => {
-  for (const rule of rules) {
-    const error = validateRule(value, rule);
-    if (error) {
-      return error;
-    }
-  }
-  return null;
-};
-
-/**
- * Validates a single rule against a value
- */
-export const validateRule = (value: unknown, rule: ValidationRule): string | null => {
-  switch (rule.type) {
-    case 'required':
-      return validateRequired(value, rule.message);
-    
-    case 'minLength':
-      return validateMinLength(value, rule.value as number, rule.message);
-    
-    case 'maxLength':
-      return validateMaxLength(value, rule.value as number, rule.message);
-    
-    case 'pattern':
-      return validatePattern(value, rule.value as RegExp, rule.message);
-    
-    case 'email':
-      return validateEmail(value, rule.message);
-    
-    case 'number':
-      return validateNumber(value, rule.message);
-    
-    case 'custom':
-      return validateCustom(value, rule.validator!, rule.message);
-    
-    default:
-      return null;
-  }
-};
-
-/**
- * Validates that a value is not empty
- */
-export const validateRequired = (value: unknown, message: string): string | null => {
-  if (value === null || value === undefined || value === '') {
-    return message;
-  }
-  
-  if (typeof value === 'string' && value.trim() === '') {
-    return message;
-  }
-  
-  if (Array.isArray(value) && value.length === 0) {
-    return message;
-  }
-  
-  return null;
-};
-
-/**
- * Validates minimum length for strings
- */
-export const validateMinLength = (value: unknown, minLength: number, message: string): string | null => {
-  if (typeof value !== 'string') {
-    return null; // Skip validation for non-strings
-  }
-  
-  if (value.length < minLength) {
-    return message;
-  }
-  
-  return null;
-};
-
-/**
- * Validates maximum length for strings
- */
-export const validateMaxLength = (value: unknown, maxLength: number, message: string): string | null => {
-  if (typeof value !== 'string') {
-    return null; // Skip validation for non-strings
-  }
-  
-  if (value.length > maxLength) {
-    return message;
-  }
-  
-  return null;
-};
-
-/**
- * Validates a value against a regular expression pattern
- */
-export const validatePattern = (value: unknown, pattern: RegExp, message: string): string | null => {
-  if (typeof value !== 'string') {
-    return null; // Skip validation for non-strings
-  }
-  
-  if (!pattern.test(value)) {
-    return message;
-  }
-  
-  return null;
-};
-
-/**
- * Validates email format
- */
-export const validateEmail = (value: unknown, message: string): string | null => {
-  if (typeof value !== 'string') {
-    return null; // Skip validation for non-strings
-  }
-  
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(value)) {
-    return message;
-  }
-  
-  return null;
-};
-
-/**
- * Validates that a value is a valid number
- */
-export const validateNumber = (value: unknown, message: string): string | null => {
-  if (typeof value === 'number' && !isNaN(value)) {
-    return null;
-  }
-  
-  if (typeof value === 'string') {
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      return null;
-    }
-  }
-  
-  return message;
-};
-
-/**
- * Validates using a custom validator function
- */
-export const validateCustom = (value: unknown, validator: (value: unknown) => boolean, message: string): string | null => {
-  if (!validator(value)) {
-    return message;
-  }
-  
-  return null;
-};
-
-/**
- * Validates an entire form against field definitions
- */
-export const validateForm = (formData: Record<string, unknown>, fields: FormField[]): ValidationResult => {
-  const errors: Record<string, string> = {};
-  
-  for (const field of fields) {
-    const value = formData[field.id];
-    const rules = field.validationRules || [];
-    
-    // Add required rule if field is marked as required
-    if (field.required && !rules.some(rule => rule.type === 'required')) {
-      rules.unshift({
-        type: 'required',
-        message: `${field.label} is required`
-      });
-    }
-    
-    const error = validateField(value, rules);
-    if (error) {
-      errors[field.id] = error;
-    }
-  }
-  
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors
-  };
-};
-
-/**
- * Common validation rule factories
- */
+// Built-in validation rules
 export const validationRules = {
-  required: (message = 'This field is required'): ValidationRule => ({
+  required: (message = 'This field is required'): FormValidationRule => ({
+    field: '',
     type: 'required',
     message
   }),
-  
-  minLength: (length: number, message = `Must be at least ${length} characters`): ValidationRule => ({
+
+  minLength: (length: number, message?: string): FormValidationRule => ({
+    field: '',
     type: 'minLength',
     value: length,
-    message
+    message: message || `Must be at least ${length} characters long`
   }),
-  
-  maxLength: (length: number, message = `Must be no more than ${length} characters`): ValidationRule => ({
+
+  maxLength: (length: number, message?: string): FormValidationRule => ({
+    field: '',
     type: 'maxLength',
     value: length,
-    message
+    message: message || `Must be no more than ${length} characters long`
   }),
-  
-  email: (message = 'Please enter a valid email address'): ValidationRule => ({
-    type: 'email',
-    message
-  }),
-  
-  number: (message = 'Please enter a valid number'): ValidationRule => ({
-    type: 'number',
-    message
-  }),
-  
-  pattern: (pattern: RegExp, message = 'Invalid format'): ValidationRule => ({
+
+  email: (message = 'Please enter a valid email address'): FormValidationRule => ({
+    field: '',
     type: 'pattern',
-    value: pattern,
+    value: FormValidator['EMAIL_REGEX'],
     message
   }),
-  
-  custom: (validator: (value: unknown) => boolean, message = 'Invalid value'): ValidationRule => ({
+
+  phone: (message = 'Please enter a valid phone number'): FormValidationRule => ({
+    field: '',
+    type: 'pattern',
+    value: FormValidator['PHONE_REGEX'],
+    message
+  }),
+
+  url: (message = 'Please enter a valid URL'): FormValidationRule => ({
+    field: '',
+    type: 'pattern',
+    value: FormValidator['URL_REGEX'],
+    message
+  }),
+
+  custom: (
+    validator: (value: unknown) => boolean,
+    message: string
+  ): FormValidationRule => ({
+    field: '',
     type: 'custom',
     validator,
-    message
-  }),
-  
-  // Common patterns
-  phone: (message = 'Please enter a valid phone number'): ValidationRule => ({
-    type: 'pattern',
-    value: /^[\+]?[\d\s\-\(\)]+$/,
-    message
-  }),
-  
-  url: (message = 'Please enter a valid URL'): ValidationRule => ({
-    type: 'pattern',
-    value: /^https?:\/\/.+/,
-    message
-  }),
-  
-  strongPassword: (message = 'Password must contain at least 8 characters with uppercase, lowercase, number and special character'): ValidationRule => ({
-    type: 'pattern',
-    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     message
   })
 };
 
-/**
- * Async validation support
- */
-export interface AsyncValidationRule {
-  type: 'async';
-  validator: (value: unknown) => Promise<boolean>;
-  message: string;
-}
-
-export const validateFieldAsync = async (value: unknown, rules: (ValidationRule | AsyncValidationRule)[] = []): Promise<string | null> => {
-  // First run synchronous validations
-  const syncRules = rules.filter(rule => rule.type !== 'async') as ValidationRule[];
-  const syncError = validateField(value, syncRules);
-  
-  if (syncError) {
-    return syncError;
-  }
-  
-  // Then run async validations
-  const asyncRules = rules.filter(rule => rule.type === 'async') as AsyncValidationRule[];
-  
-  for (const rule of asyncRules) {
-    const isValid = await rule.validator(value);
-    if (!isValid) {
-      return rule.message;
-    }
-  }
-  
-  return null;
+// Convenience function for single field validation
+export const validateField = (
+  value: unknown,
+  rules: FormValidationRule[]
+): { isValid: boolean; error?: string } => {
+  return FormValidator.validateField(value, rules);
 };
 
-/**
- * Debounced validation for real-time feedback
- */
-export const createDebouncedValidator = (
-  validator: (value: unknown) => Promise<string | null>,
-  delay = 300
-) => {
-  let timeoutId: NodeJS.Timeout;
-  
-  return (value: unknown): Promise<string | null> => {
-    return new Promise((resolve) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(async () => {
-        const result = await validator(value);
-        resolve(result);
-      }, delay);
-    });
-  };
+// Convenience function for full form validation
+export const validateForm = (
+  formData: Record<string, unknown>,
+  rules: FormValidationRule[]
+): FormValidationResult => {
+  return FormValidator.validateForm(formData, rules);
+};
+
+// Common validation rule sets
+export const commonValidations = {
+  name: [
+    { ...validationRules.required(), field: 'name' },
+    { ...validationRules.minLength(2), field: 'name' },
+    { ...validationRules.maxLength(50), field: 'name' }
+  ],
+
+  email: [
+    { ...validationRules.required(), field: 'email' },
+    { ...validationRules.email(), field: 'email' }
+  ],
+
+  password: [
+    { ...validationRules.required(), field: 'password' },
+    { ...validationRules.minLength(8, 'Password must be at least 8 characters long'), field: 'password' },
+    { 
+      ...validationRules.custom(
+        (value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(String(value)),
+        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+      ), 
+      field: 'password' 
+    }
+  ],
+
+  phone: [
+    { ...validationRules.phone(), field: 'phone' }
+  ],
+
+  url: [
+    { ...validationRules.url(), field: 'url' }
+  ]
 };

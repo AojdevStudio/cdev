@@ -1,279 +1,171 @@
 import { promises as fs } from 'fs';
-import path from 'path';
-import { FileWriter } from './file-writer';
-import { WriteValidation } from '../validation/write-validation';
-
-export interface WriteOperationResult {
-  success: boolean;
-  path: string;
-  operation: 'create' | 'update' | 'delete';
-  error?: Error;
-  backupPath?: string;
-}
-
-export interface WriteOperationOptions {
-  createBackup?: boolean;
-  overwrite?: boolean;
-  validatePermissions?: boolean;
-  encoding?: BufferEncoding;
-}
+import { join, dirname } from 'path';
+import { WriteOperationResult, WriteOperationOptions, WriteTransaction } from '../types/write-types';
 
 export class WriteOperations {
-  private fileWriter: FileWriter;
-  private validator: WriteValidation;
-
-  constructor() {
-    this.fileWriter = new FileWriter();
-    this.validator = new WriteValidation();
-  }
+  private transactions: Map<string, WriteTransaction> = new Map();
 
   async writeFile(
     filePath: string,
     content: string,
     options: WriteOperationOptions = {}
   ): Promise<WriteOperationResult> {
-    const result: WriteOperationResult = {
-      success: false,
-      path: filePath,
-      operation: 'create'
-    };
-
+    const transactionId = options.transactionId || this.generateTransactionId();
+    
     try {
       // Validate write operation
-      if (options.validatePermissions) {
-        const validation = await this.validator.validateWrite(filePath);
-        if (!validation.isValid) {
-          throw new Error(`Write validation failed: ${validation.errors.join(', ')}`);
-        }
-      }
-
-      // Check if file exists
-      const exists = await this.fileExists(filePath);
-      if (exists) {
-        result.operation = 'update';
-        if (!options.overwrite) {
-          throw new Error(`File already exists: ${filePath}`);
-        }
+      const validationResult = await this.validateWriteOperation(filePath, content, options);
+      if (!validationResult.isValid) {
+        return {
+          success: false,
+          transactionId,
+          error: validationResult.error,
+          rollbackAvailable: false
+        };
       }
 
       // Create backup if requested
-      if (options.createBackup && exists) {
-        const backupPath = await this.createBackup(filePath);
-        result.backupPath = backupPath;
+      let backupPath: string | undefined;
+      if (options.createBackup) {
+        backupPath = await this.createBackup(filePath);
       }
 
-      // Write the file
-      await this.fileWriter.writeFile(filePath, content, options.encoding);
+      // Ensure directory exists
+      await fs.mkdir(dirname(filePath), { recursive: true });
 
-      result.success = true;
-      return result;
+      // Store transaction details
+      const transaction: WriteTransaction = {
+        id: transactionId,
+        filePath,
+        backupPath,
+        timestamp: new Date(),
+        options
+      };
+      this.transactions.set(transactionId, transaction);
 
-    } catch (error) {
-      result.error = error instanceof Error ? error : new Error(String(error));
-      return result;
-    }
-  }
-
-  async writeFileAtomic(
-    filePath: string,
-    content: string,
-    options: WriteOperationOptions = {}
-  ): Promise<WriteOperationResult> {
-    const result: WriteOperationResult = {
-      success: false,
-      path: filePath,
-      operation: 'create'
-    };
-
-    const tempPath = `${filePath}.tmp.${Date.now()}`;
-
-    try {
-      // Validate write operation
-      if (options.validatePermissions) {
-        const validation = await this.validator.validateWrite(filePath);
-        if (!validation.isValid) {
-          throw new Error(`Write validation failed: ${validation.errors.join(', ')}`);
-        }
-      }
-
-      // Check if file exists
-      const exists = await this.fileExists(filePath);
-      if (exists) {
-        result.operation = 'update';
-        if (!options.overwrite) {
-          throw new Error(`File already exists: ${filePath}`);
-        }
-      }
-
-      // Create backup if requested
-      if (options.createBackup && exists) {
-        const backupPath = await this.createBackup(filePath);
-        result.backupPath = backupPath;
-      }
-
-      // Write to temporary file first
-      await this.fileWriter.writeFile(tempPath, content, options.encoding);
-
-      // Atomic move to final location
+      // Write file with atomic operation
+      const tempPath = `${filePath}.tmp`;
+      await fs.writeFile(tempPath, content, { encoding: 'utf8' });
       await fs.rename(tempPath, filePath);
 
-      result.success = true;
-      return result;
+      return {
+        success: true,
+        transactionId,
+        filePath,
+        backupPath,
+        rollbackAvailable: !!backupPath
+      };
 
     } catch (error) {
-      // Clean up temporary file on error
-      try {
-        await fs.unlink(tempPath);
-      } catch {
-        // Ignore cleanup errors
-      }
-
-      result.error = error instanceof Error ? error : new Error(String(error));
-      return result;
+      return {
+        success: false,
+        transactionId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        rollbackAvailable: false
+      };
     }
   }
 
-  async deleteFile(filePath: string, options: WriteOperationOptions = {}): Promise<WriteOperationResult> {
-    const result: WriteOperationResult = {
-      success: false,
-      path: filePath,
-      operation: 'delete'
-    };
-
-    try {
-      // Validate delete operation
-      if (options.validatePermissions) {
-        const validation = await this.validator.validateDelete(filePath);
-        if (!validation.isValid) {
-          throw new Error(`Delete validation failed: ${validation.errors.join(', ')}`);
-        }
-      }
-
-      // Check if file exists
-      const exists = await this.fileExists(filePath);
-      if (!exists) {
-        throw new Error(`File does not exist: ${filePath}`);
-      }
-
-      // Create backup if requested
-      if (options.createBackup) {
-        const backupPath = await this.createBackup(filePath);
-        result.backupPath = backupPath;
-      }
-
-      // Delete the file
-      await fs.unlink(filePath);
-
-      result.success = true;
-      return result;
-
-    } catch (error) {
-      result.error = error instanceof Error ? error : new Error(String(error));
-      return result;
-    }
-  }
-
-  async batchWrite(
-    operations: Array<{
-      path: string;
-      content: string;
-      options?: WriteOperationOptions;
-    }>
+  async writeMultipleFiles(
+    operations: Array<{ filePath: string; content: string; options?: WriteOperationOptions }>
   ): Promise<WriteOperationResult[]> {
     const results: WriteOperationResult[] = [];
-    const rollbackOperations: Array<() => Promise<void>> = [];
+    const transactionId = this.generateTransactionId();
 
-    try {
-      for (const operation of operations) {
-        const result = await this.writeFileAtomic(
-          operation.path,
-          operation.content,
-          operation.options
-        );
+    for (const operation of operations) {
+      const result = await this.writeFile(
+        operation.filePath,
+        operation.content,
+        { ...operation.options, transactionId }
+      );
+      results.push(result);
 
-        results.push(result);
-
-        if (!result.success) {
-          throw new Error(`Batch write failed at ${operation.path}: ${result.error?.message}`);
-        }
-
-        // Prepare rollback operation
-        if (result.backupPath) {
-          rollbackOperations.push(async () => {
-            await fs.copyFile(result.backupPath!, operation.path);
-          });
-        } else if (result.operation === 'create') {
-          rollbackOperations.push(async () => {
-            await fs.unlink(operation.path);
-          });
-        }
+      // Stop on first failure if rollback is requested
+      if (!result.success && operation.options?.rollbackOnFailure) {
+        await this.rollbackTransaction(transactionId);
+        break;
       }
-
-      return results;
-
-    } catch (error) {
-      // Rollback on error
-      await this.rollbackOperations(rollbackOperations);
-      throw error;
     }
+
+    return results;
   }
 
-  async createBackup(filePath: string): Promise<string> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const backupDir = path.join(path.dirname(filePath), '.backups');
-    const backupPath = path.join(backupDir, `${path.basename(filePath)}.${timestamp}.backup`);
-
-    // Ensure backup directory exists
-    await fs.mkdir(backupDir, { recursive: true });
-
-    // Copy file to backup location
-    await fs.copyFile(filePath, backupPath);
-
-    return backupPath;
-  }
-
-  async restoreFromBackup(backupPath: string, originalPath: string): Promise<WriteOperationResult> {
-    const result: WriteOperationResult = {
-      success: false,
-      path: originalPath,
-      operation: 'update'
-    };
+  async rollbackTransaction(transactionId: string): Promise<boolean> {
+    const transaction = this.transactions.get(transactionId);
+    if (!transaction || !transaction.backupPath) {
+      return false;
+    }
 
     try {
-      // Validate backup file exists
-      const exists = await this.fileExists(backupPath);
-      if (!exists) {
-        throw new Error(`Backup file does not exist: ${backupPath}`);
-      }
-
-      // Restore from backup
-      await fs.copyFile(backupPath, originalPath);
-
-      result.success = true;
-      return result;
-
-    } catch (error) {
-      result.error = error instanceof Error ? error : new Error(String(error));
-      return result;
-    }
-  }
-
-  private async fileExists(filePath: string): Promise<boolean> {
-    try {
-      await fs.access(filePath);
+      await fs.copyFile(transaction.backupPath, transaction.filePath);
+      await fs.unlink(transaction.backupPath);
+      this.transactions.delete(transactionId);
       return true;
-    } catch {
+    } catch (error) {
+      console.error('Rollback failed:', error);
       return false;
     }
   }
 
-  private async rollbackOperations(rollbackOperations: Array<() => Promise<void>>): Promise<void> {
-    for (const rollback of rollbackOperations.reverse()) {
-      try {
-        await rollback();
-      } catch (error) {
-        console.error('Rollback operation failed:', error);
+  private async validateWriteOperation(
+    filePath: string,
+    content: string,
+    options: WriteOperationOptions
+  ): Promise<{ isValid: boolean; error?: string }> {
+    // Check file permissions
+    try {
+      await fs.access(dirname(filePath), fs.constants.W_OK);
+    } catch {
+      return { isValid: false, error: 'Directory is not writable' };
+    }
+
+    // Check file size limits
+    if (options.maxFileSize && content.length > options.maxFileSize) {
+      return { isValid: false, error: 'Content exceeds maximum file size' };
+    }
+
+    // Check for concurrent operations
+    if (options.preventConcurrentWrites) {
+      const existingTransaction = Array.from(this.transactions.values())
+        .find(t => t.filePath === filePath);
+      if (existingTransaction) {
+        return { isValid: false, error: 'Concurrent write operation detected' };
+      }
+    }
+
+    return { isValid: true };
+  }
+
+  private async createBackup(filePath: string): Promise<string> {
+    const backupPath = `${filePath}.backup.${Date.now()}`;
+    try {
+      await fs.copyFile(filePath, backupPath);
+      return backupPath;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        // File doesn't exist, no backup needed
+        return '';
+      }
+      throw error;
+    }
+  }
+
+  private generateTransactionId(): string {
+    return `tx_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+  }
+
+  getTransactionStatus(transactionId: string): WriteTransaction | undefined {
+    return this.transactions.get(transactionId);
+  }
+
+  clearCompletedTransactions(olderThanMs: number = 3600000): void {
+    const cutoffTime = new Date(Date.now() - olderThanMs);
+    for (const [id, transaction] of this.transactions) {
+      if (transaction.timestamp < cutoffTime) {
+        this.transactions.delete(id);
       }
     }
   }
 }
+
+export const writeOperations = new WriteOperations();

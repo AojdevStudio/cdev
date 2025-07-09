@@ -1,11 +1,11 @@
 {
   "integration_ready": true,
-  "agent_id": "backend_api_agent",
-  "branch_name": "AOJ-100-backend_api_agent",
-  "integration_order": ["backend_api_agent"],
-  "dependencies": ["infrastructure_agent"],
-  "created_at": "2025-07-09T00:13:40Z",
-  "agent_role": "Backend & API: **Linear API key**: Set `export LINEAR_API_KEY=\"your_key\"`",
+  "agent_id": "custom_feature_agent",
+  "branch_name": "AOJ-100-custom_feature_agent",
+  "integration_order": ["custom_feature_agent"],
+  "dependencies": ["backend_integration_agent"],
+  "created_at": "2025-07-08T23:18:17Z",
+  "agent_role": "Custom Feature: Parallel Claude Development Workflow - NPX Package Distribution Plan",
   "task_id": "AOJ-100",
   "status": "completed"
 }
