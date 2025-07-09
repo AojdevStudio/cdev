@@ -1,19 +1,31 @@
 [
   {
-    "session_id": "08e71d8b-0aea-497b-a055-c2b46fcdcdc4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08e71d8b-0aea-497b-a055-c2b46fcdcdc4.jsonl",
+    "session_id": "5e839c99-083f-404b-b6cd-3481a2902301",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/5e839c99-083f-404b-b6cd-3481a2902301.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   },
   {
-    "session_id": "08e71d8b-0aea-497b-a055-c2b46fcdcdc4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08e71d8b-0aea-497b-a055-c2b46fcdcdc4.jsonl",
+    "session_id": "5e839c99-083f-404b-b6cd-3481a2902301",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/5e839c99-083f-404b-b6cd-3481a2902301.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   },
   {
-    "session_id": "08e71d8b-0aea-497b-a055-c2b46fcdcdc4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08e71d8b-0aea-497b-a055-c2b46fcdcdc4.jsonl",
+    "session_id": "5e839c99-083f-404b-b6cd-3481a2902301",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/5e839c99-083f-404b-b6cd-3481a2902301.jsonl",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "719e98eb-04d0-4c1d-a1b2-a61c438a6ed9",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/719e98eb-04d0-4c1d-a1b2-a61c438a6ed9.jsonl",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "43bd7096-6469-45b2-908a-019d7dc3ad19",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/43bd7096-6469-45b2-908a-019d7dc3ad19.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   }

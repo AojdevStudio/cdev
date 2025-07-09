@@ -1,19 +1,7 @@
 [
   {
-    "session_id": "d8517207-60e3-4e28-a254-b350a407acc4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/d8517207-60e3-4e28-a254-b350a407acc4.jsonl",
-    "hook_event_name": "Notification",
-    "message": "Claude needs your permission to use Bash"
-  },
-  {
-    "session_id": "d8517207-60e3-4e28-a254-b350a407acc4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/d8517207-60e3-4e28-a254-b350a407acc4.jsonl",
-    "hook_event_name": "Notification",
-    "message": "Claude needs your permission to use Bash"
-  },
-  {
-    "session_id": "d8517207-60e3-4e28-a254-b350a407acc4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/d8517207-60e3-4e28-a254-b350a407acc4.jsonl",
+    "session_id": "43bd7096-6469-45b2-908a-019d7dc3ad19",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/43bd7096-6469-45b2-908a-019d7dc3ad19.jsonl",
     "hook_event_name": "Notification",
     "message": "Claude is waiting for your input"
   }
