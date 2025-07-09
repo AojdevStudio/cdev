@@ -18,10 +18,11 @@ $ARGUMENTS
 - Check if `--no-verify` flag is present in $ARGUMENTS
 - If not no-verify: run pre-commit checks (`pnpm lint`, `pnpm build`, `pnpm generate:docs`)
 - Check git status to see staged files
-- If no files staged: automatically stage all modified and new files with `git add .`
+- If no files staged: automatically stage all modified and new files with `git add .` (excluding cache files, .DS_Store, and other ignore patterns)
 - Perform `git diff --staged` to analyze changes being committed
 - Analyze diff to determine if multiple distinct logical changes are present
 - If multiple changes detected: suggest splitting into separate atomic commits
+- For multiple commits: use sub-agents in parallel to handle each commit simultaneously
 - For each commit: determine appropriate conventional commit type and emoji based on changes
 - Create commit message using format: `<emoji> <type>: <description>`
 - Execute git commit with generated message
@@ -42,6 +43,7 @@ When analyzing the diff, consider splitting commits based on these criteria:
 - Staged changes: !`git diff --staged --name-status`
 - Recent commits: !`git log --oneline -5`
 - Branch info: !`git branch --show-current`
+- Exclude from staging: cache files, .DS_Store, node_modules, .env files, build artifacts, temporary files
 - **Emoji**: Each commit type is paired with an appropriate emoji:
     - Read: '@ai-docs/emoji-commit-ref.md'
 
