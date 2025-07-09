@@ -309,3 +309,22 @@ git submodule add https://github.com/your-org/parallel-claude-dev.git workflows/
 - **Adoption**: Easy to discover and use
 - **Maintenance**: Automated updates and releases
 - **Support**: Clear documentation and troubleshooting
+
+Final Repo Tree: 
+parallel-claude-dev/
+├── bin/
+├── templates/
+│   └── workflows/
+│       └── paralell-development-claude/
+│           ├── .claude/
+│           │   ├── hooks/              # 🎯 Our hooks system!
+│           │   │   ├── notification.py
+│           │   │   ├── post_tool_use.py
+│           │   │   ├── pre_tool_use.py
+│           │   │   ├── stop.py
+│           │   │   ├── subagent_stop.py
+│           │   │   └── utils/
+│           │   └── settings.json       # Hook configuration
+│           ├── scripts/                # Your parallel dev scripts
+│           ├── .env.example           # Now includes TTS API keys
+│           └── logs/                  # Hook logs directory
