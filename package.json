@@ -1,0 +1,24 @@
+{
+  "name": "parallel-development-claude",
+  "version": "1.0.0",
+  "description": "Transform Linear issues into parallel agents working simultaneously using Git worktrees and Claude Code",
+  "main": "scripts/decompose-parallel.cjs",
+  "scripts": {
+    "decompose": "node scripts/decompose-parallel.cjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "claude",
+    "parallel",
+    "development",
+    "git",
+    "worktree",
+    "linear",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.6.1"
+  }
+}
