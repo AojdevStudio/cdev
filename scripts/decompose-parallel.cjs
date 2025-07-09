@@ -14,6 +14,7 @@
 
 const fs = require('node:fs').promises;
 const path = require('node:path');
+const { LLMDecomposer } = require('../utils/llm-decomposer.js');
 
 class ExclusiveOwnershipDecomposer {
   constructor() {
@@ -23,6 +24,8 @@ class ExclusiveOwnershipDecomposer {
     this.dependencyGraph = new Map(); // File -> [dependentFiles]
     this.exclusiveDomains = new Map(); // Domain -> [files]
     this.agentOwnership = new Map(); // Agent -> [files]
+    this.llmDecomposer = new LLMDecomposer();
+    this.useHybridAnalysis = process.env.USE_HYBRID_ANALYSIS !== 'false';
   }
 
   async decompose(issueId) {
@@ -32,33 +35,136 @@ class ExclusiveOwnershipDecomposer {
       // Step 1: Load Linear issue
       await this.loadLinearIssue(issueId);
       
-      // Step 2: Analyze all file operations from requirements
-      await this.analyzeFileOperations();
+      // Step 2: Try hybrid analysis first (if enabled)
+      if (this.useHybridAnalysis) {
+        const hybridResult = await this.tryHybridAnalysis();
+        if (hybridResult) {
+          return hybridResult;
+        }
+      }
       
-      // Step 3: Build dependency graph
-      await this.buildDependencyGraph();
-      
-      // Step 4: Create exclusive domains
-      await this.createExclusiveDomains();
-      
-      // Step 5: Generate agents with exclusive ownership
-      const agents = await this.generateExclusiveAgents();
-      
-      // Step 6: Validate no conflicts
-      this.validateNoConflicts(agents);
-      
-      // Step 7: Generate deployment plan
-      const deploymentPlan = await this.generateDeploymentPlan(agents);
-      
-      // Step 8: Save and report
-      await this.saveDeploymentPlan(deploymentPlan, issueId);
-      this.reportDecomposition(deploymentPlan);
-      
-      return deploymentPlan;
+      // ERROR: LLM analysis is required
+      console.error('❌ LLM analysis failed. Please configure your LLM provider:');
+      console.error('   1. Copy .env.sample to .env');
+      console.error('   2. Add your OPENAI_API_KEY or ANTHROPIC_API_KEY');
+      console.error('   3. Set LLM_PROVIDER to "openai" or "anthropic"');
+      throw new Error('LLM configuration required. See instructions above.');
     } catch (error) {
       console.error('❌ Decomposition failed:', error.message);
       process.exit(1);
     }
+  }
+
+  async tryHybridAnalysis() {
+    try {
+      console.log('🤖 Attempting hybrid LLM analysis...');
+      
+      const description = `${this.linearIssue.title}\n\n${this.linearIssue.description}`;
+      const projectContext = {
+        hasPackageJson: await this.fileExists('package.json'),
+        hasDockerfile: await this.fileExists('Dockerfile'),
+        hasNextConfig: await this.fileExists('next.config.js'),
+        projectRoot: this.projectRoot
+      };
+      
+      const llmResult = await this.llmDecomposer.decompose(description, projectContext);
+      
+      if (llmResult.confidence >= 0.8) {
+        console.log(`✅ LLM analysis succeeded (confidence: ${llmResult.confidence})`);
+        const deploymentPlan = await this.convertLLMResultToDeploymentPlan(llmResult);
+        await this.saveDeploymentPlan(deploymentPlan, this.linearIssue.id);
+        this.reportDecomposition(deploymentPlan);
+        return deploymentPlan;
+      } else {
+        console.log(`⚠️  LLM analysis uncertain (confidence: ${llmResult.confidence})`);
+        return null;
+      }
+    } catch (error) {
+      console.warn('⚠️  LLM analysis error:', error.message);
+      return null;
+    }
+  }
+
+  async fileExists(filePath) {
+    try {
+      await fs.access(path.join(this.projectRoot, filePath));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async convertLLMResultToDeploymentPlan(llmResult) {
+    const agents = llmResult.agents.map(agent => ({
+      agentId: agent.agentId,
+      agentRole: agent.agentRole,
+      focusArea: agent.focusArea,
+      dependencies: agent.dependencies || [],
+      filesToCreate: agent.filesToCreate || [],
+      filesToModify: agent.filesToModify || [],
+      testContracts: agent.filesToCreate?.map(f => f.replace(/\.(ts|js|tsx|jsx)$/, '.test.$1')) || [],
+      validationCriteria: [
+        `All ${agent.focusArea} files are created successfully`,
+        `${agent.focusArea} functionality works as expected`,
+        `No errors in ${agent.focusArea} implementation`,
+        `${agent.focusArea} tests pass successfully`
+      ],
+      estimatedTime: agent.estimatedTime || 30,
+      canStartImmediately: !agent.dependencies || agent.dependencies.length === 0
+    }));
+
+    // Calculate total files for stats
+    const totalFiles = agents.reduce((total, agent) => 
+      total + (agent.filesToCreate?.length || 0) + (agent.filesToModify?.length || 0), 0
+    );
+
+    return {
+      taskId: this.linearIssue.id,
+      taskTitle: this.linearIssue.title,
+      decompositionStrategy: 'llm_hybrid',
+      conflictResolution: 'llm_analyzed',
+      parallelAgents: agents,
+      totalFiles: totalFiles,
+      integrationPlan: {
+        mergeOrder: this.calculateMergeOrder(agents),
+        validationSteps: [
+          'Run LLM-generated agent tests',
+          'Integration testing',
+          'Full system validation'
+        ],
+        estimatedIntegrationTime: '10 minutes'
+      },
+      llmAnalysis: {
+        projectType: llmResult.projectType,
+        confidence: llmResult.confidence,
+        reasoning: llmResult.reasoning,
+        parallelizationStrategy: llmResult.parallelizationStrategy
+      }
+    };
+  }
+
+  calculateMergeOrder(agents) {
+    const ordered = [];
+    const remaining = [...agents];
+    
+    while (remaining.length > 0) {
+      const ready = remaining.filter(agent => 
+        !agent.dependencies || 
+        agent.dependencies.every(dep => ordered.includes(dep))
+      );
+      
+      if (ready.length === 0) {
+        // Fallback: add all remaining agents
+        ordered.push(...remaining.map(a => a.agentId));
+        break;
+      }
+      
+      const next = ready[0];
+      ordered.push(next.agentId);
+      remaining.splice(remaining.indexOf(next), 1);
+    }
+    
+    return ordered;
   }
 
   async loadLinearIssue(issueId) {
@@ -504,40 +610,6 @@ class ExclusiveOwnershipDecomposer {
     return plan;
   }
 
-  calculateMergeOrder(agents) {
-    // Topological sort based on dependencies
-    const order = [];
-    const visited = new Set();
-    const visiting = new Set();
-    
-    const visit = (agentId) => {
-      if (visiting.has(agentId)) {
-        throw new Error(`Circular dependency detected involving ${agentId}`);
-      }
-      if (visited.has(agentId)) {
-        return;
-      }
-      
-      visiting.add(agentId);
-      
-      const agent = agents.find(a => a.id === agentId);
-      if (agent) {
-        for (const dep of agent.dependencies || []) {
-          visit(dep);
-        }
-      }
-      
-      visiting.delete(agentId);
-      visited.add(agentId);
-      order.push(agentId);
-    };
-    
-    for (const agent of agents) {
-      visit(agent.id);
-    }
-    
-    return order;
-  }
 
   async saveDeploymentPlan(plan, issueId) {
     const outputDir = path.join(this.projectRoot, 'shared', 'deployment-plans');
@@ -556,8 +628,10 @@ class ExclusiveOwnershipDecomposer {
     console.log('\n🎯 Decomposition Complete!');
     console.log(`📋 Task: ${plan.taskId} - ${plan.taskTitle}`);
     console.log(`🤖 Agents: ${plan.parallelAgents.length}`);
-    console.log(`📁 Total Files: ${plan.exclusiveOwnership.totalFiles}`);
-    console.log(`✅ Conflicts: ELIMINATED BY DESIGN`);
+    const totalFiles = plan.totalFiles || plan.exclusiveOwnership?.totalFiles || 0;
+    console.log(`📁 Total Files: ${totalFiles}`);
+    const conflicts = plan.exclusiveOwnership ? 'ELIMINATED BY DESIGN' : 'NONE';
+    console.log(`✅ Conflicts: ${conflicts}`);
     
     console.log('\n🔧 Agent Summary:');
     for (const agent of plan.parallelAgents) {
