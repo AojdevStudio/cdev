@@ -1,0 +1,93 @@
+{
+  "timestamp": 1752075222694,
+  "data": {
+    "projectType": "cli-tool",
+    "confidence": 0.95,
+    "architecture": "Modular CLI tool with isolated functional domains for installation, validation, configuration, CLI interface, and distribution. Each domain is developed independently with minimal dependencies, interacting through well-defined interfaces and data contracts rather than shared code modifications.",
+    "workDomains": [
+      "CLI Interface",
+      "Installation Logic",
+      "Environment Validation",
+      "Configuration Management",
+      "Package and Distribution"
+    ],
+    "agents": [
+      {
+        "agentId": "cli_agent",
+        "agentRole": "Responsible for the command-line interface and user interaction entry point.",
+        "focusArea": "CLI Interface",
+        "filesToCreate": [
+          "bin/cli.js"
+        ],
+        "filesToModify": [],
+        "estimatedTime": 20,
+        "dependencies": []
+      },
+      {
+        "agentId": "installer_agent",
+        "agentRole": "Handles the core installation logic, template copying, and setup steps.",
+        "focusArea": "Installation Logic",
+        "filesToCreate": [
+          "src/installer.js",
+          "templates/workflows/paralell-development-claude/README.md",
+          "templates/workflows/paralell-development-claude/CLAUDE.md",
+          "templates/workflows/paralell-development-claude/scripts/cache-linear-issue.sh",
+          "templates/workflows/paralell-development-claude/ai_docs/"
+        ],
+        "filesToModify": [],
+        "estimatedTime": 40,
+        "dependencies": []
+      },
+      {
+        "agentId": "validator_agent",
+        "agentRole": "Manages environment validation and dependency checks.",
+        "focusArea": "Environment Validation",
+        "filesToCreate": [
+          "src/validator.js"
+        ],
+        "filesToModify": [],
+        "estimatedTime": 25,
+        "dependencies": []
+      },
+      {
+        "agentId": "config_agent",
+        "agentRole": "Handles configuration setup and interactive user prompts.",
+        "focusArea": "Configuration Management",
+        "filesToCreate": [
+          "src/configurator.js"
+        ],
+        "filesToModify": [],
+        "estimatedTime": 30,
+        "dependencies": []
+      },
+      {
+        "agentId": "package_agent",
+        "agentRole": "Manages package metadata, dependencies, and publishing workflows.",
+        "focusArea": "Package and Distribution",
+        "filesToCreate": [
+          "package.json",
+          "README.md",
+          ".github/workflows/publish.yml"
+        ],
+        "filesToModify": [],
+        "estimatedTime": 20,
+        "dependencies": []
+      }
+    ],
+    "fileOwnership": {
+      "bin/cli.js": "cli_agent",
+      "src/installer.js": "installer_agent",
+      "templates/workflows/paralell-development-claude/README.md": "installer_agent",
+      "templates/workflows/paralell-development-claude/CLAUDE.md": "installer_agent",
+      "templates/workflows/paralell-development-claude/scripts/cache-linear-issue.sh": "installer_agent",
+      "templates/workflows/paralell-development-claude/ai_docs/": "installer_agent",
+      "src/validator.js": "validator_agent",
+      "src/configurator.js": "config_agent",
+      "package.json": "package_agent",
+      "README.md": "package_agent",
+      ".github/workflows/publish.yml": "package_agent"
+    },
+    "parallelizationStrategy": "Each agent operates in complete isolation within their functional domain. The CLI agent focuses on user interaction, the installer agent handles file copying and setup, the validator agent checks environment prerequisites, the config agent manages user configuration, and the package agent handles metadata and distribution. Agents interact only through well-defined interfaces (e.g., function calls or data contracts) rather than shared file modifications. This structure allows all agents to work simultaneously without waiting for each other, maximizing parallel development.",
+    "reasoning": "The decomposition is designed to adhere to the critical requirements of exclusive file ownership and simultaneous work. By splitting the project into distinct functional domains (CLI, installation, validation, configuration, and packaging), each agent owns a complete set of files without overlap. Shared resources like package.json are assigned to a single agent (package_agent) to prevent conflicts. Dependencies are minimized by focusing on independent development of each domain, with interactions limited to runtime function calls rather than build-time code dependencies. This approach avoids sequential chains and ensures that agents can work in parallel using Git worktrees or separate branches without file conflicts. The estimated times reflect the relative complexity of each domain, with installation logic being the most intensive due to template management."
+  }
+}

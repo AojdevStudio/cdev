@@ -1,53 +1,19 @@
 [
   {
-    "session_id": "test-123",
-    "transcript_path": "/tmp/fake.jsonl",
-    "stop_hook_active": false
-  },
-  {
-    "session_id": "final-test",
-    "transcript_path": "/tmp/fake.jsonl",
-    "stop_hook_active": false
-  },
-  {
-    "session_id": "1b1e666c-cd40-404d-adbf-a67b3ad71c2d",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-desktop-commander-workflows-paralell-development-claude/1b1e666c-cd40-404d-adbf-a67b3ad71c2d.jsonl",
+    "session_id": "08e71d8b-0aea-497b-a055-c2b46fcdcdc4",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08e71d8b-0aea-497b-a055-c2b46fcdcdc4.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   },
   {
-    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
+    "session_id": "08e71d8b-0aea-497b-a055-c2b46fcdcdc4",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08e71d8b-0aea-497b-a055-c2b46fcdcdc4.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   },
   {
-    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
-    "hook_event_name": "Stop",
-    "stop_hook_active": false
-  },
-  {
-    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
-    "hook_event_name": "Stop",
-    "stop_hook_active": false
-  },
-  {
-    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
-    "hook_event_name": "Stop",
-    "stop_hook_active": false
-  },
-  {
-    "session_id": "35abdc40-d80f-4e41-9461-36533712694f",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/35abdc40-d80f-4e41-9461-36533712694f.jsonl",
-    "hook_event_name": "Stop",
-    "stop_hook_active": false
-  },
-  {
-    "session_id": "d087cb93-1728-448a-a907-6d2ce5e189b0",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-custom-validation-agent/d087cb93-1728-448a-a907-6d2ce5e189b0.jsonl",
+    "session_id": "08e71d8b-0aea-497b-a055-c2b46fcdcdc4",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08e71d8b-0aea-497b-a055-c2b46fcdcdc4.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   }
