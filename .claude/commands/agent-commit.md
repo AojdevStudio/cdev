@@ -1,255 +1,198 @@
-# Enhanced Agent Commit & Merge Command
+# Agent Commit & Merge Command
 
-Commit agent work, create coordination files, and enable seamless integration.
+Commit completed agent work and merge the worktree back to main branch with comprehensive validation and safety checks.
 
 ## Variables
 WORKSPACE_PATH: $ARGUMENTS[0]
 CUSTOM_MESSAGE: $ARGUMENTS[1] (optional)
 
-1. **Validate Completion**: Check validation_checklist.txt - ensure all items marked [x]
-2. **Verify Files**: Confirm all files from files_to_work_on.txt were created/modified
-3. **Create Coordination Files**: Generate integration-compatible coordination files
-4. **Generate Commit**: Auto-create commit message from agent context if none provided
-5. **Git Operations**: Add all changes, commit, switch to main, merge, and push
-6. **Cleanup**: Remove worktree directory and provide completion summary
+## Execute these tasks
 
 **VALIDATE PREREQUISITES**
 
-## Coordination Files Created
-- @shared/coordination/validation-status.json - Integration validation status
-- @shared/coordination/integration-status.json - Integration metadata
-- @shared/deployment-plans/{agentId}-deployment-plan.json - Deployment configuration
-- @shared/reports/agent-completion-{timestamp}.md - Completion report
+VERIFY workspace exists and is valid:
+- CHECK `$WORKSPACE_PATH` directory exists
+- VERIFY it's a git worktree: `git -C "$WORKSPACE_PATH" rev-parse --is-inside-work-tree`
+- EXTRACT current branch: `AGENT_BRANCH=$(git -C "$WORKSPACE_PATH" rev-parse --abbrev-ref HEAD)`
+- EXIT with error if not a valid git worktree
 
-## Git Commands Executed
-```bash
-git add .
-git commit -m "$GENERATED_MESSAGE"
-git checkout main
-git pull origin main
-git merge $AGENT_BRANCH --no-ff
-git push origin main
-git worktree remove $WORKTREE_PATH
-git branch -d $AGENT_BRANCH
-```
+**VALIDATE COMPLETION**
 
-## Enhanced Workflow Steps
+CHECK validation checklist completion:
+- READ `$WORKSPACE_PATH/validation_checklist.txt`
+- COUNT completed items: `COMPLETED=$(grep -c "^\s*[0-9]*\.\s*\[x\]" "$WORKSPACE_PATH/validation_checklist.txt")`
+- COUNT total items: `TOTAL=$(grep -c "^\s*[0-9]*\.\s*\[[x ]\]" "$WORKSPACE_PATH/validation_checklist.txt")`
+- IF counts don't match, EXIT with error: "❌ Validation incomplete: $COMPLETED/$TOTAL criteria completed"
 
-### 1. Pre-Commit Validation
-```bash
-# Validate completion status
-VALIDATION_COMPLETE=$(grep -c "\\[x\\]" "$WORKSPACE_PATH/validation_checklist.txt")
-TOTAL_VALIDATIONS=$(grep -c "\\[.\\]" "$WORKSPACE_PATH/validation_checklist.txt")
+VERIFY required files exist:
+- CHECK `$WORKSPACE_PATH/agent_context.json` exists
+- CHECK `$WORKSPACE_PATH/files_to_work_on.txt` exists
+- VERIFY git status shows changes: `git -C "$WORKSPACE_PATH" diff --quiet HEAD || echo "Changes detected"`
 
-if [ "$VALIDATION_COMPLETE" -ne "$TOTAL_VALIDATIONS" ]; then
-    echo "❌ Validation incomplete: $VALIDATION_COMPLETE/$TOTAL_VALIDATIONS items completed"
-    exit 1
-fi
-```
+**EXTRACT AGENT CONTEXT**
 
-### 2. Create Coordination Infrastructure
-```bash
-# Ensure coordination directories exist
-mkdir -p shared/coordination
-mkdir -p shared/deployment-plans
-mkdir -p shared/reports
-mkdir -p workspaces/$AGENT_ID
-```
+READ agent details from `$WORKSPACE_PATH/agent_context.json`:
+- EXTRACT `agentId`, `agentRole`, `taskTitle`, `taskId`
+- GET file statistics from git:
+  - `FILES_CREATED=$(git -C "$WORKSPACE_PATH" diff --name-only --diff-filter=A HEAD~1 | wc -l)`
+  - `FILES_MODIFIED=$(git -C "$WORKSPACE_PATH" diff --name-only --diff-filter=M HEAD~1 | wc -l)`
+  - `FILES_DELETED=$(git -C "$WORKSPACE_PATH" diff --name-only --diff-filter=D HEAD~1 | wc -l)`
 
-### 3. Generate Coordination Files
+**SAFETY CHECKS**
 
-#### validation-status.json
-```json
-{
-  "validation_passed": true,
-  "validated_at": "2025-01-08T10:30:00Z",
-  "agent_id": "${AGENT_ID}",
-  "validation_criteria": ${COMPLETED_CRITERIA_COUNT},
-  "total_criteria": ${TOTAL_CRITERIA_COUNT},
-  "files_created": ${FILES_CREATED_LIST},
-  "files_modified": ${FILES_MODIFIED_LIST},
-  "validator": "agent-commit-enhanced"
-}
-```
+VERIFY main branch is clean:
+- STASH any uncommitted changes in main: `git stash push -m "Auto-stash before agent merge"`
+- CHECK main branch status: `git status --porcelain`
+- PULL latest changes: `git pull origin main`
 
-#### integration-status.json
-```json
-{
-  "integration_ready": true,
-  "agent_id": "${AGENT_ID}",
-  "branch_name": "${AGENT_BRANCH}",
-  "commit_hash": "${COMMIT_SHA}",
-  "integration_order": ["${AGENT_ID}"],
-  "dependencies": [],
-  "created_at": "2025-01-08T10:30:00Z",
-  "agent_role": "${AGENT_ROLE}",
-  "task_id": "${TASK_ID}"
-}
-```
+CHECK for potential conflicts:
+- PREVIEW merge: `git merge-tree $(git merge-base main "$AGENT_BRANCH") main "$AGENT_BRANCH"`
+- WARN if conflicts detected but continue (user can resolve)
 
-#### deployment-plan.json
-```json
-{
-  "deployment_id": "${AGENT_ID}-deployment-$(date +%Y%m%d-%H%M%S)",
-  "created_at": "2025-01-08T10:30:00Z",
-  "integration_order": ["${AGENT_ID}"],
-  "agents": {
-    "${AGENT_ID}": {
-      "role": "${AGENT_ROLE}",
-      "status": "completed",
-      "branch": "${AGENT_BRANCH}",
-      "files_created": ${FILES_CREATED_COUNT},
-      "files_modified": ${FILES_MODIFIED_COUNT},
-      "validation_passed": true,
-      "dependencies": []
-    }
-  },
-  "deployment_strategy": "single_agent_merge",
-  "quality_gates": {
-    "validation_complete": true,
-    "tests_passing": true,
-    "files_verified": true
-  }
-}
-```
+**GENERATE COMMIT MESSAGE**
 
-#### agent-completion-report.md
-```markdown
-# Agent Completion Report
-
-**Agent ID**: ${AGENT_ID}
-**Role**: ${AGENT_ROLE}
-**Completed**: $(date)
-**Branch**: ${AGENT_BRANCH}
-
-## Task Summary
-- **Task ID**: ${TASK_ID}
-- **Title**: ${TASK_TITLE}
-- **Status**: ✅ Complete
-
-## Validation Results
-- **Criteria Met**: ${COMPLETED_CRITERIA}/${TOTAL_CRITERIA}
-- **All Required**: ✅ Yes
-
-## File Changes
-### Created Files (${FILES_CREATED_COUNT})
-${FILES_CREATED_LIST}
-
-### Modified Files (${FILES_MODIFIED_COUNT})
-${FILES_MODIFIED_LIST}
-
-## Quality Gates
-- [x] All validation criteria completed
-- [x] Required files created/modified
-- [x] Agent context preserved
-- [x] Coordination files generated
-
-## Integration Readiness
-✅ Ready for integration via:
-- Direct merge (already completed)
-- Integration scripts (coordination files available)
-
-## Next Steps
-1. ✅ Work committed and merged to main
-2. 🔄 Available for integration scripts if needed
-3. 📊 Coordination files available in shared/
-```
-
-### 4. Copy Agent Workspace for Integration Scripts
-```bash
-# Preserve agent workspace for integration compatibility
-cp -r "$WORKSPACE_PATH" "workspaces/$AGENT_ID/"
-
-# Ensure required files exist in workspace
-echo "$AGENT_BRANCH" > "workspaces/$AGENT_ID/branch_name.txt"
-echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "workspaces/$AGENT_ID/completion_timestamp.txt"
-```
-
-## Auto-Generated Commit Format
+CREATE structured commit message (unless custom provided):
 ```
 feat(${agentId}): ${taskTitle}
 
+Completed validation criteria:
 ${completedValidationCriteria}
 
-- Agent: ${agentRole}
-- Files: ${filesCreated.length} created, ${filesModified.length} modified  
+- Agent: ${agentRole}  
+- Files: ${filesCreated} created, ${filesModified} modified, ${filesDeleted} deleted
 - Task: ${taskId}
-- Coordination: ✅ Integration files generated
+- Branch: ${agentBranch}
 
-Integration Ready:
-- Validation Status: ✅ Complete (${validationScore}%)
-- Deployment Plan: shared/deployment-plans/${agentId}-deployment-plan.json
-- Agent Workspace: workspaces/${agentId}/
-- Integration Scripts: Compatible
-
-🤖 Generated with Enhanced AOJDevStudio 
+🤖 Generated with AOJDevStudio
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## Command Implementation
+USE custom message if provided:
+- IF `$CUSTOM_MESSAGE` is not empty, use it instead of generated message
+- APPEND AOJDevStudio signature to custom messages
 
-### Usage
-```bash
-/agent-commit [workspace-path] [custom-message]
-/agent-commit-enhanced [workspace-path] [custom-message]
+**EXECUTE GIT OPERATIONS**
+
+SWITCH to agent worktree:
+- RUN `cd "$WORKSPACE_PATH"`
+
+STAGE and commit changes:
+- RUN `git add .`
+- RUN `git commit -m "$FINAL_MESSAGE" --no-edit`
+- CAPTURE commit hash: `COMMIT_HASH=$(git rev-parse HEAD)`
+
+**RUN OPTIONAL TESTS**
+
+IF package.json exists in workspace:
+- RUN `npm test` or configured test command
+- IF tests fail, offer option to continue or abort
+- RECORD test results in commit message
+
+**MERGE TO MAIN**
+
+SWITCH to main branch:
+- RUN `git checkout main`
+- ENSURE we're on main: `git symbolic-ref HEAD refs/heads/main`
+
+MERGE agent work:
+- RUN `git merge "$AGENT_BRANCH" --no-ff --no-edit -m "Merge agent work: $agentRole"`
+- IF merge fails:
+  - RUN `git reset --hard HEAD~1`
+  - RUN `git worktree add "$WORKSPACE_PATH" "$AGENT_BRANCH"`
+  - EXIT with error: "❌ Merge failed. Worktree restored for conflict resolution."
+
+SKIP remote push:
+- LOCAL merge only - no automatic push to remote
+- USER can manually push when ready: `git push origin main`
+
+**UPDATE COORDINATION**
+
+UPDATE agent status in coordination file:
+- READ `../paralell-development-claude-work-trees/coordination/parallel-agent-status.json`
+- MARK agent as "completed" with timestamp
+- UPDATE `completedAt` field
+- WRITE back to coordination file
+
+**CLEANUP WORKTREE**
+
+REMOVE worktree directory:
+- RUN `git worktree remove "$WORKSPACE_PATH" --force`
+
+DELETE agent branch:
+- RUN `git branch -d "$AGENT_BRANCH"`
+- IF branch not fully merged, use `-D` flag
+
+**PROVIDE COMPLETION SUMMARY**
+
+OUTPUT detailed success message:
+```
+✅ Agent Commit Complete
+  ${agentRole} work has been successfully completed and committed!
+  
+  📋 Validation Results
+  - All ${validationCount} validation criteria completed ✅
+  - Git operations completed successfully ✅
+  - No conflicts detected ✅
+  
+  🎯 Delivered Features
+  - ${taskTitle}
+  
+  💾 Git Operations
+  - Branch: ${agentBranch}
+  - Commit: ${commitHash}
+  - Status: Successfully merged to main branch
+  - Remote: Ready to push (manual step required)
+  
+  📊 File Changes
+  - Created: ${filesCreated} files
+  - Modified: ${filesModified} files  
+  - Deleted: ${filesDeleted} files
+  
+  🔄 Integration Status
+  The agent work is complete and integrated into main branch.
+  Other agents depending on this work can now proceed.
+  
+  📤 Next Steps
+  To share your changes: git push origin main
+  
+  🚀 The ${agentRole} has successfully completed its mission!
 ```
 
-### Enhanced Script Logic
+**ERROR HANDLING**
+
+FOR any step failure:
+- CAPTURE error message and step
+- PROVIDE recovery instructions
+- PRESERVE agent worktree for manual fixes
+- SUGGEST next steps for resolution
+
+**ROLLBACK CAPABILITY**
+
+IF --rollback flag provided:
+- FIND last agent merge commit
+- RUN `git reset --hard HEAD~1`
+- RECREATE agent worktree
+- RESTORE agent branch
+
+**USAGE EXAMPLES**
 ```bash
-#!/bin/bash
-# Enhanced Agent Commit with Integration Coordination
+# Standard commit with auto-generated message
+claude /project:agent-commit workspaces/AOJ-100-infrastructure_validation_agent
 
-WORKSPACE_PATH="$1"
-CUSTOM_MESSAGE="$2"
-AGENT_ID=$(basename "$WORKSPACE_PATH")
-TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+# Custom commit message
+claude /project:agent-commit workspaces/AOJ-100-backend_api_agent "feat: custom backend integration"
 
-# 1. Validate workspace and completion
-validate_agent_completion() {
-    # [existing validation logic]
-    # + coordination file generation
-}
+# Dry run (validate only, no commit)
+claude /project:agent-commit workspaces/AOJ-100-custom_feature_agent --dry-run
 
-# 2. Create coordination infrastructure  
-create_coordination_files() {
-    # Generate all required coordination files
-    # Map agent context to integration format
-}
-
-# 3. Preserve agent workspace
-preserve_agent_workspace() {
-    # Copy workspace to integration location
-    # Maintain compatibility with integration scripts
-}
-
-# 4. Execute git operations
-execute_git_workflow() {
-    # [existing git logic]
-    # + enhanced commit message with coordination details
-}
-
-# 5. Cleanup with coordination preservation
-cleanup_with_coordination() {
-    # Remove worktree but keep coordination files
-    # Provide integration options summary
-}
+# Rollback previous agent commit
+claude /project:agent-commit --rollback AOJ-100-infrastructure_validation_agent
 ```
 
-## Benefits
+**DEPENDENCY AWARENESS**
 
-1. **Backward Compatible**: Works with existing workflows
-2. **Integration Ready**: Creates files expected by integration scripts  
-3. **Flexible**: Supports both direct merge and scripted integration
-4. **Comprehensive**: Preserves all agent context and metadata
-5. **Quality Assured**: Maintains validation and verification steps
-
-## Integration Options Post-Commit
-
-After running enhanced agent-commit, users can:
-
-1. **Direct Approach**: Work is already merged, coordination files available for reference
-2. **Script Integration**: Run `./scripts/integrate-parallel-work.sh` (will find coordination files)
-3. **Manual Review**: Check `shared/reports/` for completion details
-4. **Multi-Agent**: Coordination files support multiple agents if workflow expands
-
-This enhancement bridges the gap between single-agent workflows and parallel development infrastructure!
+CHECK other agents waiting for this completion:
+- READ coordination file for dependent agents
+- NOTIFY about agents that can now start
+- SUGGEST optimal next agent to work on
+- PROVIDE agent startup commands for ready agents
