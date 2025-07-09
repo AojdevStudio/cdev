@@ -1,0 +1,20 @@
+{
+  "deployment_id": "backend_api_agent-deployment-20250709001426",
+  "created_at": "2025-07-09T00:13:40Z",
+  "integration_order": ["backend_api_agent"],
+  "agents": {
+    "backend_api_agent": {
+      "role": "Backend & API: **Linear API key**: Set `export LINEAR_API_KEY=\"your_key\"`",
+      "status": "completed", 
+      "branch": "AOJ-100-backend_api_agent",
+      "validation_passed": true,
+      "dependencies": ["infrastructure_agent"]
+    }
+  },
+  "deployment_strategy": "single_agent_merge",
+  "quality_gates": {
+    "validation_complete": true,
+    "tests_passing": true,
+    "files_verified": true
+  }
+}

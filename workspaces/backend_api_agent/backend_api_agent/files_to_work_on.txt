@@ -1,0 +1,3 @@
+CREATE: lib/api/client.ts
+CREATE: lib/integrations/external-service.ts
+CREATE: types/api-responses.ts

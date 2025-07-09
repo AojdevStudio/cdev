@@ -1,11 +1,11 @@
 {
   "integration_ready": true,
-  "agent_id": "infrastructure_validation_agent",
-  "branch_name": "AOJ-100-infrastructure_validation_agent",
-  "commit_hash": "edb55d4e1edf9b11b632e334c249225dde09cdbf",
-  "integration_order": ["infrastructure_validation_agent"],
-  "dependencies": [],
-  "created_at": "2025-07-08T23:04:22Z",
-  "agent_role": "Infrastructure & Config: **Rich Features**: Interactive setup, validation, configuration",
-  "task_id": "AOJ-100"
+  "agent_id": "backend_api_agent",
+  "branch_name": "AOJ-100-backend_api_agent",
+  "integration_order": ["backend_api_agent"],
+  "dependencies": ["infrastructure_agent"],
+  "created_at": "2025-07-09T00:13:40Z",
+  "agent_role": "Backend & API: **Linear API key**: Set `export LINEAR_API_KEY=\"your_key\"`",
+  "task_id": "AOJ-100",
+  "status": "completed"
 }
