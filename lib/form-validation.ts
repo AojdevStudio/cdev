@@ -1,309 +1,151 @@
-import { FormValidationRule, FormValidationResult } from './types/write-types';
+import { z } from 'zod';
 
+// Base validation error type
+export interface ValidationError {
+  field: string;
+  message: string;
+  code: string;
+}
+
+// Form field types
+export type FormFieldType = 'text' | 'email' | 'password' | 'number' | 'select' | 'checkbox' | 'textarea' | 'file';
+
+// Form field configuration
+export interface FormField {
+  name: string;
+  label: string;
+  type: FormFieldType;
+  required?: boolean;
+  placeholder?: string;
+  options?: { value: string; label: string; }[];
+  validation?: z.ZodSchema<unknown>;
+  defaultValue?: unknown;
+}
+
+// Form validation result
+export interface ValidationResult {
+  isValid: boolean;
+  errors: ValidationError[];
+  values: Record<string, unknown>;
+}
+
+// Directory validation schema
+export const directoryValidationSchema = z.object({
+  path: z.string().min(1, 'Directory path is required'),
+  name: z.string().min(1, 'Directory name is required').regex(/^[a-zA-Z0-9_-]+$/, 'Directory name must contain only letters, numbers, underscores, and hyphens'),
+  createIfMissing: z.boolean().default(false),
+});
+
+// Common validation schemas
+export const commonValidationSchemas = {
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters long'),
+  required: z.string().min(1, 'This field is required'),
+  number: z.number().min(0, 'Number must be positive'),
+  url: z.string().url('Please enter a valid URL'),
+  directoryPath: z.string().min(1, 'Directory path is required').refine(
+    (path) => !path.includes('..') && !path.startsWith('/'),
+    'Directory path must be relative and not contain parent references'
+  ),
+};
+
+// Main form validation class
 export class FormValidator {
-  private static readonly EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  private static readonly PHONE_REGEX = /^\+?[\d\s\-\(\)]+$/;
-  private static readonly URL_REGEX = /^https?:\/\/[^\s]+$/;
+  private fields: FormField[];
+  private schema: z.ZodObject<Record<string, z.ZodSchema<unknown>>>;
 
-  static validateField(
-    value: unknown,
-    rules: FormValidationRule[]
-  ): { isValid: boolean; error?: string } {
-    for (const rule of rules) {
-      const result = this.applyRule(value, rule);
-      if (!result.isValid) {
-        return result;
+  constructor(fields: FormField[]) {
+    this.fields = fields;
+    this.schema = this.buildSchema();
+  }
+
+  private buildSchema(): z.ZodObject<Record<string, z.ZodSchema<unknown>>> {
+    const schemaObj: Record<string, z.ZodSchema<unknown>> = {};
+
+    this.fields.forEach(field => {
+      let fieldSchema = field.validation || z.any();
+
+      // Apply common validation based on field type
+      if (field.type === 'email') {
+        fieldSchema = commonValidationSchemas.email;
+      } else if (field.type === 'password') {
+        fieldSchema = commonValidationSchemas.password;
+      } else if (field.type === 'number') {
+        fieldSchema = commonValidationSchemas.number;
       }
-    }
-    return { isValid: true };
-  }
 
-  static validateForm(
-    formData: Record<string, unknown>,
-    rules: FormValidationRule[]
-  ): FormValidationResult {
-    const errors: Record<string, string> = {};
-    const warnings: Record<string, string> = {};
-
-    for (const rule of rules) {
-      const value = formData[rule.field];
-      const result = this.applyRule(value, rule);
-      
-      if (!result.isValid && result.error) {
-        errors[rule.field] = result.error;
+      // Make field required if specified
+      if (field.required && fieldSchema instanceof z.ZodString) {
+        fieldSchema = fieldSchema.min(1, `${field.label} is required`);
       }
-    }
 
-    // Cross-field validation
-    this.validateCrossFields(formData, rules, errors, warnings);
+      schemaObj[field.name] = fieldSchema;
+    });
 
-    return {
-      isValid: Object.keys(errors).length === 0,
-      errors,
-      warnings: Object.keys(warnings).length > 0 ? warnings : undefined
-    };
+    return z.object(schemaObj);
   }
 
-  private static applyRule(
-    value: unknown,
-    rule: FormValidationRule
-  ): { isValid: boolean; error?: string } {
-    switch (rule.type) {
-      case 'required':
-        return this.validateRequired(value, rule.message);
-      
-      case 'minLength':
-        return this.validateMinLength(value, rule.value as number, rule.message);
-      
-      case 'maxLength':
-        return this.validateMaxLength(value, rule.value as number, rule.message);
-      
-      case 'pattern':
-        return this.validatePattern(value, rule.value as RegExp, rule.message);
-      
-      case 'custom':
-        return this.validateCustom(value, rule.validator!, rule.message);
-      
-      default:
-        return { isValid: true };
-    }
-  }
-
-  private static validateRequired(
-    value: unknown,
-    message: string
-  ): { isValid: boolean; error?: string } {
-    const isEmpty = value === null || 
-                   value === undefined || 
-                   value === '' || 
-                   (Array.isArray(value) && value.length === 0);
-    
-    return {
-      isValid: !isEmpty,
-      error: isEmpty ? message : undefined
-    };
-  }
-
-  private static validateMinLength(
-    value: unknown,
-    minLength: number,
-    message: string
-  ): { isValid: boolean; error?: string } {
-    if (value === null || value === undefined) {
-      return { isValid: true };
-    }
-
-    const stringValue = String(value);
-    const isValid = stringValue.length >= minLength;
-    
-    return {
-      isValid,
-      error: isValid ? undefined : message
-    };
-  }
-
-  private static validateMaxLength(
-    value: unknown,
-    maxLength: number,
-    message: string
-  ): { isValid: boolean; error?: string } {
-    if (value === null || value === undefined) {
-      return { isValid: true };
-    }
-
-    const stringValue = String(value);
-    const isValid = stringValue.length <= maxLength;
-    
-    return {
-      isValid,
-      error: isValid ? undefined : message
-    };
-  }
-
-  private static validatePattern(
-    value: unknown,
-    pattern: RegExp,
-    message: string
-  ): { isValid: boolean; error?: string } {
-    if (value === null || value === undefined || value === '') {
-      return { isValid: true };
-    }
-
-    const stringValue = String(value);
-    const isValid = pattern.test(stringValue);
-    
-    return {
-      isValid,
-      error: isValid ? undefined : message
-    };
-  }
-
-  private static validateCustom(
-    value: unknown,
-    validator: (value: unknown) => boolean,
-    message: string
-  ): { isValid: boolean; error?: string } {
+  validate(data: Record<string, unknown>): ValidationResult {
     try {
-      const isValid = validator(value);
+      const validatedData = this.schema.parse(data);
       return {
-        isValid,
-        error: isValid ? undefined : message
+        isValid: true,
+        errors: [],
+        values: validatedData,
       };
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors: ValidationError[] = error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message,
+          code: err.code,
+        }));
+
+        return {
+          isValid: false,
+          errors,
+          values: data,
+        };
+      }
+
       return {
         isValid: false,
-        error: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`
+        errors: [{
+          field: 'form',
+          message: 'An unexpected validation error occurred',
+          code: 'UNKNOWN_ERROR',
+        }],
+        values: data,
       };
     }
   }
 
-  private static validateCrossFields(
-    formData: Record<string, unknown>,
-    rules: FormValidationRule[],
-    errors: Record<string, string>,
-    warnings: Record<string, string>
-  ): void {
-    // Password confirmation validation
-    const password = formData.password;
-    const confirmPassword = formData.confirmPassword;
-    
-    if (password && confirmPassword && password !== confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
-    }
+  getFieldError(fieldName: string, errors: ValidationError[]): string | undefined {
+    return errors.find(error => error.field === fieldName)?.message;
+  }
 
-    // Email format validation
-    const email = formData.email;
-    if (email && typeof email === 'string' && !this.EMAIL_REGEX.test(email)) {
-      errors.email = 'Please enter a valid email address';
-    }
-
-    // Phone number validation
-    const phone = formData.phone;
-    if (phone && typeof phone === 'string' && !this.PHONE_REGEX.test(phone)) {
-      errors.phone = 'Please enter a valid phone number';
-    }
-
-    // URL validation
-    const url = formData.url || formData.website;
-    if (url && typeof url === 'string' && !this.URL_REGEX.test(url)) {
-      errors.url = 'Please enter a valid URL';
-    }
-
-    // Date range validation
-    const startDate = formData.startDate;
-    const endDate = formData.endDate;
-    
-    if (startDate && endDate) {
-      const start = new Date(startDate as string);
-      const end = new Date(endDate as string);
-      
-      if (start > end) {
-        errors.endDate = 'End date must be after start date';
-      }
-    }
+  hasFieldError(fieldName: string, errors: ValidationError[]): boolean {
+    return errors.some(error => error.field === fieldName);
   }
 }
 
-// Built-in validation rules
-export const validationRules = {
-  required: (message = 'This field is required'): FormValidationRule => ({
-    field: '',
-    type: 'required',
-    message
-  }),
+// Directory validation utility
+export const validateDirectory = (path: string, name: string, createIfMissing: boolean = false): ValidationResult => {
+  const validator = new FormValidator([
+    { name: 'path', label: 'Directory Path', type: 'text', required: true, validation: commonValidationSchemas.directoryPath },
+    { name: 'name', label: 'Directory Name', type: 'text', required: true },
+    { name: 'createIfMissing', label: 'Create if Missing', type: 'checkbox' },
+  ]);
 
-  minLength: (length: number, message?: string): FormValidationRule => ({
-    field: '',
-    type: 'minLength',
-    value: length,
-    message: message || `Must be at least ${length} characters long`
-  }),
-
-  maxLength: (length: number, message?: string): FormValidationRule => ({
-    field: '',
-    type: 'maxLength',
-    value: length,
-    message: message || `Must be no more than ${length} characters long`
-  }),
-
-  email: (message = 'Please enter a valid email address'): FormValidationRule => ({
-    field: '',
-    type: 'pattern',
-    value: FormValidator['EMAIL_REGEX'],
-    message
-  }),
-
-  phone: (message = 'Please enter a valid phone number'): FormValidationRule => ({
-    field: '',
-    type: 'pattern',
-    value: FormValidator['PHONE_REGEX'],
-    message
-  }),
-
-  url: (message = 'Please enter a valid URL'): FormValidationRule => ({
-    field: '',
-    type: 'pattern',
-    value: FormValidator['URL_REGEX'],
-    message
-  }),
-
-  custom: (
-    validator: (value: unknown) => boolean,
-    message: string
-  ): FormValidationRule => ({
-    field: '',
-    type: 'custom',
-    validator,
-    message
-  })
+  return validator.validate({ path, name, createIfMissing });
 };
 
-// Convenience function for single field validation
-export const validateField = (
-  value: unknown,
-  rules: FormValidationRule[]
-): { isValid: boolean; error?: string } => {
-  return FormValidator.validateField(value, rules);
+// Form field validation helper
+export const validateField = (field: FormField, value: unknown): ValidationError[] => {
+  const validator = new FormValidator([field]);
+  const result = validator.validate({ [field.name]: value });
+  return result.errors;
 };
 
-// Convenience function for full form validation
-export const validateForm = (
-  formData: Record<string, unknown>,
-  rules: FormValidationRule[]
-): FormValidationResult => {
-  return FormValidator.validateForm(formData, rules);
-};
-
-// Common validation rule sets
-export const commonValidations = {
-  name: [
-    { ...validationRules.required(), field: 'name' },
-    { ...validationRules.minLength(2), field: 'name' },
-    { ...validationRules.maxLength(50), field: 'name' }
-  ],
-
-  email: [
-    { ...validationRules.required(), field: 'email' },
-    { ...validationRules.email(), field: 'email' }
-  ],
-
-  password: [
-    { ...validationRules.required(), field: 'password' },
-    { ...validationRules.minLength(8, 'Password must be at least 8 characters long'), field: 'password' },
-    { 
-      ...validationRules.custom(
-        (value) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(String(value)),
-        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-      ), 
-      field: 'password' 
-    }
-  ],
-
-  phone: [
-    { ...validationRules.phone(), field: 'phone' }
-  ],
-
-  url: [
-    { ...validationRules.url(), field: 'url' }
-  ]
-};
+// Export types for external use
+export type { FormField, ValidationResult, ValidationError, FormFieldType };
