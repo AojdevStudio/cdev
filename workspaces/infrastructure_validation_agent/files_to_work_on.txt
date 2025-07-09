@@ -1,0 +1,6 @@
+CREATE: components/forms/DynamicForm.tsx
+CREATE: lib/form-validation.ts
+CREATE: hooks/useFormState.ts
+CREATE: Dockerfile
+CREATE: docker-compose.yml
+CREATE: scripts/deploy.sh
