@@ -1,2 +1,5 @@
 .env
-logs/
+logs/# Cache files
+.cache/
+.DS_Store
+*.log
