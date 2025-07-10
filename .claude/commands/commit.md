@@ -17,6 +17,7 @@ $ARGUMENTS
 ## Instructions
 - Check if `--no-verify` flag is present in $ARGUMENTS
 - If not no-verify: run pre-commit checks (`pnpm lint`, `pnpm build`, `pnpm generate:docs`)
+- **Ensure logs are ignored**: Check if `logs/` is in `.gitignore`; if not, add it to prevent hook conflicts
 - Check git status to see staged files
 - If no files staged: automatically stage all modified and new files with `git add .` (excluding cache files, .DS_Store, and other ignore patterns)
 - Perform `git diff --staged` to analyze changes being committed
