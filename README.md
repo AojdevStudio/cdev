@@ -1,598 +1,309 @@
-# Claude Code Hooks - Enhanced Development Workflow
+# Claude Code Hooks
 
-> **Global NPX package for streamlined Claude Code development with intelligent hooks and automation**
+[![npm version](https://img.shields.io/npm/v/claude-code-hooks.svg)](https://www.npmjs.com/package/claude-code-hooks)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/claude-code-hooks.svg)](https://nodejs.org/)
 
-This package provides a comprehensive set of tools and hooks to enhance your Claude Code development workflow, including parallel agent management, automated Linear issue processing, and intelligent git worktree coordination.
+> **Enhanced development workflow for Claude Code with intelligent hooks, automated validations, and parallel development support**
+
+Claude Code Hooks is a comprehensive NPM package that supercharges your Claude Code development experience. It provides intelligent pre/post hooks, automated code quality checks, TypeScript validation, API standards enforcement, and seamless integration with Linear for parallel agent workflows.
 
 ## 🚀 Quick Start
 
 ```bash
-# Install globally via NPX
+# Install in your project (recommended)
 npx claude-code-hooks install
 
-# Initialize hooks in your project
-npx claude-code-hooks init
+# Or install globally
+npm install -g claude-code-hooks
 
-# Use enhanced Linear workflow
-npx claude-code-hooks linear PROJ-123
+# Initialize in an existing project
+cd your-project
+claude-code-hooks init
 
-# Or use individual commands
-npx claude-code-hooks cache PROJ-123
-npx claude-code-hooks decompose PROJ-123
-npx claude-code-hooks spawn shared/deployment-plans/proj-123-deployment-plan.json
+# Use the interactive installer
+claude-code-hooks install --interactive
 ```
 
-## 🎯 What This Package Does
+## 🎯 Features
 
-This NPX package provides a comprehensive development toolkit that:
+### 🪝 Intelligent Hooks
+- **Pre/Post Tool Use Hooks**: Monitor and validate Claude's actions
+- **TypeScript Validation**: Automatic type checking before file edits
+- **Code Quality Reporting**: Real-time feedback on code standards
+- **API Standards Checker**: Ensure consistent API design patterns
 
-1. **Installs** development hooks and automation tools globally
-2. **Initializes** project-specific configurations and templates
-3. **Manages** Linear issue processing with intelligent decomposition
-4. **Orchestrates** parallel agent workflows with isolated worktrees
-5. **Validates** development environments and dependencies
-6. **Distributes** via NPM for easy installation and updates
+### 🚀 Parallel Development
+- **Linear Integration**: Transform Linear issues into parallel workstreams
+- **Git Worktree Management**: Isolated development environments
+- **Intelligent Task Decomposition**: AI-powered task breakdown
+- **Agent Coordination**: Manage multiple Claude instances efficiently
 
-## 📋 Prerequisites
+### 🛡️ Safety & Validation
+- **Commit Message Validation**: Enforce commit conventions
+- **Import Organization**: Keep imports clean and sorted
+- **Universal Linting**: Multi-language code quality checks
+- **Task Completion Enforcement**: Ensure all TODOs are addressed
 
-- **Node.js**: Version 16 or higher for NPX package management
-- **Git**: Version control system for worktree management
-- **Claude Code**: Anthropic's Claude Code tool installed
-- **Linear Account**: Optional, for Linear integration features
-- **NPM Account**: Optional, for package publishing (developers only)
+## 📋 Requirements
 
-## 🗂️ Project Structure
+- **Node.js**: v16.0.0 or higher
+- **Git**: v2.0.0 or higher
+- **Python**: v3.7 or higher (for hooks)
+- **Claude Code**: Latest version installed
+- **Operating System**: Windows, macOS, or Linux
+
+## 📦 What Gets Installed
 
 ```
 your-project/
-├── .linear-cache/              # Cached Linear issues
-├── shared/
-│   └── deployment-plans/       # Decomposed task plans
-├── workflows/
-│   └── paralell-development-claude/
-│       └── scripts/            # This workflow's scripts
-└── ../your-project-work-trees/ # Git worktrees (created automatically)
-    ├── feature-branch-1/       # Complete codebase copy #1
-    ├── feature-branch-2/       # Complete codebase copy #2
-    └── feature-branch-3/       # Complete codebase copy #3
+├── .claude/
+│   ├── hooks/                  # Intelligent validation hooks
+│   │   ├── pre_tool_use.py    # Pre-execution validation
+│   │   ├── post_tool_use.py   # Post-execution reporting
+│   │   ├── typescript-validator.py
+│   │   ├── api-standards-checker.py
+│   │   └── ...
+│   ├── commands/              # Custom Claude commands
+│   └── settings.json          # Configuration
+├── scripts/
+│   ├── cache-linear-issue.sh  # Linear integration
+│   ├── decompose-parallel.cjs # Task decomposition
+│   └── spawn-agents.sh        # Agent management
+└── .gitignore                 # Updated with Claude entries
 ```
 
-## 🚀 Step-by-Step Workflow
+## 🔧 Installation Options
 
-### Step 1: Cache Linear Issue
-
-**What it does**: Downloads a Linear issue and saves it locally so you can work offline.
+### Interactive Installation (Recommended)
 
 ```bash
-./cache-linear-issue.sh PROJ-123
+npx claude-code-hooks install
 ```
 
-**Requirements**:
-- Set your Linear API key: `export LINEAR_API_KEY="your_api_key_here"`
-- Replace `PROJ-123` with your actual Linear issue ID
+The interactive installer will:
+1. Detect your project type (Next.js, React, Node.js, etc.)
+2. Configure appropriate hooks for your stack
+3. Set up Linear integration (optional)
+4. Install framework-specific commands
+5. Configure your preferred package manager
 
-**What happens**:
-- Fetches issue details from Linear API
-- Saves to `.linear-cache/PROJ-123.json`
-- Shows issue title, priority, status, and description preview
-- Creates local copy for offline decomposition
-
-**Example output**:
-```
-✅ Issue cached successfully!
-📋 Title: Add user authentication system
-🎯 Priority: High
-📊 Status: In Progress
-👤 Assignee: Jane Developer
-💾 Cached to: .linear-cache/PROJ-123.json
-📝 Description: 1. Create login/signup forms 2. Implement JWT authentication 3. Add password reset...
-```
-
-### Step 2: Decompose Into Parallel Tasks
-
-**What it does**: Analyzes the cached Linear issue and intelligently breaks it down into parallel workstreams using semantic understanding.
+### Quick Installation
 
 ```bash
-node decompose-parallel.cjs PROJ-123
+# Install with defaults
+npx claude-code-hooks install --yes
+
+# Install with specific package manager
+npx claude-code-hooks install --pm pnpm
+
+# Install in a specific directory
+npx claude-code-hooks install /path/to/project
 ```
 
-**The Intelligent Decomposition Engine**:
+### Manual Installation
 
-Instead of hardcoded pattern matching, the system uses an advanced semantic analysis engine that:
+```bash
+# Clone specific hooks only
+npx claude-code-hooks install --hooks typescript,api-standards
 
-1. **Analyzes Your Codebase**: Scans your project structure to discover what types of work domains exist (frontend, backend, components, data, infrastructure)
-2. **Parses Requirements Semantically**: Extracts actions (create, implement, fix), objects (forms, API, database), technologies (React, MCP, Google Drive), and complexity levels
-3. **Maps Requirements to Domains**: Intelligently scores which work domains best match each requirement based on semantic similarity
-4. **Generates Agents Dynamically**: Creates specialized agents based on the analysis rather than predefined templates
+# Skip Linear integration
+npx claude-code-hooks install --no-linear
 
-**How Semantic Analysis Works**:
+# Preserve existing configuration
+npx claude-code-hooks install --preserve
+```
+
+## 🎨 Configuration
+
+### Hook Configuration
+
+Edit `.claude/settings.json` to customize hook behavior:
+
+```json
+{
+  "hooks": {
+    "pre_tool_use": "python3 .claude/hooks/pre_tool_use.py",
+    "post_tool_use": "python3 .claude/hooks/post_tool_use.py"
+  },
+  "validation": {
+    "typescript": true,
+    "eslint": true,
+    "prettier": true
+  },
+  "projectType": "nextjs",
+  "packageManager": "pnpm"
+}
+```
+
+### Environment Variables
+
+```bash
+# Linear API integration
+export LINEAR_API_KEY="lin_api_xxxxxxxxxx"
+
+# Custom Python path (if needed)
+export CLAUDE_PYTHON_PATH="/usr/local/bin/python3"
+
+# Disable specific hooks
+export CLAUDE_DISABLE_TYPESCRIPT=true
+```
+
+## 🔌 Available Hooks
+
+### Core Hooks
+- **pre_tool_use.py**: Validates actions before execution
+- **post_tool_use.py**: Reports on completed actions
+- **stop.py**: Cleanup on session end
+- **subagent_stop.py**: Manages parallel agent cleanup
+
+### Validation Hooks
+- **typescript-validator.py**: Type checking for TypeScript files
+- **api-standards-checker.py**: REST/GraphQL API validation
+- **code-quality-reporter.py**: General code quality metrics
+- **import-organizer.py**: Sorts and groups imports
+
+### Workflow Hooks
+- **commit-message-validator.py**: Enforces commit conventions
+- **task-completion-enforcer.py**: Tracks TODO completion
+- **pnpm-enforcer.py**: Ensures pnpm usage in monorepos
+
+## 🚀 Linear Integration Workflow
+
+### 1. Cache Linear Issue
+
+```bash
+claude-code-hooks linear cache PROJ-123
+```
+
+### 2. Decompose into Parallel Tasks
+
+```bash
+claude-code-hooks linear decompose PROJ-123
+```
+
+### 3. Spawn Parallel Agents
+
+```bash
+claude-code-hooks linear spawn PROJ-123
+```
+
+### 4. Monitor Progress
+
+```bash
+claude-code-hooks linear status PROJ-123
+```
+
+## 🤝 Framework Support
+
+### Next.js
+- Automatic App Router detection
+- Server Component validation
+- API route standards
+- Tailwind CSS integration
+
+### React
+- Component best practices
+- Hook validation
+- State management patterns
+- Testing setup
+
+### Node.js
+- Express/Fastify detection
+- API endpoint validation
+- Database integration checks
+- Environment configuration
+
+### Python
+- Flask/Django support
+- Type hint validation
+- PEP 8 enforcement
+- Virtual environment detection
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Python not found**
+```bash
+# Set custom Python path
+export CLAUDE_PYTHON_PATH=$(which python3)
+```
+
+**Permission denied on scripts**
+```bash
+# Fix permissions
+chmod +x scripts/*.sh
+```
+
+**Hooks not triggering**
+```bash
+# Verify Claude settings
+claude-code-hooks doctor
+```
+
+### Debug Mode
+
+```bash
+# Enable verbose logging
+export CLAUDE_DEBUG=true
+
+# Check hook execution
+claude-code-hooks test-hooks
+```
+
+## 📚 API Reference
+
+### CLI Commands
+
+```bash
+claude-code-hooks install [path] [options]
+claude-code-hooks init [options]
+claude-code-hooks linear <command> [id]
+claude-code-hooks doctor
+claude-code-hooks update
+claude-code-hooks uninstall
+```
+
+### Programmatic Usage
 
 ```javascript
-// Example requirement: "Enhanced Google Drive MCP Server - Full Write Capabilities"
+const { Installer } = require('claude-code-hooks');
 
-// Step 1: Extract semantic information
-{
-  actions: ['enhance', 'implement'],
-  objects: ['server', 'api', 'storage', 'capabilities'],
-  technologies: ['mcp', 'google drive'],
-  complexity: 'high',
-  suggestedDomains: ['backend', 'data', 'infrastructure']
-}
+const installer = new Installer({
+  projectPath: './my-project',
+  packageManager: 'npm',
+  skipPrompts: true
+});
 
-// Step 2: Score against discovered work domains
-backend_domain: score 8 (high match for 'server', 'api')
-data_domain: score 6 (good match for 'storage', 'google drive')
-infrastructure_domain: score 4 (match for 'mcp', 'server')
-
-// Step 3: Generate agent dynamically
-{
-  id: 'backend_server_agent',
-  role: 'Backend & API: Enhanced Google Drive MCP Server',
-  focusArea: 'Backend & API',
-  estimatedTime: 45, // Calculated based on complexity and domain
-  type: 'backend'
-}
+await installer.install();
 ```
 
-**Adaptive Agent Creation**:
+## 🤝 Contributing
 
-The system discovers what makes sense for YOUR specific project:
-- **Frontend Apps**: Creates UI, component, and layout agents
-- **Backend Services**: Creates API, integration, and data agents  
-- **Full-Stack Projects**: Creates balanced agents across all domains
-- **Specialized Projects**: Adapts to your unique architecture patterns
-
-**What happens**:
-- Creates `shared/deployment-plans/proj-123-deployment-plan.json`
-- Each agent gets semantically-matched files to work on
-- Calculates realistic time estimates based on complexity analysis
-- Determines optimal parallelization strategy
-- Shows debugging information about why each agent was created
-
-**Example decomposition output**:
-```json
-{
-  "taskId": "PROJ-123",
-  "taskTitle": "Enhanced Google Drive MCP Server - Full Write Capabilities",
-  "parallelAgents": [
-    {
-      "agentId": "backend_server_agent",
-      "agentRole": "Backend & API: Enhanced Google Drive MCP Server",
-      "focusArea": "Backend & API",
-      "canStartImmediately": true,
-      "filesToCreate": ["lib/google-drive-client.ts", "pages/api/drive/[...path].ts"],
-      "filesToModify": ["lib/mcp-server.ts"],
-      "estimatedTime": "45 minutes",
-      "_analysis": {
-        "complexity": "high",
-        "actions": ["enhance", "implement"],
-        "objects": ["server", "capabilities", "storage"],
-        "technologies": ["mcp", "google drive"]
-      }
-    },
-    {
-      "agentId": "data_storage_agent",
-      "agentRole": "Data & Integration: Full Write Capabilities", 
-      "focusArea": "Data & Integration",
-      "canStartImmediately": true,
-      "filesToCreate": ["lib/file-operations.ts", "lib/storage-sync.ts"],
-      "estimatedTime": "35 minutes"
-    }
-  ],
-  "estimatedTotalTime": "45 minutes",
-  "parallelismFactor": "1.8x faster than sequential"
-}
-```
-
-**Intelligence Features**:
-- **Codebase-Aware**: Understands your Next.js vs React vs Node.js project structure
-- **Context-Sensitive**: File predictions based on your existing patterns  
-- **Complexity-Adaptive**: Time estimates adjust based on requirement complexity
-- **Fallback-Safe**: Always creates agents even for novel requirement types
-- **Debug-Friendly**: Shows analysis reasoning for transparency
-
-### Step 3: Spawn Parallel Agents
-
-**What it does**: Creates isolated Git worktrees for ALL agents specified in the deployment plan JSON file.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ```bash
-./spawn-agents.sh shared/deployment-plans/proj-123-deployment-plan.json
-```
+# Clone the repository
+git clone https://github.com/anthropics/claude-code-hooks.git
 
-**What happens**:
-- **Reads the deployment plan JSON** to discover all unique agents
-- **Creates separate worktrees** for each agent automatically
-- **Generates agent-specific workspaces** with context files, file lists, and validation criteria
-- **Sets up coordination system** to track progress across all agents
-- **Copies essential configuration** (.env, .claude, .cursor) to each worktree
-- **🚀 Automatically opens Cursor** in each agent's worktree for immediate development
+# Install dependencies
+npm install
 
-**Example output**:
-```
-🚀 Enhanced Parallel Agent Spawning System
-📋 Reading deployment plan: shared/deployment-plans/proj-123-deployment-plan.json
-🎯 Task: PROJ-123 - Enhanced Google Drive MCP Server
-🤖 Found 4 unique agents to spawn: backend_server_agent data_storage_agent forms_validation_agent auth_agent
-
-🌿 Creating Git worktrees for each agent...
-
-🔄 Processing agent: backend_server_agent
-   📍 Branch: PROJ-123-backend_server_agent
-   📂 Path: ../your-project-work-trees/PROJ-123-backend_server_agent
-   🌱 Creating worktree...
-   📋 Setting up agent workspace...
-   📄 Copying configuration files...
-   📝 Generating agent context...
-   📁 Generating file lists...
-   ✅ Agent backend_server_agent workspace ready!
-   🚀 Opening Cursor in: ../your-project-work-trees/PROJ-123-backend_server_agent
-
-[... repeats for each agent ...]
-
-✅ All agent worktrees created successfully!
-
-📊 Summary:
-   Task: PROJ-123
-   Agents: 4
-   Worktrees: ../your-project-work-trees
-   Coordination: ../your-project-work-trees/coordination
-
-🔄 Next Steps:
-   1. ✅ Cursor instances opened automatically for each agent
-   2. In each Cursor window:
-      - Open terminal (Ctrl+` or Cmd+`)
-      - Run: claude
-      - Feed Claude the agent context from workspaces/{agent_id}/agent_context.json
-```
-
-**What each agent gets**:
-- **Isolated Git worktree**: `../your-project-work-trees/PROJ-123-{agent_id}/`
-- **Agent context file**: `workspaces/{agent_id}/agent_context.json` with complete task details
-- **File work list**: `workspaces/{agent_id}/files_to_work_on.txt` (CREATE/MODIFY instructions)
-- **Test contracts**: `workspaces/{agent_id}/test_contracts.txt` (required tests)
-- **Validation checklist**: `workspaces/{agent_id}/validation_checklist.txt` (success criteria)
-- **Configuration files**: Copied .env, .claude, .cursor settings
-
-**No more manual agent spawning**: The system automatically creates all agents from the JSON plan!
-
-### Step 4: Start Claude in Each Worktree
-
-**What you do**: Navigate to each agent's worktree and start Claude Code with the generated context.
-
-```bash
-# Navigate to an agent's worktree
-cd ../your-project-work-trees/PROJ-123-backend_server_agent
-
-# Check the agent's specific instructions
-cat workspaces/backend_server_agent/agent_context.json
-cat workspaces/backend_server_agent/files_to_work_on.txt
-cat workspaces/backend_server_agent/validation_checklist.txt
-
-# Start Claude Code
-claude
-```
-
-**Give Claude the context**:
-```
-I'm working as the backend_server_agent on task PROJ-123. Here's my context:
-
-[Paste contents of agent_context.json]
-
-My files to work on:
-[Paste contents of files_to_work_on.txt]
-
-My validation criteria:
-[Paste contents of validation_checklist.txt]
-
-Please help me implement these requirements.
-```
-
-**Example agent context**:
-```json
-{
-  "agentId": "backend_server_agent",
-  "taskId": "PROJ-123", 
-  "taskTitle": "Enhanced Google Drive MCP Server",
-  "branchName": "PROJ-123-backend_server_agent",
-  "canStartImmediately": true,
-  "allFilesToCreate": [
-    "lib/mcp/drive-client.ts",
-    "lib/mcp/server-setup.ts", 
-    "types/drive-types.ts"
-  ],
-  "allFilesToModify": [
-    "index.ts"
-  ],
-  "allValidationCriteria": [
-    "Google Drive operations complete successfully",
-    "MCP server starts without errors",
-    "File operations (read/write) work correctly"
-  ],
-  "estimatedTime": 45
-}
-```
-
-### Step 5: Monitor Progress (Enhanced Coordination)
-
-The system provides multiple ways to monitor progress across all agents:
-
-**1. Coordination Dashboard**:
-```bash
-# Check overall status
-cat ../your-project-work-trees/coordination/parallel-agent-status.json
-```
-
-**Example coordination status**:
-```json
-{
-  "taskId": "PROJ-123",
-  "taskTitle": "Enhanced Google Drive MCP Server",
-  "totalAgents": 4,
-  "agents": [
-    {
-      "agentId": "backend_server_agent",
-      "branchName": "PROJ-123-backend_server_agent", 
-      "status": "spawned",
-      "canStartImmediately": true,
-      "dependencies": [],
-      "startedAt": null,
-      "completedAt": null
-    },
-    {
-      "agentId": "auth_agent",
-      "branchName": "PROJ-123-auth_agent",
-      "status": "spawned", 
-      "canStartImmediately": false,
-      "dependencies": ["backend_server_agent"],
-      "startedAt": null,
-      "completedAt": null
-    }
-  ],
-  "createdAt": "2025-07-08T02:09:47.956Z",
-  "lastUpdated": "2025-07-08T02:09:47.957Z"
-}
-```
-
-**2. Git Branch Monitoring**:
-```bash
-# Check what branches exist
-git worktree list
-
-# See commits on each agent's branch
-git log PROJ-123-backend_server_agent --oneline
-git log PROJ-123-auth_agent --oneline
-git log PROJ-123-forms_validation_agent --oneline
-
-# Check current status in each worktree
-cd ../your-project-work-trees/PROJ-123-backend_server_agent && git status
-cd ../your-project-work-trees/PROJ-123-auth_agent && git status
-```
-
-**3. Validation Progress**:
-```bash
-# Check validation criteria completion for each agent
-cat ../your-project-work-trees/PROJ-123-backend_server_agent/workspaces/backend_server_agent/validation_checklist.txt
-```
-
-**4. Dependency Tracking**:
-The system tracks which agents can work immediately vs. which need to wait for dependencies:
-- **Independent agents**: Can start immediately
-- **Dependent agents**: Wait for prerequisite agents to complete
-- **Merge order**: Follow the dependency chain for integration
-
-### Step 6: Integration (Smart Dependency-Aware Workflow)
-
-The system provides a suggested merge order based on agent dependencies:
-
-**1. Check the Integration Plan**:
-```bash
-# View the merge order from the deployment plan
-node -e "const plan = require('./shared/deployment-plans/proj-123-deployment-plan.json'); console.log('Merge Order:', plan.integrationPlan.mergeOrder.join(' → '));"
-```
-
-**2. Merge Following Dependencies**:
-```bash
-# Return to main project
-cd main-project/
-
-# Merge in dependency order (example)
-git merge PROJ-123-backend_server_agent     # Infrastructure first
-git merge PROJ-123-auth_agent               # Authentication second  
-git merge PROJ-123-data_storage_agent       # Data layer third
-git merge PROJ-123-forms_validation_agent   # Frontend last
-
-# Handle any merge conflicts manually
-# Run tests after each merge to catch integration issues early
+# Run tests
 npm test
+
+# Submit a pull request
 ```
 
-**3. Validation Steps**:
-The deployment plan includes systematic validation:
-```json
-{
-  "integrationPlan": {
-    "mergeOrder": ["backend_server_agent", "auth_agent", "data_storage_agent", "forms_validation_agent"],
-    "validationSteps": [
-      "Run agent-specific tests",
-      "Cross-agent integration tests", 
-      "Full test suite validation",
-      "E2E testing"
-    ],
-    "estimatedIntegrationTime": "10 minutes"
-  }
-}
-```
+## 📄 License
 
-**4. Clean Up When Complete**:
-```bash
-# Remove worktrees after successful integration
-git worktree remove ../your-project-work-trees/PROJ-123-backend_server_agent
-git worktree remove ../your-project-work-trees/PROJ-123-auth_agent  
-git worktree remove ../your-project-work-trees/PROJ-123-data_storage_agent
-git worktree remove ../your-project-work-trees/PROJ-123-forms_validation_agent
+MIT © Anthropic
 
-# Remove coordination directory
-rm -rf ../your-project-work-trees/coordination
+## 🔗 Links
 
-# Delete feature branches (optional)
-git branch -d PROJ-123-backend_server_agent
-git branch -d PROJ-123-auth_agent
-git branch -d PROJ-123-data_storage_agent  
-git branch -d PROJ-123-forms_validation_agent
-```
-
-## 💡 Key Benefits
-
-### **Speed**: Parallel vs Sequential
-- **Traditional**: 45 + 35 + 30 = 110 minutes total
-- **Parallel**: max(45, 35, 30) = 45 minutes total
-- **Result**: 2.4x faster development
-
-### **Intelligence**: Semantic Understanding
-- Analyzes requirements by meaning, not just keywords
-- Adapts to your specific codebase architecture
-- Creates agents based on discovered work domains
-- Provides debugging information for transparency
-
-### **Isolation**: No Conflicts
-- Each agent works on separate file copies
-- No Git conflicts during development
-- Independent testing and iteration
-- Clean merge process when complete
-
-### **Adaptability**: Works with Any Project
-- **React Apps**: UI, component, and state management agents
-- **Next.js Projects**: Page, API route, and middleware agents
-- **Backend Services**: Integration, data, and infrastructure agents
-- **Full-Stack**: Balanced agents across all layers
-
-### **Flexibility**: Your Custom Commands
-- Agents work with your existing Claude slash commands
-- You control the specific instructions per agent
-- Easy to adapt to any development workflow
-- Scales from simple features to complex systems
-
-## 🛠️ Creating Custom Claude Commands
-
-Based on your decomposition plan, you can create specialized slash commands:
-
-### Example: Backend Integration Agent Command
-```markdown
-# .claude/commands/implement-mcp-integration.md
-
-## Implement MCP Server Integration
-
-You are the backend integration specialist agent. Your job is to:
-
-1. Create MCP server integration layer
-2. Implement Google Drive API client
-3. Add write capabilities and error handling
-
-**Files to focus on**: lib/mcp-server.ts, lib/google-drive-client.ts
-
-**Success criteria**: MCP server connects to Google Drive with full write access
-
-**Tests to pass**: mcp-integration.test.js, google-drive.test.js
-```
-
-### Example: Data Storage Agent Command
-```markdown
-# .claude/commands/build-file-operations.md
-
-## Build File Operations System
-
-You are the data storage specialist agent. Your job is to:
-
-1. Create file upload/download operations
-2. Implement storage sync functionality
-3. Add file validation and security checks
-
-**Files to create**: lib/file-operations.ts, lib/storage-sync.ts
-
-**Success criteria**: Files can be uploaded, downloaded, and synced securely
-
-**Tests to pass**: file-operations.test.js, storage-sync.test.js
-```
-
-## 📝 Tips for Success
-
-### **Writing Good Linear Issues**
-- Use numbered lists for requirements (1. Implement server, 2. Add storage, 3. Create forms)
-- Be specific about what needs to be built
-- Include acceptance criteria
-- Mention any architectural constraints
-
-### **Optimal Agent Count**
-- **2-4 agents**: Sweet spot for most features
-- **Complex systems**: 4-6 agents with clear domain separation
-- **Simple features**: 1-2 agents may be sufficient
-- **Coordination overhead**: More agents require more merge coordination
-
-### **Managing Dependencies**
-- **Infrastructure first**: Deploy backend/API agents before frontend agents
-- **Components before UI**: Build reusable components before complex interfaces  
-- **Data before presentation**: Establish data layer before visualization
-- **The system automatically calculates and suggests merge order**
-
-### **Semantic Requirements Writing**
-- **Use action verbs**: "Implement", "Create", "Integrate", "Enhance"
-- **Specify technologies**: "MCP server", "Google Drive API", "React forms"
-- **Include objects**: "file operations", "authentication system", "dashboard"
-- **Indicate complexity**: "basic login" vs "enterprise SSO integration"
-
-### **Testing Strategy**  
-- Each agent should run tests in their worktree
-- Agents should only commit when tests pass
-- Run full test suite after integration
-
-## 🔧 Environment Setup
-
-### Linear API Key
-```bash
-# Add to your shell profile (.bashrc, .zshrc, etc.)
-export LINEAR_API_KEY="lin_api_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-```
-
-### Project Structure
-```bash
-# Make scripts executable
-chmod +x cache-linear-issue.sh
-chmod +x spawn-agents.sh
-
-# Install Node.js dependencies for decomposition
-npm install # or pnpm install
-```
-
-## 🎯 Next Steps
-
-1. **Try the workflow** with a Linear issue containing numbered requirements
-2. **Observe the semantic analysis** in the decomposition output to understand the AI reasoning
-3. **Create custom slash commands** based on the generated agent specifications
-4. **Refine your Linear issue writing** to work optimally with semantic analysis
-5. **Scale up** to larger, more complex features across multiple domains
-
-## 🧠 How the Intelligence Works
-
-The workflow uses advanced semantic analysis to understand your requirements:
-
-**Traditional Approach** (keyword matching):
-```
-"forms" → forms_agent
-"api" → api_agent  
-"chart" → chart_agent
-```
-
-**Intelligent Approach** (semantic understanding):
-```
-"Enhanced Google Drive MCP Server" →
-  - Actions: [enhance, implement, integrate]
-  - Objects: [server, storage, api, capabilities]  
-  - Technologies: [mcp, google drive]
-  - Complexity: high
-  - Best Domain: backend (score: 8/10)
-  - Agent: backend_server_agent
-```
-
-This enables the system to handle any type of requirement, adapt to your specific codebase, and generate meaningful parallel work distributions without manual configuration.
-
-The future of development is here: **AI that understands context, not just keywords.**
+- [Documentation](https://docs.anthropic.com/claude-code-hooks)
+- [NPM Package](https://www.npmjs.com/package/claude-code-hooks)
+- [GitHub Repository](https://github.com/anthropics/claude-code-hooks)
+- [Issue Tracker](https://github.com/anthropics/claude-code-hooks/issues)
+- [Discord Community](https://discord.gg/claude-code)
