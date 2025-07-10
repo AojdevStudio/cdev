@@ -4,301 +4,229 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/cdev.svg)](https://nodejs.org/)
 
-> **Parallel workflow system for Claude Code with intelligent hooks, automated validations, and multi-agent orchestration**
+> **Think of CDEV as your AI-powered development team manager - it takes complex tasks, breaks them down intelligently, and manages multiple Claude instances working in parallel to deliver faster, cleaner code.**
 
-CDEV (Claude Development) is a comprehensive NPM package that supercharges your Claude Code development experience. It provides parallel agent workflows, intelligent task decomposition, automated code quality checks, TypeScript validation, API standards enforcement, and seamless integration with Linear for issue management.
+## 🎯 What is CDEV?
+
+CDEV (Claude Development) transforms how you work with Claude Code by enabling **parallel development workflows**. Instead of working on features sequentially, CDEV intelligently splits tasks into independent workstreams, allowing multiple Claude instances to work simultaneously while maintaining code quality through intelligent hooks.
+
+### 🔑 Key Benefits
+
+- **⚡ 2-4x Faster Development**: Work on multiple features simultaneously
+- **🛡️ Built-in Safety**: Intelligent hooks prevent common mistakes before they happen
+- **🧠 AI-Powered Intelligence**: Semantic analysis understands your code and requirements
+- **📊 Linear Integration**: Seamlessly transform Linear issues into parallel workflows
+- **🔒 Security First**: Comprehensive protection against accidental exposure of secrets
 
 ## 🚀 Quick Start
 
 ```bash
-# Install in your project (recommended)
-npx cdev install
-
-# Or install globally
+# Install globally
 npm install -g cdev
 
-# Initialize in an existing project
-cd your-project
-cdev init
-
-# Use the interactive installer
-cdev install --interactive
+# Start your first parallel workflow
+cdev get PROJ-123    # Get issue from Linear
+cdev split PROJ-123  # AI splits it into parallel tasks
+cdev run plan.json   # Spawn multiple Claude agents
+cdev status          # Monitor progress
+cdev commit          # Merge completed work
 ```
 
-## 🎯 Features
+## 📋 Complete Hook System
 
-### 🪝 Intelligent Hooks
-- **Pre/Post Tool Use Hooks**: Monitor and validate Claude's actions
-- **TypeScript Validation**: Automatic type checking before file edits
-- **Code Quality Reporting**: Real-time feedback on code standards
-- **API Standards Checker**: Ensure consistent API design patterns
+CDEV includes intelligent hooks that enhance Claude's capabilities and protect your codebase:
 
-### 🚀 Parallel Development
-- **Linear Integration**: Transform Linear issues into parallel workstreams
-- **Git Worktree Management**: Isolated development environments
-- **Intelligent Task Decomposition**: AI-powered task breakdown
-- **Agent Coordination**: Manage multiple Claude instances efficiently
+| Hook | What it Does | Why it's Awesome |
+|------|--------------|------------------|
+| **🛡️ pre_tool_use** | Validates actions before execution | Prevents dangerous operations like `rm -rf` and protects sensitive files |
+| **📝 post_tool_use** | Processes results after actions | Logs actions, validates outputs, triggers notifications |
+| **🔍 typescript-validator** | Checks TypeScript syntax before edits | Catches type errors before they break your build |
+| **📐 api-standards-checker** | Validates API design patterns | Ensures consistent REST/GraphQL API structure |
+| **🎨 code-quality-reporter** | Real-time code quality feedback | Identifies code smells and suggests improvements |
+| **📦 import-organizer** | Organizes and sorts imports | Maintains clean, consistent import statements |
+| **✅ task-completion-enforcer** | Tracks TODO completion | Ensures no tasks are forgotten before committing |
+| **📋 commit-message-validator** | Enforces commit conventions | Maintains clean git history with semantic commits |
+| **🔧 pnpm-enforcer** | Ensures pnpm usage | Prevents accidental npm/yarn usage in pnpm projects |
+| **🧹 universal-linter** | Multi-language linting | Applies appropriate linters based on file type |
+| **🔔 notification** | System notifications | Alerts you when Claude needs input or completes tasks |
+| **🛑 stop** | Cleanup on session end | Saves progress and cleans up resources |
 
-### 🛡️ Safety & Validation
-- **Commit Message Validation**: Enforce commit conventions
-- **Import Organization**: Keep imports clean and sorted
-- **Universal Linting**: Multi-language code quality checks
-- **Task Completion Enforcement**: Ensure all TODOs are addressed
+[→ Detailed Hook Documentation](docs/hooks-reference.md)
+
+## 🎪 The Parallel Development Workflow
+
+Here's how to transform a complex Linear issue into parallel development streams:
+
+### Step 1: Get Your Linear Issue
+```bash
+cdev get PROJ-123
+```
+**What happens**: Downloads the Linear issue and caches it locally so you can work offline.
+
+### Step 2: Let AI Decompose It
+```bash
+cdev split PROJ-123
+```
+**What happens**: Our AI analyzes your issue semantically and creates a deployment plan:
+- Understands what needs to be built
+- Identifies independent workstreams
+- Assigns specialized agents to each part
+- Calculates optimal parallelization
+
+Example output:
+```
+🧠 Analyzing: "Add user authentication with social login"
+📊 Created 4 parallel agents:
+  • backend_auth_agent: JWT implementation & user models
+  • frontend_auth_agent: Login/signup UI components
+  • social_oauth_agent: Google/GitHub OAuth integration
+  • testing_agent: Auth flow test suite
+⚡ Estimated time: 45 min (vs 3 hours sequential)
+```
+
+### Step 3: Spawn Your Parallel Agents
+```bash
+cdev run shared/deployment-plans/proj-123.json
+```
+**What happens**: Creates isolated Git worktrees for each agent:
+- Each agent gets its own directory
+- Complete codebase copy (using Git's efficient storage)
+- Opens Cursor/VS Code automatically
+- No merge conflicts during development
+
+### Step 4: Work with Each Agent
+In each opened editor window:
+```bash
+claude
+
+# Claude loads the agent context automatically
+# The agent knows exactly what files to create/modify
+# Works through a validation checklist
+# Runs tests in isolation
+```
+
+### Step 5: Monitor Progress
+```bash
+cdev status
+```
+Shows real-time progress across all agents:
+```
+📊 PROJ-123 Progress:
+✅ backend_auth_agent    [████████████████████] 100% - Ready to merge
+🔄 frontend_auth_agent   [████████████░░░░░░░]  67% - Building components
+🔄 social_oauth_agent    [████████░░░░░░░░░░░░]  40% - OAuth setup
+⏳ testing_agent         [░░░░░░░░░░░░░░░░░░░░]   0% - Waiting for others
+```
+
+### Step 6: Commit and Merge
+```bash
+cdev commit
+```
+**What happens**: 
+- Validates all checklist items completed
+- Runs integration tests
+- Merges in dependency order
+- Cleans up worktrees
+
+## 🧠 AI Documentation System
+
+CDEV includes an intelligent documentation system that helps Claude understand your project:
+
+### What are AI Docs?
+Think of AI docs as a "knowledge base" that teaches Claude about:
+- Your coding standards and patterns
+- Project-specific conventions
+- Common workflows and procedures
+- Technology-specific best practices
+
+### How AI Docs Help
+
+1. **📚 Context Templates** - Pre-written contexts for common scenarios
+2. **🎯 Linear Templates** - Structured formats for consistent issue handling  
+3. **🔤 Commit Standards** - Emoji-based semantic commit references
+4. **📝 Command Templates** - Patterns for creating custom Claude commands
+
+Example: When Claude sees a Linear issue about "authentication", it references:
+- Authentication pattern templates
+- Security best practices
+- Your project's auth conventions
+- Testing requirements for auth code
+
+[→ Explore AI Documentation](ai-docs/README.md)
+
+## 🔧 Configuration
+
+### Environment Setup (.env)
+```bash
+# Recommended configuration for optimal performance
+LINEAR_API_KEY=lin_api_XXXXXXXX             # Your Linear API key
+LLM_PROVIDER=openrouter                     # Recommended provider
+LLM_MODEL=mistralai/mistral-large-2411     # Best for task decomposition
+ENGINEER_NAME=YourName                      # For personalized notifications
+```
+
+[→ See Complete Configuration Guide](.env.example)
+
+## 🎓 Understanding Hook Tiers
+
+CDEV organizes hooks into three tiers based on importance:
+
+### Tier 1: Critical Security & Validation
+- Cannot be disabled
+- Protect against destructive operations
+- Ensure code quality standards
+- Examples: `pre_tool_use`, `typescript-validator`
+
+### Tier 2: Productivity Enhancement  
+- Highly recommended
+- Improve workflow efficiency
+- Can be selectively disabled
+- Examples: `import-organizer`, `code-quality-reporter`
+
+### Tier 3: Optional Features
+- Nice-to-have conveniences
+- Project-specific customizations
+- Examples: `notification`, `custom-linters`
+
+## 📖 Complete Documentation
+
+- **[Installation Guide](docs/installation.md)** - Detailed setup instructions
+- **[Hooks Reference](docs/hooks-reference.md)** - Deep dive into each hook
+- **[Parallel Workflow Guide](docs/parallel-workflow.md)** - Advanced workflow patterns
+- **[API Reference](docs/api-reference.md)** - Programmatic usage
+- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
+- **[Security Best Practices](SECURITY.md)** - Keeping your code safe
+
+## 🌟 Real-World Example
+
+Let's say you receive this Linear issue:
+> "Add real-time collaborative editing to the document editor with presence indicators and conflict resolution"
+
+Traditional approach: 150+ hours of sequential work
+
+CDEV approach:
+1. `cdev get COLLAB-001` - Cache the issue
+2. `cdev split COLLAB-001` - AI creates 5 specialized agents
+3. `cdev run` - All agents work simultaneously
+4. 40 hours total (5 agents × 8 hours each, in parallel)
+
+Result: **3.75x faster delivery** with better code organization!
 
 ## 📋 Requirements
 
 - **Node.js**: v16.0.0 or higher
-- **Git**: v2.0.0 or higher
+- **Git**: v2.0.0 or higher  
 - **Python**: v3.7 or higher (for hooks)
 - **Claude Code**: Latest version installed
-- **Operating System**: Windows, macOS, or Linux
-
-## 📦 What Gets Installed
-
-```
-your-project/
-├── .claude/
-│   ├── hooks/                  # Intelligent validation hooks
-│   │   ├── pre_tool_use.py    # Pre-execution validation
-│   │   ├── post_tool_use.py   # Post-execution reporting
-│   │   ├── typescript-validator.py
-│   │   ├── api-standards-checker.py
-│   │   └── ...
-│   ├── commands/              # Custom Claude commands
-│   └── settings.json          # Configuration
-├── scripts/
-│   ├── cache-linear-issue.sh  # Linear integration
-│   ├── decompose-parallel.cjs # Task decomposition
-│   └── spawn-agents.sh        # Agent management
-└── .gitignore                 # Updated with Claude entries
-```
-
-## 🔧 Installation Options
-
-### Interactive Installation (Recommended)
-
-```bash
-npx cdev install
-```
-
-The interactive installer will:
-1. Detect your project type (Next.js, React, Node.js, etc.)
-2. Configure appropriate hooks for your stack
-3. Set up Linear integration (optional)
-4. Install framework-specific commands
-5. Configure your preferred package manager
-
-### Quick Installation
-
-```bash
-# Install with defaults
-npx cdev install --yes
-
-# Install with specific package manager
-npx cdev install --pm pnpm
-
-# Install in a specific directory
-npx cdev install /path/to/project
-```
-
-### Manual Installation
-
-```bash
-# Clone specific hooks only
-npx cdev install --hooks typescript,api-standards
-
-# Skip Linear integration
-npx cdev install --no-linear
-
-# Preserve existing configuration
-npx cdev install --preserve
-```
-
-## 🎨 Configuration
-
-### Hook Configuration
-
-Edit `.claude/settings.json` to customize hook behavior:
-
-```json
-{
-  "hooks": {
-    "pre_tool_use": "python3 .claude/hooks/pre_tool_use.py",
-    "post_tool_use": "python3 .claude/hooks/post_tool_use.py"
-  },
-  "validation": {
-    "typescript": true,
-    "eslint": true,
-    "prettier": true
-  },
-  "projectType": "nextjs",
-  "packageManager": "pnpm"
-}
-```
-
-### Environment Variables
-
-```bash
-# Linear API integration
-export LINEAR_API_KEY="lin_api_xxxxxxxxxx"
-
-# Custom Python path (if needed)
-export CLAUDE_PYTHON_PATH="/usr/local/bin/python3"
-
-# Disable specific hooks
-export CLAUDE_DISABLE_TYPESCRIPT=true
-```
-
-## 🔌 Available Hooks
-
-### Core Hooks
-- **pre_tool_use.py**: Validates actions before execution
-- **post_tool_use.py**: Reports on completed actions
-- **stop.py**: Cleanup on session end
-- **subagent_stop.py**: Manages parallel agent cleanup
-
-### Validation Hooks
-- **typescript-validator.py**: Type checking for TypeScript files
-- **api-standards-checker.py**: REST/GraphQL API validation
-- **code-quality-reporter.py**: General code quality metrics
-- **import-organizer.py**: Sorts and groups imports
-
-### Workflow Hooks
-- **commit-message-validator.py**: Enforces commit conventions
-- **task-completion-enforcer.py**: Tracks TODO completion
-- **pnpm-enforcer.py**: Ensures pnpm usage in monorepos
-
-## 🚀 Linear Integration Workflow
-
-### 1. Cache Linear Issue
-
-```bash
-cdev get PROJ-123
-```
-
-### 2. Decompose into Parallel Tasks
-
-```bash
-cdev split PROJ-123
-```
-
-### 3. Spawn Parallel Agents
-
-```bash
-cdev run shared/deployment-plans/proj-123.json
-```
-
-### 4. Monitor Progress
-
-```bash
-cdev linear status PROJ-123
-```
-
-## 🤝 Framework Support
-
-### Next.js
-- Automatic App Router detection
-- Server Component validation
-- API route standards
-- Tailwind CSS integration
-
-### React
-- Component best practices
-- Hook validation
-- State management patterns
-- Testing setup
-
-### Node.js
-- Express/Fastify detection
-- API endpoint validation
-- Database integration checks
-- Environment configuration
-
-### Python
-- Flask/Django support
-- Type hint validation
-- PEP 8 enforcement
-- Virtual environment detection
-
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-**Python not found**
-```bash
-# Set custom Python path
-export CLAUDE_PYTHON_PATH=$(which python3)
-```
-
-**Permission denied on scripts**
-```bash
-# Fix permissions
-chmod +x scripts/*.sh
-```
-
-**Hooks not triggering**
-```bash
-# Verify Claude settings
-cdev doctor
-```
-
-### Debug Mode
-
-```bash
-# Enable verbose logging
-export CLAUDE_DEBUG=true
-
-# Check hook execution
-cdev test-hooks
-```
-
-## 📚 API Reference
-
-### CLI Commands
-
-```bash
-cdev install [path] [options]
-cdev init [options]
-cdev linear <command> [id]
-cdev doctor
-cdev update
-cdev uninstall
-```
-
-### Programmatic Usage
-
-```javascript
-const { Installer } = require('cdev');
-
-const installer = new Installer({
-  projectPath: './my-project',
-  packageManager: 'npm',
-  skipPrompts: true
-});
-
-await installer.install();
-```
+- **Linear Account**: Optional, for Linear integration
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-```bash
-# Clone the repository
-git clone https://github.com/AOJDevStudio/cdev.git
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Submit a pull request
-```
+We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## 📄 License
 
-MIT © Anthropic
+MIT License - see [LICENSE](LICENSE) for details.
 
 ## 🔗 Links
 
@@ -307,3 +235,7 @@ MIT © Anthropic
 - [Issue Tracker](https://github.com/AOJDevStudio/cdev/issues)
 - [Author](https://github.com/AOJDevStudio)
 - Discord Community (Coming Soon)
+
+---
+
+*Built with ❤️ by AOJDevStudio - Making parallel development accessible to everyone*
