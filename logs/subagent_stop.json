@@ -40,5 +40,11 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08b5990f-44bd-40ce-a581-aa5f5f4fcaeb.jsonl",
     "hook_event_name": "SubagentStop",
     "stop_hook_active": false
+  },
+  {
+    "session_id": "278d9b1e-2e26-487f-942b-cc030bf4ffb9",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-REMEDIATION-001-git-history-agent/278d9b1e-2e26-487f-942b-cc030bf4ffb9.jsonl",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
   }
 ]
