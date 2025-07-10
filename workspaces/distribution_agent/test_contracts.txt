@@ -1,0 +1,3 @@
+.github/workflows/publish.yml
+scripts/prepublish.test.js
+scripts/postpublish.test.js

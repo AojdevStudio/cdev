@@ -52,5 +52,11 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/568de877-8eff-4ee3-a1ab-0a5c01f16b06.jsonl",
     "hook_event_name": "Notification",
     "message": "Claude is waiting for your input"
+  },
+  {
+    "session_id": "fdeaa4bd-15bf-48b4-ad3d-2f0c714cf713",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-distribution-agent/fdeaa4bd-15bf-48b4-ad3d-2f0c714cf713.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
   }
 ]

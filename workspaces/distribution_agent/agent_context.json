@@ -1,0 +1,55 @@
+{
+  "agentId": "distribution_agent",
+  "taskId": "AOJ-100",
+  "taskTitle": "Enhanced Claude Code Hooks - Global NPX Package Distribution System",
+  "branchName": "AOJ-100-distribution_agent",
+  "workTreePath": "../paralell-development-claude-work-trees/AOJ-100-distribution_agent",
+  "agentInstances": [
+    {
+      "agentId": "distribution_agent",
+      "agentRole": "Manages distribution and publishing workflows",
+      "focusArea": "distribution",
+      "dependencies": [],
+      "filesToCreate": [
+        ".github/workflows/publish.yml",
+        "scripts/prepublish.js",
+        "scripts/postpublish.js"
+      ],
+      "filesToModify": [],
+      "testContracts": [
+        ".github/workflows/publish.yml",
+        "scripts/prepublish.test.js",
+        "scripts/postpublish.test.js"
+      ],
+      "validationCriteria": [
+        "All distribution files are created successfully",
+        "distribution functionality works as expected",
+        "No errors in distribution implementation",
+        "distribution tests pass successfully"
+      ],
+      "estimatedTime": 30,
+      "canStartImmediately": true
+    }
+  ],
+  "dependencies": [],
+  "allFilesToCreate": [
+    ".github/workflows/publish.yml",
+    "scripts/prepublish.js",
+    "scripts/postpublish.js"
+  ],
+  "allFilesToModify": [],
+  "allTestContracts": [
+    ".github/workflows/publish.yml",
+    "scripts/prepublish.test.js",
+    "scripts/postpublish.test.js"
+  ],
+  "allValidationCriteria": [
+    "All distribution files are created successfully",
+    "distribution functionality works as expected",
+    "No errors in distribution implementation",
+    "distribution tests pass successfully"
+  ],
+  "canStartImmediately": true,
+  "estimatedTime": 30,
+  "createdAt": "2025-07-10T00:46:47.719Z"
+}
