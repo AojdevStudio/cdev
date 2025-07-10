@@ -7,7 +7,8 @@ description: Strict 100% validation of all parallel agent work completion and in
 
 This command performs an extremely strict final validation of all parallel agent work by analyzing git history, file existence, and task completion to ensure 100% integration success.
 
-$ARGUMENTS
+**variables:**
+TaskIdOrOptions: $ARGUMENTS
 
 **Usage Examples:**
 - `/agent-final-validation` - Validate all agents from the most recent deployment plan

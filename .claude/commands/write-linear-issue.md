@@ -7,7 +7,8 @@ description: Create well-structured Linear issues for parallel development workf
 
 This command creates well-structured Linear issues that work optimally with the parallel development workflow's semantic analysis and decomposition system using Linear MCP tools.
 
-$ARGUMENTS
+**variables:**
+IssueDescription: $ARGUMENTS
 
 **Usage Examples:**
 - `/write-linear-issue` - Interactive issue creation with team/project selection

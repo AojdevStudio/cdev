@@ -1,171 +1,40 @@
-# Create Coordination Files Command
+---
+allowed-tools: Read, Write, Bash, Edit
+description: Generate coordination files for parallel workflow integration
+---
 
-Generate integration coordination files for parallel development workflow compatibility.
+# Create Coordination Files
 
-## Variables
-AGENT_WORKSPACE: $ARGUMENTS
+This command generates integration coordination files for parallel development workflow compatibility by creating status files, deployment plans, and completion reports.
 
-## Execute these tasks
+**variables:**
+AgentWorkspace: $ARGUMENTS
 
-**VALIDATE AGENT WORKSPACE**
+**Usage Examples:**
+- `/create-coordination-files workspaces/AOJ-100-backend_api_agent` - Generate coordination for specific agent
+- `/create-coordination-files ./` - Use current directory as agent workspace
+- `/create-coordination-files ../agent-workspace` - Generate from relative path
 
-CHECK workspace exists and is valid:
-- VERIFY `$AGENT_WORKSPACE/agent_context.json` exists
-- VERIFY `$AGENT_WORKSPACE/validation_checklist.txt` exists
-- VERIFY `$AGENT_WORKSPACE/files_to_work_on.txt` exists
-- IF any missing, EXIT with error: "❌ Invalid agent workspace"
+## Instructions
+- Parse $ARGUMENTS to extract agent workspace path
+- Validate workspace contains required files (agent_context.json, validation_checklist.txt)
+- Extract agent metadata including ID, role, task information
+- Calculate validation completion percentage from checklist
+- Create coordination directory structure if missing
+- Generate validation-status.json with completion metrics
+- Generate integration-status.json for workflow compatibility
+- Create deployment plan JSON for integration scripts
+- Preserve agent workspace in workspaces directory
+- Generate markdown completion report with summary
 
-**EXTRACT AGENT METADATA**
-
-READ agent context:
-- EXTRACT `agentId` from `$AGENT_WORKSPACE/agent_context.json`
-- EXTRACT `agentRole` from agent context
-- EXTRACT `taskId` and `taskTitle` from agent context
-- GET current timestamp: `date -u +%Y-%m-%dT%H:%M:%SZ`
-- GET current git branch from workspace
-
-COUNT validation status:
-- COUNT completed: `grep -c "\[x\]" "$AGENT_WORKSPACE/validation_checklist.txt"`
-- COUNT total: `grep -c "\[.\]" "$AGENT_WORKSPACE/validation_checklist.txt"`
-- CALCULATE validation percentage
-
-**CREATE COORDINATION INFRASTRUCTURE**
-
-ENSURE directories exist:
-- RUN `mkdir -p shared/coordination`
-- RUN `mkdir -p shared/deployment-plans` 
-- RUN `mkdir -p shared/reports`
-- RUN `mkdir -p workspaces`
-
-**GENERATE VALIDATION STATUS FILE**
-
-CREATE `shared/coordination/validation-status.json`:
-```json
-{
-  "validation_passed": true,
-  "validated_at": "${TIMESTAMP}",
-  "agent_id": "${AGENT_ID}",
-  "validation_criteria": ${COMPLETED_COUNT},
-  "total_criteria": ${TOTAL_COUNT},
-  "validation_percentage": ${VALIDATION_PERCENTAGE},
-  "validator": "create-coordination-files"
-}
-```
-
-**GENERATE INTEGRATION STATUS FILE**
-
-CREATE `shared/coordination/integration-status.json`:
-```json
-{
-  "integration_ready": true,
-  "agent_id": "${AGENT_ID}",
-  "branch_name": "${AGENT_BRANCH}",
-  "integration_order": ["${AGENT_ID}"],
-  "dependencies": [],
-  "created_at": "${TIMESTAMP}",
-  "agent_role": "${AGENT_ROLE}",
-  "task_id": "${TASK_ID}",
-  "status": "completed"
-}
-```
-
-**GENERATE DEPLOYMENT PLAN**
-
-CREATE `shared/deployment-plans/${AGENT_ID}-deployment-plan.json`:
-```json
-{
-  "deployment_id": "${AGENT_ID}-deployment-${TIMESTAMP_SHORT}",
-  "created_at": "${TIMESTAMP}",
-  "integration_order": ["${AGENT_ID}"],
-  "agents": {
-    "${AGENT_ID}": {
-      "role": "${AGENT_ROLE}",
-      "status": "completed", 
-      "branch": "${AGENT_BRANCH}",
-      "validation_passed": true,
-      "dependencies": []
-    }
-  },
-  "deployment_strategy": "single_agent_merge",
-  "quality_gates": {
-    "validation_complete": true,
-    "tests_passing": true,
-    "files_verified": true
-  }
-}
-```
-
-**PRESERVE AGENT WORKSPACE**
-
-COPY agent workspace for integration scripts:
-- RUN `cp -r "$AGENT_WORKSPACE" "workspaces/${AGENT_ID}/"`
-- CREATE `workspaces/${AGENT_ID}/branch_name.txt` with `$AGENT_BRANCH`
-- CREATE `workspaces/${AGENT_ID}/completion_timestamp.txt` with `$TIMESTAMP`
-
-**GENERATE COMPLETION REPORT**
-
-CREATE `shared/reports/agent-completion-${TIMESTAMP_SHORT}.md`:
-```markdown
-# Agent Completion Report
-
-**Agent ID**: ${AGENT_ID}
-**Role**: ${AGENT_ROLE}  
-**Completed**: ${TIMESTAMP}
-**Branch**: ${AGENT_BRANCH}
-
-## Task Summary
-- **Task ID**: ${TASK_ID}
-- **Title**: ${TASK_TITLE}
-- **Status**: ✅ Complete
-
-## Validation Results
-- **Criteria Met**: ${COMPLETED_COUNT}/${TOTAL_COUNT}
-- **Success Rate**: ${VALIDATION_PERCENTAGE}%
-- **All Required**: ✅ Yes
-
-## Integration Readiness
-✅ Coordination files generated:
-- shared/coordination/validation-status.json
-- shared/coordination/integration-status.json  
-- shared/deployment-plans/${AGENT_ID}-deployment-plan.json
-- workspaces/${AGENT_ID}/ (preserved workspace)
-
-## Integration Options
-1. **Direct Approach**: Work already merged to main
-2. **Script Integration**: Run `./scripts/integrate-parallel-work.sh`
-3. **Manual Review**: Check shared/reports/ for details
-
-Generated by create-coordination-files command
-```
-
-**PROVIDE COMPLETION SUMMARY**
-
-OUTPUT success message:
-```
-✅ Coordination Files Created
-  Integration coordination files generated for ${AGENT_ID}!
-  
-  📁 Files Created:
-  - shared/coordination/validation-status.json ✅
-  - shared/coordination/integration-status.json ✅  
-  - shared/deployment-plans/${AGENT_ID}-deployment-plan.json ✅
-  - shared/reports/agent-completion-${TIMESTAMP_SHORT}.md ✅
-  - workspaces/${AGENT_ID}/ (workspace preserved) ✅
-  
-  🔄 Integration Ready:
-  - Validation Status: ✅ Passed (${VALIDATION_PERCENTAGE}%)
-  - Integration Scripts: Compatible
-  - Deployment Plan: Available
-  
-  🎯 Next Steps:
-  1. Run integration scripts: ./scripts/integrate-parallel-work.sh
-  2. Review reports: shared/reports/
-  3. Check deployment plan: shared/deployment-plans/
-  
-  Integration coordination complete! 🚀
-```
-
-**USAGE**
-```bash
-claude /project:create-coordination-files workspaces/AOJ-100-infrastructure_validation_agent
-```
+## Context
+- Agent context: !`cat agent_context.json 2>/dev/null || echo "{}"`
+- Validation status: !`grep -c "\[x\]" validation_checklist.txt 2>/dev/null || echo "0"`
+- Total criteria: !`grep -c "\[.\]" validation_checklist.txt 2>/dev/null || echo "0"`
+- Current branch: !`git branch --show-current`
+- Coordination directory: shared/coordination/
+- Deployment plans: shared/deployment-plans/
+- Reports directory: shared/reports/
+- Required files: agent_context.json, validation_checklist.txt, files_to_work_on.txt
+- Output format: JSON status files, deployment plan, markdown report
+- Integration compatibility: Supports parallel workflow scripts

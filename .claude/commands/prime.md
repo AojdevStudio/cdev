@@ -7,6 +7,9 @@ description: Load context for a new agent session by analyzing codebase structur
 
 This command loads essential context for a new agent session by examining the codebase structure and reading the project README.
 
+**Usage Examples:**
+- `/prime` - Load project context and provide overview
+
 ## Instructions
 - Run `git ls-files` to understand the codebase structure and file organization
 - Read the README.md to understand the project purpose, setup instructions, and key information
@@ -19,3 +22,4 @@ This command loads essential context for a new agent session by examining the co
 - Documentation: 
   - @ai_docs/astral-uv-scripting-documentation.md
   - @ai_docs/claude-code-hooks-documentation.md
+  - @docs/parallel-workflow.md

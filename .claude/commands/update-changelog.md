@@ -7,7 +7,8 @@ description: Add new entries to project CHANGELOG.md following Keep a Changelog 
 
 This command adds a new entry to the project's CHANGELOG.md file following Keep a Changelog conventions and Semantic Versioning standards.
 
-$ARGUMENTS
+**variables:**
+VersionEntry: $ARGUMENTS
 
 **Usage Examples:**
 - `/update-changelog` - Analyze git history and automatically generate changelog entries

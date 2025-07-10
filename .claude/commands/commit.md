@@ -7,7 +7,8 @@ description: Create well-formatted commits with conventional messages and emoji
 
 This command creates well-formatted Git commits using conventional commit messages with emoji, automated quality checks, and intelligent change analysis.
 
-$ARGUMENTS
+**variables:**
+CommitOptions: $ARGUMENTS
 
 **Usage Examples:**
 - `/commit` - Full commit workflow with pre-commit checks

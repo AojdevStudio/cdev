@@ -1,46 +1,40 @@
-# Agent Status Command
+---
+allowed-tools: Read, Bash, Grep, Task
+description: Check status of all agent worktrees and their progress
+---
 
-Check status of all agent worktrees and their progress.
+# Agent Status
 
-Discover and analyze all agent workspaces from $ARGUMENTS (base path) to:
+This command discovers and analyzes all agent workspaces to provide comprehensive status reporting, progress tracking, and workflow recommendations.
 
-1. **Find All Agents**: Scan for agent workspace directories
-2. **Check Progress**: Read validation checklists and git status for each
-3. **Map Dependencies**: Analyze agent relationships and blockers  
-4. **Generate Report**: Show completion status and next actions
-5. **Suggest Workflow**: Recommend optimal execution order
+**variables:**
+FilterOption: $ARGUMENTS
 
-## Discovery Commands
-```bash
-!`git worktree list`
-!`find ../project-work-trees -name "workspaces" -type d 2>/dev/null`
-```
-
-## Context Analysis
-For each agent found:
-- @../project-work-trees/*/workspaces/*/agent_context.json
-- @../project-work-trees/*/workspaces/*/validation_checklist.txt
-- @../project-work-trees/*/workspaces/*/files_to_work_on.txt
-
-## Status Report Format
-```
-=== Agent Workflow Status ===
-Total Agents: X
-✅ Completed: X    🔄 In Progress: X    ⏸️ Blocked: X
-
-🤖 backend_api_agent
-📋 TASK-123 - Implement user authentication system
-🎯 Backend & API (High Priority)
-📊 Progress: 8/12 validation criteria (67%)
-🔧 Files: 6 created, 3 modified
-📍 Branch: TASK-123-backend_api_agent
-🔗 Dependencies: database_agent, auth_middleware_agent
-```
-
-## Filter Options
+**Usage Examples:**
+- `/agent-status` - Show status of all agents
 - `/agent-status complete` - Show only finished agents
-- `/agent-status ready` - Show agents ready to start/commit
+- `/agent-status ready` - Show agents ready to start or commit
 - `/agent-status blocked` - Show dependency-blocked agents
 - `/agent-status TASK-123` - Filter by specific task ID
 
-Usage: `/agent-status [filter]`
+## Instructions
+- Parse $ARGUMENTS to extract filter option (complete, ready, blocked, or task ID)
+- Discover all agent workspaces using git worktree list and file system scan
+- For each agent found, read agent_context.json for metadata
+- Analyze validation_checklist.txt to calculate completion percentage
+- Check git status to determine if changes exist
+- Map agent dependencies from context files
+- Apply requested filter to agent list
+- Generate comprehensive status report with progress indicators
+- Provide actionable recommendations for next steps
+
+## Context
+- Git worktrees: !`git worktree list`
+- Agent workspaces: !`find .. -name "*-agent" -type d 2>/dev/null | grep -E "work-trees|workspaces" | head -20`
+- Coordination status: !`cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo "{}"`
+- Current directory: !`pwd`
+- Agent patterns: *-work-trees/*-agent, workspaces/*-agent
+- Context files: agent_context.json (metadata), validation_checklist.txt (progress)
+- Progress calculation: Count [x] vs [ ] in validation checklist
+- Status categories: Complete (100%), In Progress (1-99%), Blocked (0% with deps)
+- Filter keywords: complete, ready, blocked, or task ID pattern

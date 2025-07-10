@@ -7,9 +7,8 @@ description: Generate comprehensive README using structured template with projec
 
 This command analyzes your project structure and generates a comprehensive README file following the established template pattern with proper variable substitution and contextual content.
 
-$ARGUMENTS:
-- `--output <path>`: Specify the folder path to explore to create the README then place the README in the specified path (default: README.md)
-- if no arguments are provided, the command will generate/update a README for the current project using the template (@ai-docs/readme-template.md)
+**variables:**
+OutputPath: $ARGUMENTS
 
 **Usage Examples:**
 - `/generate-readme` - Generate README for current project using template (@ai-docs/readme-template.md)
