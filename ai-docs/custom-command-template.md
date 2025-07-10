@@ -41,7 +41,8 @@ This command [does what] by [how it works] for [purpose/benefit].
 
 ### 4. Arguments Section
 ```markdown
-$ARGUMENTS
+**variables:**
+[VariableName]: $ARGUMENTS
 
 **Usage Examples:**
 - `/command` - Default behavior with no arguments  
@@ -50,7 +51,15 @@ $ARGUMENTS
 ```
 
 **Guidelines:**
-- Simply use `$ARGUMENTS` - users can pass whatever they want
+- Replace `[VariableName]` with a descriptive name for your argument type:
+  - `Query` for search commands
+  - `FilePath` for file operations
+  - `Topic` for documentation/help commands
+  - `ToolName` for tool-specific commands
+  - `IssueId` for issue tracking
+  - `Pattern` for matching/filtering
+  - Or any other descriptive name that fits your command
+- Some commands may not need arguments - in that case, omit the variables section
 - Provide clear usage examples showing different argument patterns
 - Reference `$ARGUMENTS` in instructions to process the user input
 - Keep it simple and flexible
@@ -100,7 +109,8 @@ description: Convert project rules to executable hooks using modern patterns
 
 This command converts natural language project rules into Claude Code hook configurations, leveraging modern uv scripting patterns for sophisticated implementations.
 
-$ARGUMENTS
+**variables:**
+RuleText: $ARGUMENTS
 
 **Usage Examples:**
 - `/rule2hook` - Convert all rules from CLAUDE.md files

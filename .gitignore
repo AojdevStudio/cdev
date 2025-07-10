@@ -53,4 +53,5 @@ pnpm-lock.yaml
 # Git worktrees coordination
 ../project-work-trees/
 workspaces/
-coordination/
+coordination/node_modules/
+.cache/
