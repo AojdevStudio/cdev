@@ -1,0 +1,58 @@
+{
+  "agentId": "configuration_agent",
+  "taskId": "AOJ-101",
+  "taskTitle": "Complete Claude Code Hooks NPM Package - Interactive Installer and Hook Organization System",
+  "branchName": "AOJ-101-configuration_agent",
+  "workTreePath": "../paralell-development-claude-work-trees/AOJ-101-configuration_agent",
+  "agentInstances": [
+    {
+      "agentId": "configuration_agent",
+      "agentRole": "Configuration & Templates Developer",
+      "focusArea": "Configuration Management",
+      "canStartImmediately": true,
+      "dependencies": [],
+      "allFilesToCreate": [
+        "src/config-generator.js",
+        "src/config-migrator.js",
+        "src/config-validator.js",
+        "src/template-engine.js",
+        "templates/typescript.json",
+        "templates/pnpm.json",
+        "templates/nextjs.json",
+        "templates/react.json",
+        "templates/api.json",
+        "templates/default.json"
+      ],
+      "allFilesToModify": [],
+      "allValidationCriteria": [
+        "Configuration generator creates valid settings.json files",
+        "Templates work correctly for each project type",
+        "Migration from settings.local.json to settings.json preserves all data",
+        "Dynamic configuration based on detected project type",
+        "Template engine properly substitutes variables",
+        "All generated configurations are valid JSON"
+      ],
+      "testContracts": [
+        "test/config-generator.test.js",
+        "test/config-migrator.test.js",
+        "test/config-validator.test.js",
+        "test/template-engine.test.js"
+      ],
+      "estimatedTime": 60,
+      "rationale": "Handles all configuration-related tasks including generation, migration, and templates"
+    }
+  ],
+  "dependencies": [],
+  "allFilesToCreate": [],
+  "allFilesToModify": [],
+  "allTestContracts": [
+    "test/config-generator.test.js",
+    "test/config-migrator.test.js",
+    "test/config-validator.test.js",
+    "test/template-engine.test.js"
+  ],
+  "allValidationCriteria": [],
+  "canStartImmediately": true,
+  "estimatedTime": 60,
+  "createdAt": "2025-07-10T04:11:06.482Z"
+}

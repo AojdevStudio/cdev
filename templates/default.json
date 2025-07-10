@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "description": "Default Claude Code Hooks configuration for {{projectName}}",
+  "createdAt": "{{timestamp}}",
+  "projectType": "{{projectType}}",
+  "hooks": {
+    "pre_tool_use": [
+      {
+        "command": "echo 'Tool use: {{projectName}}' >> .claude/logs/tool-usage.log",
+        "blocking": false
+      }
+    ],
+    "post_tool_use": [],
+    "pre_command": [],
+    "post_command": [],
+    "subagent_start": [],
+    "subagent_stop": []
+  },
+  "environment": {
+    "PROJECT_PATH": "{{projectPath}}",
+    "PROJECT_NAME": "{{projectName}}"
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 30000
+    },
+    "read": {
+      "enabled": true
+    },
+    "write": {
+      "enabled": true
+    },
+    "edit": {
+      "enabled": true
+    },
+    "search": {
+      "enabled": true
+    }
+  },
+  "disabled": false,
+  "debug": false
+}

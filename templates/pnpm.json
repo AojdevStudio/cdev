@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "description": "Claude Code Hooks configuration for pnpm project: {{projectName}}",
+  "createdAt": "{{timestamp}}",
+  "projectType": "pnpm",
+  "hooks": {
+    "pre_tool_use": [
+      {
+        "command": "echo 'Tool use: {{projectName}}' >> .claude/logs/tool-usage.log",
+        "blocking": false
+      }
+    ],
+    "post_tool_use": [],
+    "pre_command": [
+      {
+        "command": "pnpm install --frozen-lockfile --prefer-offline",
+        "blocking": true,
+        "condition": "file_changed:pnpm-lock.yaml"
+      }
+    ],
+    "post_command": [],
+    "subagent_start": [],
+    "subagent_stop": []
+  },
+  "environment": {
+    "PROJECT_PATH": "{{projectPath}}",
+    "PROJECT_NAME": "{{projectName}}",
+    "PACKAGE_MANAGER": "pnpm",
+    "NPM_CONFIG_PACKAGE_LOCK": "false"
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 60000,
+      "aliases": {
+        "npm": "pnpm",
+        "yarn": "pnpm"
+      }
+    },
+    "read": {
+      "enabled": true
+    },
+    "write": {
+      "enabled": true
+    },
+    "edit": {
+      "enabled": true
+    },
+    "search": {
+      "enabled": true
+    }
+  },
+  "packageManager": {
+    "type": "pnpm",
+    "autoInstall": true,
+    "strictPeerDependencies": false
+  },
+  "disabled": false,
+  "debug": false
+}
