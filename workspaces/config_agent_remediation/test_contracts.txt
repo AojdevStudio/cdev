@@ -1,0 +1,3 @@
+src/config.test.js
+src/config-loader.test.js
+src/config-defaults.test.js

@@ -1,23 +1,12 @@
 [
   {
-    "session_id": "5feebd24-b407-4e6e-b1cd-7b04805d32c4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/5feebd24-b407-4e6e-b1cd-7b04805d32c4.jsonl",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/ossieirondi/Projects/dev-utils/paralell-development-claude/.gitignore",
-      "old_string": ".env\nlogs/# Cache files\n.cache/\n.DS_Store\n*.log\n<<<<<<< HEAD\nlogs/\n=======\n*.node_modules/\n>>>>>>> REMEDIATION-001-test_framework_agent",
-      "new_string": ".env\nlogs/# Cache files\n.cache/\n.DS_Store\n*.log\nlogs/\n*.node_modules/"
-    }
-  },
-  {
-    "session_id": "5feebd24-b407-4e6e-b1cd-7b04805d32c4",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/5feebd24-b407-4e6e-b1cd-7b04805d32c4.jsonl",
+    "session_id": "a806d921-2aab-43b2-9f61-48a7325b088e",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/a806d921-2aab-43b2-9f61-48a7325b088e.jsonl",
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "git add .",
-      "description": "Stage all resolved conflicts"
+      "command": "git add . &&\ngit commit --no-edit &&\necho \"\u2705 config_agent_remediation merged successfully!\"",
+      "description": "Complete merge commit"
     }
   }
 ]
