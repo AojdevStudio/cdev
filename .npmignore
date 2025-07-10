@@ -51,12 +51,21 @@ yarn-error.log*
 *.tmp
 *.temp
 
-# Environment and local config
+# Environment and local config - SECURITY CRITICAL
 .env
 .env.*
 .env.local
 .env.*.local
+!.env.example
 .claude/settings.local.json
+
+# API Keys and secrets - NEVER PUBLISH
+*secret*
+*key*
+*token*
+*api*key*
+!*key*.example
+!*secret*.example
 
 # Cache directories
 .linear-cache/
