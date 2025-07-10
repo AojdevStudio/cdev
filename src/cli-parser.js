@@ -54,6 +54,7 @@ Parallel Development CLI - Transform Linear issues into parallel agents
 Usage: npx cdev [command] [options]
 
 Commands:
+  install [directory]       Install cdev files to your project
   get <issue-id>            Cache a Linear issue locally
   split <issue-id>          Decompose issue into parallel agents
   run <plan-file>           Spawn all agents from deployment plan
@@ -68,6 +69,8 @@ Options:
   --force                  Force operation without confirmation
 
 Examples:
+  npx cdev install              # Install to current directory
+  npx cdev install ./myproject  # Install to specific directory
   npx cdev get PROJ-123
   npx cdev split PROJ-123
   npx cdev run shared/deployment-plans/proj-123.json

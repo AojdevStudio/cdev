@@ -2,6 +2,7 @@ const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { showHelp } = require('./cli-parser');
+const { InteractiveInstaller } = require('./interactive-installer');
 
 /**
  * Execute CLI commands for parallel development workflow
@@ -25,6 +26,9 @@ async function executeCommand(args) {
 
   // Handle commands
   switch (command) {
+    case 'install':
+      await installCommand(positional, options);
+      break;
     case 'get':
     case 'cache': // backward compatibility
       await cacheCommand(positional, options);
@@ -48,6 +52,13 @@ async function executeCommand(args) {
       showHelp();
       process.exit(1);
   }
+}
+
+async function installCommand(args, options) {
+  const targetDir = args[0] || '.';
+  
+  const installer = new InteractiveInstaller();
+  await installer.install(targetDir, options);
 }
 
 async function cacheCommand(args, options) {
@@ -163,6 +174,7 @@ async function commitCommand(args, options) {
 
 module.exports = {
   executeCommand,
+  installCommand,
   cacheCommand,
   decomposeCommand,
   spawnCommand,
