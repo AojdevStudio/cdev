@@ -1,50 +1,45 @@
-# Parallel Claude Development Workflow
+# Claude Code Hooks - Enhanced Development Workflow
 
-> **Transform any Linear issue into multiple isolated Claude agents working in parallel**
+> **Global NPX package for streamlined Claude Code development with intelligent hooks and automation**
 
-This workflow enables you to take a complex Linear issue, automatically break it down into smaller tasks, and have multiple Claude Code instances work on different parts simultaneously using Git worktrees.
+This package provides a comprehensive set of tools and hooks to enhance your Claude Code development workflow, including parallel agent management, automated Linear issue processing, and intelligent git worktree coordination.
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Cache a Linear issue
-./cache-linear-issue.sh PROJ-123
+# Install globally via NPX
+npx claude-code-hooks install
 
-# 2. Decompose into parallel agents  
-node decompose-parallel.cjs PROJ-123
+# Initialize hooks in your project
+npx claude-code-hooks init
 
-# 3. Spawn ALL agents from the JSON plan (NEW!)
-./spawn-agents.sh shared/deployment-plans/proj-123-deployment-plan.json
-# 🚀 Automatically opens Cursor in each agent's worktree!
+# Use enhanced Linear workflow
+npx claude-code-hooks linear PROJ-123
 
-# 4. In each auto-opened Cursor window:
-#    - Open terminal (Ctrl+` or Cmd+`)
-#    - Run: claude
-#    - Feed agent the context from workspaces/{agent_id}/agent_context.json
-
-# 5. Merge when complete
-git merge PROJ-123-agent1 PROJ-123-agent2 PROJ-123-agent3
+# Or use individual commands
+npx claude-code-hooks cache PROJ-123
+npx claude-code-hooks decompose PROJ-123
+npx claude-code-hooks spawn shared/deployment-plans/proj-123-deployment-plan.json
 ```
 
-**Key Enhancement**: The spawn-agents script now reads the JSON deployment plan and creates ALL agent worktrees automatically, with rich context files, file lists, and validation criteria for each agent.
+## 🎯 What This Package Does
 
-## 🎯 What This Workflow Does
+This NPX package provides a comprehensive development toolkit that:
 
-Instead of having one Claude agent work on a large feature sequentially, this workflow:
-
-1. **Fetches** a Linear issue and caches it locally for offline work
-2. **Analyzes** the issue description and breaks it into parallel workstreams
-3. **Creates** isolated Git worktrees where each Claude agent can work independently
-4. **Enables** multiple Claude instances to work simultaneously without conflicts
-5. **Provides** a simple Git-based integration process when work is complete
+1. **Installs** development hooks and automation tools globally
+2. **Initializes** project-specific configurations and templates
+3. **Manages** Linear issue processing with intelligent decomposition
+4. **Orchestrates** parallel agent workflows with isolated worktrees
+5. **Validates** development environments and dependencies
+6. **Distributes** via NPM for easy installation and updates
 
 ## 📋 Prerequisites
 
-- **Linear Account**: Access to Linear with an API key
-- **Git Repository**: A project using Git version control
+- **Node.js**: Version 16 or higher for NPX package management
+- **Git**: Version control system for worktree management
 - **Claude Code**: Anthropic's Claude Code tool installed
-- **Node.js**: For running the decomposition script
-- **Cursor**: Code editor (or any editor that can open directories)
+- **Linear Account**: Optional, for Linear integration features
+- **NPM Account**: Optional, for package publishing (developers only)
 
 ## 🗂️ Project Structure
 
