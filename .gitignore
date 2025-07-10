@@ -6,3 +6,4 @@ logs/# Cache files
 logs/
 *.node_modules/
 logs/
+logs/
