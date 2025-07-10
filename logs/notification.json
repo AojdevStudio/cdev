@@ -58,5 +58,17 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-installer-agent/6534d632-b1ce-434f-bbac-e8540bde6005.jsonl",
     "hook_event_name": "Notification",
     "message": "Claude is waiting for your input"
+  },
+  {
+    "session_id": "2e72f838-264a-40de-b481-6afeb4304419",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-REMEDIATION-001-test-framework-agent/2e72f838-264a-40de-b481-6afeb4304419.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
+  },
+  {
+    "session_id": "2e72f838-264a-40de-b481-6afeb4304419",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-REMEDIATION-001-test-framework-agent/2e72f838-264a-40de-b481-6afeb4304419.jsonl",
+    "hook_event_name": "Notification",
+    "message": "Claude is waiting for your input"
   }
 ]

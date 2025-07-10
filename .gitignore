@@ -3,3 +3,4 @@ logs/# Cache files
 .cache/
 .DS_Store
 *.log
+*.node_modules/
