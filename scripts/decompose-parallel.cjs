@@ -629,6 +629,7 @@ class ExclusiveOwnershipDecomposer {
     
     await fs.writeFile(filepath, JSON.stringify(plan, null, 2));
     console.log(`💾 Saved deployment plan: ${filepath}`);
+    console.log(`   Next: Run 'cdev run ${filepath}' to spawn agents`);
     
     return filepath;
   }
@@ -652,6 +653,10 @@ class ExclusiveOwnershipDecomposer {
     for (let i = 0; i < plan.integrationPlan.mergeOrder.length; i++) {
       console.log(`   ${i + 1}. ${plan.integrationPlan.mergeOrder[i]}`);
     }
+    
+    console.log('\n🚀 Next Steps:');
+    console.log(`   Run: cdev run shared/deployment-plans/${plan.taskId.toLowerCase()}-deployment-plan.json`);
+    console.log('   This will spawn parallel agents and open them in your editor');
   }
 
   // Helper methods
