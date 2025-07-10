@@ -1,0 +1,3 @@
+src/installer.test.js
+src/install-steps.test.js
+src/install-utils.test.js
