@@ -1,3 +1,0 @@
-api/client.test.ts
-integration/external-service.test.ts
-api/error-handling.test.ts

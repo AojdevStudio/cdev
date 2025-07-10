@@ -1,5 +1,0 @@
-operations/write-operations.test.ts
-operations/file-validation.test.ts
-integration/write-flow.test.ts
-infrastructure/docker.test.ts
-infrastructure/deployment.test.ts

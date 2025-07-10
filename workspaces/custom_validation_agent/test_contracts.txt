@@ -1,3 +1,0 @@
-components/forms.test.tsx
-validation/form-validation.test.ts
-integration/form-submission.test.ts
