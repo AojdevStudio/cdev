@@ -1,4 +1,4 @@
-const { describe, it, expect, beforeEach, afterEach, jest } = require('@jest/globals');
+const { describe, it, expect, beforeEach, afterEach } = require('@jest/globals');
 const fs = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
