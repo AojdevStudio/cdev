@@ -40,5 +40,11 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude/08b5990f-44bd-40ce-a581-aa5f5f4fcaeb.jsonl",
     "hook_event_name": "SubagentStop",
     "stop_hook_active": false
+  },
+  {
+    "session_id": "e120fab9-5404-4704-a8ad-6c21d7ad9100",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-101-hook-system-agent/e120fab9-5404-4704-a8ad-6c21d7ad9100.jsonl",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
   }
 ]

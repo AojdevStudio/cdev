@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.61% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>8/105</span>
+                <span class='fraction'>0/105</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.76% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/103</span>
+                <span class='fraction'>0/103</span>
             </div>
         
             
@@ -322,12 +322,12 @@
 <a name='L257'></a><a href='#L257'>257</a>
 <a name='L258'></a><a href='#L258'>258</a>
 <a name='L259'></a><a href='#L259'>259</a>
-<a name='L260'></a><a href='#L260'>260</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<a name='L260'></a><a href='#L260'>260</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -342,13 +342,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -581,12 +581,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span></td><td class="text"><pre class="prettyprint lang-js">import { promises as fs } from 'fs';
-import { dirname, extname, resolve } from 'path';
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { promises as fs } from 'fs';</span>
+<span class="cstat-no" title="statement not covered" >import { dirname, extname, resolve } from 'path';</span>
 import { FileValidationResult, WriteOperationOptions } from '../types/write-types';
 &nbsp;
-export class WriteValidator {
-  private static readonly DANGEROUS_PATTERNS = [
+<span class="cstat-no" title="statement not covered" >export class W</span>riteValidator {
+  private static readonly <span class="cstat-no" title="statement not covered" >DANGEROUS_PATTERNS = [</span>
     /eval\s*\(/,
     /Function\s*\(/,
     /import\s*\(\s*['"`][^'"`]*['"`]\s*\)/,
@@ -601,13 +601,13 @@ export class WriteValidator {
     /wget\s+.*\|\s*bash/,
   ];
 &nbsp;
-  private static readonly SAFE_EXTENSIONS = [
+  private static readonly <span class="cstat-no" title="statement not covered" >SAFE_EXTENSIONS = [</span>
     '.ts', '.tsx', '.js', '.jsx', '.json', '.md', '.txt', '.yml', '.yaml',
     '.css', '.scss', '.sass', '.less', '.html', '.svg', '.gitignore'
   ];
 &nbsp;
-  private static readonly MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
-  private static readonly MAX_LINE_LENGTH = 1000;
+  private static readonly <span class="cstat-no" title="statement not covered" >MAX_FILE_SIZE = 1024 * 1024 * 10; </span>// 10MB
+  private static readonly <span class="cstat-no" title="statement not covered" >MAX_LINE_LENGTH = 1000;</span>
 &nbsp;
 <span class="fstat-no" title="function not covered" >  async </span>validateWriteOperation(
     filePath: string,
@@ -840,14 +840,14 @@ export class WriteValidator {
   }
 }
 &nbsp;
-export const writeValidator = new WriteValidator();</pre></td></tr></table></pre>
+export const <span class="cstat-no" title="statement not covered" >writeValidator = new WriteValidator();</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-10T01:59:04.434Z
+                at 2025-07-10T04:25:48.860Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
