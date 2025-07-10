@@ -1,0 +1,37 @@
+# Python Command Usage
+
+This system uses `python3` and `uv` for Python development.
+
+## Command Usage
+- Use `python3` for executing Python scripts
+- Use `uv` for package management (NOT pip)
+- Python scripts with shebangs should use `#!/usr/bin/env python3`
+
+## Package Management with UV
+```bash
+# Correct - use uv for package management
+uv add package-name
+uv remove package-name
+uv sync
+uv run script.py
+uv pip install package-name
+
+# Incorrect - don't use pip directly
+python3 -m pip install package
+pip install package
+```
+
+## Script Execution Examples
+```bash
+# Correct
+python3 script.py
+uv run script.py
+
+# Incorrect
+python script.py
+```
+
+## Special Cases
+- Scripts in `.claude/hooks/` use `#!/usr/bin/env -S uv run --script` shebang for UV script execution
+- These can still be run directly: `python3 .claude/hooks/typescript-validator.py`
+- UV handles virtual environments automatically, no need for manual venv management
