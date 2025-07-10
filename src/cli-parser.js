@@ -51,12 +51,12 @@ function showHelp() {
   console.log(`
 Parallel Development CLI - Transform Linear issues into parallel agents
 
-Usage: npx parallel-development-claude [command] [options]
+Usage: npx cdev [command] [options]
 
 Commands:
-  cache <issue-id>          Cache a Linear issue locally
-  decompose <issue-id>      Decompose issue into parallel agents
-  spawn <plan-file>         Spawn all agents from deployment plan
+  get <issue-id>            Cache a Linear issue locally
+  split <issue-id>          Decompose issue into parallel agents
+  run <plan-file>           Spawn all agents from deployment plan
   status [filter]           Check status of all agent worktrees
   commit [workspace] [msg]  Commit and merge agent work
   help                      Show this help message
@@ -68,11 +68,11 @@ Options:
   --force                  Force operation without confirmation
 
 Examples:
-  npx parallel-development-claude cache PROJ-123
-  npx parallel-development-claude decompose PROJ-123
-  npx parallel-development-claude spawn shared/deployment-plans/proj-123.json
-  npx parallel-development-claude status ready
-  npx parallel-development-claude commit backend_agent "implement auth system"
+  npx cdev get PROJ-123
+  npx cdev split PROJ-123
+  npx cdev run shared/deployment-plans/proj-123.json
+  npx cdev status ready
+  npx cdev commit backend_agent "implement auth system"
 `);
 }
 

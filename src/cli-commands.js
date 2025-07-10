@@ -25,13 +25,16 @@ async function executeCommand(args) {
 
   // Handle commands
   switch (command) {
-    case 'cache':
+    case 'get':
+    case 'cache': // backward compatibility
       await cacheCommand(positional, options);
       break;
-    case 'decompose':
+    case 'split':
+    case 'decompose': // backward compatibility
       await decomposeCommand(positional, options);
       break;
-    case 'spawn':
+    case 'run':
+    case 'spawn': // backward compatibility
       await spawnCommand(positional, options);
       break;
     case 'status':
@@ -51,7 +54,7 @@ async function cacheCommand(args, options) {
   const issueId = args[0];
   if (!issueId) {
     console.error('Error: Issue ID is required');
-    console.log('Usage: cache <issue-id>');
+    console.log('Usage: get <issue-id>');
     process.exit(1);
   }
 
@@ -73,7 +76,7 @@ async function decomposeCommand(args, options) {
   const issueId = args[0];
   if (!issueId) {
     console.error('Error: Issue ID is required');
-    console.log('Usage: decompose <issue-id>');
+    console.log('Usage: split <issue-id>');
     process.exit(1);
   }
 
@@ -95,7 +98,7 @@ async function spawnCommand(args, options) {
   const planFile = args[0];
   if (!planFile) {
     console.error('Error: Deployment plan file is required');
-    console.log('Usage: spawn <plan-file>');
+    console.log('Usage: run <plan-file>');
     process.exit(1);
   }
 

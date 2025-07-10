@@ -1,10 +1,10 @@
 {
-  "name": "claude-code-hooks",
+  "name": "cdev",
   "version": "1.0.0",
-  "description": "Enhanced development workflow for Claude Code with intelligent hooks, Linear integration, and parallel agent management",
+  "description": "Claude Development - Parallel workflow system with intelligent hooks, Linear integration, and automated agent management",
   "main": "src/installer.js",
   "bin": {
-    "claude-code-hooks": "./bin/cli.js"
+    "cdev": "./bin/cli.js"
   },
   "scripts": {
     "test": "jest",
@@ -15,7 +15,9 @@
     "test:ci": "jest --coverage --watchAll=false",
     "lint": "eslint src scripts test --ext .js",
     "lint:fix": "eslint src scripts test --ext .js --fix",
-    "prepublishOnly": "npm run test:ci && npm run lint && chmod +x scripts/*.sh && chmod +x bin/cli.js",
+    "prepublishOnly": "npm run security:check && npm run test:ci && npm run lint && chmod +x scripts/*.sh && chmod +x bin/cli.js",
+    "security:check": "node scripts/security-check.js",
+    "security:audit": "npm audit --audit-level moderate",
     "postpublish": "node scripts/postpublish.js",
     "prepare": "node scripts/prepublish.js"
   },
@@ -31,19 +33,19 @@
     "npx",
     "workflow"
   ],
-  "author": "Claude Parallel Development Team",
+  "author": "AOJDevStudio <admin@kamdental.com>",
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/claude-parallel-dev.git"
+    "url": "git+https://github.com/AOJDevStudio/cdev.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/claude-parallel-dev/issues"
+    "url": "https://github.com/AOJDevStudio/cdev/issues"
   },
-  "homepage": "https://github.com/your-org/claude-parallel-dev#readme",
+  "homepage": "https://github.com/AOJDevStudio/cdev#readme",
   "files": [
     "bin/",
     "src/",

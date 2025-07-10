@@ -1,28 +1,28 @@
-# Claude Code Hooks
+# CDEV - Claude Development
 
-[![npm version](https://img.shields.io/npm/v/claude-code-hooks.svg)](https://www.npmjs.com/package/claude-code-hooks)
+[![npm version](https://img.shields.io/npm/v/cdev.svg)](https://www.npmjs.com/package/cdev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/node/v/claude-code-hooks.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/node/v/cdev.svg)](https://nodejs.org/)
 
-> **Enhanced development workflow for Claude Code with intelligent hooks, automated validations, and parallel development support**
+> **Parallel workflow system for Claude Code with intelligent hooks, automated validations, and multi-agent orchestration**
 
-Claude Code Hooks is a comprehensive NPM package that supercharges your Claude Code development experience. It provides intelligent pre/post hooks, automated code quality checks, TypeScript validation, API standards enforcement, and seamless integration with Linear for parallel agent workflows.
+CDEV (Claude Development) is a comprehensive NPM package that supercharges your Claude Code development experience. It provides parallel agent workflows, intelligent task decomposition, automated code quality checks, TypeScript validation, API standards enforcement, and seamless integration with Linear for issue management.
 
 ## 🚀 Quick Start
 
 ```bash
 # Install in your project (recommended)
-npx claude-code-hooks install
+npx cdev install
 
 # Or install globally
-npm install -g claude-code-hooks
+npm install -g cdev
 
 # Initialize in an existing project
 cd your-project
-claude-code-hooks init
+cdev init
 
 # Use the interactive installer
-claude-code-hooks install --interactive
+cdev install --interactive
 ```
 
 ## 🎯 Features
@@ -78,7 +78,7 @@ your-project/
 ### Interactive Installation (Recommended)
 
 ```bash
-npx claude-code-hooks install
+npx cdev install
 ```
 
 The interactive installer will:
@@ -92,26 +92,26 @@ The interactive installer will:
 
 ```bash
 # Install with defaults
-npx claude-code-hooks install --yes
+npx cdev install --yes
 
 # Install with specific package manager
-npx claude-code-hooks install --pm pnpm
+npx cdev install --pm pnpm
 
 # Install in a specific directory
-npx claude-code-hooks install /path/to/project
+npx cdev install /path/to/project
 ```
 
 ### Manual Installation
 
 ```bash
 # Clone specific hooks only
-npx claude-code-hooks install --hooks typescript,api-standards
+npx cdev install --hooks typescript,api-standards
 
 # Skip Linear integration
-npx claude-code-hooks install --no-linear
+npx cdev install --no-linear
 
 # Preserve existing configuration
-npx claude-code-hooks install --preserve
+npx cdev install --preserve
 ```
 
 ## 🎨 Configuration
@@ -173,25 +173,25 @@ export CLAUDE_DISABLE_TYPESCRIPT=true
 ### 1. Cache Linear Issue
 
 ```bash
-claude-code-hooks linear cache PROJ-123
+cdev get PROJ-123
 ```
 
 ### 2. Decompose into Parallel Tasks
 
 ```bash
-claude-code-hooks linear decompose PROJ-123
+cdev split PROJ-123
 ```
 
 ### 3. Spawn Parallel Agents
 
 ```bash
-claude-code-hooks linear spawn PROJ-123
+cdev run shared/deployment-plans/proj-123.json
 ```
 
 ### 4. Monitor Progress
 
 ```bash
-claude-code-hooks linear status PROJ-123
+cdev linear status PROJ-123
 ```
 
 ## 🤝 Framework Support
@@ -239,7 +239,7 @@ chmod +x scripts/*.sh
 **Hooks not triggering**
 ```bash
 # Verify Claude settings
-claude-code-hooks doctor
+cdev doctor
 ```
 
 ### Debug Mode
@@ -249,7 +249,7 @@ claude-code-hooks doctor
 export CLAUDE_DEBUG=true
 
 # Check hook execution
-claude-code-hooks test-hooks
+cdev test-hooks
 ```
 
 ## 📚 API Reference
@@ -257,18 +257,18 @@ claude-code-hooks test-hooks
 ### CLI Commands
 
 ```bash
-claude-code-hooks install [path] [options]
-claude-code-hooks init [options]
-claude-code-hooks linear <command> [id]
-claude-code-hooks doctor
-claude-code-hooks update
-claude-code-hooks uninstall
+cdev install [path] [options]
+cdev init [options]
+cdev linear <command> [id]
+cdev doctor
+cdev update
+cdev uninstall
 ```
 
 ### Programmatic Usage
 
 ```javascript
-const { Installer } = require('claude-code-hooks');
+const { Installer } = require('cdev');
 
 const installer = new Installer({
   projectPath: './my-project',
@@ -285,7 +285,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Clone the repository
-git clone https://github.com/anthropics/claude-code-hooks.git
+git clone https://github.com/AOJDevStudio/cdev.git
 
 # Install dependencies
 npm install
@@ -302,8 +302,8 @@ MIT © Anthropic
 
 ## 🔗 Links
 
-- [Documentation](https://docs.anthropic.com/claude-code-hooks)
-- [NPM Package](https://www.npmjs.com/package/claude-code-hooks)
-- [GitHub Repository](https://github.com/anthropics/claude-code-hooks)
-- [Issue Tracker](https://github.com/anthropics/claude-code-hooks/issues)
-- [Discord Community](https://discord.gg/claude-code)
+- [NPM Package](https://www.npmjs.com/package/cdev)
+- [GitHub Repository](https://github.com/AOJDevStudio/cdev)
+- [Issue Tracker](https://github.com/AOJDevStudio/cdev/issues)
+- [Author](https://github.com/AOJDevStudio)
+- Discord Community (Coming Soon)
