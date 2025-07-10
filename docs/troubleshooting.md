@@ -472,20 +472,19 @@ claude-code-hooks test-git
    ```
 
 2. **Check existing issues:**
-   - [GitHub Issues](https://github.com/anthropics/claude-code-hooks/issues)
-   - [Discord FAQ](https://discord.gg/claude-code)
+   - [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues)
+   - Discord FAQ (Coming Soon)
 
 3. **Collect diagnostic info:**
    ```bash
-   claude-code-hooks debug-info > debug.log
+   cdev debug-info > debug.log
    ```
 
 ### Where to Get Help
 
-1. **Discord Community:**
-   - Real-time support
-   - Community solutions
-   - [Join Discord](https://discord.gg/claude-code)
+1. **Discord Community:** (Coming Soon)
+   - Real-time support from maintainers and community
+   - Share experiences and best practices
 
 2. **GitHub Issues:**
    - Bug reports

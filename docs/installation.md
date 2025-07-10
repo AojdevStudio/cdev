@@ -440,4 +440,4 @@ After installation:
 1. Read the [Usage Guide](usage.md) to learn about available features
 2. Check [API Reference](api-reference.md) for programmatic usage
 3. See [Troubleshooting](troubleshooting.md) for common issues
-4. Join our [Discord Community](https://discord.gg/claude-code) for support
+4. Join our Discord Community (Coming Soon) for support

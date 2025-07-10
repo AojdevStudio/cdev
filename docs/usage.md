@@ -427,5 +427,5 @@ if __name__ == "__main__":
 
 - Check [Troubleshooting Guide](troubleshooting.md)
 - View [API Reference](api-reference.md)
-- Join [Discord Community](https://discord.gg/claude-code)
-- Report issues on [GitHub](https://github.com/anthropics/claude-code-hooks/issues)
+- Join Discord Community (Coming Soon)
+- Report issues on [GitHub](https://github.com/AOJDevStudio/cdev/issues)
