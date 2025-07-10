@@ -1,9 +1,8 @@
 # CDEV - Claude Development: AI-Powered Parallel Development Workflows
 
-**Version**: 1.0.0  
-**License**: MIT  
-**Requirements**: Node.js >=16.0.0, Git >=2.0.0, Python >=3.7, Claude Code  
-**Community**: [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues) | [NPM Package](https://www.npmjs.com/package/cdev)
+[![npm version](https://img.shields.io/npm/v/cdev.svg)](https://www.npmjs.com/package/cdev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/cdev.svg)](https://nodejs.org/)
 
 ---
 
