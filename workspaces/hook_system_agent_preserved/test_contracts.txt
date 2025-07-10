@@ -1,0 +1,4 @@
+test/hook-manager.test.js
+test/hook-categorizer.test.js
+test/hook-selector.test.js
+test/hook-organizer.test.js
