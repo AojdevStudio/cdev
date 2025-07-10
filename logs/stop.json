@@ -120,8 +120,8 @@
     "stop_hook_active": false
   },
   {
-    "session_id": "fdeaa4bd-15bf-48b4-ad3d-2f0c714cf713",
-    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-distribution-agent/fdeaa4bd-15bf-48b4-ad3d-2f0c714cf713.jsonl",
+    "session_id": "7970692e-225a-48ea-bb01-2a43591eb098",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-AOJ-100-validator-agent/7970692e-225a-48ea-bb01-2a43591eb098.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
   }

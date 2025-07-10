@@ -1,0 +1,3 @@
+CREATE: src/validator.js
+CREATE: src/validation-rules.js
+CREATE: src/validation-errors.js
