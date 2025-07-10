@@ -1,9 +1,25 @@
 {
-  "validation_passed": true,
-  "validated_at": "2025-07-10T02:00:07Z",
-  "agent_id": "test_framework_agent",
-  "validation_criteria": 5,
-  "total_criteria": 5,
-  "validation_percentage": 100,
-  "validator": "create-coordination-files"
+  "agentId": "integration_agent",
+  "taskId": "AOJ-101",
+  "branchName": "AOJ-101-integration_agent",
+  "validationStatus": {
+    "completed": 0,
+    "total": 0,
+    "percentage": 0
+  },
+  "validationCriteria": [
+    "All unit tests pass with >90% coverage",
+    "Integration tests verify complete installation flow",
+    "Documentation is comprehensive and user-friendly",
+    "Package.json has correct dependencies and scripts",
+    "NPM package builds and publishes correctly",
+    "GitHub Actions workflows execute successfully",
+    "Package size remains under 10MB"
+  ],
+  "testContracts": [
+    "All tests must pass",
+    "Test coverage must exceed 90%",
+    "Integration tests must cover all project types"
+  ],
+  "lastUpdated": "2025-07-10T04:35:16.3NZ"
 }
