@@ -1,11 +1,19 @@
 {
-  "name": "parallel-development-claude",
+  "name": "claude-parallel-dev",
   "version": "1.0.0",
   "description": "Transform Linear issues into parallel agents working simultaneously using Git worktrees and Claude Code",
   "main": "scripts/decompose-parallel.cjs",
+  "bin": {
+    "claude-parallel": "./scripts/decompose-parallel.cjs",
+    "parallel-cache": "./scripts/cache-linear-issue.sh",
+    "parallel-spawn": "./scripts/spawn-agents.sh"
+  },
   "scripts": {
     "decompose": "node scripts/decompose-parallel.cjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cache": "bash scripts/cache-linear-issue.sh",
+    "spawn": "bash scripts/spawn-agents.sh",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "chmod +x scripts/*.sh && chmod +x scripts/*.cjs"
   },
   "keywords": [
     "claude",
@@ -14,11 +22,38 @@
     "git",
     "worktree",
     "linear",
-    "automation"
+    "automation",
+    "cli",
+    "npx",
+    "workflow"
   ],
-  "author": "",
+  "author": "Claude Parallel Development Team",
   "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/claude-parallel-dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/claude-parallel-dev/issues"
+  },
+  "homepage": "https://github.com/your-org/claude-parallel-dev#readme",
+  "files": [
+    "scripts/",
+    "shared/",
+    "ai_docs/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "dotenv": "^16.6.1"
+  },
+  "devDependencies": {},
+  "preferGlobal": true,
+  "publishConfig": {
+    "access": "public"
   }
 }
