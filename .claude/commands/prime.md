@@ -19,6 +19,7 @@ This command loads essential context for a new agent session by examining the co
 - Codebase structure git accessible: !`git ls-files`
 - Codebase structure all: !`eza . --tree`
 - Project README: @README.md
+- Project Changelog: @CHANGELOG.md
 - Documentation: 
   - @ai_docs/astral-uv-scripting-documentation.md
   - @ai_docs/claude-code-hooks-documentation.md
