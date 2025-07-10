@@ -15,6 +15,8 @@ VERIFY workspace exists and is valid:
 - VERIFY it's a git worktree: `git -C "$WORKSPACE_PATH" rev-parse --is-inside-work-tree`
 - EXTRACT current branch: `AGENT_BRANCH=$(git -C "$WORKSPACE_PATH" rev-parse --abbrev-ref HEAD)`
 - EXIT with error if not a valid git worktree
+- use git -C to check status without changing the current working directory
+- VERIFY you are in the main branch and directory, if not, exit with error and inform the user to run this command from the main project directory and not a worktree. 
 
 **VALIDATE COMPLETION**
 
