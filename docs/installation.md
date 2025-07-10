@@ -42,184 +42,162 @@ Before installing Claude Code Hooks, ensure you have:
 The fastest way to get started:
 
 ```bash
-# Install in current directory
-npx claude-code-hooks install
+# Install globally (recommended)
+npm install -g cdev
 
-# Install globally
-npm install -g claude-code-hooks
-
-# Install with all defaults (no prompts)
-npx claude-code-hooks install --yes
+# Or use directly with npx
+npx cdev get PROJ-123
 ```
 
-## Interactive Installation
+## Setting Up Your Project
 
-The interactive installer guides you through setup:
+After installing CDEV globally, you need to set up the hooks and scripts in your project:
 
-```bash
-npx claude-code-hooks install --interactive
-```
-
-You'll be prompted for:
-
-1. **Project Detection**
-   - Automatically detects Next.js, React, Node.js, Python projects
-   - Suggests appropriate hooks and configurations
-
-2. **Package Manager Selection**
-   ```
-   ? Which package manager do you use?
-   ❯ npm
-     pnpm
-     yarn
-     bun
+1. **Clone the hooks and scripts**
+   ```bash
+   # Navigate to your project
+   cd your-project
+   
+   # Get the necessary files from the CDEV repository
+   git clone https://github.com/AOJDevStudio/cdev.git temp-cdev
+   cp -r temp-cdev/.claude .
+   cp -r temp-cdev/scripts .
+   rm -rf temp-cdev
    ```
 
-3. **Hook Selection**
-   ```
-   ? Which hooks would you like to install? (Press <space> to select)
-   ❯◉ TypeScript Validator
-    ◉ API Standards Checker
-    ◉ Code Quality Reporter
-    ◯ Import Organizer
-    ◯ Commit Message Validator
+2. **Set up environment variables**
+   ```bash
+   # Create .env file
+   echo "LINEAR_API_KEY=lin_api_xxxxx" >> .env
+   echo "LLM_MODEL=mistralai/mistral-large-2411" >> .env
    ```
 
-4. **Linear Integration**
-   ```
-   ? Would you like to set up Linear integration? (Y/n)
-   ? Enter your Linear API key: lin_api_xxxxx
-   ```
-
-5. **Framework-Specific Features**
-   ```
-   ? Install Next.js specific commands? (Y/n)
-   ? Configure for App Router? (Y/n)
+3. **Make scripts executable**
+   ```bash
+   chmod +x scripts/*.sh
    ```
 
-## Manual Installation
+## Manual Setup
 
-For fine-grained control over the installation:
+For complete control over the setup process:
 
 ### Basic Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/anthropics/claude-code-hooks.git
-cd claude-code-hooks
+git clone https://github.com/AOJDevStudio/cdev.git
+cd cdev
 
-# Install dependencies
-npm install
+# Install as global package
+npm install -g .
 
-# Copy files to your project
+# Copy necessary files to your project
 cp -r .claude /path/to/your-project/
 cp -r scripts /path/to/your-project/
 ```
 
-### Custom Hook Selection
+### Selective Hook Installation
 
-Install only specific hooks:
-
-```bash
-# Install TypeScript and API validation only
-npx claude-code-hooks install --hooks typescript-validator,api-standards-checker
-
-# Install all hooks except commit validation
-npx claude-code-hooks install --skip-hooks commit-message-validator
-```
-
-### Configuration Options
+To use only specific hooks, copy them individually:
 
 ```bash
-# Preserve existing .claude directory
-npx claude-code-hooks install --preserve
-
-# Force overwrite existing files
-npx claude-code-hooks install --force
-
-# Specify package manager
-npx claude-code-hooks install --pm pnpm
-
-# Custom Python path
-npx claude-code-hooks install --python /usr/local/bin/python3.11
+# Copy only the hooks you need
+cp .claude/hooks/pre_tool_use.py /path/to/your-project/.claude/hooks/
+cp .claude/hooks/typescript-validator.py /path/to/your-project/.claude/hooks/
 ```
 
-## Project-Specific Setup
+### Custom Configuration
+
+Edit `.claude/settings.json` to customize behavior:
+
+```json
+{
+  "hooks": {
+    "pre_tool_use": "python3 .claude/hooks/pre_tool_use.py",
+    "post_tool_use": "python3 .claude/hooks/post_tool_use.py"
+  },
+  "validation": {
+    "typescript": true,
+    "eslint": true
+  }
+}
+```
+
+## Framework-Specific Configurations
 
 ### Next.js Projects
 
-```bash
-npx claude-code-hooks install --preset nextjs
-```
+For Next.js projects, ensure your `.claude/settings.json` includes:
 
-This installs:
-- TypeScript validation with Next.js types
-- App Router specific commands
-- API route validation
-- Server Component checks
+```json
+{
+  "projectType": "nextjs",
+  "validation": {
+    "typescript": true,
+    "appRouter": true,
+    "serverComponents": true
+  }
+}
+```
 
 ### React Projects
 
-```bash
-npx claude-code-hooks install --preset react
-```
+For React applications:
 
-Includes:
-- Component validation
-- Hook rules enforcement
-- JSX formatting
-- Testing utilities
+```json
+{
+  "projectType": "react",
+  "validation": {
+    "typescript": true,
+    "hooks": true,
+    "jsx": true
+  }
+}
+```
 
 ### Node.js Backend
 
-```bash
-npx claude-code-hooks install --preset node
-```
+For Node.js services:
 
-Features:
-- API endpoint validation
-- Express/Fastify detection
-- Environment variable checks
-- Database migration hooks
+```json
+{
+  "projectType": "node",
+  "validation": {
+    "typescript": true,
+    "apiPatterns": true
+  }
+}
+```
 
 ### Python Projects
 
-```bash
-npx claude-code-hooks install --preset python
+For Python applications:
+
+```json
+{
+  "projectType": "python",
+  "pythonCommand": "python3",
+  "validation": {
+    "typeHints": true,
+    "pep8": true
+  }
+}
 ```
-
-Provides:
-- Type hint validation
-- PEP 8 enforcement
-- Virtual environment detection
-- Flask/Django specific hooks
-
-### Monorepo Setup
-
-```bash
-npx claude-code-hooks install --preset monorepo
-```
-
-Configures:
-- Workspace detection
-- pnpm/yarn workspace support
-- Cross-package validation
-- Turbo integration
 
 ## Post-Installation Steps
 
 ### 1. Verify Installation
 
 ```bash
-# Check installed files
+# Check that cdev is installed
+cdev --version
+
+# Check installed files in your project
 ls -la .claude/
 ls -la scripts/
 
-# Test hook execution
-claude-code-hooks test-hooks
-
-# Run diagnostics
-claude-code-hooks doctor
+# Test a simple command
+cdev help
 ```
 
 ### 2. Configure Environment
@@ -265,27 +243,14 @@ For VS Code:
 
 ```bash
 # Update global installation
-npm update -g claude-code-hooks
+npm update -g cdev
 
-# Update in project
-npx claude-code-hooks update
-```
-
-### Update Specific Components
-
-```bash
-# Update hooks only
-npx claude-code-hooks update --hooks
-
-# Update scripts only
-npx claude-code-hooks update --scripts
-```
-
-### Check for Updates
-
-```bash
-# Check if updates are available
-npx claude-code-hooks check-updates
+# Update project files manually
+cd your-project
+git clone https://github.com/AOJDevStudio/cdev.git temp-cdev
+cp -r temp-cdev/.claude .
+cp -r temp-cdev/scripts .
+rm -rf temp-cdev
 ```
 
 ## Uninstalling
@@ -293,21 +258,13 @@ npx claude-code-hooks check-updates
 ### Complete Removal
 
 ```bash
-# Uninstall from project
-npx claude-code-hooks uninstall
-
 # Remove global installation
-npm uninstall -g claude-code-hooks
-```
+npm uninstall -g cdev
 
-### Selective Removal
-
-```bash
-# Remove hooks but keep scripts
-npx claude-code-hooks uninstall --keep-scripts
-
-# Remove Linear integration only
-npx claude-code-hooks uninstall --linear-only
+# Remove from project
+rm -rf .claude/
+rm -rf scripts/
+rm -rf .linear-cache/
 ```
 
 ### Manual Cleanup
@@ -330,12 +287,12 @@ npm pkg delete scripts.claude:spawn
 
 **Permission Denied**
 ```bash
-# Use sudo for global install (not recommended)
-sudo npm install -g claude-code-hooks
-
 # Better: use a Node version manager
 nvm use 18
-npm install -g claude-code-hooks
+npm install -g cdev
+
+# Or use npx directly without installing
+npx cdev get PROJ-123
 ```
 
 **Python Not Found**
@@ -382,18 +339,16 @@ tail -f logs/claude-hooks.log
 
 ### Package Manager Conflicts
 
-**Wrong Package Manager Detected**
-```bash
-# Force specific package manager
-npx claude-code-hooks install --pm npm --force
-```
-
 **Lock File Conflicts**
 ```bash
-# Remove conflicting lock files
-rm package-lock.json yarn.lock pnpm-lock.yaml
-# Then reinstall
-npx claude-code-hooks install
+# When using the scripts, ensure you use the right package manager
+# Check which lockfile exists
+ls *.lock* *-lock.*
+
+# Use the appropriate command
+npm install    # if package-lock.json exists
+pnpm install   # if pnpm-lock.yaml exists
+yarn install   # if yarn.lock exists
 ```
 
 ## Advanced Configuration
@@ -427,10 +382,11 @@ export CLAUDE_ENV=development
 
 ```yaml
 # GitHub Actions
-- name: Install Claude Code Hooks
+- name: Install CDEV
   run: |
-    npx claude-code-hooks install --yes --ci
-    npx claude-code-hooks test-hooks
+    npm install -g cdev
+    # Copy hooks and scripts from your repository
+    # (assumes they're already committed to your repo)
 ```
 
 ## Next Steps

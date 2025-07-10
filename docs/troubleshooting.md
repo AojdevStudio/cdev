@@ -18,7 +18,7 @@ This guide helps you resolve common issues with Claude Code Hooks.
 
 **Problem:**
 ```bash
-$ npx claude-code-hooks install
+$ npx cdev get PROJ-123
 command not found: npx
 ```
 
@@ -31,9 +31,9 @@ npm --version   # Should be 5.2+
 # If npx is missing, install it
 npm install -g npx
 
-# Or use npm directly
-npm install -g claude-code-hooks
-claude-code-hooks install
+# Or install cdev globally
+npm install -g cdev
+cdev get PROJ-123
 ```
 
 ### Permission Denied During Installation
@@ -46,7 +46,7 @@ Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'
 **Solution:**
 ```bash
 # Option 1: Use npx (recommended)
-npx claude-code-hooks install
+npx cdev get PROJ-123
 
 # Option 2: Change npm prefix
 mkdir ~/.npm-global
@@ -398,7 +398,7 @@ ls -la .claude/
 ls -la scripts/
 
 # Reinstall if files are missing
-npx claude-code-hooks install --force
+git clone https://github.com/AOJDevStudio/cdev.git temp-cdev && cp -r temp-cdev/.claude . && cp -r temp-cdev/scripts . && rm -rf temp-cdev
 ```
 
 **"Invalid hook response"**
@@ -427,20 +427,24 @@ git worktree remove --force ../project-work-trees/branch-name
 ### System Check
 
 ```bash
-# Run full diagnostics
-claude-code-hooks doctor
+# Check cdev is working
+cdev help
 
-# Check specific components
-claude-code-hooks doctor --hooks
-claude-code-hooks doctor --scripts
-claude-code-hooks doctor --git
+# Check version
+cdev --version
+
+# Test with a simple command
+cdev status
 ```
 
 ### Debug Information
 
 ```bash
-# Collect debug info for support
-claude-code-hooks debug-info > debug.log
+# Check environment and collect info
+echo "CDEV Version: $(cdev --version)" > debug.log
+echo "Node Version: $(node --version)" >> debug.log
+echo "NPM Version: $(npm --version)" >> debug.log
+echo "Linear API Key Set: ${LINEAR_API_KEY:+Yes}" >> debug.log
 
 # What's included:
 # - System information
@@ -452,14 +456,14 @@ claude-code-hooks debug-info > debug.log
 ### Test Individual Components
 
 ```bash
-# Test hooks
-claude-code-hooks test-hooks
-
 # Test Linear integration
-claude-code-hooks test-linear
+cdev get PROJ-123  # Replace with a real issue ID
 
-# Test Git operations
-claude-code-hooks test-git
+# Test decomposition
+cdev split PROJ-123
+
+# Check worktree status
+cdev status
 ```
 
 ## Getting Help
@@ -468,7 +472,7 @@ claude-code-hooks test-git
 
 1. **Update to latest version:**
    ```bash
-   npm update -g claude-code-hooks
+   npm update -g cdev
    ```
 
 2. **Check existing issues:**
@@ -489,7 +493,7 @@ claude-code-hooks test-git
 2. **GitHub Issues:**
    - Bug reports
    - Feature requests
-   - [Create Issue](https://github.com/anthropics/claude-code-hooks/issues/new)
+   - [Create Issue](https://github.com/AOJDevStudio/cdev/issues/new)
 
 3. **Documentation:**
    - [Installation Guide](installation.md)
