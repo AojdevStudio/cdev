@@ -1,0 +1,8 @@
+# Validation Checklist for hook_system_agent
+
+[x] Hook manager correctly categorizes hooks into tier1/tier2/tier3
+[x] Hook selection logic works based on project type and user preferences
+[x] Existing hooks are restructured into new tier-based organization
+[x] Hook organizer maintains references to Python hook files
+[x] Tier categorization follows security and importance levels
+[x] Utils directory contains shared hook utilities

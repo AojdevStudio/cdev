@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import List, Dict, Optional
 from dataclasses import dataclass, asdict
 import argparse
+import urllib.parse
 
 
 @dataclass
@@ -202,7 +203,7 @@ class ApiStandardsChecker:
         
         # Check for SQL injection prevention
         if 'prisma' in content and '$queryRaw' in content:
-            if 'Prisma.sql' not in content and '$queryRawUnsafe' not in content:
+            if 'Prisma.sql' not in content:
                 self.suggestions.append(Violation(
                     rule='SQL Safety',
                     message='Ensure raw queries are parameterized to prevent SQL injection',
@@ -260,6 +261,127 @@ def check_directory(directory: str) -> List[Violation]:
     return all_violations
 
 
+def is_safe_path(file_path: str, base_dir: Optional[str] = None) -> bool:
+    """
+    Robust path traversal security check that handles various attack vectors.
+    
+    This function provides comprehensive protection against path traversal attacks by:
+    1. Checking for encoded dangerous patterns before URL decoding
+    2. Detecting Unicode normalization attacks (e.g., %c0%af for /)
+    3. Handling multiple layers of URL encoding
+    4. Normalizing paths to resolve relative segments
+    5. Ensuring normalized paths stay within allowed boundaries
+    6. Cross-platform compatibility (Windows/Unix)
+    
+    Attack vectors detected:
+    - Standard traversal: ../../../etc/passwd
+    - URL encoded: ..%2f..%2f..%2fetc%2fpasswd
+    - Double encoded: %2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
+    - Unicode overlong: ..%c0%af..%c0%af
+    - Null byte injection: ../../../etc/passwd%00.txt
+    - Mixed patterns: %2e%2e/../../etc/passwd
+    - Windows traversal: ..\\..\\..\\windows\\system32
+    
+    Args:
+        file_path: The file path to validate
+        base_dir: Optional base directory to restrict access to (defaults to current working directory)
+    
+    Returns:
+        True if the path is safe, False if it's potentially malicious
+    """
+    if not file_path:
+        return True
+    
+    try:
+        # Set base directory (default to current working directory)
+        if base_dir is None:
+            base_dir = os.getcwd()
+        base_dir = os.path.abspath(base_dir)
+        
+        # First check for dangerous patterns in the original (encoded) path
+        original_lower = file_path.lower()
+        
+        # Check for encoded dangerous patterns before decoding
+        encoded_dangerous_patterns = [
+            '%2e%2e%2f',  # Double URL encoded ../
+            '%2e%2e%5c',  # Double URL encoded ..\
+            '%2e%2e/',    # Mixed encoded ../
+            '%2e%2e\\',   # Mixed encoded ..\
+            '..%2f',      # URL encoded forward slash
+            '..%2F',      # URL encoded forward slash (uppercase)
+            '..%5c',      # URL encoded backslash
+            '..%5C',      # URL encoded backslash (uppercase)
+            '%00',        # Null byte injection
+            '%c0%af',     # Unicode overlong encoding for /
+            '%c1%9c',     # Unicode overlong encoding for \
+            '%c0%ae',     # Unicode overlong encoding for .
+        ]
+        
+        for pattern in encoded_dangerous_patterns:
+            if pattern in original_lower:
+                return False
+        
+        # Check for Unicode normalization attacks with regex
+        import re
+        unicode_patterns = [
+            r'%c[0-1]%[a-f0-9][a-f0-9]',  # Unicode overlong encoding patterns like %c0%af
+        ]
+        
+        for pattern in unicode_patterns:
+            if re.search(pattern, original_lower):
+                return False
+        
+        # URL decode the path to handle encoded characters like %2e%2e%2f (../)
+        decoded_path = urllib.parse.unquote(file_path)
+        
+        # Handle multiple URL encoding layers
+        prev_decoded = decoded_path
+        for _ in range(3):  # Limit iterations to prevent infinite loops
+            decoded_path = urllib.parse.unquote(decoded_path)
+            if decoded_path == prev_decoded:
+                break
+            prev_decoded = decoded_path
+        
+        # Check for obvious traversal patterns in the decoded path
+        dangerous_patterns = [
+            '../',      # Standard traversal
+            '..\\',     # Windows traversal
+            '....///',  # Multiple dots and slashes
+            '....\\\\\\', # Multiple dots and backslashes
+        ]
+        
+        decoded_lower = decoded_path.lower()
+        for pattern in dangerous_patterns:
+            if pattern in decoded_lower:
+                return False
+        
+        # Normalize the path to resolve any relative segments
+        if os.path.isabs(decoded_path):
+            # Absolute path - check if it's within allowed boundaries
+            normalized_path = os.path.abspath(decoded_path)
+        else:
+            # Relative path - resolve against base directory
+            normalized_path = os.path.abspath(os.path.join(base_dir, decoded_path))
+        
+        # Ensure the normalized path is within the base directory
+        common_path = os.path.commonpath([normalized_path, base_dir])
+        if common_path != base_dir:
+            return False
+        
+        # Additional check for Windows drive letter changes
+        if os.name == 'nt':
+            base_drive = os.path.splitdrive(base_dir)[0].lower()
+            normalized_drive = os.path.splitdrive(normalized_path)[0].lower()
+            if base_drive != normalized_drive:
+                return False
+        
+        return True
+        
+    except (ValueError, OSError) as e:
+        # If path operations fail, consider it unsafe
+        return False
+
+
 def hook_mode() -> Dict:
     """Claude Code hook compatibility mode"""
     try:
@@ -271,11 +393,11 @@ def hook_mode() -> Dict:
         file_path = tool_input.get('file_path', '')
         content = output.get('content') or tool_input.get('content', '')
         
-        # Security check
-        if file_path and ('../' in file_path or file_path.startswith('/')):
+        # Enhanced security check for path traversal
+        if file_path and not is_safe_path(file_path):
             return {
-                'approve': True,
-                'message': 'Potentially unsafe file path detected'
+                'approve': False,
+                'message': '🚨 Security Alert: Potentially unsafe file path detected. Path traversal attempt blocked.'
             }
         
         if not content:

@@ -11,12 +11,76 @@ import os
 import subprocess
 import hashlib
 import re
+import threading
+import logging
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
+from collections import OrderedDict
 
-# Validation cache to prevent redundant work
-validation_cache = {}
+# Configure logging for cache operations
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
+
+# Thread-safe LRU cache with size limit
+class ThreadSafeLRUCache:
+    def __init__(self, max_size: int = 100, ttl: timedelta = timedelta(minutes=5)):
+        self.max_size = max_size
+        self.ttl = ttl
+        self._cache: OrderedDict = OrderedDict()
+        self._lock = threading.RLock()
+    
+    def get(self, key: str) -> Optional[Dict[str, Any]]:
+        """Get cached value if exists and not expired"""
+        with self._lock:
+            if key not in self._cache:
+                return None
+            
+            entry = self._cache[key]
+            if datetime.now() - entry['timestamp'] >= self.ttl:
+                # Remove expired entry
+                del self._cache[key]
+                return None
+            
+            # Move to end (most recently used)
+            self._cache.move_to_end(key)
+            return entry['result']
+    
+    def set(self, key: str, value: Dict[str, Any]) -> None:
+        """Set cached value with automatic cleanup"""
+        with self._lock:
+            # Remove oldest entries if at capacity
+            while len(self._cache) >= self.max_size:
+                self._cache.popitem(last=False)
+            
+            self._cache[key] = {
+                'result': value,
+                'timestamp': datetime.now()
+            }
+            # Move to end
+            self._cache.move_to_end(key)
+    
+    def clear_expired(self) -> int:
+        """Clear expired entries and return count removed"""
+        with self._lock:
+            current_time = datetime.now()
+            expired_keys = [
+                key for key, entry in self._cache.items()
+                if current_time - entry['timestamp'] >= self.ttl
+            ]
+            
+            for key in expired_keys:
+                del self._cache[key]
+            
+            return len(expired_keys)
+    
+    def size(self) -> int:
+        """Get current cache size"""
+        with self._lock:
+            return len(self._cache)
+
+# Global cache instance
+validation_cache = ThreadSafeLRUCache(max_size=100, ttl=timedelta(minutes=5))
 CACHE_TTL = timedelta(minutes=5)
 
 # Configuration
@@ -28,11 +92,11 @@ ZERO_TOLERANCE = os.environ.get('CLAUDE_HOOKS_ZERO_TOLERANCE', 'true').lower() !
 class TypeScriptValidator:
     def __init__(self, hook_input: Dict[str, Any]):
         self.hook_input = hook_input
-        self.errors = []
-        self.warnings = []
-        self.violations = []
-        self.blockers = []
-        self.results = {
+        self.errors: List[str] = []
+        self.warnings: List[str] = []
+        self.violations: List[Dict[str, Any]] = []
+        self.blockers: List[str] = []
+        self.results: Dict[str, Any] = {
             'biome': None,
             'typecheck': None,
             'codeStandards': None
@@ -62,9 +126,9 @@ class TypeScriptValidator:
             print(f"TypeScript validation mode: {validation_mode['type']} ({validation_mode['reason']})", file=sys.stderr)
 
         # Run validation steps
-        await self.validate_biome(file_path, validation_mode)
-        await self.validate_typecheck(validation_mode)
-        await self.validate_coding_standards(tool_input, file_path)
+        self.validate_biome(file_path, validation_mode)
+        self.validate_typecheck(validation_mode)
+        self.validate_coding_standards(tool_input, file_path)
 
         # Determine final result
         final_result = self.get_final_result()
@@ -98,15 +162,26 @@ class TypeScriptValidator:
                 content = f.read()
             
             mtime = Path(file_path).stat().st_mtime
-            cache_key = hashlib.md5(f"{content}{mtime}".encode()).hexdigest()
+            # Use SHA-256 for better performance and security
+            cache_key = hashlib.sha256(f"{content}{mtime}".encode()).hexdigest()
             
-            cached = validation_cache.get(f"{file_path}:{cache_key}")
-            if cached and datetime.now() - cached['timestamp'] < CACHE_TTL:
-                return cached['result']
-        except Exception:
-            pass
-        
-        return None
+            return validation_cache.get(f"{file_path}:{cache_key}")
+            
+        except FileNotFoundError:
+            logger.warning(f"File not found for cache lookup: {file_path}")
+            return None
+        except PermissionError:
+            logger.warning(f"Permission denied reading file for cache: {file_path}")
+            return None
+        except UnicodeDecodeError:
+            logger.warning(f"Unicode decode error reading file for cache: {file_path}")
+            return None
+        except OSError as e:
+            logger.warning(f"OS error reading file for cache {file_path}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error in cache lookup for {file_path}: {e}")
+            return None
 
     def cache_result(self, file_path: str, result: Dict[str, Any]):
         """Cache validation result"""
@@ -118,16 +193,29 @@ class TypeScriptValidator:
                 content = f.read()
             
             mtime = Path(file_path).stat().st_mtime
-            cache_key = hashlib.md5(f"{content}{mtime}".encode()).hexdigest()
+            # Use SHA-256 for better performance and security
+            cache_key = hashlib.sha256(f"{content}{mtime}".encode()).hexdigest()
             
-            validation_cache[f"{file_path}:{cache_key}"] = {
-                'result': result,
-                'timestamp': datetime.now()
-            }
-        except Exception:
-            pass
+            validation_cache.set(f"{file_path}:{cache_key}", result)
+            
+            # Periodically clean up expired entries
+            if validation_cache.size() > 80:  # Clean when 80% full
+                expired_count = validation_cache.clear_expired()
+                if expired_count > 0 and DEBUG_MODE:
+                    logger.info(f"Cleaned {expired_count} expired cache entries")
+                    
+        except FileNotFoundError:
+            logger.warning(f"File not found for caching: {file_path}")
+        except PermissionError:
+            logger.warning(f"Permission denied reading file for caching: {file_path}")
+        except UnicodeDecodeError:
+            logger.warning(f"Unicode decode error reading file for caching: {file_path}")
+        except OSError as e:
+            logger.warning(f"OS error reading file for caching {file_path}: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error caching result for {file_path}: {e}")
 
-    def determine_validation_mode(self, tool_input: Any, phase: str) -> Dict[str, str]:
+    def determine_validation_mode(self, tool_input: Any, phase: Optional[str]) -> Dict[str, str]:
         """Determine validation mode based on phase and context"""
         if phase == 'Stop':
             return {'type': 'full', 'reason': 'Stop phase requires full validation'}
@@ -137,14 +225,14 @@ class TypeScriptValidator:
         
         return {'type': 'incremental', 'reason': 'Incremental validation'}
 
-    async def validate_biome(self, file_path: str, validation_mode: Dict[str, str]):
+    def validate_biome(self, file_path: str, validation_mode: Dict[str, str]):
         """Run Biome validation (formatting, linting, imports)"""
         try:
             biome_command = self.build_biome_command(file_path, validation_mode)
             if DEBUG_MODE:
-                print(f"Running: {biome_command}", file=sys.stderr)
+                print(f"Running: {' '.join(biome_command)}", file=sys.stderr)
             
-            subprocess.run(biome_command, shell=True, check=True, capture_output=True, text=True)
+            subprocess.run(biome_command, check=True, capture_output=True, text=True)
             
             self.results['biome'] = {'success': True, 'message': 'Biome validation passed'}
             
@@ -171,14 +259,14 @@ class TypeScriptValidator:
                        else "Run 'pnpm biome:check --apply' and fix all remaining issues")
             }
 
-    async def validate_typecheck(self, validation_mode: Dict[str, str]):
+    def validate_typecheck(self, validation_mode: Dict[str, str]):
         """Run TypeScript type checking"""
         try:
             typecheck_command = self.build_typecheck_command(validation_mode)
             if DEBUG_MODE:
-                print(f"Running: {typecheck_command}", file=sys.stderr)
+                print(f"Running: {' '.join(typecheck_command)}", file=sys.stderr)
             
-            subprocess.run(typecheck_command, shell=True, check=True, capture_output=True, text=True)
+            subprocess.run(typecheck_command, check=True, capture_output=True, text=True)
             
             self.results['typecheck'] = {'success': True, 'message': 'TypeScript check passed'}
             
@@ -193,7 +281,7 @@ class TypeScriptValidator:
                        else "Fix all TypeScript errors before completing task")
             }
 
-    async def validate_coding_standards(self, tool_input: Any, file_path: str):
+    def validate_coding_standards(self, tool_input: Any, file_path: str):
         """Run coding standards validation"""
         try:
             content = tool_input.get('content') if isinstance(tool_input, dict) else None
@@ -222,13 +310,13 @@ class TypeScriptValidator:
             self.warnings.append(f'Coding standards validation error: {error}')
             self.results['codeStandards'] = {'success': True, 'message': 'Coding standards check skipped due to error'}
 
-    def build_biome_command(self, file_path: str, validation_mode: Dict[str, str]) -> str:
+    def build_biome_command(self, file_path: str, validation_mode: Dict[str, str]) -> List[str]:
         """Build Biome command based on validation mode"""
         if validation_mode['type'] == 'full':
-            return 'pnpm biome:check --apply'
+            return ['pnpm', 'biome:check', '--apply']
         
         if validation_mode['type'] == 'file-specific':
-            return f'pnpm biome check "{file_path}" --apply'
+            return ['pnpm', 'biome', 'check', file_path, '--apply']
         
         # For incremental validation, check changed files
         try:
@@ -238,7 +326,7 @@ class TypeScriptValidator:
                                         capture_output=True, text=True, check=True).stdout.strip()
             
             if not changed_files and not staged_files:
-                return f'pnpm biome check "{file_path}" --apply'
+                return ['pnpm', 'biome', 'check', file_path, '--apply']
             
             # Build command for changed files
             all_files = []
@@ -251,20 +339,20 @@ class TypeScriptValidator:
             ts_files = [f for f in all_files if Path(f).suffix in ['.ts', '.tsx', '.js', '.jsx']]
             
             if ts_files:
-                files_str = ' '.join(f'"{f}"' for f in ts_files)
-                return f'pnpm biome check {files_str} --apply'
+                command = ['pnpm', 'biome', 'check'] + ts_files + ['--apply']
+                return command
             else:
-                return f'pnpm biome check "{file_path}" --apply'
+                return ['pnpm', 'biome', 'check', file_path, '--apply']
                 
         except subprocess.CalledProcessError:
-            return f'pnpm biome check "{file_path}" --apply'
+            return ['pnpm', 'biome', 'check', file_path, '--apply']
 
-    def build_typecheck_command(self, validation_mode: Dict[str, str]) -> str:
+    def build_typecheck_command(self, validation_mode: Dict[str, str]) -> List[str]:
         """Build TypeScript check command"""
         if validation_mode['type'] == 'full':
-            return 'pnpm typecheck'
+            return ['pnpm', 'typecheck']
         else:
-            return 'pnpm typecheck --noEmit'
+            return ['pnpm', 'typecheck', '--noEmit']
 
     def validate_no_any_type(self, content: str):
         """Check for 'any' type usage"""
@@ -292,24 +380,40 @@ class TypeScriptValidator:
 
     def validate_null_safety(self, content: str):
         """Check for null safety issues"""
-        null_access_pattern = r'\.\w+\s*\('
-        if re.search(null_access_pattern, content):
-            if '?.' not in content:
-                self.violations.append({
-                    'rule': 'Null Safety',
-                    'message': 'Potential null reference access without optional chaining',
-                    'severity': 'warning'
-                })
+        # DISABLED: This regex-based check causes too many false positives
+        # TypeScript's type system and strict null checks handle this better
+        # To properly implement this, we would need AST parsing to understand:
+        # - Type guarantees (non-nullable types)
+        # - Control flow analysis (null checks before access)
+        # - Type guards and narrowing
+        # 
+        # Example false positives this regex would catch:
+        # - myArray.map() where myArray is guaranteed non-null by type
+        # - obj.method() after explicit null check
+        # - React component props that are required
+        #
+        # If you need null safety checks, enable TypeScript's strictNullChecks instead
+        pass
 
     def validate_implicit_globals(self, content: str):
         """Check for implicit global variables"""
-        # Simple check for undeclared variables
-        if re.search(r'\b\w+\s*=\s*[^=]', content) and 'let ' not in content and 'const ' not in content and 'var ' not in content:
-            self.violations.append({
-                'rule': 'Implicit Globals',
-                'message': 'Potential implicit global variable usage',
-                'severity': 'warning'
-            })
+        # DISABLED: This regex-based check is too simplistic and causes false positives
+        # Issues with the current approach:
+        # - Doesn't understand scoping (function parameters, block scope, module scope)
+        # - Doesn't recognize property assignments (this.prop = value, obj.prop = value)
+        # - Doesn't understand destructuring assignments
+        # - Doesn't recognize TypeScript class properties
+        # - Doesn't handle imports/exports
+        #
+        # Example false positives:
+        # - Class property assignments: this.name = 'value'
+        # - Object property updates: user.name = 'new name'
+        # - Array element updates: items[0] = newItem
+        # - Destructuring: const { name } = user; name = 'new'
+        # - Function parameters: function(param) { param = transform(param) }
+        #
+        # TypeScript's noImplicitAny and strict mode handle this properly
+        pass
 
     def validate_empty_catch(self, content: str):
         """Check for empty catch blocks"""
@@ -369,7 +473,7 @@ class TypeScriptValidator:
         else:
             return self.approve()
 
-    def approve(self, custom_message: str = None) -> Dict[str, Any]:
+    def approve(self, custom_message: Optional[str] = None) -> Dict[str, Any]:
         """Approve validation"""
         message = custom_message or '✅ TypeScript validation passed'
         if self.warnings:
@@ -410,7 +514,7 @@ async def main():
         print(json.dumps({
             'approve': False,
             'message': f'TypeScript validator error: {error}'
-        }), file=sys.stderr)
+        }))
         sys.exit(1)
 
 
