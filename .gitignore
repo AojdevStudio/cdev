@@ -5,3 +5,4 @@ logs/# Cache files
 *.log
 logs/
 *.node_modules/
+logs/

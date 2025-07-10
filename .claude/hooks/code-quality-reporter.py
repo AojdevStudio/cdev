@@ -67,10 +67,15 @@ class CodeQualityReporter:
         message = input_data.get('message')
         file_path = tool_input.get('file_path')
         
-        # Security: Basic input validation
-        if file_path and ('../' in file_path or '..\\' in file_path or file_path.startswith('/')):
-            return {'message': 'Potentially unsafe file path detected'}
-
+        # Security: Validate file path
+        if file_path:
+            try:
+                resolved_path = Path(file_path).resolve()
+                cwd = Path.cwd()
+                # Ensure the path is within the current working directory
+                resolved_path.relative_to(cwd)
+            except (ValueError, OSError):
+                return {'message': 'Invalid or unsafe file path detected'}
         # Track file modifications
         if file_path and tool_name in ['Write', 'Edit', 'MultiEdit', 'Task']:
             self.session['filesModified'].add(file_path)
