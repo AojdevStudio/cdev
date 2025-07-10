@@ -55,3 +55,6 @@ pnpm-lock.yaml
 workspaces/
 coordination/node_modules/
 .cache/
+node_modules/
+*.cpython-*.pyc
+__pycache__/

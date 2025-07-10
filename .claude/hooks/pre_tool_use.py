@@ -6,6 +6,9 @@
 import json
 import sys
 import re
+import os
+import hashlib
+import time
 from pathlib import Path
 
 def is_dangerous_rm_command(command):
@@ -88,6 +91,150 @@ def is_env_file_access(tool_name, tool_input):
     
     return False
 
+def is_command_file_access(tool_name, tool_input):
+    """
+    Check if any tool is trying to access .claude/commands/ files.
+    Prevents creation/editing of command files without reading template first.
+    """
+    if tool_name not in ['Write', 'Edit', 'MultiEdit']:
+        return False
+    
+    file_path = tool_input.get('file_path', '')
+    if not file_path:
+        return False
+    
+    # Check if this is a .claude/commands/ file
+    normalized_path = os.path.normpath(file_path)
+    
+    # Check for both relative and absolute paths
+    is_commands_file = (
+        '/.claude/commands/' in normalized_path or
+        normalized_path.startswith('.claude/commands/') or
+        normalized_path.startswith('.claude\\commands\\') or  # Windows
+        '/.claude/commands/' in normalized_path or
+        normalized_path.endswith('/.claude/commands') or
+        normalized_path.endswith('\\.claude\\commands')  # Windows
+    )
+    
+    if not is_commands_file:
+        return False
+    
+    # Only check .md files in commands directory
+    if not file_path.endswith('.md'):
+        return False
+    
+    return True
+
+def find_template_file():
+    """Find the custom command template file"""
+    possible_paths = [
+        "ai-docs/custom-command-template.md",
+        "./ai-docs/custom-command-template.md",
+        "../ai-docs/custom-command-template.md",
+        "ai_docs/custom-command-template.md",
+        "./ai_docs/custom-command-template.md"
+    ]
+    
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    return None
+
+def check_template_understanding(template_file):
+    """Check if the template has been read and understanding confirmed"""
+    
+    # Create a session state directory
+    session_dir = Path.home() / '.claude' / 'session_state'
+    session_dir.mkdir(parents=True, exist_ok=True)
+    
+    # State file for template understanding
+    state_file = session_dir / 'template_understanding.json'
+    
+    # Check recent understanding confirmation
+    if state_file.exists():
+        try:
+            with open(state_file, 'r') as f:
+                state = json.load(f)
+            
+            # Check if understanding was confirmed recently (within 24 hours)
+            last_confirmation = state.get('last_confirmation', 0)
+            template_hash = state.get('template_hash', '')
+            
+            # Get current template hash
+            current_hash = get_file_hash(template_file)
+            
+            # If template unchanged and confirmed recently, allow access
+            if (template_hash == current_hash and 
+                time.time() - last_confirmation < 86400):  # 24 hours
+                return True
+                
+        except (json.JSONDecodeError, FileNotFoundError):
+            pass
+    
+    # Check if understanding was just echoed in recent logs
+    return check_recent_understanding_confirmation(template_file, state_file)
+
+def check_recent_understanding_confirmation(template_file, state_file):
+    """Check logs for recent understanding confirmation"""
+    
+    # Look for recent echo of understanding
+    log_paths = [
+        Path.home() / '.claude' / 'logs' / 'chat.json',
+        Path('logs/chat.json'),
+        Path('../logs/chat.json')
+    ]
+    
+    understanding_phrases = [
+        "I have read and understood the custom command template requirements",
+        "I understand the custom command template requirements",
+        "I have read and understand the template",
+        "Template requirements understood"
+    ]
+    
+    for log_path in log_paths:
+        if log_path.exists():
+            try:
+                # Check last 10 minutes of logs
+                cutoff_time = time.time() - 600  # 10 minutes
+                
+                with open(log_path, 'r') as f:
+                    content = f.read()
+                    
+                    # Check if any understanding phrase exists in recent content
+                    # Simple approach: check if phrases exist in the log file
+                    content_lower = content.lower()
+                    for phrase in understanding_phrases:
+                        if phrase.lower() in content_lower:
+                            # Save confirmation state
+                            save_understanding_confirmation(template_file, state_file)
+                            return True
+            except (FileNotFoundError, PermissionError):
+                continue
+    
+    return False
+
+def save_understanding_confirmation(template_file, state_file):
+    """Save the understanding confirmation state"""
+    state = {
+        'last_confirmation': time.time(),
+        'template_hash': get_file_hash(template_file),
+        'template_path': template_file
+    }
+    
+    try:
+        with open(state_file, 'w') as f:
+            json.dump(state, f)
+    except (FileNotFoundError, PermissionError):
+        pass
+
+def get_file_hash(file_path):
+    """Get SHA256 hash of file content"""
+    try:
+        with open(file_path, 'rb') as f:
+            return hashlib.sha256(f.read()).hexdigest()
+    except (FileNotFoundError, PermissionError):
+        return ""
+
 def main():
     try:
         # Read JSON input from stdin
@@ -110,6 +257,35 @@ def main():
             if is_dangerous_rm_command(command):
                 print("BLOCKED: Dangerous rm command detected and prevented", file=sys.stderr)
                 sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
+        
+        # Check for .claude/commands/ file access
+        if is_command_file_access(tool_name, tool_input):
+            file_path = tool_input.get('file_path', '')
+            print(f"🔒 Command Template Guard: Checking access to {file_path}", file=sys.stderr)
+            
+            # Template file to read
+            template_file = find_template_file()
+            if not template_file:
+                print("❌ Error: Custom command template not found!", file=sys.stderr)
+                print("📝 Expected: ai-docs/custom-command-template.md", file=sys.stderr)
+                sys.exit(2)
+            
+            # Check if template has been read and understood
+            if not check_template_understanding(template_file):
+                print("❌ BLOCKED: You must read and understand the custom command template first!", file=sys.stderr)
+                print(f"📖 Please read: {template_file}", file=sys.stderr)
+                print("💡 After reading, confirm understanding by echoing:", file=sys.stderr)
+                print("   'I have read and understood the custom command template requirements'", file=sys.stderr)
+                print("", file=sys.stderr)
+                print("🔑 Key requirements from template:", file=sys.stderr)
+                print("   • 6-part structure: YAML frontmatter, heading, description, arguments, instructions, context", file=sys.stderr)
+                print("   • Use action verbs and keep descriptions under 80 characters", file=sys.stderr)
+                print("   • Include dynamic data gathering with ! commands", file=sys.stderr)
+                print("   • Reference files with @ syntax", file=sys.stderr)
+                print("   • Follow consistent naming and formatting patterns", file=sys.stderr)
+                sys.exit(2)
+            
+            print("✅ Template understanding confirmed. Access granted.", file=sys.stderr)
         
         # Ensure log directory exists
         log_dir = Path.cwd() / 'logs'
