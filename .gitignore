@@ -1,10 +1,56 @@
+# Environment variables
 .env
-logs/# Cache files
-.cache/
-.DS_Store
+.env.local
+.env.*.local
+
+# Logs
+logs/
 *.log
-logs/
-*.node_modules/
-logs/
-logs/
-logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output
+
+# Production build files
+dist/
+build/
+dist-manifest.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Cache
+.cache/
+.linear-cache/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Git worktrees coordination
+../project-work-trees/
+workspaces/
+coordination/
