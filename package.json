@@ -1,22 +1,23 @@
 {
-  "name": "claude-parallel-dev",
+  "name": "claude-code-hooks",
   "version": "1.0.0",
-  "description": "Transform Linear issues into parallel agents working simultaneously using Git worktrees and Claude Code",
-  "main": "scripts/decompose-parallel.cjs",
+  "description": "Enhanced development workflow for Claude Code with intelligent hooks, Linear integration, and parallel agent management",
+  "main": "src/installer.js",
   "bin": {
-    "claude-parallel": "./scripts/decompose-parallel.cjs",
-    "parallel-cache": "./scripts/cache-linear-issue.sh",
-    "parallel-spawn": "./scripts/spawn-agents.sh"
+    "claude-code-hooks": "./bin/cli.js"
   },
   "scripts": {
-    "decompose": "node scripts/decompose-parallel.cjs",
-    "cache": "bash scripts/cache-linear-issue.sh",
-    "spawn": "bash scripts/spawn-agents.sh",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:ci": "jest --coverage --watchAll=false --passWithNoTests",
-    "prepublishOnly": "chmod +x scripts/*.sh && chmod +x scripts/*.cjs"
+    "test:coverage": "jest --coverage --collectCoverageFrom='src/**/*.js' --collectCoverageFrom='scripts/**/*.js' --collectCoverageFrom='!**/*.test.js'",
+    "test:integration": "jest test/integration --runInBand",
+    "test:unit": "jest src scripts --testPathIgnorePatterns=test/integration",
+    "test:ci": "jest --coverage --watchAll=false",
+    "lint": "eslint src scripts test --ext .js",
+    "lint:fix": "eslint src scripts test --ext .js --fix",
+    "prepublishOnly": "npm run test:ci && npm run lint && chmod +x scripts/*.sh && chmod +x bin/cli.js",
+    "postpublish": "node scripts/postpublish.js",
+    "prepare": "node scripts/prepublish.js"
   },
   "keywords": [
     "claude",
@@ -44,32 +45,33 @@
   },
   "homepage": "https://github.com/your-org/claude-parallel-dev#readme",
   "files": [
+    "bin/",
+    "src/",
     "scripts/",
-    "shared/",
-    "ai_docs/",
+    ".claude/",
+    "docs/",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "dotenv": "^16.6.1"
+    "chalk": "^4.1.2",
+    "commander": "^11.0.0",
+    "dotenv": "^16.6.1",
+    "fs-extra": "^11.1.1",
+    "inquirer": "^8.2.6",
+    "ora": "^5.4.1",
+    "semver": "^7.5.4",
+    "which": "^3.0.1"
   },
   "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jest": "^27.4.0",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
     "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.5.1",
-    "babel-jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
-    "identity-obj-proxy": "^3.0.0",
-    "jest-transform-stub": "^2.0.0",
-    "@babel/core": "^7.23.2",
-    "@babel/preset-env": "^7.23.2",
-    "@babel/preset-react": "^7.22.15",
-    "@babel/preset-typescript": "^7.23.2",
-    "@types/jest": "^29.5.6",
-    "typescript": "^5.2.2"
+    "@types/jest": "^29.5.6"
   },
   "preferGlobal": true,
   "publishConfig": {

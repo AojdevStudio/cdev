@@ -27,7 +27,7 @@ module.exports = {
   },
   
   // Setup files to run before tests
-  setupFilesAfterEnv: ['<rootDir>/test-setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
   
   // Coverage configuration
   collectCoverage: true,

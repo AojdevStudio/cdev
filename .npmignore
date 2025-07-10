@@ -1,0 +1,149 @@
+# Development files
+test/
+tests/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+coverage/
+.nyc_output/
+
+# Source files (if shipping compiled)
+src/**/*.test.js
+src/**/*.spec.js
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+appveyor.yml
+.circleci/
+
+# Development tools
+.eslintrc*
+.prettierrc*
+.editorconfig
+.babelrc*
+jest.config.js
+tsconfig.json
+rollup.config.js
+webpack.config.js
+
+# Documentation source
+docs/
+*.md
+!README.md
+!CHANGELOG.md
+!LICENSE
+
+# Examples and demos
+examples/
+demo/
+
+# Logs and temporary files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+*.tmp
+*.temp
+
+# Environment and local config
+.env
+.env.*
+.env.local
+.env.*.local
+.claude/settings.local.json
+
+# Cache directories
+.linear-cache/
+.cache/
+.parcel-cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Dependencies (should be installed by user)
+node_modules/
+jspm_packages/
+bower_components/
+
+# Build outputs (if not shipping dist)
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# Lock files (controversial, but common in packages)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Project-specific
+workspaces/
+shared/deployment-plans/
+validation/
+infrastructure/
+components/
+hooks/
+types/
+lib/
+api/
+operations/
+integration/
+
+# Git worktree related
+*-work-trees/
+coordination/
+
+# Scripts not needed in package
+cleanup-*.sh
+publish.sh
+implementation.md
+PLAN.md
+
+# Templates
+templates/
+
+# Docker files (if not needed for package)
+Dockerfile
+docker-compose.yml
+nginx/
+
+# Database
+*.sql
+migrations/
+
+# Agent-specific files
+AGENT_COMPLETION_SUMMARY.md
+agent-*.json
+branch_name.txt
+completion_timestamp.txt
+files_to_work_on.txt
+validation_checklist.txt
+test_contracts.txt
+
+# IDE specific
+.cursor/
+
+# Reports
+shared/reports/
+
+# AI documentation (development only)
+ai_docs/

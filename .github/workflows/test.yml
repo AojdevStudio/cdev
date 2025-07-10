@@ -1,0 +1,193 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test on Node ${{ matrix.node }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        node: [16, 18, 20]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            python: '3.9'
+          - os: windows-latest
+            python: '3.9'
+          - os: macos-latest
+            python: '3.11'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node }}
+        cache: 'npm'
+    
+    - name: Setup Python ${{ matrix.python }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python }}
+    
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      shell: bash
+      run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ matrix.node }}-
+          ${{ runner.os }}-node-
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linter
+      run: npm run lint
+      continue-on-error: true
+    
+    - name: Run unit tests
+      run: npm run test:unit
+      env:
+        CI: true
+    
+    - name: Run integration tests
+      run: npm run test:integration
+      env:
+        CI: true
+        LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+    
+    - name: Generate coverage report
+      run: npm run test:coverage
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-${{ matrix.os }}-node-${{ matrix.node }}
+        fail_ci_if_error: false
+
+  check-package:
+    name: Check Package
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Check package size
+      run: |
+        npm pack --dry-run
+        size=$(npm pack --dry-run 2>&1 | grep "npm notice" | grep -E "[0-9]+(\.[0-9]+)? [kMG]B" | awk '{print $(NF-1), $NF}')
+        echo "Package size: $size"
+        
+        # Convert to bytes for comparison
+        size_bytes=$(echo $size | awk '{
+          num = $1
+          unit = $2
+          if (unit == "kB") num *= 1024
+          else if (unit == "MB") num *= 1024 * 1024
+          else if (unit == "GB") num *= 1024 * 1024 * 1024
+          print int(num)
+        }')
+        
+        # Check if under 10MB
+        if [ $size_bytes -gt 10485760 ]; then
+          echo "Package size exceeds 10MB limit!"
+          exit 1
+        fi
+    
+    - name: Test package installation
+      run: |
+        # Pack the package
+        npm pack
+        
+        # Create test directory
+        mkdir test-install
+        cd test-install
+        
+        # Initialize test project
+        npm init -y
+        
+        # Install the package
+        npm install ../claude-code-hooks-*.tgz
+        
+        # Test CLI availability
+        npx claude-code-hooks --version
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run security audit
+      run: npm audit --production
+      continue-on-error: true
+    
+    - name: Check for known vulnerabilities
+      run: npx audit-ci --moderate
+
+  quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Check code formatting
+      run: npx prettier --check "**/*.{js,json,md}"
+      continue-on-error: true
+    
+    - name: Type check
+      run: npx tsc --noEmit
+      continue-on-error: true
+    
+    - name: Check for unused dependencies
+      run: npx depcheck
+      continue-on-error: true
