@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "description": "Claude Code Hooks configuration for TypeScript project: {{projectName}}",
+  "createdAt": "{{timestamp}}",
+  "projectType": "typescript",
+  "hooks": {
+    "pre_tool_use": [
+      {
+        "command": "echo 'Tool use: {{projectName}}' >> .claude/logs/tool-usage.log",
+        "blocking": false
+      }
+    ],
+    "post_tool_use": [
+      {
+        "command": "python .claude/hooks/typescript-validator.py",
+        "blocking": true
+      }
+    ],
+    "pre_command": [],
+    "post_command": [],
+    "subagent_start": [],
+    "subagent_stop": []
+  },
+  "environment": {
+    "PROJECT_PATH": "{{projectPath}}",
+    "PROJECT_NAME": "{{projectName}}",
+    "TS_NODE_PROJECT": "./tsconfig.json",
+    "NODE_ENV": "development"
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 30000
+    },
+    "read": {
+      "enabled": true
+    },
+    "write": {
+      "enabled": true
+    },
+    "edit": {
+      "enabled": true
+    },
+    "search": {
+      "enabled": true
+    },
+    "grep": {
+      "enabled": true
+    }
+  },
+  "typescript": {
+    "strict": true,
+    "checkJs": false,
+    "allowJs": true
+  },
+  "disabled": false,
+  "debug": false
+}

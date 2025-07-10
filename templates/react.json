@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "description": "Claude Code Hooks configuration for React project: {{projectName}}",
+  "createdAt": "{{timestamp}}",
+  "projectType": "react",
+  "hooks": {
+    "pre_tool_use": [
+      {
+        "command": "echo 'Tool use: {{projectName}}' >> .claude/logs/tool-usage.log",
+        "blocking": false
+      }
+    ],
+    "post_tool_use": [],
+    "pre_command": [],
+    "post_command": [
+      {
+        "command": "npm run lint:fix",
+        "blocking": false,
+        "condition": "file_changed:*.jsx,*.js,*.tsx,*.ts"
+      }
+    ],
+    "subagent_start": [],
+    "subagent_stop": []
+  },
+  "environment": {
+    "PROJECT_PATH": "{{projectPath}}",
+    "PROJECT_NAME": "{{projectName}}",
+    "NODE_ENV": "development",
+    "REACT_APP_NAME": "{{projectName}}"
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 45000
+    },
+    "read": {
+      "enabled": true
+    },
+    "write": {
+      "enabled": true,
+      "templates": {
+        "component": "templates/react/component.jsx",
+        "hook": "templates/react/hook.js",
+        "test": "templates/react/test.js"
+      }
+    },
+    "edit": {
+      "enabled": true
+    },
+    "search": {
+      "enabled": true
+    }
+  },
+  "react": {
+    "version": "18",
+    "typescript": false,
+    "testingLibrary": true,
+    "stateManagement": "context"
+  },
+  "disabled": false,
+  "debug": false
+}

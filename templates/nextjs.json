@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "description": "Claude Code Hooks configuration for Next.js project: {{projectName}}",
+  "createdAt": "{{timestamp}}",
+  "projectType": "nextjs",
+  "hooks": {
+    "pre_tool_use": [
+      {
+        "command": "echo 'Tool use: {{projectName}}' >> .claude/logs/tool-usage.log",
+        "blocking": false
+      }
+    ],
+    "post_tool_use": [
+      {
+        "command": "python .claude/hooks/typescript-validator.py",
+        "blocking": true
+      }
+    ],
+    "pre_command": [],
+    "post_command": [
+      {
+        "command": "next lint --fix",
+        "blocking": false,
+        "condition": "file_changed:*.tsx,*.ts,*.jsx,*.js"
+      }
+    ],
+    "subagent_start": [],
+    "subagent_stop": []
+  },
+  "environment": {
+    "PROJECT_PATH": "{{projectPath}}",
+    "PROJECT_NAME": "{{projectName}}",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_ENV": "development"
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 60000
+    },
+    "read": {
+      "enabled": true
+    },
+    "write": {
+      "enabled": true,
+      "templates": {
+        "page": "templates/nextjs/page.tsx",
+        "component": "templates/nextjs/component.tsx",
+        "api": "templates/nextjs/api.ts"
+      }
+    },
+    "edit": {
+      "enabled": true
+    },
+    "search": {
+      "enabled": true
+    }
+  },
+  "nextjs": {
+    "appDirectory": true,
+    "typescript": true,
+    "eslint": true,
+    "tailwindcss": true
+  },
+  "disabled": false,
+  "debug": false
+}

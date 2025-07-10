@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "description": "Claude Code Hooks configuration for API project: {{projectName}}",
+  "createdAt": "{{timestamp}}",
+  "projectType": "api",
+  "hooks": {
+    "pre_tool_use": [
+      {
+        "command": "echo 'Tool use: {{projectName}}' >> .claude/logs/tool-usage.log",
+        "blocking": false
+      }
+    ],
+    "post_tool_use": [
+      {
+        "command": "python .claude/hooks/api-standards-checker.py",
+        "blocking": true
+      }
+    ],
+    "pre_command": [],
+    "post_command": [],
+    "subagent_start": [],
+    "subagent_stop": []
+  },
+  "environment": {
+    "PROJECT_PATH": "{{projectPath}}",
+    "PROJECT_NAME": "{{projectName}}",
+    "NODE_ENV": "development",
+    "API_VERSION": "v1",
+    "PORT": "3000"
+  },
+  "tools": {
+    "bash": {
+      "enabled": true,
+      "timeout": 30000
+    },
+    "read": {
+      "enabled": true
+    },
+    "write": {
+      "enabled": true,
+      "templates": {
+        "route": "templates/api/route.js",
+        "middleware": "templates/api/middleware.js",
+        "model": "templates/api/model.js",
+        "controller": "templates/api/controller.js"
+      }
+    },
+    "edit": {
+      "enabled": true
+    },
+    "search": {
+      "enabled": true
+    },
+    "task": {
+      "enabled": true
+    }
+  },
+  "api": {
+    "framework": "express",
+    "database": "postgresql",
+    "authentication": "jwt",
+    "documentation": "swagger",
+    "testing": "jest",
+    "validation": "joi"
+  },
+  "disabled": false,
+  "debug": false
+}
