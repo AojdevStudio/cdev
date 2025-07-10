@@ -12,7 +12,10 @@
     "decompose": "node scripts/decompose-parallel.cjs",
     "cache": "bash scripts/cache-linear-issue.sh",
     "spawn": "bash scripts/spawn-agents.sh",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --coverage --watchAll=false --passWithNoTests",
     "prepublishOnly": "chmod +x scripts/*.sh && chmod +x scripts/*.cjs"
   },
   "keywords": [
@@ -51,7 +54,23 @@
   "dependencies": {
     "dotenv": "^16.6.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.1",
+    "babel-jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest-transform-stub": "^2.0.0",
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
+    "@babel/preset-typescript": "^7.23.2",
+    "@types/jest": "^29.5.6",
+    "typescript": "^5.2.2"
+  },
   "preferGlobal": true,
   "publishConfig": {
     "access": "public"

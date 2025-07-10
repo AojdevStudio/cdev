@@ -12,3 +12,6 @@ Parse the agent_context.json to extract the agentRole and focusArea, then:
 6. Focus on the specific responsibilities defined in your agent context
 
 Your role and priorities are determined dynamically from the agent context, not hard-coded.
+
+**Important**
+- Once you have completed your stas

@@ -1,11 +1,11 @@
 {
   "integration_ready": true,
-  "agent_id": "docs_agent",
-  "branch_name": "AOJ-100-docs_agent",
-  "integration_order": ["docs_agent"],
+  "agent_id": "test_framework_agent",
+  "branch_name": "REMEDIATION-001-test_framework_agent",
+  "integration_order": ["test_framework_agent"],
   "dependencies": [],
-  "created_at": "2025-07-10T00:54:29Z",
-  "agent_role": "Handles documentation and user guides",
-  "task_id": "AOJ-100",
+  "created_at": "2025-07-10T02:00:07Z",
+  "agent_role": "Installs Jest test framework and configures test runner",
+  "task_id": "REMEDIATION-001",
   "status": "completed"
 }
