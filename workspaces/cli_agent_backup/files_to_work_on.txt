@@ -1,3 +1,0 @@
-CREATE: bin/cli.js
-CREATE: src/cli-parser.js
-CREATE: src/cli-commands.js

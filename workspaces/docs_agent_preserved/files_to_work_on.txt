@@ -1,3 +1,0 @@
-CREATE: README.md
-CREATE: ai_docs/README.md
-CREATE: templates/README.md
