@@ -1,0 +1,4 @@
+1. [x] All cli_interface files are created successfully
+2. [x] cli_interface functionality works as expected
+3. [x] No errors in cli_interface implementation
+4. [x] cli_interface tests pass successfully

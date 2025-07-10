@@ -1,0 +1,3 @@
+bin/cli.test.js
+src/cli-parser.test.js
+src/cli-commands.test.js
