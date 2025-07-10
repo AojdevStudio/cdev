@@ -24,3 +24,4 @@ This command loads essential context for a new agent session by examining the co
   - @ai_docs/astral-uv-scripting-documentation.md
   - @ai_docs/claude-code-hooks-documentation.md
   - @docs/parallel-workflow.md
+  - @ai-docs/mastering-git-worktrees.md

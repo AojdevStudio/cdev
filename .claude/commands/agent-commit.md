@@ -31,9 +31,12 @@ WorkspacePath: $ARGUMENTS
 - Current directory: !`pwd`
 - Git worktrees: !`git worktree list`
 - Main branch status: !`git status --porcelain`
+- Worktree patterns: @ai-docs/mastering-git-worktrees.md
 - Coordination directory: ../paralell-development-claude-work-trees/coordination/
 - Agent context file: agent_context.json (contains agentId, taskId, agentRole)
 - Validation checklist: validation_checklist.txt (tracks completion criteria)
 - Commit format: feat(agentId): taskTitle with statistics and metadata
 - Safety requirements: Main branch must be clean, all validation complete
 - No automatic push: Local merge only, user pushes manually
+- Cleanup patterns: Remove worktree after merge, delete branch if merged
+- Merge strategy: Use --no-ff to preserve agent history in commit graph
