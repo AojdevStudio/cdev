@@ -14,11 +14,11 @@ if [ -f shared/coordination/spawn-status.json ]; then
 fi
 
 echo "Agent Progress:"
-for status_file in shared/coordination/agent-status/*.json 2>/dev/null; do
+for status_file in shared/coordination/agent-status/*.json; do
     if [ -f "$status_file" ]; then
         agent=$(basename "$status_file" .json)
-        status=$(jq -r ".status" "$status_file")
-        completed=$(jq -r ".completed" "$status_file")
+        status=$(jq -r ".status" "$status_file" 2>/dev/null || echo "unknown")
+        completed=$(jq -r ".completed" "$status_file" 2>/dev/null || echo "false")
         
         if [ "$completed" = "true" ]; then
             echo "   ✅ $agent: Complete"
