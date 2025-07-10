@@ -130,5 +130,11 @@
     "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-REMEDIATION-001-config-agent-remediation/5ae2118d-c350-4d28-a5a9-41e4eb0b80a9.jsonl",
     "hook_event_name": "Stop",
     "stop_hook_active": false
+  },
+  {
+    "session_id": "5ae2118d-c350-4d28-a5a9-41e4eb0b80a9",
+    "transcript_path": "/Users/ossieirondi/.claude/projects/-Users-ossieirondi-Projects-dev-utils-paralell-development-claude-work-trees-REMEDIATION-001-config-agent-remediation/5ae2118d-c350-4d28-a5a9-41e4eb0b80a9.jsonl",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false
   }
 ]
