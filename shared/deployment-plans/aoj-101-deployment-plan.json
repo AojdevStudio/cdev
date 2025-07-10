@@ -1,0 +1,233 @@
+{
+  "taskId": "AOJ-101",
+  "taskTitle": "Complete Claude Code Hooks NPM Package - Interactive Installer and Hook Organization System",
+  "estimatedTotalTime": "330 minutes",
+  "parallelismFactor": "3.3x faster than sequential",
+  "decompositionStrategy": "Domain-focused agents with complete ownership of related functionality",
+  "parallelAgents": [
+    {
+      "agentId": "installer_orchestrator_agent",
+      "agentRole": "Interactive Installer & CLI Developer",
+      "focusArea": "Installer Orchestration & Project Detection",
+      "canStartImmediately": true,
+      "dependencies": [],
+      "allFilesToCreate": [
+        "bin/claude-code-hooks",
+        "bin/cli.js",
+        "src/installer.js",
+        "src/installer-prompts.js",
+        "src/project-detector.js",
+        "src/detectors/typescript-detector.js",
+        "src/detectors/pnpm-detector.js",
+        "src/detectors/nextjs-detector.js",
+        "src/detectors/react-detector.js",
+        "src/detectors/index.js",
+        "src/cli-commands.js",
+        "src/cli-parser.js"
+      ],
+      "allFilesToModify": [],
+      "allValidationCriteria": [
+        "Interactive installer launches and prompts users correctly",
+        "Project type auto-detection works for TypeScript, pnpm, Next.js, and React",
+        "CLI entry point works with npx claude-code-hooks command",
+        "Commander.js and inquirer.js are properly integrated",
+        "All detector modules return accurate results",
+        "Installation workflow completes end-to-end successfully"
+      ],
+      "testContracts": [
+        "test/installer.test.js",
+        "test/project-detector.test.js",
+        "test/detectors/typescript-detector.test.js",
+        "test/detectors/pnpm-detector.test.js",
+        "test/detectors/nextjs-detector.test.js",
+        "test/detectors/react-detector.test.js",
+        "test/cli-commands.test.js"
+      ],
+      "estimatedTime": 90,
+      "rationale": "Consolidates all installer and CLI functionality into one agent for cohesive interactive flow"
+    },
+    {
+      "agentId": "hook_system_agent",
+      "agentRole": "Hook Management & Organization Developer",
+      "focusArea": "Hook System Architecture",
+      "canStartImmediately": true,
+      "dependencies": [],
+      "allFilesToCreate": [
+        "src/hook-manager.js",
+        "src/hook-categorizer.js",
+        "src/hook-selector.js",
+        "src/hook-organizer.js",
+        "src/hooks-restructure.js",
+        ".claude/hooks/tier1/README.md",
+        ".claude/hooks/tier2/README.md",
+        ".claude/hooks/tier3/README.md",
+        ".claude/hooks/utils/README.md"
+      ],
+      "allFilesToModify": [],
+      "allValidationCriteria": [
+        "Hook manager correctly categorizes hooks into tier1/tier2/tier3",
+        "Hook selection logic works based on project type and user preferences",
+        "Existing hooks are restructured into new tier-based organization",
+        "Hook organizer maintains references to Python hook files",
+        "Tier categorization follows security and importance levels",
+        "Utils directory contains shared hook utilities"
+      ],
+      "testContracts": [
+        "test/hook-manager.test.js",
+        "test/hook-categorizer.test.js",
+        "test/hook-selector.test.js",
+        "test/hook-organizer.test.js"
+      ],
+      "estimatedTime": 75,
+      "rationale": "Manages all hook-related functionality including the critical tier restructuring requirement"
+    },
+    {
+      "agentId": "configuration_agent",
+      "agentRole": "Configuration & Templates Developer",
+      "focusArea": "Configuration Management",
+      "canStartImmediately": true,
+      "dependencies": [],
+      "allFilesToCreate": [
+        "src/config-generator.js",
+        "src/config-migrator.js",
+        "src/config-validator.js",
+        "src/template-engine.js",
+        "templates/typescript.json",
+        "templates/pnpm.json",
+        "templates/nextjs.json",
+        "templates/react.json",
+        "templates/api.json",
+        "templates/default.json"
+      ],
+      "allFilesToModify": [],
+      "allValidationCriteria": [
+        "Configuration generator creates valid settings.json files",
+        "Templates work correctly for each project type",
+        "Migration from settings.local.json to settings.json preserves all data",
+        "Dynamic configuration based on detected project type",
+        "Template engine properly substitutes variables",
+        "All generated configurations are valid JSON"
+      ],
+      "testContracts": [
+        "test/config-generator.test.js",
+        "test/config-migrator.test.js",
+        "test/config-validator.test.js",
+        "test/template-engine.test.js"
+      ],
+      "estimatedTime": 60,
+      "rationale": "Handles all configuration-related tasks including generation, migration, and templates"
+    },
+    {
+      "agentId": "cross_platform_agent",
+      "agentRole": "Cross-Platform & Validation Developer",
+      "focusArea": "Platform Compatibility",
+      "canStartImmediately": true,
+      "dependencies": [],
+      "allFilesToCreate": [
+        "src/path-resolver.js",
+        "src/python-detector.js",
+        "src/platform-utils.js",
+        "src/validator.js",
+        "src/pre-install-validator.js",
+        "src/post-install-validator.js",
+        "src/validation-rules.js",
+        "src/validation-reporter.js"
+      ],
+      "allFilesToModify": [],
+      "allValidationCriteria": [
+        "Path resolution works on Windows, macOS, and Linux",
+        "Python interpreter detection finds correct Python installation",
+        "Pre-installation validation catches all potential issues",
+        "Post-installation validation confirms successful setup",
+        "Cross-platform file operations work correctly",
+        "Validation reports are clear and actionable"
+      ],
+      "testContracts": [
+        "test/path-resolver.test.js",
+        "test/python-detector.test.js",
+        "test/platform-utils.test.js",
+        "test/validator.test.js",
+        "test/validation-rules.test.js"
+      ],
+      "estimatedTime": 60,
+      "rationale": "Ensures cross-platform compatibility and provides comprehensive validation"
+    },
+    {
+      "agentId": "integration_agent",
+      "agentRole": "Testing, Documentation & Package Developer",
+      "focusArea": "Integration & Distribution",
+      "canStartImmediately": false,
+      "dependencies": ["installer_orchestrator_agent", "hook_system_agent", "configuration_agent", "cross_platform_agent"],
+      "allFilesToCreate": [
+        "test/integration/full-install.test.js",
+        "test/integration/project-types.test.js",
+        "test/integration/cross-platform.test.js",
+        "test/setup.js",
+        "test/fixtures/sample-projects.js",
+        "docs/installation.md",
+        "docs/troubleshooting.md",
+        "docs/usage.md",
+        "docs/api-reference.md",
+        "README.md",
+        "CHANGELOG.md",
+        ".npmignore",
+        ".github/workflows/test.yml",
+        ".github/workflows/publish.yml"
+      ],
+      "allFilesToModify": [
+        "package.json"
+      ],
+      "allValidationCriteria": [
+        "All unit tests pass with >90% coverage",
+        "Integration tests verify complete installation flow",
+        "Documentation is comprehensive and user-friendly",
+        "Package.json has correct dependencies and scripts",
+        "NPM package builds and publishes correctly",
+        "GitHub Actions workflows execute successfully",
+        "Package size remains under 10MB"
+      ],
+      "testContracts": [
+        "All tests must pass",
+        "Test coverage must exceed 90%",
+        "Integration tests must cover all project types"
+      ],
+      "estimatedTime": 45,
+      "rationale": "Integrates all components, ensures quality through testing, and prepares for distribution"
+    }
+  ],
+  "totalFiles": 76,
+  "criticalDependencies": {
+    "npm": ["commander", "inquirer", "chalk", "ora", "fs-extra"],
+    "dev": ["jest", "@types/node", "@types/inquirer", "typescript"]
+  },
+  "integrationPlan": {
+    "mergeOrder": [
+      "installer_orchestrator_agent",
+      "hook_system_agent",
+      "configuration_agent",
+      "cross_platform_agent",
+      "integration_agent"
+    ],
+    "criticalPath": "integration_agent depends on all others",
+    "validationSteps": [
+      "Run unit tests for each agent",
+      "Run integration tests after merging first 4 agents",
+      "Perform manual installation test on each platform",
+      "Verify package size and dependencies"
+    ],
+    "estimatedIntegrationTime": "30 minutes"
+  },
+  "riskMitigation": {
+    "hookRestructuring": "hook_system_agent explicitly handles tier organization to prevent missing this requirement",
+    "crossPlatform": "cross_platform_agent focuses solely on compatibility issues",
+    "packageConflicts": "Only integration_agent modifies package.json",
+    "pythonCompatibility": "Existing Python hooks remain untouched, only references are updated"
+  },
+  "successMetrics": {
+    "functionalRequirements": "All 12 requirements implemented",
+    "acceptanceCriteria": "All 8 acceptance criteria met",
+    "technicalConstraints": "All 6 constraints satisfied",
+    "parallelExecution": "4 agents work simultaneously, 3.3x speedup",
+    "codeQuality": ">90% test coverage achieved"
+  }
+}
