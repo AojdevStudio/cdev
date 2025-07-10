@@ -17,7 +17,17 @@ $ARGUMENTS
 ## Instructions
 - Check if `--no-verify` flag is present in $ARGUMENTS
 - If not no-verify: run pre-commit checks (`pnpm lint`, `pnpm build`, `pnpm generate:docs`)
-- **Ensure logs are ignored**: Use `git check-ignore -q logs/ || echo "logs/" >> .gitignore` to safely add logs/ to .gitignore if not already present
+- **Validate .gitignore configuration**:
+  - Check for files that should be ignored: `git ls-files --others --ignored --exclude-standard`
+  - Ensure common patterns are in .gitignore:
+    - `git check-ignore -q logs/ || echo "logs/" >> .gitignore`
+    - `git check-ignore -q "*.log" || echo "*.log" >> .gitignore`
+    - `git check-ignore -q node_modules/ || echo "node_modules/" >> .gitignore`
+    - `git check-ignore -q .env || echo ".env" >> .gitignore`
+    - `git check-ignore -q dist-manifest.json || echo "dist-manifest.json" >> .gitignore`
+    - `git check-ignore -q package-lock.json || echo "package-lock.json" >> .gitignore` (for packages)
+  - If any tracked files should be ignored: `git rm --cached <file>` to untrack them
+  - Alert user if large files (>1MB) are being tracked that might should be ignored
 - Check git status to see staged files
 - If no files staged: automatically stage all modified and new files with `git add .` (excluding cache files, .DS_Store, and other ignore patterns)
 - Perform `git diff --staged` to analyze changes being committed
@@ -45,6 +55,15 @@ When analyzing the diff, consider splitting commits based on these criteria:
 - Recent commits: !`git log --oneline -5`
 - Branch info: !`git branch --show-current`
 - Exclude from staging: cache files, .DS_Store, node_modules, .env files, build artifacts, temporary files
+- **Common files to ignore**:
+  - Log files: `logs/`, `*.log`, `npm-debug.log*`
+  - Dependencies: `node_modules/`, `.pnp`, `.pnp.js`
+  - Environment: `.env`, `.env.local`, `.env.*.local`
+  - Build outputs: `dist/`, `build/`, `dist-manifest.json`
+  - Lock files (for packages): `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
+  - IDE/Editor: `.vscode/`, `.idea/`, `*.swp`, `*.swo`
+  - OS files: `.DS_Store`, `Thumbs.db`
+  - Cache: `.cache/`, `.linear-cache/`, `*.tmp`, `*.temp`
 - **Emoji**: Each commit type is paired with an appropriate emoji:
     - Read: '@ai-docs/emoji-commit-ref.md'
 
