@@ -25,6 +25,19 @@ try {
   console.warn('dotenv package not found. Install with: npm install dotenv');
 }
 
+// Use node-fetch for older Node.js versions
+let fetch;
+if (typeof global.fetch === 'undefined') {
+  try {
+    fetch = require('node-fetch');
+  } catch (error) {
+    console.error('❌ node-fetch is required for Node.js < 18. Install with: npm install node-fetch');
+    process.exit(1);
+  }
+} else {
+  fetch = global.fetch;
+}
+
 class LLMDecomposer {
   constructor() {
     this.projectRoot = process.cwd();
@@ -439,10 +452,16 @@ Remember: The goal is MAXIMUM PARALLELIZATION with ZERO FILE CONFLICTS.`;
     });
 
     if (!response.ok) {
-      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('OpenRouter API error details:', errorText);
+      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Unexpected OpenRouter response structure:', JSON.stringify(data, null, 2));
+      throw new Error('Invalid OpenRouter API response structure');
+    }
     return data.choices[0].message.content;
   }
 
@@ -475,12 +494,16 @@ Remember: The goal is MAXIMUM PARALLELIZATION with ZERO FILE CONFLICTS.`;
    */
   parseLLMResponse(response) {
     try {
+      console.log('Parsing LLM response of length:', response.length);
+      
       // Try to extract JSON from response
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
+        console.error('No JSON found in response. First 500 chars:', response.substring(0, 500));
         throw new Error('No JSON found in LLM response');
       }
 
+      console.log('Found JSON block, attempting to parse...');
       const parsed = JSON.parse(jsonMatch[0]);
       
       // Validate required fields

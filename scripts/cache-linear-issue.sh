@@ -85,4 +85,4 @@ PREVIEW=$(echo "$DESCRIPTION" | head -c 100)
 echo "📝 Description: $PREVIEW..."
 
 echo ""
-echo "🚀 Now you can run: node decompose-parallel.cjs $ISSUE_ID"
+echo "🚀 Now you can run: cdev split $ISSUE_ID"

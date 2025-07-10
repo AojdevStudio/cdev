@@ -14,6 +14,14 @@
 
 const fs = require('node:fs').promises;
 const path = require('node:path');
+
+// Load environment variables from .env file
+try {
+  require('dotenv').config();
+} catch (error) {
+  console.warn('⚠️  dotenv not found. Using system environment variables.');
+}
+
 const { LLMDecomposer } = require('../utils/llm-decomposer.js');
 
 class ExclusiveOwnershipDecomposer {
@@ -45,9 +53,10 @@ class ExclusiveOwnershipDecomposer {
       
       // ERROR: LLM analysis is required
       console.error('❌ LLM analysis failed. Please configure your LLM provider:');
-      console.error('   1. Copy .env.sample to .env');
-      console.error('   2. Add your OPENAI_API_KEY or ANTHROPIC_API_KEY');
-      console.error('   3. Set LLM_PROVIDER to "openai" or "anthropic"');
+      console.error('   1. Copy .env.example to .env');
+      console.error('   2. Add your API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY)');
+      console.error('   3. Set LLM_PROVIDER to "openai", "anthropic", or "openrouter"');
+      console.error('   4. Set LLM_MODEL to your preferred model');
       throw new Error('LLM configuration required. See instructions above.');
     } catch (error) {
       console.error('❌ Decomposition failed:', error.message);
