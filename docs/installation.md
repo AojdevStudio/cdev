@@ -67,9 +67,17 @@ After installing CDEV globally, you need to set up the hooks and scripts in your
 
 2. **Set up environment variables**
    ```bash
-   # Create .env file
-   echo "LINEAR_API_KEY=lin_api_xxxxx" >> .env
-   echo "LLM_MODEL=mistralai/mistral-large-2411" >> .env
+   # Create .env file from example
+   cp .env.example .env
+   
+   # Edit .env and configure:
+   # Linear API (optional, for issue tracking)
+   LINEAR_API_KEY=lin_api_xxxxx
+   
+   # LLM Configuration (required for decompose-parallel.cjs)
+   LLM_PROVIDER=openrouter  # or "openai" or "anthropic"
+   LLM_MODEL=mistralai/mistral-large-2411
+   OPENROUTER_API_KEY=sk-or-v1-xxxxx  # or OPENAI_API_KEY or ANTHROPIC_API_KEY
    ```
 
 3. **Make scripts executable**

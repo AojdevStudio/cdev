@@ -77,28 +77,47 @@ claude-code-hooks init [options]
 claude-code-hooks init --update
 ```
 
-##### linear
+##### Parallel Development Scripts
 
-Linear integration commands.
+The parallel development workflow uses individual scripts rather than subcommands:
 
+**Cache Linear Issue:**
 ```bash
-claude-code-hooks linear <subcommand> [id] [options]
+./scripts/cache-linear-issue.sh <LINEAR_ISSUE_ID>
 ```
+Caches a Linear issue locally for offline access and decomposition.
 
-**Subcommands:**
-- `cache <id>` - Cache Linear issue locally
-- `decompose <id>` - Decompose issue into parallel tasks
-- `spawn <id>` - Create agent worktrees
-- `status [id]` - Check agent status
-- `refresh <id>` - Update cached issue
+**Decompose Issue:**
+```bash
+node scripts/decompose-parallel.cjs <LINEAR_ISSUE_ID>
+```
+Uses AI to analyze the cached issue and create a parallel deployment plan.
+
+**Spawn Agent Worktrees:**
+```bash
+./scripts/spawn-agents.sh <DEPLOYMENT_PLAN_PATH>
+```
+Creates Git worktrees for each agent based on the deployment plan.
+
+**Monitor Agents:**
+```bash
+./scripts/monitor-agents.sh
+```
+Shows progress across all active agent worktrees.
+
+**Integrate Work:**
+```bash
+./scripts/integrate-parallel-work.sh
+```
+Merges completed agent work back to the main branch.
 
 **Examples:**
 ```bash
-# Complete Linear workflow
-claude-code-hooks linear cache PROJ-123
-claude-code-hooks linear decompose PROJ-123
-claude-code-hooks linear spawn PROJ-123
-claude-code-hooks linear status PROJ-123
+# Complete parallel workflow
+./scripts/cache-linear-issue.sh PROJ-123
+node scripts/decompose-parallel.cjs PROJ-123
+./scripts/spawn-agents.sh shared/deployment-plans/proj-123-deployment-plan.json
+./scripts/monitor-agents.sh
 ```
 
 ##### doctor

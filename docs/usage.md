@@ -93,21 +93,175 @@ subagent_stop.py # Parallel agent cleanup
 
 ### Complete Workflow
 
-Transform Linear issues into parallel development:
+Transform Linear issues into parallel development using the actual script commands:
 
 ```bash
 # 1. Cache Linear issue locally
-claude-code-hooks linear cache PROJ-123
+./scripts/cache-linear-issue.sh PROJ-123
 
 # 2. Decompose into parallel tasks
-claude-code-hooks linear decompose PROJ-123
+node scripts/decompose-parallel.cjs PROJ-123
 
 # 3. Spawn agent worktrees
-claude-code-hooks linear spawn PROJ-123
+./scripts/spawn-agents.sh shared/deployment-plans/proj-123-deployment-plan.json
 
 # 4. Monitor progress
-claude-code-hooks linear status PROJ-123
+./scripts/monitor-agents.sh
 ```
+
+### Understanding the Decompose-Parallel Workflow
+
+The `decompose-parallel.cjs` script is the brain of the parallel development system. It uses AI to analyze your Linear issue and create an optimal parallelization strategy.
+
+#### Prerequisites
+
+Before using decompose-parallel.cjs, you need:
+
+1. **Cached Linear Issue**: The issue must be cached locally first
+2. **LLM Configuration**: Set up your AI provider in `.env`
+3. **Git Repository**: Must be in a Git repository for worktree creation
+
+#### Step-by-Step Guide
+
+**Step 1: Configure Your LLM Provider**
+
+```bash
+# Copy the example configuration
+cp .env.example .env
+
+# Edit .env and add your configuration:
+# For OpenRouter (Recommended):
+LLM_PROVIDER=openrouter
+LLM_MODEL=mistralai/mistral-large-2411
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxx
+
+# For OpenAI:
+LLM_PROVIDER=openai
+LLM_MODEL=gpt-4-turbo-preview
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+
+# For Anthropic:
+LLM_PROVIDER=anthropic
+LLM_MODEL=claude-3-opus-20240229
+ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxxxxxxx
+```
+
+**Step 2: Cache Your Linear Issue**
+
+```bash
+# Ensure you have your Linear API key set
+export LINEAR_API_KEY="lin_api_xxxxxxxxxx"
+
+# Cache the issue
+./scripts/cache-linear-issue.sh PROJ-123
+
+# Verify it was cached
+ls .linear-cache/PROJ-123.json
+```
+
+**Step 3: Run Decomposition**
+
+```bash
+# Run the decomposition
+node scripts/decompose-parallel.cjs PROJ-123
+```
+
+**What happens during decomposition:**
+- AI analyzes the issue description and requirements
+- Identifies distinct work domains (frontend, backend, testing, etc.)
+- Creates agents with exclusive file ownership
+- Generates a deployment plan with dependencies
+- Estimates time for each agent
+
+**Step 4: Review the Output**
+
+After decomposition, you'll see:
+```
+🧠 Analyzing: "Add user authentication with OAuth"
+📊 Created 4 parallel agents:
+  • backend_auth_agent: JWT & user models (45 min)
+  • frontend_auth_agent: Login/signup UI (35 min)
+  • oauth_integration_agent: Google/GitHub OAuth (30 min)
+  • testing_agent: Auth flow tests (25 min)
+
+✅ Deployment plan created: shared/deployment-plans/proj-123-deployment-plan.json
+
+Next steps:
+1. Review the plan: cat shared/deployment-plans/proj-123-deployment-plan.json | jq
+2. Spawn agents: ./scripts/spawn-agents.sh shared/deployment-plans/proj-123-deployment-plan.json
+3. Start working with /agent-start in each workspace
+```
+
+**Step 5: Spawn Agent Worktrees**
+
+```bash
+# This creates isolated workspaces for each agent
+./scripts/spawn-agents.sh shared/deployment-plans/proj-123-deployment-plan.json
+
+# What this does:
+# - Creates Git worktrees for each agent
+# - Copies agent context files
+# - Opens Cursor/VS Code for each workspace
+# - Sets up branch tracking
+```
+
+**Step 6: Work with Agents**
+
+In each opened editor window:
+```bash
+# Start Claude
+claude
+
+# Load agent context and begin work
+/agent-start
+
+# The agent will:
+# - Show its specific role and tasks
+# - Display validation checklist
+# - Work through files systematically
+# - Update progress in real-time
+```
+
+**Step 7: Monitor and Commit**
+
+```bash
+# Check progress across all agents
+/agent-status
+
+# When an agent completes its work
+/agent-commit
+
+# Or manually from the command line
+./scripts/integrate-parallel-work.sh
+```
+
+### Troubleshooting Common Issues
+
+**LLM Configuration Error:**
+If you see "LLM analysis failed", check:
+- Your API key is valid
+- LLM provider is correctly set
+- You have credits/quota available
+
+**No Agents Created:**
+This happens when:
+- The task is too simple for parallelization
+- The issue description lacks detail
+- Consider adding more context to the Linear issue
+
+**File Conflicts:**
+The system prevents this by design, but if you see conflicts:
+- Check that agents have exclusive file ownership
+- Review the deployment plan for overlaps
+- Report the issue - this shouldn't happen!
+
+### Best Practices
+
+1. **Write Detailed Linear Issues**: The AI works better with clear, detailed descriptions
+2. **Include Acceptance Criteria**: Help the AI understand success metrics
+3. **Specify Technical Details**: Mention specific technologies, frameworks, or patterns
+4. **Review Deployment Plans**: Always check the generated plan before spawning agents
+5. **Use Semantic Commit Messages**: Let /agent-commit generate proper messages
 
 ### Setting Up Linear
 

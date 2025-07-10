@@ -151,7 +151,7 @@ Instead, CDEV works like a smart construction project:
 ### Step 1: Cache Your Linear Issue
 
 ```bash
-cdev get TASK-123
+./scripts/cache-linear-issue.sh TASK-123
 ```
 
 **What this does**: Downloads your Linear issue and saves it locally, like downloading a movie to watch offline. This means you can work on the task even without internet, and the AI decomposition system has all the context it needs.
@@ -161,7 +161,7 @@ cdev get TASK-123
 ### Step 2: Decompose Into Parallel Agents
   
 ```bash
-cdev split TASK-123
+node scripts/decompose-parallel.cjs TASK-123
 ```
 
 **What this does**: The AI system reads your issue like a smart project manager reading blueprints. It identifies:
@@ -179,7 +179,7 @@ cdev split TASK-123
 ### Step 3: Spawn Agent Workspaces
   
 ```bash
-cdev run shared/deployment-plans/task-123-deployment-plan.json
+./scripts/spawn-agents.sh shared/deployment-plans/task-123-deployment-plan.json
 ```
 
 **What this does**: Creates completely isolated workspaces for each agent using Git worktrees. Think of it like giving each contractor team their own section of the construction site with their own copy of the blueprints.
@@ -206,8 +206,8 @@ claude
 ### Step 5: Monitor Progress
 
 ```bash
-cdev status
-# or
+./scripts/monitor-agents.sh
+# or in Claude:
 /agent-status
 ```
 
@@ -225,8 +225,8 @@ cdev status
 ### Step 6: Integration and Merging
 
 ```bash
-cdev commit
-# or 
+./scripts/integrate-parallel-work.sh
+# or in Claude:
 /agent-commit
 ```
 
