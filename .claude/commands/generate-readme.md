@@ -15,6 +15,15 @@ OutputPath: $ARGUMENTS
 - `/generate-readme --output docs/README.md` - Generate to specific location
 
 ## Instructions
+
+**Apply the Feynman Technique throughout README generation:**
+- Explain complex concepts in simple, clear language that anyone can understand
+- Use analogies and real-world examples to illustrate technical concepts
+- Break down complicated processes into basic, logical steps
+- Assume the reader is intelligent but unfamiliar with the specific domain
+- Test understanding by explaining "why" not just "what" and "how"
+
+### Technical Analysis
 - Analyze current or specified project structure for file system exploration
 - Use EZA CLI to explore project structure with common patterns:
   ```bash
@@ -46,12 +55,27 @@ OutputPath: $ARGUMENTS
   eza --icons
   ```
 
+### Content Generation with Feynman Technique
 - Extract project metadata from package.json, setup.py, or similar configuration files
 - Identify key features, installation methods, and usage patterns from codebase
+- **Explain each feature's purpose in simple terms**: What problem does it solve? Why would someone need this?
+- **Use analogies**: Compare technical concepts to familiar, everyday experiences
+- **Break down complex workflows**: Transform multi-step technical processes into logical, sequential explanations
+- **Avoid jargon**: When technical terms are necessary, immediately explain them in plain language
 - Load the README template and systematically replace all {{VARIABLE}} placeholders with actual project data
 - Generate contextual content based on actual project analysis (not generic placeholders)
-- Use git analysis understand the commits and changes in the git repository.
-- Review changelog to understand the changes and updates to the project.
+- Use git analysis understand the commits and changes in the git repository
+- Review changelog to understand the changes and updates to the project
+
+### Feynman-Style Writing Guidelines
+- **Start with the "why"**: Begin each section by explaining the problem or need
+- **Use concrete examples**: Instead of "supports multiple frameworks," say "works with React, Vue, and Angular projects"
+- **Simplify installation**: Explain each setup step and why it's necessary
+- **Make benefits clear**: Don't just list features—explain the real-world impact
+- **Use progressive disclosure**: Start simple, then provide deeper details for those who need them
+- **Test comprehension**: Each explanation should be understandable to someone new to the field
+
+### Final Assembly
 - Create navigation links that correspond to actual README sections
 - Include proper setup instructions based on detected package manager and dependencies (if applicable)
 - Add relevant badges, license information, and community links if available
