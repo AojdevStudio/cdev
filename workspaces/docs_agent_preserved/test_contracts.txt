@@ -1,3 +1,0 @@
-README.md
-ai_docs/README.md
-templates/README.md

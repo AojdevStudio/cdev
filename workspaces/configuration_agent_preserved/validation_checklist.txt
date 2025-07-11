@@ -1,6 +1,0 @@
-[x] Configuration generator creates valid settings.json files
-[x] Templates work correctly for each project type
-[x] Migration from settings.local.json to settings.json preserves all data
-[x] Dynamic configuration based on detected project type
-[x] Template engine properly substitutes variables
-[x] All generated configurations are valid JSON

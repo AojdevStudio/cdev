@@ -1,5 +1,0 @@
-test/path-resolver.test.js
-test/python-detector.test.js
-test/platform-utils.test.js
-test/validator.test.js
-test/validation-rules.test.js
