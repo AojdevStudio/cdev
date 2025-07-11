@@ -1,0 +1,55 @@
+{
+  "root": true,
+  "extends": [
+    "airbnb-base",
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "env": {
+    "node": true,
+    "jest": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "jest",
+    "import",
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "arrow-body-style": ["error", "as-needed"],
+    "prefer-arrow-callback": "error",
+    "import/order": ["error", {
+      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+      "newlines-between": "always"
+    }],
+    "import/no-unresolved": "error",
+    "import/extensions": ["error", "never", { "json": "always" }],
+    "class-methods-use-this": "off",
+    "no-param-reassign": ["error", { "props": false }],
+    "consistent-return": "warn",
+    "no-underscore-dangle": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js", "**/__tests__/**/*.js"],
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "no-console": "off",
+        "max-len": "off"
+      }
+    }
+  ]
+}

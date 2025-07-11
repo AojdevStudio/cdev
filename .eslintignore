@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+coverage/
+*.log
+
+# Test files that shouldn't be linted
+test/fixtures/
+
+# Generated files
+dist-manifest.json
+*.min.js
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+operations/test-temp/
+
+# Documentation
+docs/
+
+# Logs
+logs/
+
+# Workspaces (agent-generated content)
+workspaces/
+
+# Git
+.git/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
