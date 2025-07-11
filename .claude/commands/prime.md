@@ -1,11 +1,11 @@
 ---
 allowed-tools: Bash, Read
-description: Load context for a new agent session by analyzing codebase structure and README
+description: Load essential project context by analyzing codebase structure and core docs
 ---
 
 # Prime
 
-This command loads essential context for a new agent session by examining the codebase structure and reading the project README.
+This command provides a lean, focused overview of the project by examining the codebase structure and core documentation for efficient context loading.
 
 **Usage Examples:**
 - `/prime` - Load project context and provide overview
@@ -13,15 +13,12 @@ This command loads essential context for a new agent session by examining the co
 ## Instructions
 - Run `git ls-files` to understand the codebase structure and file organization
 - Read the README.md to understand the project purpose, setup instructions, and key information
-- Provide a concise overview of the project based on the gathered context
+- Read the CHANGELOG.md to understand recent changes and version history
+- Provide a concise overview of the project structure and purpose
+- Focus on what the codebase contains rather than how to work with it (CLAUDE.md handles that)
 
 ## Context
-- Codebase structure git accessible: !`git ls-files`
-- Codebase structure all: !`eza . --tree`
-- Project README: @README.md
-- Project Changelog: @CHANGELOG.md
-- Documentation: 
-  - @ai_docs/astral-uv-scripting-documentation.md
-  - @ai_docs/claude-code-hooks-documentation.md
-  - @docs/parallel-workflow.md
-  - @ai-docs/mastering-git-worktrees.md
+- Codebase structure: !`git ls-files`
+- Project overview: @README.md
+- Recent changes: @CHANGELOG.md
+- Note: Parallel development workflows are loaded via CLAUDE.md automatically

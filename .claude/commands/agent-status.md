@@ -19,7 +19,12 @@ FilterOption: $ARGUMENTS
 
 ## Instructions
 - Parse $ARGUMENTS to extract filter option (complete, ready, blocked, or task ID)
-- Discover all agent workspaces using git worktree list and file system scan
+- Discover all agent workspaces using git worktree list and file system scan 
+    - run `git worktree list` to get all agent worktrees
+    - run `find .. -name "*-agent" -type d 2>/dev/null | grep -E "work-trees|workspaces" | head -20` to get all agent workspaces
+    - run `cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo "{}"` to get the coordination status
+    - run `pwd` to get the current directory
+    - run `cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo "{}"` to get the coordination status
 - For each agent found, read agent_context.json for metadata
 - Analyze validation_checklist.txt to calculate completion percentage
 - Check git status to determine if changes exist
