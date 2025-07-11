@@ -20,7 +20,7 @@ This guide helps you resolve common issues with Claude Code Hooks.
 
 **Problem:**
 ```bash
-$ npx cdev get PROJ-123
+$ npx @aojdevstudio/cdev get PROJ-123
 command not found: npx
 ```
 
@@ -34,7 +34,7 @@ npm --version   # Should be 5.2+
 npm install -g npx
 
 # Or install cdev globally
-npm install -g cdev
+npm install -g @aojdevstudio/cdev
 cdev get PROJ-123
 ```
 
@@ -48,7 +48,7 @@ Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'
 **Solution:**
 ```bash
 # Option 1: Use npx (recommended)
-npx cdev get PROJ-123
+npx @aojdevstudio/cdev get PROJ-123
 
 # Option 2: Change npm prefix
 mkdir ~/.npm-global

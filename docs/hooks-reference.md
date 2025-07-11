@@ -1,6 +1,6 @@
-# CDEV Hooks Reference
+# @aojdevstudio/cdev Hooks Reference
 
-> **Complete guide to understanding and using CDEV's intelligent hook system**
+> **Complete guide to understanding and using cdev's intelligent hook system that acts as your AI pair programmer's safety net**
 
 ## 📚 Table of Contents
 
@@ -11,6 +11,24 @@
 5. [Creating Custom Hooks](#creating-custom-hooks)
 6. [Hook Configuration](#hook-configuration)
 7. [Troubleshooting Hooks](#troubleshooting-hooks)
+8. [Real-World Examples](#real-world-examples)
+
+## Quick Reference
+
+| Hook Name | Tier | Purpose | Can Disable? |
+|-----------|------|---------|--------------|
+| pre_tool_use.py | 1 | Blocks dangerous operations & date hallucinations | ❌ No |
+| typescript-validator.py | 1 | Validates TypeScript syntax | ❌ No |
+| commit-message-validator.py | 1 | Enforces commit conventions | ❌ No |
+| task-completion-enforcer.py | 1 | Blocks commits with TODOs | ❌ No |
+| pnpm-enforcer.py | 1 | Prevents package manager conflicts | ❌ No |
+| api-standards-checker.py | 2 | Ensures REST/GraphQL standards | ✅ Yes |
+| code-quality-reporter.py | 2 | Reports code metrics | ✅ Yes |
+| import-organizer.py | 2 | Organizes import statements | ✅ Yes |
+| universal-linter.py | 2 | Multi-language linting | ✅ Yes |
+| notification.py | 3 | System notifications | ✅ Yes |
+| stop.py | 3 | Session cleanup | ✅ Yes |
+| post_tool_use.py | 3 | Action logging | ✅ Yes |
 
 ## What Are Hooks?
 
@@ -60,21 +78,39 @@ Results processed/logged
 These hooks **cannot be disabled** - they protect your codebase from critical errors.
 
 #### 1. pre_tool_use.py
-**Purpose**: Your first line of defense against dangerous operations
+**Purpose**: Your first line of defense against dangerous operations and AI hallucinations
 
 **What it does**:
 - Blocks destructive commands (`rm -rf`, `dd`, `format`)
 - Prevents editing sensitive files (`.env`, private keys)
-- Requires reading files before editing them
+- Enforces command template reading before creating new commands
+- **NEW: Date Awareness Check** - Detects when AI writes dates without verification
 - Validates file paths for safety
 
-**Example protection**:
-```python
+**Example protections**:
+
+1. **Dangerous Command Protection**:
+```bash
 # This would be blocked:
 rm -rf /important-directory
 
 # Claude receives:
 "BLOCKED: Dangerous rm command detected and prevented"
+```
+
+2. **Date Hallucination Prevention** (NEW):
+```python
+# When writing "Released in January 2025":
+📅 Date Awareness Check: Content contains date references
+⚠️  WARNING: You're writing date-sensitive content without verifying the current date!
+💡 Recommendation: Run 'date' command first to ensure accuracy
+```
+
+3. **Command Template Protection**:
+```bash
+# When creating new command without reading template:
+❌ BLOCKED: You must read and understand the custom command template first!
+📖 Please read: ai-docs/custom-command-template.md
 ```
 
 **Configuration**: None - always active for safety
@@ -483,6 +519,167 @@ send_notification(message: str, level: str)
 log_action(action: str, details: dict)
 ```
 
+## Additional Hooks
+
+### pre_tool_use_command_template_guard.py
+**Purpose**: Ensures proper command creation workflow
+
+**What it does**:
+- Validates command file structure
+- Enforces template compliance
+- Prevents malformed commands
+- Guides proper command creation
+
+### subagent_stop.py
+**Purpose**: Manages sub-agent lifecycle
+
+**What it does**:
+- Tracks sub-agent completion
+- Aggregates sub-agent results
+- Manages resource cleanup
+- Reports back to main agent
+
+## Real-World Examples
+
+### Example 1: Preventing Production Disasters
+
+```bash
+# Scenario: Claude tries to clean up temporary files
+Claude: "I'll remove the temporary files"
+Command: rm -rf /tmp/*
+
+# Hook intervention:
+🛡️ pre_tool_use.py: "BLOCKED: Dangerous rm command with wildcard detected"
+Suggestion: "Use specific file paths or safer alternatives like find with -delete"
+```
+
+### Example 2: Maintaining Code Quality
+
+```typescript
+// Scenario: Claude fixes a bug quickly
+const processPayment = (amount) => {
+  // TODO: Add currency validation
+  return amount * 1.1; // Add tax
+}
+
+// Hook intervention:
+❌ task-completion-enforcer.py: "Blocked: Unresolved TODO found"
+📝 typescript-validator.py: "Warning: 'amount' parameter needs type annotation"
+```
+
+### Example 3: Date Accuracy in Documentation
+
+```markdown
+// Scenario: Claude updates README
+## Version History
+- v1.0.0 - Released January 2025
+- v1.1.0 - Planned for Q2 2025
+
+// Hook intervention:
+📅 pre_tool_use.py: "Date Awareness Check: Verify dates are accurate"
+💡 Suggestion: "Run 'date' command first to confirm current date"
+```
+
+### Example 4: Consistent API Design
+
+```javascript
+// Scenario: Claude adds new endpoint
+router.get('/api/getUsers', fetchUsers);
+
+// Hook intervention:
+🎯 api-standards-checker.py: "Non-RESTful endpoint detected"
+✅ Suggestion: "Use '/api/users' for REST compliance"
+```
+
+## Hook Development Best Practices
+
+### 1. Performance Optimization
+```python
+# ❌ Bad: Reading entire file for every check
+content = open(large_file).read()
+if "pattern" in content:
+    # process
+
+# ✅ Good: Stream file and exit early
+with open(large_file) as f:
+    for line in f:
+        if "pattern" in line:
+            # process and break
+```
+
+### 2. User-Friendly Messages
+```python
+# ❌ Bad: Technical jargon
+print("E_INVALID_AST_NODE: Unexpected token at position 42")
+
+# ✅ Good: Clear, actionable feedback
+print("Syntax Error: Missing closing bracket ')' on line 5")
+print("Hint: Check if all parentheses are properly matched")
+```
+
+### 3. Graceful Degradation
+```python
+# ✅ Good: Handle missing dependencies
+try:
+    import typescript_parser
+    can_validate_ts = True
+except ImportError:
+    can_validate_ts = False
+    print("Note: TypeScript validation unavailable (parser not installed)")
+```
+
+## Integration with CI/CD
+
+### GitHub Actions
+```yaml
+name: CDEV Hooks Validation
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run CDEV Hooks
+        run: |
+          npx @aojdevstudio/cdev validate
+          npx @aojdevstudio/cdev run-hooks --all
+```
+
+### Pre-commit Integration
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: cdev-hooks
+        name: CDEV Hook Validation
+        entry: cdev run-hooks
+        language: system
+        pass_filenames: true
+```
+
+## Summary
+
+The cdev hook system provides multiple layers of protection and enhancement for AI-assisted development:
+
+1. **Safety First**: Tier 1 hooks prevent catastrophic mistakes before they happen
+2. **Quality Assurance**: Tier 2 hooks maintain code standards automatically  
+3. **Developer Experience**: Tier 3 hooks enhance workflow with notifications and logging
+4. **Extensibility**: Custom hooks allow project-specific validations
+5. **AI Awareness**: Special features like date detection prevent common AI hallucinations
+
+Whether you're working solo or in a team, hooks ensure that AI assistance remains helpful without introducing risks or inconsistencies.
+
+### Next Steps
+
+- Install cdev: `npm install -g @aojdevstudio/cdev`
+- Run setup: `cdev init`
+- Customize hooks: Edit `.cdev/hooks.config.json`
+- Create custom hooks: See examples above
+
 ---
 
-*For more examples and patterns, check the [hooks directory](.claude/hooks/) in your CDEV installation.*
+*For more examples and patterns, check the [hooks directory](.claude/hooks/) in your cdev installation.*
+
+**Last Updated**: July 2025

@@ -45,7 +45,7 @@ CDEV Parallel Workflow is designed to address challenges such as merge conflicts
 **Recommended Command:**
 
 ```bash
-npm install -g cdev
+npm install -g @aojdevstudio/cdev
 # OR for existing setups
 npm update -g cdev
 ```

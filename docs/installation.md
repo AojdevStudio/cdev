@@ -43,10 +43,10 @@ The fastest way to get started:
 
 ```bash
 # Install globally (recommended)
-npm install -g cdev
+npm install -g @aojdevstudio/cdev
 
 # Or use directly with npx
-npx cdev get PROJ-123
+npx @aojdevstudio/cdev get PROJ-123
 ```
 
 ## Setting Up Your Project
@@ -297,10 +297,10 @@ npm pkg delete scripts.claude:spawn
 ```bash
 # Better: use a Node version manager
 nvm use 18
-npm install -g cdev
+npm install -g @aojdevstudio/cdev
 
 # Or use npx directly without installing
-npx cdev get PROJ-123
+npx @aojdevstudio/cdev get PROJ-123
 ```
 
 **Python Not Found**
@@ -392,7 +392,7 @@ export CLAUDE_ENV=development
 # GitHub Actions
 - name: Install CDEV
   run: |
-    npm install -g cdev
+    npm install -g @aojdevstudio/cdev
     # Copy hooks and scripts from your repository
     # (assumes they're already committed to your repo)
 ```
