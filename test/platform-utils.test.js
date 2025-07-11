@@ -17,16 +17,16 @@ describe('PlatformUtils', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
+    originalPlatform = os.platform;
   });
 
   afterEach(() => {
-    Object.defineProperty(process, 'platform', originalPlatform);
+    os.platform = originalPlatform;
   });
 
   describe('platform detection', () => {
     test('detects Windows correctly', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       const utils = new PlatformUtils();
       
       expect(utils.isWindows).toBe(true);
@@ -36,7 +36,7 @@ describe('PlatformUtils', () => {
     });
 
     test('detects macOS correctly', () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' });
+      os.platform = jest.fn(() => 'darwin');
       const utils = new PlatformUtils();
       
       expect(utils.isWindows).toBe(false);
@@ -46,7 +46,7 @@ describe('PlatformUtils', () => {
     });
 
     test('detects Linux correctly', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       const utils = new PlatformUtils();
       
       expect(utils.isWindows).toBe(false);
@@ -74,7 +74,7 @@ describe('PlatformUtils', () => {
     });
 
     test('detects admin privileges on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       execSync.mockImplementation(() => ''); // Success means admin
 
       const utils = new PlatformUtils();
@@ -84,7 +84,7 @@ describe('PlatformUtils', () => {
     });
 
     test('detects non-admin on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       execSync.mockImplementation(() => {
         throw new Error('Access denied');
       });
@@ -96,7 +96,7 @@ describe('PlatformUtils', () => {
     });
 
     test('detects admin privileges on Unix', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       const originalGetuid = process.getuid;
       process.getuid = () => 0; // Root user
 
@@ -155,7 +155,7 @@ describe('PlatformUtils', () => {
     });
 
     test('uses correct shell on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       execSync.mockReturnValue('');
 
       const utils = new PlatformUtils();
@@ -167,7 +167,7 @@ describe('PlatformUtils', () => {
     });
 
     test('uses correct shell on Unix', () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' });
+      os.platform = jest.fn(() => 'darwin');
       execSync.mockReturnValue('');
 
       const utils = new PlatformUtils();
@@ -181,7 +181,7 @@ describe('PlatformUtils', () => {
 
   describe('openBrowser', () => {
     test('opens browser on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       execSync.mockReturnValue('');
 
       const utils = new PlatformUtils();
@@ -192,7 +192,7 @@ describe('PlatformUtils', () => {
     });
 
     test('opens browser on macOS', () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' });
+      os.platform = jest.fn(() => 'darwin');
       execSync.mockReturnValue('');
 
       const utils = new PlatformUtils();
@@ -203,7 +203,7 @@ describe('PlatformUtils', () => {
     });
 
     test('opens browser on Linux', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       execSync.mockReturnValue('');
 
       const utils = new PlatformUtils();
@@ -216,7 +216,7 @@ describe('PlatformUtils', () => {
 
   describe('getFilePermissions', () => {
     test('gets file permissions on Unix', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       fs.statSync.mockReturnValue({
         mode: 0o755
       });
@@ -231,7 +231,7 @@ describe('PlatformUtils', () => {
     });
 
     test('gets file permissions on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       fs.statSync.mockReturnValue({
         mode: 0o666
       });
@@ -256,7 +256,7 @@ describe('PlatformUtils', () => {
 
   describe('setFilePermissions', () => {
     test('sets file permissions on Unix', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       fs.chmodSync.mockImplementation(() => {});
 
       const utils = new PlatformUtils();
@@ -271,7 +271,7 @@ describe('PlatformUtils', () => {
     });
 
     test('handles limited permissions on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       fs.chmodSync.mockImplementation(() => {});
 
       const utils = new PlatformUtils();
@@ -295,22 +295,22 @@ describe('PlatformUtils', () => {
 
   describe('createScript', () => {
     test('creates Windows script', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       fs.writeFileSync.mockImplementation(() => {});
 
       const utils = new PlatformUtils();
-      const scriptPath = utils.createScript('/test/script', 'echo hello');
+      const scriptPath = utils.createScript('/test/script', 'echo hello\necho world');
       
       expect(scriptPath).toBe('/test/script.cmd');
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         '/test/script.cmd',
-        expect.stringContaining('\r\n'),
-        expect.any(Object)
+        'echo hello\r\necho world',
+        { mode: 0o755 }
       );
     });
 
     test('creates Unix script with shebang', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       fs.writeFileSync.mockImplementation(() => {});
 
       const utils = new PlatformUtils();
@@ -327,7 +327,7 @@ describe('PlatformUtils', () => {
 
   describe('process management', () => {
     test('kills process on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       execSync.mockImplementation(() => '');
 
       const utils = new PlatformUtils();
@@ -338,7 +338,7 @@ describe('PlatformUtils', () => {
     });
 
     test('kills process on Unix', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       const originalKill = process.kill;
       process.kill = jest.fn();
 
@@ -352,11 +352,9 @@ describe('PlatformUtils', () => {
     });
 
     test('finds processes by name', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
-      execSync.mockReturnValue(`
-        user  1234  0.0  0.1  12345  6789 ?  S  10:00  0:00 /usr/bin/node test.js
-        user  5678  0.0  0.1  12345  6789 ?  S  10:01  0:00 /usr/bin/node server.js
-      `);
+      os.platform = jest.fn(() => 'linux');
+      execSync.mockReturnValue(`user     1234  0.0  0.1  12345  6789 ?        S    10:00   0:00 /usr/bin/node test.js
+user     5678  0.0  0.1  12345  6789 ?        S    10:01   0:00 /usr/bin/node server.js`);
 
       const utils = new PlatformUtils();
       const processes = utils.findProcess('node');
@@ -401,7 +399,7 @@ describe('PlatformUtils', () => {
 
   describe('WSL detection', () => {
     test('detects WSL environment', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
+      os.platform = jest.fn(() => 'linux');
       fs.readFileSync.mockImplementation((path) => {
         if (path === '/proc/version') {
           return 'Linux version 5.10.16.3-microsoft-standard-WSL2';
@@ -415,7 +413,7 @@ describe('PlatformUtils', () => {
     });
 
     test('returns false on non-Linux platforms', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       
       const utils = new PlatformUtils();
       const result = utils.isWSL();
@@ -425,21 +423,21 @@ describe('PlatformUtils', () => {
 
   describe('line endings', () => {
     test('returns correct line ending for Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       const utils = new PlatformUtils();
       
       expect(utils.getLineEnding()).toBe('\r\n');
     });
 
     test('returns correct line ending for Unix', () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' });
+      os.platform = jest.fn(() => 'darwin');
       const utils = new PlatformUtils();
       
       expect(utils.getLineEnding()).toBe('\n');
     });
 
     test('normalizes line endings correctly', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
+      os.platform = jest.fn(() => 'win32');
       const utils = new PlatformUtils();
       
       const text = 'line1\nline2\r\nline3\rline4';

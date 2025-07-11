@@ -50,25 +50,9 @@ const sessionStorageMock = {
 };
 global.sessionStorage = sessionStorageMock;
 
-// Mock window.location
-const mockLocation = {
-  href: 'http://localhost:3000/',
-  origin: 'http://localhost:3000',
-  protocol: 'http:',
-  host: 'localhost:3000',
-  hostname: 'localhost',
-  port: '3000',
-  pathname: '/',
-  search: '',
-  hash: '',
-  assign: jest.fn(),
-  replace: jest.fn(),
-  reload: jest.fn(),
-};
-Object.defineProperty(window, 'location', {
-  value: mockLocation,
-  writable: true,
-});
+// Note: window.location is provided by JSDOM and cannot be overridden
+// Tests that need to mock location behavior should use jest.spyOn or other approaches
+// For example: jest.spyOn(window.location, 'assign').mockImplementation(() => {})
 
 // Mock window.matchMedia for responsive tests
 Object.defineProperty(window, 'matchMedia', {
@@ -114,13 +98,13 @@ global.FileList = class MockFileList {
   constructor(files) {
     this.files = files;
     this.length = files.length;
-    
+
     // Make it iterable
     files.forEach((file, index) => {
       this[index] = file;
     });
   }
-  
+
   item(index) {
     return this.files[index] || null;
   }
@@ -137,14 +121,14 @@ global.waitForNextTick = () => new Promise(resolve => process.nextTick(resolve))
 beforeEach(() => {
   // Clear all mocks before each test
   jest.clearAllMocks();
-  
+
   // Reset fetch mock
   fetch.mockClear();
-  
+
   // Reset localStorage and sessionStorage
   localStorage.clear();
   sessionStorage.clear();
-  
+
   // Reset console mocks
   if (console.log.mockClear) console.log.mockClear();
   if (console.error.mockClear) console.error.mockClear();

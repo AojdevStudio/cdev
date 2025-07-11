@@ -213,8 +213,13 @@ describe('ValidationRules', () => {
     });
 
     test('custom rule with options', () => {
+      const { ValidationError } = require('../src/validation-errors');
+      
       const customValidator = (value, field, context, options) => {
-        return value.length >= options.minLength;
+        if (value.length < options.minLength) {
+          throw new ValidationError(`Field '${field}' must be at least ${options.minLength} characters`, field, 'MIN_LENGTH');
+        }
+        return true;
       };
       
       rules.addRule('minLength', customValidator, { minLength: 5 });

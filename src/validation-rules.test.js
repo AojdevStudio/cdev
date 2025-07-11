@@ -100,33 +100,33 @@ describe('ValidationRules', () => {
     });
 
     test('should validate minimum length/value', () => {
-      expect(() => rules.validateValue('hello', 'field', { rule: 'min', min: 3 })).not.toThrow();
-      expect(() => rules.validateValue('hi', 'field', { rule: 'min', min: 3 })).toThrow(RangeValidationError);
-      expect(() => rules.validateValue(10, 'field', { rule: 'min', min: 5 })).not.toThrow();
-      expect(() => rules.validateValue(3, 'field', { rule: 'min', min: 5 })).toThrow(RangeValidationError);
+      expect(() => rules.validateValue('hello', 'field', 'min', { min: 3 })).not.toThrow();
+      expect(() => rules.validateValue('hi', 'field', 'min', { min: 3 })).toThrow(RangeValidationError);
+      expect(() => rules.validateValue(10, 'field', 'min', { min: 5 })).not.toThrow();
+      expect(() => rules.validateValue(3, 'field', 'min', { min: 5 })).toThrow(RangeValidationError);
     });
 
     test('should validate maximum length/value', () => {
-      expect(() => rules.validateValue('hello', 'field', { rule: 'max', max: 10 })).not.toThrow();
-      expect(() => rules.validateValue('very long string', 'field', { rule: 'max', max: 10 })).toThrow(RangeValidationError);
-      expect(() => rules.validateValue(5, 'field', { rule: 'max', max: 10 })).not.toThrow();
-      expect(() => rules.validateValue(15, 'field', { rule: 'max', max: 10 })).toThrow(RangeValidationError);
+      expect(() => rules.validateValue('hello', 'field', 'max', { max: 10 })).not.toThrow();
+      expect(() => rules.validateValue('very long string', 'field', 'max', { max: 10 })).toThrow(RangeValidationError);
+      expect(() => rules.validateValue(5, 'field', 'max', { max: 10 })).not.toThrow();
+      expect(() => rules.validateValue(15, 'field', 'max', { max: 10 })).toThrow(RangeValidationError);
     });
 
     test('should validate range', () => {
-      expect(() => rules.validateValue(5, 'field', { rule: 'range', min: 1, max: 10 })).not.toThrow();
-      expect(() => rules.validateValue(0, 'field', { rule: 'range', min: 1, max: 10 })).toThrow(RangeValidationError);
-      expect(() => rules.validateValue(15, 'field', { rule: 'range', min: 1, max: 10 })).toThrow(RangeValidationError);
+      expect(() => rules.validateValue(5, 'field', 'range', { min: 1, max: 10 })).not.toThrow();
+      expect(() => rules.validateValue(0, 'field', 'range', { min: 1, max: 10 })).toThrow(RangeValidationError);
+      expect(() => rules.validateValue(15, 'field', 'range', { min: 1, max: 10 })).toThrow(RangeValidationError);
     });
 
     test('should validate pattern', () => {
-      expect(() => rules.validateValue('abc123', 'field', { rule: 'pattern', pattern: /^[a-z]+\\d+$/ })).not.toThrow();
-      expect(() => rules.validateValue('123abc', 'field', { rule: 'pattern', pattern: /^[a-z]+\\d+$/ })).toThrow(FormatValidationError);
+      expect(() => rules.validateValue('abc123', 'field', 'pattern', { pattern: /^[a-z]+\d+$/ })).not.toThrow();
+      expect(() => rules.validateValue('123abc', 'field', 'pattern', { pattern: /^[a-z]+\d+$/ })).toThrow(FormatValidationError);
     });
 
     test('should validate custom rule', () => {
       const customValidator = jest.fn(() => true);
-      expect(() => rules.validateValue('value', 'field', { rule: 'custom', validator: customValidator })).not.toThrow();
+      expect(() => rules.validateValue('value', 'field', 'custom', { validator: customValidator })).not.toThrow();
       expect(customValidator).toHaveBeenCalledWith('value', 'field', {});
     });
   });

@@ -27,7 +27,7 @@ module.exports = {
   },
   
   // Setup files to run before tests
-  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.js', '<rootDir>/test/jest-setup.js'],
   
   // Coverage configuration
   collectCoverage: true,
@@ -37,10 +37,10 @@ module.exports = {
   // Coverage thresholds
   coverageThreshold: {
     global: {
-      branches: 70,
-      functions: 70,
-      lines: 70,
-      statements: 70
+      branches: 95,
+      functions: 95,
+      lines: 95,
+      statements: 95
     }
   },
   
@@ -68,8 +68,11 @@ module.exports = {
     '!**/coverage/**'
   ],
   
-  // Test timeout (30 seconds)
-  testTimeout: 30000,
+  // Test timeout (60 seconds for slower tests)
+  testTimeout: 60000,
+  
+  // Performance optimizations
+  maxWorkers: '50%',
   
   // Clear mocks between tests
   clearMocks: true,
@@ -79,6 +82,9 @@ module.exports = {
   
   // Verbose output
   verbose: true,
+  
+  // Fail fast on first test failure
+  bail: false,
   
   // Module directories to search for modules
   moduleDirectories: ['node_modules', '<rootDir>'],

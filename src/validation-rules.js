@@ -3,6 +3,7 @@
  */
 
 const {
+  ValidationError,
   RequiredFieldError,
   TypeValidationError,
   FormatValidationError,
@@ -182,7 +183,9 @@ class ValidationRules {
     if (!rule) {
       throw new Error(`Unknown validation rule: ${ruleName}`);
     }
-    return rule.validator(value, field, {}, options);
+    // Pass options to the validator along with the rule's default options
+    const mergedOptions = { ...rule.options, ...options };
+    return rule.validator(value, field, {}, mergedOptions);
   }
 
   validateWithRules(value, field, ruleSpecs) {
