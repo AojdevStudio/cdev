@@ -525,7 +525,7 @@ git status
       const envPath = path.join(targetDir, '.env');
       const envContent = await fs.readFile(envExampleTarget, 'utf8');
       const updatedContent = envContent
-        .replace('lin_api_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', config.linearApiKey)
+        .replace('<your-linear-api-key>', config.linearApiKey)
         .replace('YourName', config.engineerName)
         .replace('cursor', config.defaultEditor);
       

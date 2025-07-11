@@ -507,7 +507,7 @@ describe('InteractiveInstaller', () => {
     test('creates .env file with user configuration', async () => {
       fs.pathExists.mockResolvedValue(true);
       fs.readFile.mockResolvedValue(`
-LINEAR_API_KEY=lin_api_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+LINEAR_API_KEY=<your-linear-api-key>
 ENGINEER_NAME=YourName
 DEFAULT_EDITOR=cursor
       `);

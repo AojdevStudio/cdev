@@ -235,6 +235,82 @@ def get_file_hash(file_path):
     except (FileNotFoundError, PermissionError):
         return ""
 
+def contains_date_patterns(content):
+    """
+    Check if content contains date patterns that might be hallucinated.
+    Returns True if dates are found that should be verified.
+    """
+    # Common date patterns that LLMs might hallucinate
+    date_patterns = [
+        r'\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b',
+        r'\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\b',
+        r'\bQ[1-4]\s+\d{4}\b',  # Q1 2025, etc.
+        r'\b\d{4}-\d{2}-\d{2}\b',  # 2025-01-15
+        r'\b\d{1,2}/\d{1,2}/\d{4}\b',  # 1/15/2025 or 01/15/2025
+        r'\b(by|in|on|before|after)\s+(end\s+of\s+)?\d{4}\b',  # by 2025, by end of 2025
+        r'\b(early|mid|late)\s+\d{4}\b',  # early 2025
+        r'(next|last|this)\s+(month|quarter|year)',  # next quarter
+        r'(within|in)\s+\d+\s+(days|weeks|months)',  # within 30 days
+    ]
+    
+    for pattern in date_patterns:
+        if re.search(pattern, content, re.IGNORECASE):
+            return True
+    
+    return False
+
+def check_date_awareness(tool_name, tool_input):
+    """
+    Check if the tool is writing date-sensitive content without verifying current date.
+    """
+    # Only check tools that write content
+    if tool_name not in ['Write', 'Edit', 'MultiEdit']:
+        return False
+    
+    # Get the content being written
+    content = ''
+    if tool_name == 'Write':
+        content = tool_input.get('content', '')
+    elif tool_name == 'Edit':
+        content = tool_input.get('new_string', '')
+    elif tool_name == 'MultiEdit':
+        edits = tool_input.get('edits', [])
+        content = ' '.join([edit.get('new_string', '') for edit in edits])
+    
+    # Check if content contains date patterns
+    return contains_date_patterns(content)
+
+def check_recent_date_command():
+    """
+    Check if the date command was run recently (within last 5 minutes).
+    """
+    # Check logs for recent date command
+    log_paths = [
+        Path.home() / '.claude' / 'logs' / 'pre_tool_use.json',
+        Path('logs/pre_tool_use.json'),
+        Path('../logs/pre_tool_use.json')
+    ]
+    
+    cutoff_time = time.time() - 300  # 5 minutes
+    
+    for log_path in log_paths:
+        if log_path.exists():
+            try:
+                with open(log_path, 'r') as f:
+                    log_data = json.load(f)
+                    
+                    # Check recent entries for date command
+                    for entry in reversed(log_data[-20:]):  # Check last 20 entries
+                        if entry.get('tool_name') == 'Bash':
+                            command = entry.get('tool_input', {}).get('command', '')
+                            if command.strip() == 'date' or 'date' in command.split():
+                                return True
+                                
+            except (json.JSONDecodeError, FileNotFoundError):
+                continue
+    
+    return False
+
 def main():
     try:
         # Read JSON input from stdin
@@ -286,6 +362,22 @@ def main():
                 sys.exit(2)
             
             print("✅ Template understanding confirmed. Access granted.", file=sys.stderr)
+        
+        # Check for date-sensitive content
+        if check_date_awareness(tool_name, tool_input):
+            if not check_recent_date_command():
+                print("📅 Date Awareness Check: Content contains date references", file=sys.stderr)
+                print("⚠️  WARNING: You're writing date-sensitive content without verifying the current date!", file=sys.stderr)
+                print("💡 Recommendation: Run 'date' command first to ensure accuracy", file=sys.stderr)
+                print("", file=sys.stderr)
+                print("🗓️  Common date hallucination patterns detected:", file=sys.stderr)
+                print("   • Month/Year references (e.g., 'January 2025')", file=sys.stderr)
+                print("   • Quarter references (e.g., 'Q1 2025')", file=sys.stderr)
+                print("   • Relative dates (e.g., 'next quarter', 'by end of 2025')", file=sys.stderr)
+                print("", file=sys.stderr)
+                print("✅ To proceed accurately: Run the Bash tool with command 'date' first", file=sys.stderr)
+                # Note: This is a warning, not a block - allows Claude to decide
+                # If you want to enforce it, change to sys.exit(2)
         
         # Ensure log directory exists
         log_dir = Path.cwd() / 'logs'

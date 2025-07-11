@@ -50,6 +50,16 @@ pnpm-lock.yaml
 .tmp/
 .temp/
 
+# Package artifacts
+*.tgz
+cdev@*
+
+# Test outputs
+test-output/
+
+# IDE specific
+.cursor/
+
 # Git worktrees coordination
 ../project-work-trees/
 workspaces/

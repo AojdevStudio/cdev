@@ -1,5 +1,5 @@
 {
-  "name": "cdev",
+  "name": "@aojdevstudio/cdev",
   "version": "1.0.0",
   "description": "Claude Development - Parallel workflow system with intelligent hooks, Linear integration, and automated agent management",
   "main": "src/installer.js",
@@ -15,7 +15,12 @@
     "test:ci": "jest --coverage --watchAll=false",
     "lint": "eslint src scripts test --ext .js",
     "lint:fix": "eslint src scripts test --ext .js --fix",
-    "prepublishOnly": "npm run security:check && npm run test:ci && npm run lint && chmod +x scripts/*.sh && chmod +x bin/cli.js",
+    "format": "prettier --write \"**/*.{js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{js,json,md,yml,yaml}\"",
+    "lint:prettier": "prettier --check \"**/*.{js,json,md,yml,yaml}\"",
+    "quality": "npm run lint && npm run format:check",
+    "quality:fix": "npm run lint:fix && npm run format",
+    "prepublishOnly": "npm run security:check && npm run test:ci && npm run quality && chmod +x scripts/*.sh && chmod +x bin/cli.js",
     "security:check": "node scripts/security-check.js",
     "security:audit": "npm audit --audit-level moderate",
     "postpublish": "node scripts/postpublish.js",
@@ -34,7 +39,7 @@
     "workflow"
   ],
   "author": "AOJDevStudio <admin@kamdental.com>",
-  "license": "MIT",
+  "license": "CC-BY-NC-SA-4.0",
   "engines": {
     "node": ">=16.0.0"
   },
@@ -73,11 +78,14 @@
     "babel-jest": "30.0.4",
     "eslint": "^8.50.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-jest": "^27.4.0",
+    "eslint-plugin-prettier": "^5.0.0",
     "fs-extra": "11.3.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "30.0.4",
+    "prettier": "^3.0.3",
     "ts-jest": "29.4.0",
     "typescript": "5.8.3"
   },
