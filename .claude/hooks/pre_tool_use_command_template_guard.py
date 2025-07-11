@@ -117,7 +117,21 @@ def check_template_understanding(template_file):
 def check_recent_understanding_confirmation(template_file, state_file):
     """Check logs for recent understanding confirmation"""
     
-    # Look for recent echo of understanding
+    # First, check for a temporary confirmation file that Claude can create
+    temp_confirmation_file = Path.home() / '.claude' / 'session_state' / 'template_confirmed.tmp'
+    if temp_confirmation_file.exists():
+        try:
+            # Check if file was created recently (within 10 minutes)
+            file_stat = temp_confirmation_file.stat()
+            if time.time() - file_stat.st_mtime < 600:  # 10 minutes
+                # Save permanent confirmation and remove temp file
+                save_understanding_confirmation(template_file, state_file)
+                temp_confirmation_file.unlink()
+                return True
+        except (FileNotFoundError, PermissionError):
+            pass
+    
+    # Look for recent echo of understanding in logs as fallback
     log_paths = [
         Path.home() / '.claude' / 'logs' / 'chat.json',
         Path('logs/chat.json'),
