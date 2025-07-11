@@ -36,7 +36,8 @@ All sub-agents must be launched with the **Task** tool, given a bounded goal, an
 
 ---
 
-### Phase 1 — Explore
+## Phase 1 — Explore
+
 *Think hard* and spin up ≤ 6 sub-agents (one per directory bucket).  
 Each agent produces `explore-<bucket>.md` in `/shared/coordination/`.
 
@@ -47,6 +48,7 @@ Each agent produces `explore-<bucket>.md` in `/shared/coordination/`.
 **Purpose**: One-line description
 **Key Patterns**: • pattern 1 • pattern 2
 **Integration Notes**: Relevance to task
+```
 
 After all return, aggregate highlights into `/shared/coordination/explore_summary.md`, then echo top findings.
 
@@ -56,18 +58,18 @@ After all return, aggregate highlights into `/shared/coordination/explore_summar
 
 ## Phase 2 — Plan
 
-- Launch sub-agents to draft plan segments (tests, refactor, dependencies, etc.).
-- Each sub-agent saves its segment to `/shared/deployment-plans/plan-<agent-name>.md`.
-- When all segments are in, optionally merge key points into `/shared/deployment-plans/plan_master.md`.
-- Ask clarifying questions if blockers arise; commit the plan artefacts.
+- Launch sub-agents to draft plan segments (tests, refactor, dependencies, etc.)
+- Each sub-agent saves its segment to `/shared/deployment-plans/plan-<agent-name>.md`
+- When all segments are in, optionally merge key points into `/shared/deployment-plans/plan_master.md`
+- Ask clarifying questions if blockers arise; commit the plan artefacts
 
 ---
 
 ## Phase 3 — Write Tests
 
-- Spawn component-focused sub-agents to create failing tests under `/shared/coordination/tests/`.
-- Run the project test runner; store red log as `/shared/reports/red_test_log.txt`.
-- Commit tests.
+- Spawn component-focused sub-agents to create failing tests under `/shared/coordination/tests/`
+- Run the project test runner; store red log as `/shared/reports/red_test_log.txt`
+- Commit tests
 
 <!-- CONFIRM TESTS BEFORE CODE -->
 
@@ -75,52 +77,46 @@ After all return, aggregate highlights into `/shared/coordination/explore_summar
 
 ## Phase 4 — Code to Pass Tests
 
-- Fork sub-agents per component; implement minimal code to go green.
-- Run linter / formatter; save `/shared/reports/lint_results.txt`.
-- Commit implementation.
+- Fork sub-agents per component; implement minimal code to go green
+- Run linter / formatter; save `/shared/reports/lint_results.txt`
+- Commit implementation
 
 ---
 
 ## Phase 5 — Refactor
 
-- Launch review sub-agents (clarity, performance, security).
-- Apply safe edits; rely on test suite; commit refactor.
+- Launch review sub-agents (clarity, performance, security)
+- Apply safe edits; rely on test suite; commit refactor
 
 ---
 
 ## Phase 6 — Validate
+**(entry point for --validate-only)**
 
-*Entry point for `--validate-only`*
+- Parallel validation sub-agents:
+  1. Full unit / integration tests
+  2. UX checks (Puppeteer)
+  3. Static analysis
 
-Parallel validation sub-agents:
-
-1. Full unit / integration tests
-2. UX checks (Puppeteer) - user credentials are in .env
-3. Static analysis
-
-- Save artefacts to `/shared/reports/validation/`.
-- On failure, loop to the following tools: Plan, ultrathink, mcp__context7__*, mcp__zen__*.
-- Summarize validation in ≤ 1200 tokens.
+- Save artefacts to `/shared/reports/validation/`
+- On failure, loop back to **Plan** and *think ultrahard*
+- Summarise validation in ≤ 150 tokens
 
 ---
 
 ## Phase 7 — Write-Up
 
-- Collect `plan_master.md` (or individual plan files), commit hashes, coverage, screenshots.
-- Generate `/shared/reports/pr_description.md`; present summary in chat.
+- Collect plan_master.md (or individual plan files), commit hashes, coverage, screenshots
+- Generate `/shared/reports/pr_description.md`; present summary in chat
 
-**Return:** `OK` on success, else `FAIL: <reason>`.
+**Return** OK on success, else FAIL: <reason>.
 
 ---
 
 ## Context
-- Agent context file: !`cat agent_context.json 2>/dev/null || echo "No agent context found"`
-- Files to work on: !`cat files_to_work_on.txt 2>/dev/null || echo "No file list found"`
-- Validation checklist: !`cat validation_checklist.txt 2>/dev/null || echo "No checklist found"`
+- Agent context: !`cat agent_context.json 2>/dev/null || echo "No agent context found"`
+- File list: !`cat files_to_work_on.txt 2>/dev/null || echo "No file list found"`
+- Checklist: !`cat validation_checklist.txt 2>/dev/null || echo "No checklist found"`
 - Test contracts: !`cat test_contracts.txt 2>/dev/null || echo "No test contracts"`
-- Current directory: !`pwd`
+- PWD: !`pwd`
 - Git branch: !`git branch --show-current 2>/dev/null || echo "Not in git repo"`
-- Agent role: Determined dynamically from agentRole field in context
-- Focus area: Extracted from focusArea field for specialized work
-- Success criteria: All validation checklist items marked complete
-- Work approach: Systematic, checklist-driven development
