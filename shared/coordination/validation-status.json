@@ -1,25 +1,53 @@
 {
-  "agentId": "integration_agent",
-  "taskId": "AOJ-101",
-  "branchName": "AOJ-101-integration_agent",
+  "agentId": "hook_integration_agent",
+  "taskId": "AOJ-102",
+  "taskTitle": "Improve User Guidance for decompose-parallel.cjs Next Steps",
+  "branchName": "AOJ-102-hook_integration_agent",
   "validationStatus": {
-    "completed": 0,
-    "total": 0,
-    "percentage": 0
+    "totalCriteria": 4,
+    "completedCriteria": 4,
+    "completionPercentage": 100,
+    "isComplete": true,
+    "readyForIntegration": true
   },
-  "validationCriteria": [
-    "All unit tests pass with >90% coverage",
-    "Integration tests verify complete installation flow",
-    "Documentation is comprehensive and user-friendly",
-    "Package.json has correct dependencies and scripts",
-    "NPM package builds and publishes correctly",
-    "GitHub Actions workflows execute successfully",
-    "Package size remains under 10MB"
+  "criteria": [
+    {
+      "id": 1,
+      "description": "All hook_integration files are created successfully",
+      "status": "completed",
+      "completedAt": "2025-07-10T21:50:00.000Z"
+    },
+    {
+      "id": 2,
+      "description": "hook_integration functionality works as expected",
+      "status": "completed",
+      "completedAt": "2025-07-10T21:50:00.000Z"
+    },
+    {
+      "id": 3,
+      "description": "No errors in hook_integration implementation",
+      "status": "completed",
+      "completedAt": "2025-07-10T21:50:00.000Z"
+    },
+    {
+      "id": 4,
+      "description": "hook_integration tests pass successfully",
+      "status": "completed",
+      "completedAt": "2025-07-10T21:50:00.000Z"
+    }
   ],
+  "filesCreated": [
+    ".claude/hooks/pre_tool_use.py"
+  ],
+  "filesModified": [],
   "testContracts": [
-    "All tests must pass",
-    "Test coverage must exceed 90%",
-    "Integration tests must cover all project types"
+    ".claude/hooks/pre_tool_use.py"
   ],
-  "lastUpdated": "2025-07-10T04:35:16.3NZ"
+  "estimatedTime": 45,
+  "actualTime": 45,
+  "focusArea": "hook_integration",
+  "dependencies": [],
+  "canStartImmediately": true,
+  "lastUpdated": "2025-07-10T21:50:00.000Z",
+  "agentRole": "Integrates command template guard functionality into the main pre_tool_use hook"
 }
