@@ -7,6 +7,8 @@ This guide helps you resolve common issues with Claude Code Hooks.
 - [Installation Issues](#installation-issues)
 - [Hook Problems](#hook-problems)
 - [Linear Integration](#linear-integration)
+- [LLM Configuration](#llm-configuration)
+- [Decompose-Parallel Issues](#decompose-parallel-issues)
 - [Performance Issues](#performance-issues)
 - [Platform-Specific Issues](#platform-specific-issues)
 - [Error Messages](#error-messages)
@@ -261,6 +263,206 @@ fatal: could not create work tree dir: Permission denied
    ```bash
    git worktree prune
    git worktree list
+   ```
+
+## LLM Configuration
+
+### LLM Analysis Failed Error
+
+**Problem:**
+```
+❌ LLM analysis failed. Please configure your LLM provider:
+   1. Copy .env.example to .env
+   2. Add your API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or OPENROUTER_API_KEY)
+   3. Set LLM_PROVIDER to "openai", "anthropic", or "openrouter"
+   4. Set LLM_MODEL to your preferred model
+```
+
+**Solutions:**
+
+1. **Create .env file from example:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Configure your LLM provider:**
+   ```bash
+   # For OpenAI
+   LLM_PROVIDER=openai
+   LLM_MODEL=gpt-4-turbo-preview
+   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+
+   # For Anthropic
+   LLM_PROVIDER=anthropic
+   LLM_MODEL=claude-3-opus-20240229
+   ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxxxxxxx
+
+   # For OpenRouter (Recommended)
+   LLM_PROVIDER=openrouter
+   LLM_MODEL=mistralai/mistral-large-2411
+   OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxx
+   ```
+
+3. **Verify configuration:**
+   ```bash
+   # Check environment variables
+   grep "LLM_" .env
+   
+   # Test the configuration
+   node scripts/decompose-parallel.cjs --test
+   ```
+
+### Unsupported LLM Provider
+
+**Problem:**
+```
+Error: Unsupported LLM provider: azure
+```
+
+**Solution:**
+Currently supported providers are:
+- `openai` - OpenAI GPT models
+- `anthropic` - Claude models
+- `openrouter` - Access to multiple models (recommended)
+
+To use other providers, you can:
+1. Use OpenRouter which supports many providers
+2. Contribute a provider implementation to the project
+
+### API Key Invalid or Expired
+
+**Problem:**
+```
+Error: Authentication failed - check your API key
+```
+
+**Solutions:**
+
+1. **Verify API key format:**
+   - OpenAI: Starts with `sk-`
+   - Anthropic: Starts with `sk-ant-`
+   - OpenRouter: Starts with `sk-or-v1-`
+
+2. **Test API key directly:**
+   ```bash
+   # OpenAI
+   curl https://api.openai.com/v1/models \
+     -H "Authorization: Bearer $OPENAI_API_KEY"
+   
+   # Anthropic
+   curl https://api.anthropic.com/v1/messages \
+     -H "x-api-key: $ANTHROPIC_API_KEY" \
+     -H "anthropic-version: 2023-06-01"
+   ```
+
+3. **Check rate limits and quotas:**
+   - Ensure your account has available credits
+   - Check if you've hit rate limits
+   - Verify API key permissions
+
+## Decompose-Parallel Issues
+
+### Script Not Found
+
+**Problem:**
+```
+bash: node scripts/decompose-parallel.cjs: No such file or directory
+```
+
+**Solutions:**
+
+1. **Ensure you're in the project root:**
+   ```bash
+   # Check current directory
+   pwd
+   
+   # Should contain these files
+   ls scripts/decompose-parallel.cjs
+   ```
+
+2. **Make scripts executable:**
+   ```bash
+   chmod +x scripts/*.sh
+   chmod +x scripts/*.cjs
+   ```
+
+### No Linear Issue Cached
+
+**Problem:**
+```
+Error: No cached Linear issue found for TASK-123
+```
+
+**Solution:**
+```bash
+# First cache the Linear issue
+./scripts/cache-linear-issue.sh TASK-123
+
+# Then decompose it
+node scripts/decompose-parallel.cjs TASK-123
+```
+
+### Decomposition Produces No Agents
+
+**Problem:**
+```
+Warning: Task too simple for parallel decomposition
+```
+
+**Solution:**
+This occurs when the task is too small to benefit from parallelization. Consider:
+1. Combining with related tasks
+2. Adding more detail to the Linear issue
+3. Working on it sequentially instead
+
+### Next Steps After Decomposition
+
+After running `decompose-parallel.cjs`, you'll see output like:
+```
+✅ Deployment plan created: shared/deployment-plans/task-123-deployment-plan.json
+📊 Created 4 parallel agents:
+  • backend_api_agent
+  • frontend_ui_agent
+  • testing_agent
+  • documentation_agent
+
+Next steps:
+1. Review the deployment plan
+2. Spawn agent worktrees: ./scripts/spawn-agents.sh shared/deployment-plans/task-123-deployment-plan.json
+3. Start working with agents in their respective directories
+```
+
+**Follow these steps:**
+
+1. **Review the deployment plan:**
+   ```bash
+   cat shared/deployment-plans/task-123-deployment-plan.json | jq
+   ```
+
+2. **Spawn agent worktrees:**
+   ```bash
+   ./scripts/spawn-agents.sh shared/deployment-plans/task-123-deployment-plan.json
+   ```
+
+3. **Work with each agent:**
+   ```bash
+   # Cursor will auto-open for each agent
+   # In each window:
+   claude
+   /agent-start
+   ```
+
+4. **Monitor progress:**
+   ```bash
+   ./scripts/monitor-agents.sh
+   # or in Claude:
+   /agent-status
+   ```
+
+5. **Commit completed work:**
+   ```bash
+   # When an agent is done:
+   /agent-commit
    ```
 
 ## Performance Issues
