@@ -58,3 +58,4 @@ coordination/node_modules/
 node_modules/
 *.cpython-*.pyc
 __pycache__/
+coverage/
