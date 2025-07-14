@@ -2,8 +2,10 @@
  * Tests for hook-organizer.js
  */
 
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
+
 const HookOrganizer = require('./hook-organizer');
 
 // Mock fs-extra
@@ -13,47 +15,55 @@ describe('HookOrganizer', () => {
   let organizer;
   const testHooksPath = '/test/hooks';
   const mockCategorizedHooks = {
-    tier1: [{
-      name: 'validator.py',
-      category: 'validation',
-      description: 'Validation hook',
-      importance: 'critical',
-      path: '/old/validator.py',
-      size: 100,
-      modified: new Date('2024-01-01')
-    }],
-    tier2: [{
-      name: 'checker.py',
-      category: 'checking',
-      description: 'Checker hook',
-      importance: 'important',
-      path: '/old/checker.py',
-      size: 200,
-      modified: new Date('2024-01-02')
-    }],
-    tier3: [{
-      name: 'notification.py',
-      category: 'notification',
-      description: 'Notification hook',
-      importance: 'optional',
-      path: '/old/notification.py',
-      size: 150,
-      modified: new Date('2024-01-03')
-    }],
-    utils: [{
-      name: 'helper.py',
-      category: 'utility',
-      description: 'Helper utility',
-      importance: 'utility',
-      path: '/old/utils/helper.py',
-      size: 50,
-      modified: new Date('2024-01-04')
-    }]
+    tier1: [
+      {
+        name: 'validator.py',
+        category: 'validation',
+        description: 'Validation hook',
+        importance: 'critical',
+        path: '/old/validator.py',
+        size: 100,
+        modified: new Date('2024-01-01'),
+      },
+    ],
+    tier2: [
+      {
+        name: 'checker.py',
+        category: 'checking',
+        description: 'Checker hook',
+        importance: 'important',
+        path: '/old/checker.py',
+        size: 200,
+        modified: new Date('2024-01-02'),
+      },
+    ],
+    tier3: [
+      {
+        name: 'notification.py',
+        category: 'notification',
+        description: 'Notification hook',
+        importance: 'optional',
+        path: '/old/notification.py',
+        size: 150,
+        modified: new Date('2024-01-03'),
+      },
+    ],
+    utils: [
+      {
+        name: 'helper.py',
+        category: 'utility',
+        description: 'Helper utility',
+        importance: 'utility',
+        path: '/old/utils/helper.py',
+        size: 50,
+        modified: new Date('2024-01-04'),
+      },
+    ],
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Default mock implementations
     fs.ensureDir.mockResolvedValue();
     fs.pathExists.mockResolvedValue(false);
@@ -65,10 +75,10 @@ describe('HookOrganizer', () => {
     fs.stat.mockResolvedValue({
       isDirectory: () => false,
       size: 100,
-      mtime: new Date()
+      mtime: new Date(),
     });
     fs.move.mockResolvedValue();
-    
+
     organizer = new HookOrganizer(testHooksPath);
   });
 
@@ -79,7 +89,7 @@ describe('HookOrganizer', () => {
         tier1: path.join(testHooksPath, 'tier1'),
         tier2: path.join(testHooksPath, 'tier2'),
         tier3: path.join(testHooksPath, 'tier3'),
-        utils: path.join(testHooksPath, 'utils')
+        utils: path.join(testHooksPath, 'utils'),
       });
       expect(organizer.hookRegistry).toBe(path.join(testHooksPath, 'hook-registry.json'));
     });
@@ -107,35 +117,35 @@ describe('HookOrganizer', () => {
               name: 'validator.py',
               tier: 'tier1',
               category: 'validation',
-              currentPath: path.join(testHooksPath, 'tier1', 'validator.py')
+              currentPath: path.join(testHooksPath, 'tier1', 'validator.py'),
             }),
             'checker.py': expect.objectContaining({
               name: 'checker.py',
               tier: 'tier2',
               category: 'checking',
-              currentPath: path.join(testHooksPath, 'tier2', 'checker.py')
+              currentPath: path.join(testHooksPath, 'tier2', 'checker.py'),
             }),
             'notification.py': expect.objectContaining({
               name: 'notification.py',
               tier: 'tier3',
               category: 'notification',
-              currentPath: path.join(testHooksPath, 'tier3', 'notification.py')
+              currentPath: path.join(testHooksPath, 'tier3', 'notification.py'),
             }),
             'helper.py': expect.objectContaining({
               name: 'helper.py',
               tier: 'utils',
               category: 'utility',
-              currentPath: path.join(testHooksPath, 'utils', 'helper.py')
-            })
+              currentPath: path.join(testHooksPath, 'utils', 'helper.py'),
+            }),
           },
           tiers: {
             tier1: ['validator.py'],
             tier2: ['checker.py'],
             tier3: ['notification.py'],
-            utils: ['helper.py']
-          }
+            utils: ['helper.py'],
+          },
         }),
-        { spaces: 2 }
+        { spaces: 2 },
       );
     });
 
@@ -143,15 +153,13 @@ describe('HookOrganizer', () => {
       const utilsHook = {
         name: 'llm_helper.py',
         path: path.join(testHooksPath, 'utils', 'llm', 'llm_helper.py'),
-        category: 'utility'
+        category: 'utility',
       };
 
       await organizer.organize({ utils: [utilsHook], tier1: [], tier2: [], tier3: [] });
 
       // Verify subdirectory was ensured
-      expect(fs.ensureDir).toHaveBeenCalledWith(
-        path.join(testHooksPath, 'utils', 'llm')
-      );
+      expect(fs.ensureDir).toHaveBeenCalledWith(path.join(testHooksPath, 'utils', 'llm'));
     });
 
     test('updates hook objects with current path', async () => {
@@ -171,7 +179,7 @@ describe('HookOrganizer', () => {
         tier1: [],
         tier2: [],
         tier3: [],
-        utils: []
+        utils: [],
       });
     });
   });
@@ -181,7 +189,7 @@ describe('HookOrganizer', () => {
       await organizer.ensureTierDirectories();
 
       expect(fs.ensureDir).toHaveBeenCalledTimes(4);
-      Object.values(organizer.tierPaths).forEach(tierPath => {
+      Object.values(organizer.tierPaths).forEach((tierPath) => {
         expect(fs.ensureDir).toHaveBeenCalledWith(tierPath);
       });
     });
@@ -198,9 +206,9 @@ describe('HookOrganizer', () => {
     test('preserves utils subdirectory structure', async () => {
       const hook = {
         name: 'helper.py',
-        path: path.join(testHooksPath, 'utils', 'llm', 'helper.py')
+        path: path.join(testHooksPath, 'utils', 'llm', 'helper.py'),
       };
-      
+
       const targetPath = await organizer.getTargetPath(hook, 'utils');
 
       expect(targetPath).toBe(path.join(testHooksPath, 'utils', 'llm', 'helper.py'));
@@ -221,8 +229,8 @@ describe('HookOrganizer', () => {
       fs.readJson.mockResolvedValue({
         hooks: {
           'validator.py': { name: 'validator.py', tier: 'tier1' },
-          'checker.py': { name: 'checker.py', tier: 'tier2' }
-        }
+          'checker.py': { name: 'checker.py', tier: 'tier2' },
+        },
       });
 
       const result = await organizer.getCategorizedHooks();
@@ -234,12 +242,14 @@ describe('HookOrganizer', () => {
     });
 
     test('scans directories when no registry exists', async () => {
-      fs.pathExists.mockImplementation(path => {
-        return path.includes('tier1') || path.includes('tier2');
-      });
-      fs.readdir.mockImplementation(dirPath => {
-        if (dirPath.includes('tier1')) return Promise.resolve(['validator.py']);
-        if (dirPath.includes('tier2')) return Promise.resolve(['checker.py']);
+      fs.pathExists.mockImplementation((path) => path.includes('tier1') || path.includes('tier2'));
+      fs.readdir.mockImplementation((dirPath) => {
+        if (dirPath.includes('tier1')) {
+          return Promise.resolve(['validator.py']);
+        }
+        if (dirPath.includes('tier2')) {
+          return Promise.resolve(['checker.py']);
+        }
         return Promise.resolve([]);
       });
 
@@ -248,7 +258,7 @@ describe('HookOrganizer', () => {
       expect(result.tier1).toHaveLength(1);
       expect(result.tier1[0]).toMatchObject({
         name: 'validator.py',
-        tier: 'tier1'
+        tier: 'tier1',
       });
       expect(result.tier2).toHaveLength(1);
     });
@@ -272,7 +282,7 @@ describe('HookOrganizer', () => {
       fs.stat.mockImplementation(() => ({
         isDirectory: () => false,
         size: 100,
-        mtime: new Date()
+        mtime: new Date(),
       }));
 
       const hooks = await organizer.scanDirectory('/test/tier1', 'tier1');
@@ -281,22 +291,24 @@ describe('HookOrganizer', () => {
       expect(hooks[0]).toMatchObject({
         name: 'hook1.py',
         tier: 'tier1',
-        content: '# Hook content'
+        content: '# Hook content',
       });
     });
 
     test('recursively scans subdirectories', async () => {
       let callCount = 0;
-      fs.readdir.mockImplementation(dirPath => {
+      fs.readdir.mockImplementation((dirPath) => {
         callCount++;
-        if (callCount === 1) return Promise.resolve(['subdir', 'hook1.py']);
+        if (callCount === 1) {
+          return Promise.resolve(['subdir', 'hook1.py']);
+        }
         return Promise.resolve(['hook2.py']);
       });
-      
-      fs.stat.mockImplementation(itemPath => ({
+
+      fs.stat.mockImplementation((itemPath) => ({
         isDirectory: () => itemPath.includes('subdir'),
         size: 100,
-        mtime: new Date()
+        mtime: new Date(),
       }));
 
       const hooks = await organizer.scanDirectory('/test/utils', 'utils');
@@ -304,17 +316,17 @@ describe('HookOrganizer', () => {
       expect(hooks).toHaveLength(2);
       expect(hooks[0]).toMatchObject({
         name: 'hook2.py',
-        subPath: 'subdir'
+        subPath: 'subdir',
       });
       expect(hooks[1]).toMatchObject({
         name: 'hook1.py',
-        subPath: ''
+        subPath: '',
       });
     });
 
     test('skips non-Python files', async () => {
       fs.readdir.mockResolvedValue(['hook.py', 'script.js', 'data.json']);
-      
+
       const hooks = await organizer.scanDirectory('/test/tier1', 'tier1');
 
       expect(hooks).toHaveLength(1);
@@ -330,14 +342,14 @@ describe('HookOrganizer', () => {
           'validator.py': {
             name: 'validator.py',
             tier: 'tier2',
-            currentPath: path.join(testHooksPath, 'tier2', 'validator.py')
-          }
+            currentPath: path.join(testHooksPath, 'tier2', 'validator.py'),
+          },
         },
         tiers: {
           tier1: [],
           tier2: ['validator.py'],
-          tier3: []
-        }
+          tier3: [],
+        },
       });
 
       const newPath = await organizer.moveHookToTier('validator.py', 'tier2', 'tier1');
@@ -346,25 +358,25 @@ describe('HookOrganizer', () => {
       expect(fs.move).toHaveBeenCalledWith(
         path.join(testHooksPath, 'tier2', 'validator.py'),
         path.join(testHooksPath, 'tier1', 'validator.py'),
-        { overwrite: true }
+        { overwrite: true },
       );
-      
+
       expect(fs.writeJson).toHaveBeenCalledWith(
         organizer.hookRegistry,
         expect.objectContaining({
           hooks: {
             'validator.py': expect.objectContaining({
               tier: 'tier1',
-              currentPath: path.join(testHooksPath, 'tier1', 'validator.py')
-            })
+              currentPath: path.join(testHooksPath, 'tier1', 'validator.py'),
+            }),
           },
           tiers: {
             tier1: ['validator.py'],
             tier2: [],
-            tier3: []
-          }
+            tier3: [],
+          },
         }),
-        { spaces: 2 }
+        { spaces: 2 },
       );
 
       expect(newPath).toBe(path.join(testHooksPath, 'tier1', 'validator.py'));
@@ -388,19 +400,19 @@ describe('HookOrganizer', () => {
       expect(fs.writeFile).toHaveBeenCalledTimes(4);
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(testHooksPath, 'tier1', 'README.md'),
-        expect.stringContaining('Tier 1 - Critical Hooks')
+        expect.stringContaining('Tier 1 - Critical Hooks'),
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(testHooksPath, 'tier2', 'README.md'),
-        expect.stringContaining('Tier 2 - Important Hooks')
+        expect.stringContaining('Tier 2 - Important Hooks'),
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(testHooksPath, 'tier3', 'README.md'),
-        expect.stringContaining('Tier 3 - Optional Hooks')
+        expect.stringContaining('Tier 3 - Optional Hooks'),
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(testHooksPath, 'utils', 'README.md'),
-        expect.stringContaining('Utils - Shared Utilities')
+        expect.stringContaining('Utils - Shared Utilities'),
       );
     });
   });
@@ -415,16 +427,16 @@ describe('HookOrganizer', () => {
             tier: 'tier1',
             category: 'validation',
             description: 'Validation hook',
-            size: 100
+            size: 100,
           },
           'checker.py': {
             name: 'checker.py',
             tier: 'tier2',
             category: 'checking',
             description: 'Checker hook',
-            size: 200
-          }
-        }
+            size: 200,
+          },
+        },
       });
 
       const manifest = await organizer.generateManifest();
@@ -436,35 +448,39 @@ describe('HookOrganizer', () => {
           tier1: {
             description: 'Critical security and validation hooks',
             hookCount: 1,
-            hooks: [{
-              name: 'validator.py',
-              category: 'validation',
-              description: 'Validation hook',
-              size: 100
-            }]
+            hooks: [
+              {
+                name: 'validator.py',
+                category: 'validation',
+                description: 'Validation hook',
+                size: 100,
+              },
+            ],
           },
           tier2: {
             description: 'Important quality and standards hooks',
             hookCount: 1,
-            hooks: [{
-              name: 'checker.py',
-              category: 'checking',
-              description: 'Checker hook',
-              size: 200
-            }]
+            hooks: [
+              {
+                name: 'checker.py',
+                category: 'checking',
+                description: 'Checker hook',
+                size: 200,
+              },
+            ],
           },
           tier3: {
             description: 'Optional convenience and notification hooks',
             hookCount: 0,
-            hooks: []
+            hooks: [],
           },
           utils: {
             description: 'Shared utilities and helper functions',
             hookCount: 0,
-            hooks: []
-          }
+            hooks: [],
+          },
         },
-        totalHooks: 2
+        totalHooks: 2,
       });
     });
   });
@@ -473,7 +489,9 @@ describe('HookOrganizer', () => {
     test('returns correct tier descriptions', () => {
       expect(organizer.getTierDescription('tier1')).toBe('Critical security and validation hooks');
       expect(organizer.getTierDescription('tier2')).toBe('Important quality and standards hooks');
-      expect(organizer.getTierDescription('tier3')).toBe('Optional convenience and notification hooks');
+      expect(organizer.getTierDescription('tier3')).toBe(
+        'Optional convenience and notification hooks',
+      );
       expect(organizer.getTierDescription('utils')).toBe('Shared utilities and helper functions');
     });
 
@@ -493,7 +511,9 @@ describe('HookOrganizer', () => {
     test('handles readdir errors', async () => {
       fs.readdir.mockRejectedValue(new Error('Permission denied'));
 
-      await expect(organizer.scanDirectory('/protected', 'tier1')).rejects.toThrow('Permission denied');
+      await expect(organizer.scanDirectory('/protected', 'tier1')).rejects.toThrow(
+        'Permission denied',
+      );
     });
 
     test('handles readJson errors gracefully in getCategorizedHooks', async () => {
@@ -506,7 +526,9 @@ describe('HookOrganizer', () => {
     test('handles move errors', async () => {
       fs.move.mockRejectedValue(new Error('Move failed'));
 
-      await expect(organizer.moveHookToTier('hook.py', 'tier1', 'tier2')).rejects.toThrow('Move failed');
+      await expect(organizer.moveHookToTier('hook.py', 'tier1', 'tier2')).rejects.toThrow(
+        'Move failed',
+      );
     });
   });
 });

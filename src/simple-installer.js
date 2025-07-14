@@ -1,5 +1,6 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
 const chalk = require('chalk');
 const ora = require('ora');
 
@@ -10,43 +11,43 @@ class SimpleInstaller {
 
   async install(targetDir = '.', options = {}) {
     const spinner = ora('Installing cdev files to your project...').start();
-    
+
     try {
       const resolvedTargetDir = path.resolve(targetDir);
-      
+
       // Ensure target directory exists
       await fs.ensureDir(resolvedTargetDir);
-      
+
       // Create .claude directory structure
       spinner.text = 'Creating .claude directory structure...';
       await this.createClaudeDirectory(resolvedTargetDir);
-      
+
       // Copy hook configurations
       spinner.text = 'Setting up hooks...';
       await this.copyHookConfigurations(resolvedTargetDir);
-      
+
       // Copy command templates
       spinner.text = 'Installing command templates...';
       await this.copyCommandTemplates(resolvedTargetDir);
-      
+
       // Copy workflow scripts
       spinner.text = 'Installing workflow scripts...';
       await this.copyWorkflowScripts(resolvedTargetDir);
-      
+
       // Copy AI documentation
       spinner.text = 'Installing AI documentation...';
       await this.copyAIDocs(resolvedTargetDir);
-      
+
       // Create example configuration
       spinner.text = 'Creating example configuration...';
       await this.createExampleConfig(resolvedTargetDir);
-      
+
       // Set permissions
       spinner.text = 'Setting file permissions...';
       await this.setPermissions(resolvedTargetDir);
-      
+
       spinner.succeed('cdev installation complete!');
-      
+
       console.log('');
       console.log(chalk.green('✅ Successfully installed cdev files to your project!'));
       console.log('');
@@ -64,7 +65,6 @@ class SimpleInstaller {
       console.log('  2. Copy .env.example to .env and add your Linear API key');
       console.log('  3. Run: claude (to start using Claude Code with hooks)');
       console.log('');
-      
     } catch (error) {
       spinner.fail('Installation failed');
       throw error;
@@ -78,9 +78,9 @@ class SimpleInstaller {
       '.claude/hooks',
       '.claude/commands',
       '.claude/logs',
-      '.claude/templates'
+      '.claude/templates',
     ];
-    
+
     for (const dir of dirs) {
       await fs.ensureDir(path.join(targetDir, dir));
     }
@@ -88,7 +88,7 @@ class SimpleInstaller {
 
   async copyHookConfigurations(targetDir) {
     const claudeDir = path.join(targetDir, '.claude');
-    
+
     // Create settings.json with hook configurations
     const settings = {
       version: '1.0',
@@ -100,19 +100,19 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/pre-bash-validator.py'
-              }
-            ]
+                command: 'python3 ~/.claude/hooks/pre-bash-validator.py',
+              },
+            ],
           },
           {
             matcher: 'Write|Edit|MultiEdit',
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/typescript-validator.py'
-              }
-            ]
-          }
+                command: 'python3 ~/.claude/hooks/typescript-validator.py',
+              },
+            ],
+          },
         ],
         PostToolUse: [
           {
@@ -120,10 +120,10 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/import-organizer.py'
-              }
-            ]
-          }
+                command: 'python3 ~/.claude/hooks/import-organizer.py',
+              },
+            ],
+          },
         ],
         Notification: [
           {
@@ -131,10 +131,10 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/notification.py'
-              }
-            ]
-          }
+                command: 'python3 ~/.claude/hooks/notification.py',
+              },
+            ],
+          },
         ],
         Stop: [
           {
@@ -142,27 +142,27 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/task-completion-enforcer.py'
-              }
-            ]
-          }
-        ]
-      }
+                command: 'python3 ~/.claude/hooks/task-completion-enforcer.py',
+              },
+            ],
+          },
+        ],
+      },
     };
-    
+
     await fs.writeJson(path.join(claudeDir, 'settings.json'), settings, { spaces: 2 });
-    
+
     // Copy hook scripts from templates or create basic ones
     const hookScripts = [
       'pre-bash-validator.py',
       'typescript-validator.py',
       'import-organizer.py',
       'notification.py',
-      'task-completion-enforcer.py'
+      'task-completion-enforcer.py',
     ];
-    
+
     const hooksDir = path.join(claudeDir, 'hooks');
-    
+
     // Create basic hook scripts
     await this.createBasicHookScripts(hooksDir);
   }
@@ -198,7 +198,7 @@ except Exception as e:
 `;
 
     await fs.writeFile(path.join(hooksDir, 'pre-bash-validator.py'), preBashValidator);
-    
+
     // TypeScript validator
     const tsValidator = `#!/usr/bin/env python3
 import json
@@ -227,7 +227,7 @@ except Exception as e:
 `;
 
     await fs.writeFile(path.join(hooksDir, 'typescript-validator.py'), tsValidator);
-    
+
     // Import organizer
     const importOrganizer = `#!/usr/bin/env python3
 import json
@@ -243,7 +243,7 @@ except Exception as e:
 `;
 
     await fs.writeFile(path.join(hooksDir, 'import-organizer.py'), importOrganizer);
-    
+
     // Notification hook
     const notification = `#!/usr/bin/env python3
 import json
@@ -267,7 +267,7 @@ except Exception as e:
 `;
 
     await fs.writeFile(path.join(hooksDir, 'notification.py'), notification);
-    
+
     // Task completion enforcer
     const taskEnforcer = `#!/usr/bin/env python3
 import json
@@ -306,7 +306,7 @@ except Exception as e:
 
   async copyCommandTemplates(targetDir) {
     const commandsDir = path.join(targetDir, '.claude', 'commands');
-    
+
     // Create agent-start command
     const agentStartCmd = `#!/bin/bash
 # /agent-start command implementation
@@ -339,7 +339,7 @@ fi
 `;
 
     await fs.writeFile(path.join(commandsDir, 'agent-start.sh'), agentStartCmd);
-    
+
     // Create agent-commit command
     const agentCommitCmd = `#!/bin/bash
 # /agent-commit command implementation
@@ -379,8 +379,8 @@ echo "✅ Agent work committed successfully"
 `;
 
     await fs.writeFile(path.join(commandsDir, 'agent-commit.sh'), agentCommitCmd);
-    
-    // Create agent-status command  
+
+    // Create agent-status command
     const agentStatusCmd = `#!/bin/bash
 # /agent-status command implementation
 
@@ -427,20 +427,20 @@ done
   async copyWorkflowScripts(targetDir) {
     const scriptsDir = path.join(targetDir, 'scripts');
     await fs.ensureDir(scriptsDir);
-    
+
     // Copy essential workflow scripts
     const scriptsToInstall = [
       'cache-linear-issue.sh',
       'decompose-parallel.cjs',
       'spawn-agents.sh',
       'monitor-agents.sh',
-      'agent-commit-enhanced.sh'
+      'agent-commit-enhanced.sh',
     ];
-    
+
     for (const script of scriptsToInstall) {
       const sourcePath = path.join(this.packageRoot, 'scripts', script);
       const targetPath = path.join(scriptsDir, script);
-      
+
       if (await fs.pathExists(sourcePath)) {
         await fs.copy(sourcePath, targetPath);
       }
@@ -450,7 +450,7 @@ done
   async copyAIDocs(targetDir) {
     const aiDocsDir = path.join(targetDir, 'ai-docs');
     await fs.ensureDir(aiDocsDir);
-    
+
     // Copy AI documentation files
     const sourceAiDocs = path.join(this.packageRoot, 'ai-docs');
     if (await fs.pathExists(sourceAiDocs)) {
@@ -466,9 +466,9 @@ LLM_PROVIDER=openrouter
 LLM_MODEL=mistralai/mistral-large-2411
 ENGINEER_NAME=YourName
 `;
-    
+
     await fs.writeFile(path.join(targetDir, '.env.example'), envExample);
-    
+
     // Create CLAUDE.md
     const claudeMd = `# Claude Code Instructions
 
@@ -491,7 +491,7 @@ This project has intelligent hooks configured to:
 
 See \`.claude/settings.json\` for hook configuration.
 `;
-    
+
     await fs.writeFile(path.join(targetDir, 'CLAUDE.md'), claudeMd);
   }
 
@@ -500,9 +500,9 @@ See \`.claude/settings.json\` for hook configuration.
     const executableDirs = [
       path.join(targetDir, 'scripts'),
       path.join(targetDir, '.claude', 'commands'),
-      path.join(targetDir, '.claude', 'hooks')
+      path.join(targetDir, '.claude', 'hooks'),
     ];
-    
+
     for (const dir of executableDirs) {
       if (await fs.pathExists(dir)) {
         const files = await fs.readdir(dir);

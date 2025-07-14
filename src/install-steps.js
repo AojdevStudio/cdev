@@ -1,8 +1,10 @@
-const fs = require('fs-extra');
 const path = require('path');
-const chalk = require('chalk');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+
+const chalk = require('chalk');
+const fs = require('fs-extra');
+
 const { InstallUtils } = require('./install-utils');
 
 const execAsync = promisify(exec);
@@ -14,9 +16,9 @@ class InstallSteps {
 
   async validateTargetDirectory(targetDir, options) {
     console.log(chalk.gray('  • Validating target directory...'));
-    
+
     const exists = await fs.pathExists(targetDir);
-    
+
     if (!exists) {
       // Create directory if it doesn't exist
       await fs.ensureDir(targetDir);
@@ -24,12 +26,15 @@ class InstallSteps {
     } else {
       // Check if directory is empty or has existing workflow
       const files = await fs.readdir(targetDir);
-      const hasWorkflow = files.includes('workflows') || files.includes('paralell-development-claude');
-      
+      const hasWorkflow =
+        files.includes('workflows') || files.includes('paralell-development-claude');
+
       if (hasWorkflow && !options.force) {
-        throw new Error(`Directory ${targetDir} already contains a workflow. Use --force to overwrite.`);
+        throw new Error(
+          `Directory ${targetDir} already contains a workflow. Use --force to overwrite.`,
+        );
       }
-      
+
       if (files.length > 0 && !options.force) {
         const isEmpty = await this.utils.isDirectoryEmpty(targetDir);
         if (!isEmpty) {
@@ -37,7 +42,7 @@ class InstallSteps {
         }
       }
     }
-    
+
     // Validate write permissions
     try {
       await fs.access(targetDir, fs.constants.W_OK);
@@ -48,16 +53,16 @@ class InstallSteps {
 
   async validateEnvironment() {
     console.log(chalk.gray('  • Validating environment dependencies...'));
-    
+
     const dependencies = [
       { name: 'Node.js', command: 'node --version', required: true },
       { name: 'Git', command: 'git --version', required: true },
       { name: 'Claude Code', command: 'claude --version', required: false },
-      { name: 'npm', command: 'npm --version', required: true }
+      { name: 'npm', command: 'npm --version', required: true },
     ];
-    
+
     const results = [];
-    
+
     for (const dep of dependencies) {
       try {
         const { stdout } = await execAsync(dep.command);
@@ -65,7 +70,7 @@ class InstallSteps {
           name: dep.name,
           version: stdout.trim(),
           available: true,
-          required: dep.required
+          required: dep.required,
         });
         console.log(chalk.gray(`    ✓ ${dep.name}: ${stdout.trim()}`));
       } catch (error) {
@@ -73,9 +78,9 @@ class InstallSteps {
           name: dep.name,
           version: null,
           available: false,
-          required: dep.required
+          required: dep.required,
         });
-        
+
         if (dep.required) {
           console.log(chalk.red(`    ✗ ${dep.name}: Not found (required)`));
         } else {
@@ -83,13 +88,13 @@ class InstallSteps {
         }
       }
     }
-    
-    const missingRequired = results.filter(r => r.required && !r.available);
-    
+
+    const missingRequired = results.filter((r) => r.required && !r.available);
+
     if (missingRequired.length > 0) {
       console.log('');
       console.log(chalk.red('Missing required dependencies:'));
-      missingRequired.forEach(dep => {
+      missingRequired.forEach((dep) => {
         console.log(chalk.red(`  - ${dep.name}`));
       });
       console.log('');
@@ -99,13 +104,13 @@ class InstallSteps {
       console.log('  Claude Code: https://claude.ai/code');
       throw new Error('Missing required dependencies');
     }
-    
+
     return results;
   }
 
   async createDirectoryStructure(targetDir) {
     console.log(chalk.gray('  • Creating directory structure...'));
-    
+
     const directories = [
       'workflows',
       'workflows/paralell-development-claude',
@@ -115,9 +120,9 @@ class InstallSteps {
       'shared/deployment-plans',
       'shared/coordination',
       'shared/reports',
-      '.linear-cache'
+      '.linear-cache',
     ];
-    
+
     for (const dir of directories) {
       const fullPath = path.join(targetDir, dir);
       await fs.ensureDir(fullPath);
@@ -127,10 +132,10 @@ class InstallSteps {
 
   async copyWorkflowTemplates(targetDir) {
     console.log(chalk.gray('  • Copying workflow templates...'));
-    
+
     const templateDir = path.join(__dirname, '..', 'templates');
     const workflowDir = path.join(targetDir, 'workflows', 'paralell-development-claude');
-    
+
     // Copy all template files
     const templateFiles = [
       'scripts/cache-linear-issue.sh',
@@ -151,18 +156,16 @@ class InstallSteps {
       'ai_docs/emoji-commit-ref.md',
       'ai_docs/linear-issue-template.md',
       'ai_docs/readme-template.md',
-      'ai_docs/astral-uv-scripting-documentation.md'
+      'ai_docs/astral-uv-scripting-documentation.md',
     ];
-    
+
     // If templates directory doesn't exist, copy from current workflow
-    const sourceDir = await fs.pathExists(templateDir) 
-      ? templateDir 
-      : path.join(__dirname, '..');
-    
+    const sourceDir = (await fs.pathExists(templateDir)) ? templateDir : path.join(__dirname, '..');
+
     for (const file of templateFiles) {
       const sourcePath = path.join(sourceDir, file);
       const targetPath = path.join(workflowDir, file);
-      
+
       if (await fs.pathExists(sourcePath)) {
         await fs.ensureDir(path.dirname(targetPath));
         await fs.copy(sourcePath, targetPath);
@@ -175,21 +178,21 @@ class InstallSteps {
 
   async setupScriptsAndPermissions(targetDir) {
     console.log(chalk.gray('  • Setting up scripts and permissions...'));
-    
+
     const scriptsDir = path.join(targetDir, 'workflows', 'paralell-development-claude', 'scripts');
-    
+
     try {
       const scriptFiles = await fs.readdir(scriptsDir);
-      const shellScripts = scriptFiles.filter(file => file.endsWith('.sh'));
-      
+      const shellScripts = scriptFiles.filter((file) => file.endsWith('.sh'));
+
       for (const script of shellScripts) {
         const scriptPath = path.join(scriptsDir, script);
-        
+
         // Make script executable
         await fs.chmod(scriptPath, '755');
         console.log(chalk.gray(`    Made executable: ${script}`));
       }
-      
+
       // Also make the main executable files executable
       const mainScripts = ['decompose-parallel.cjs', 'intelligent-agent-generator.js'];
       for (const script of mainScripts) {
@@ -199,7 +202,6 @@ class InstallSteps {
           console.log(chalk.gray(`    Made executable: ${script}`));
         }
       }
-      
     } catch (error) {
       console.log(chalk.yellow(`    Warning: Could not set script permissions: ${error.message}`));
     }
@@ -207,7 +209,7 @@ class InstallSteps {
 
   async createConfigurationFiles(targetDir, config) {
     console.log(chalk.gray('  • Creating configuration files...'));
-    
+
     // Create .env.example
     const envExamplePath = path.join(targetDir, '.env.example');
     const envExampleContent = `# Parallel Claude Development Workflow Configuration
@@ -223,25 +225,22 @@ WORKTREE_PATH=${config.workTreePath}
 CLAUDE_MODEL=claude-3-5-sonnet-20241022
 EDITOR=cursor
 `;
-    
+
     await fs.writeFile(envExamplePath, envExampleContent);
     console.log(chalk.gray(`    Created: .env.example`));
-    
+
     // Create .env if Linear API key was provided
     if (config.linearApiKey) {
       const envPath = path.join(targetDir, '.env');
-      const envContent = envExampleContent.replace(
-        'your_linear_api_key_here',
-        config.linearApiKey
-      );
+      const envContent = envExampleContent.replace('your_linear_api_key_here', config.linearApiKey);
       await fs.writeFile(envPath, envContent);
       console.log(chalk.gray(`    Created: .env`));
     }
-    
+
     // Create CLAUDE.md in .claude directory
     const claudeDir = path.join(targetDir, '.claude');
     await fs.ensureDir(claudeDir);
-    
+
     const claudeMdPath = path.join(claudeDir, 'CLAUDE.md');
     const claudeMdContent = `# ${config.projectName} - Parallel Claude Development
 
@@ -281,10 +280,10 @@ Spawn all agents:
 - @workflows/paralell-development-claude/CLAUDE.md - Claude Code instructions
 - @workflows/paralell-development-claude/ai_docs/ - AI-specific documentation
 `;
-    
+
     await fs.writeFile(claudeMdPath, claudeMdContent);
     console.log(chalk.gray(`    Created: .claude/CLAUDE.md`));
-    
+
     // Create package.json if it doesn't exist
     const packageJsonPath = path.join(targetDir, 'package.json');
     if (!(await fs.pathExists(packageJsonPath))) {
@@ -294,19 +293,19 @@ Spawn all agents:
         description: 'Project using Parallel Claude Development Workflow',
         main: 'index.js',
         scripts: {
-          'decompose': 'node workflows/paralell-development-claude/scripts/decompose-parallel.cjs',
+          decompose: 'node workflows/paralell-development-claude/scripts/decompose-parallel.cjs',
           'spawn-agents': 'workflows/paralell-development-claude/scripts/spawn-agents.sh',
-          'cache-issue': 'workflows/paralell-development-claude/scripts/cache-linear-issue.sh'
+          'cache-issue': 'workflows/paralell-development-claude/scripts/cache-linear-issue.sh',
         },
         dependencies: {
-          'dotenv': '^16.6.1'
+          dotenv: '^16.6.1',
         },
         devDependencies: {},
         keywords: ['claude', 'parallel', 'development', 'workflow'],
         author: '',
-        license: 'MIT'
+        license: 'MIT',
       };
-      
+
       await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
       console.log(chalk.gray(`    Created: package.json`));
     }
@@ -314,9 +313,14 @@ Spawn all agents:
 
   async setupEnvironmentVariables(targetDir, config) {
     console.log(chalk.gray('  • Setting up environment variables...'));
-    
+
     // Create shell script to source environment
-    const envScriptPath = path.join(targetDir, 'workflows', 'paralell-development-claude', 'env.sh');
+    const envScriptPath = path.join(
+      targetDir,
+      'workflows',
+      'paralell-development-claude',
+      'env.sh',
+    );
     const envScriptContent = `#!/bin/bash
 
 # Source project environment variables
@@ -333,7 +337,7 @@ export EDITOR=\${EDITOR:-"cursor"}
 
 echo "Parallel Claude Development Workflow environment ready"
 `;
-    
+
     await fs.writeFile(envScriptPath, envScriptContent);
     await fs.chmod(envScriptPath, '755');
     console.log(chalk.gray(`    Created: env.sh`));
@@ -341,15 +345,15 @@ echo "Parallel Claude Development Workflow environment ready"
 
   async setupGitHooks(targetDir) {
     console.log(chalk.gray('  • Setting up Git hooks...'));
-    
+
     const gitHooksDir = path.join(targetDir, '.git', 'hooks');
-    
+
     // Check if this is a Git repository
     if (!(await fs.pathExists(gitHooksDir))) {
       console.log(chalk.yellow('    Warning: Not a Git repository, skipping Git hooks setup'));
       return;
     }
-    
+
     // Create pre-commit hook
     const preCommitPath = path.join(gitHooksDir, 'pre-commit');
     const preCommitContent = `#!/bin/bash
@@ -378,12 +382,12 @@ fi
 
 echo "Pre-commit validation passed"
 `;
-    
+
     // Backup existing pre-commit hook if it exists
     if (await fs.pathExists(preCommitPath)) {
-      await fs.move(preCommitPath, preCommitPath + '.backup');
+      await fs.move(preCommitPath, `${preCommitPath}.backup`);
     }
-    
+
     await fs.writeFile(preCommitPath, preCommitContent);
     await fs.chmod(preCommitPath, '755');
     console.log(chalk.gray(`    Created: pre-commit hook`));
@@ -391,28 +395,34 @@ echo "Pre-commit validation passed"
 
   async createExampleFiles(targetDir, config) {
     console.log(chalk.gray('  • Creating example files...'));
-    
+
     // Create example Linear issue cache
     const exampleIssuePath = path.join(targetDir, '.linear-cache', 'EXAMPLE-123.json');
     const exampleIssue = {
       id: 'example-123',
       identifier: 'EXAMPLE-123',
       title: 'Example: Implement user authentication system',
-      description: 'This is an example Linear issue showing how to structure requirements for parallel development.\n\n1. Create login/signup forms\n2. Implement JWT authentication\n3. Add password reset functionality\n4. Create user profile management\n5. Add role-based access control',
+      description:
+        'This is an example Linear issue showing how to structure requirements for parallel development.\n\n1. Create login/signup forms\n2. Implement JWT authentication\n3. Add password reset functionality\n4. Create user profile management\n5. Add role-based access control',
       priority: 1,
       priorityLabel: 'High',
       state: { name: 'Todo' },
       assignee: { name: 'Developer', email: 'dev@example.com' },
       team: { name: 'Engineering' },
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
-    
+
     await fs.writeFile(exampleIssuePath, JSON.stringify(exampleIssue, null, 2));
     console.log(chalk.gray(`    Created: example issue cache`));
-    
+
     // Create example deployment plan
-    const examplePlanPath = path.join(targetDir, 'shared', 'deployment-plans', 'example-123-deployment-plan.json');
+    const examplePlanPath = path.join(
+      targetDir,
+      'shared',
+      'deployment-plans',
+      'example-123-deployment-plan.json',
+    );
     const examplePlan = {
       taskId: 'EXAMPLE-123',
       taskTitle: 'Example: Implement user authentication system',
@@ -424,7 +434,7 @@ echo "Pre-commit validation passed"
           canStartImmediately: true,
           filesToCreate: ['components/LoginForm.tsx', 'components/SignupForm.tsx'],
           filesToModify: ['pages/login.tsx', 'pages/signup.tsx'],
-          estimatedTime: 30
+          estimatedTime: 30,
         },
         {
           agentId: 'backend_auth_agent',
@@ -433,25 +443,25 @@ echo "Pre-commit validation passed"
           canStartImmediately: true,
           filesToCreate: ['lib/auth.ts', 'pages/api/auth/[...nextauth].ts'],
           filesToModify: ['lib/database.ts'],
-          estimatedTime: 45
-        }
+          estimatedTime: 45,
+        },
       ],
       estimatedTotalTime: '45 minutes',
       parallelismFactor: '1.5x faster than sequential',
       integrationPlan: {
         mergeOrder: ['backend_auth_agent', 'frontend_forms_agent'],
         validationSteps: ['Run tests', 'Integration testing', 'E2E validation'],
-        estimatedIntegrationTime: '15 minutes'
-      }
+        estimatedIntegrationTime: '15 minutes',
+      },
     };
-    
+
     await fs.writeFile(examplePlanPath, JSON.stringify(examplePlan, null, 2));
     console.log(chalk.gray(`    Created: example deployment plan`));
   }
 
   async finalValidation(targetDir, config) {
     console.log(chalk.gray('  • Running final validation...'));
-    
+
     const requiredFiles = [
       'workflows/paralell-development-claude/README.md',
       'workflows/paralell-development-claude/CLAUDE.md',
@@ -459,32 +469,38 @@ echo "Pre-commit validation passed"
       'workflows/paralell-development-claude/scripts/decompose-parallel.cjs',
       'workflows/paralell-development-claude/scripts/spawn-agents.sh',
       '.claude/CLAUDE.md',
-      '.env.example'
+      '.env.example',
     ];
-    
+
     const missingFiles = [];
-    
+
     for (const file of requiredFiles) {
       const filePath = path.join(targetDir, file);
       if (!(await fs.pathExists(filePath))) {
         missingFiles.push(file);
       }
     }
-    
+
     if (missingFiles.length > 0) {
       console.log(chalk.yellow('    Warning: Some files were not created:'));
-      missingFiles.forEach(file => {
+      missingFiles.forEach((file) => {
         console.log(chalk.yellow(`      - ${file}`));
       });
     } else {
       console.log(chalk.gray('    All required files created successfully'));
     }
-    
+
     // Validate script permissions
-    const scriptPath = path.join(targetDir, 'workflows', 'paralell-development-claude', 'scripts', 'cache-linear-issue.sh');
+    const scriptPath = path.join(
+      targetDir,
+      'workflows',
+      'paralell-development-claude',
+      'scripts',
+      'cache-linear-issue.sh',
+    );
     if (await fs.pathExists(scriptPath)) {
       const stats = await fs.stat(scriptPath);
-      if (stats.mode & parseInt('111', 8)) {
+      if (stats.mode & 0o111) {
         console.log(chalk.gray('    Script permissions configured correctly'));
       } else {
         console.log(chalk.yellow('    Warning: Scripts may not be executable'));
@@ -494,15 +510,15 @@ echo "Pre-commit validation passed"
 
   async removeWorkflowDirectories(targetDir) {
     console.log(chalk.gray('  • Removing workflow directories...'));
-    
+
     const directoriesToRemove = [
       'workflows/paralell-development-claude',
       'shared/deployment-plans',
       'shared/coordination',
       'shared/reports',
-      '.linear-cache'
+      '.linear-cache',
     ];
-    
+
     for (const dir of directoriesToRemove) {
       const fullPath = path.join(targetDir, dir);
       if (await fs.pathExists(fullPath)) {
@@ -514,19 +530,19 @@ echo "Pre-commit validation passed"
 
   async cleanupWorktrees(targetDir) {
     console.log(chalk.gray('  • Cleaning up worktrees...'));
-    
+
     try {
       const { stdout } = await execAsync('git worktree list --porcelain', { cwd: targetDir });
       const worktrees = stdout.split('\n\n').filter(Boolean);
-      
+
       for (const worktree of worktrees) {
         const lines = worktree.split('\n');
         const worktreePath = lines[0].replace('worktree ', '');
-        const branchLine = lines.find(line => line.startsWith('branch '));
-        
+        const branchLine = lines.find((line) => line.startsWith('branch '));
+
         if (branchLine) {
           const branch = branchLine.replace('branch refs/heads/', '');
-          
+
           // Remove worktree if it looks like an agent worktree
           if (branch.includes('agent')) {
             await execAsync(`git worktree remove ${worktreePath}`, { cwd: targetDir });
@@ -541,12 +557,9 @@ echo "Pre-commit validation passed"
 
   async removeConfigurationFiles(targetDir) {
     console.log(chalk.gray('  • Removing configuration files...'));
-    
-    const filesToRemove = [
-      '.claude/CLAUDE.md',
-      '.env.example'
-    ];
-    
+
+    const filesToRemove = ['.claude/CLAUDE.md', '.env.example'];
+
     for (const file of filesToRemove) {
       const fullPath = path.join(targetDir, file);
       if (await fs.pathExists(fullPath)) {

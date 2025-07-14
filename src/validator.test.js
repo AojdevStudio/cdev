@@ -16,11 +16,11 @@ describe('Validator', () => {
     test('should define and get schema', () => {
       const schema = {
         name: ['required', 'string'],
-        age: ['required', 'number']
+        age: ['required', 'number'],
       };
-      
+
       validatorInstance.defineSchema('user', schema);
-      
+
       expect(validatorInstance.getSchema('user')).toBe(schema);
     });
 
@@ -32,13 +32,13 @@ describe('Validator', () => {
   describe('single value validation', () => {
     test('should validate single value', () => {
       const errors = validatorInstance.validateValue('test', 'field', ['required', 'string']);
-      
+
       expect(errors.hasErrors()).toBe(false);
     });
 
     test('should collect errors for invalid value', () => {
       const errors = validatorInstance.validateValue('', 'field', ['required', 'string']);
-      
+
       expect(errors.hasErrors()).toBe(true);
       expect(errors.getErrors()).toHaveLength(1);
     });
@@ -49,17 +49,17 @@ describe('Validator', () => {
       const schema = {
         name: ['required', 'string'],
         age: ['required', 'number'],
-        email: ['required', 'email']
+        email: ['required', 'email'],
       };
-      
+
       const data = {
         name: 'John Doe',
         age: 30,
-        email: 'john@example.com'
+        email: 'john@example.com',
       };
-      
+
       const result = validatorInstance.validate(data, schema);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.errors.hasErrors()).toBe(false);
       expect(result.errorCount).toBe(0);
@@ -70,17 +70,17 @@ describe('Validator', () => {
       const schema = {
         name: ['required', 'string'],
         age: ['required', 'number'],
-        email: ['required', 'email']
+        email: ['required', 'email'],
       };
-      
+
       const data = {
         name: '',
         age: 'not a number',
-        email: 'invalid-email'
+        email: 'invalid-email',
       };
-      
+
       const result = validatorInstance.validate(data, schema);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors.hasErrors()).toBe(true);
       expect(result.errorCount).toBe(3);
@@ -90,25 +90,27 @@ describe('Validator', () => {
     test('should validate with defined schema name', () => {
       const schema = {
         name: ['required', 'string'],
-        age: ['required', 'number']
+        age: ['required', 'number'],
       };
-      
+
       validatorInstance.defineSchema('user', schema);
-      
+
       const data = {
         name: 'John Doe',
-        age: 30
+        age: 30,
       };
-      
+
       const result = validatorInstance.validate(data, 'user');
-      
+
       expect(result.isValid).toBe(true);
     });
 
     test('should throw error for unknown schema name', () => {
       const data = { name: 'John' };
-      
-      expect(() => validatorInstance.validate(data, 'unknown')).toThrow('Schema not found: unknown');
+
+      expect(() => validatorInstance.validate(data, 'unknown')).toThrow(
+        'Schema not found: unknown',
+      );
     });
   });
 
@@ -117,11 +119,11 @@ describe('Validator', () => {
       const data = {
         user: {
           profile: {
-            name: 'John Doe'
-          }
-        }
+            name: 'John Doe',
+          },
+        },
       };
-      
+
       const value = validatorInstance.getNestedValue(data, 'user.profile.name');
       expect(value).toBe('John Doe');
     });
@@ -129,19 +131,19 @@ describe('Validator', () => {
     test('should handle missing nested paths', () => {
       const data = {
         user: {
-          profile: {}
-        }
+          profile: {},
+        },
       };
-      
+
       const value = validatorInstance.getNestedValue(data, 'user.profile.name');
       expect(value).toBeUndefined();
     });
 
     test('should set nested values', () => {
       const data = {};
-      
+
       validatorInstance.setNestedValue(data, 'user.profile.name', 'John Doe');
-      
+
       expect(data.user.profile.name).toBe('John Doe');
     });
 
@@ -150,20 +152,20 @@ describe('Validator', () => {
         user: {
           schema: {
             name: ['required', 'string'],
-            age: ['required', 'number']
-          }
-        }
+            age: ['required', 'number'],
+          },
+        },
       };
-      
+
       const data = {
         user: {
           name: 'John Doe',
-          age: 30
-        }
+          age: 30,
+        },
       };
-      
+
       const result = validatorInstance.validate(data, schema);
-      
+
       expect(result.isValid).toBe(true);
     });
 
@@ -172,26 +174,26 @@ describe('Validator', () => {
         user: {
           schema: {
             name: ['required', 'string'],
-            age: ['required', 'number']
-          }
-        }
+            age: ['required', 'number'],
+          },
+        },
       };
-      
+
       const data = {
         user: {
           name: '',
-          age: 'not a number'
-        }
+          age: 'not a number',
+        },
       };
-      
+
       const result = validatorInstance.validate(data, schema);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors.hasErrors()).toBe(true);
-      
+
       const errors = result.errors.getErrors();
-      expect(errors.some(e => e.field === 'user.name')).toBe(true);
-      expect(errors.some(e => e.field === 'user.age')).toBe(true);
+      expect(errors.some((e) => e.field === 'user.name')).toBe(true);
+      expect(errors.some((e) => e.field === 'user.age')).toBe(true);
     });
   });
 
@@ -199,7 +201,7 @@ describe('Validator', () => {
     test('should add custom rule', () => {
       const customValidator = jest.fn(() => true);
       validatorInstance.addRule('custom', customValidator);
-      
+
       expect(validatorInstance.getAvailableRules()).toContain('custom');
     });
 
@@ -207,11 +209,11 @@ describe('Validator', () => {
       const customValidator = jest.fn(() => {
         throw new ValidationError('Custom validation failed');
       });
-      
+
       validatorInstance.addRule('custom', customValidator);
-      
+
       const errors = validatorInstance.validateValue('value', 'field', ['custom']);
-      
+
       expect(errors.hasErrors()).toBe(true);
       expect(customValidator).toHaveBeenCalled();
     });
@@ -226,28 +228,28 @@ describe('Validator', () => {
     test('should validate required fields', () => {
       const data = {
         name: 'John Doe',
-        email: 'john@example.com'
+        email: 'john@example.com',
       };
-      
+
       const result = validatorInstance.validateRequired(data, ['name', 'email']);
-      
+
       expect(result.isValid).toBe(true);
     });
 
     test('should detect missing required fields', () => {
       const data = {
-        name: 'John Doe'
+        name: 'John Doe',
       };
-      
+
       const result = validatorInstance.validateRequired(data, ['name', 'email']);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errorCount).toBe(1);
     });
 
     test('should get available rules', () => {
       const rules = validatorInstance.getAvailableRules();
-      
+
       expect(rules).toContain('required');
       expect(rules).toContain('string');
       expect(rules).toContain('number');
@@ -259,30 +261,30 @@ describe('Validator', () => {
     test('should handle object field schema with rules', () => {
       const schema = {
         name: {
-          rules: ['required', 'string']
-        }
+          rules: ['required', 'string'],
+        },
       };
-      
+
       const data = {
-        name: 'John Doe'
+        name: 'John Doe',
       };
-      
+
       const result = validatorInstance.validate(data, schema);
-      
+
       expect(result.isValid).toBe(true);
     });
 
     test('should handle array field schema', () => {
       const schema = {
-        name: ['required', 'string']
+        name: ['required', 'string'],
       };
-      
+
       const data = {
-        name: 'John Doe'
+        name: 'John Doe',
       };
-      
+
       const result = validatorInstance.validate(data, schema);
-      
+
       expect(result.isValid).toBe(true);
     });
   });
@@ -295,15 +297,15 @@ describe('default validator instance', () => {
 
   test('should use default validator', () => {
     const schema = {
-      name: ['required', 'string']
+      name: ['required', 'string'],
     };
-    
+
     const data = {
-      name: 'John Doe'
+      name: 'John Doe',
     };
-    
+
     const result = validator.validate(data, schema);
-    
+
     expect(result.isValid).toBe(true);
   });
 });

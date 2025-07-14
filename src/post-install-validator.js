@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
+
 const { pathResolver } = require('./path-resolver');
 const { pythonDetector } = require('./python-detector');
 const { platformUtils } = require('./platform-utils');
@@ -18,13 +19,13 @@ class PostInstallValidator {
       scripts: [
         'scripts/cache-linear-issue.sh',
         'scripts/decompose-parallel.cjs',
-        'scripts/spawn-agents.sh'
+        'scripts/spawn-agents.sh',
       ],
       hooks: [
         '.claude/hooks/api-standards-checker.py',
         '.claude/hooks/code-quality-reporter.py',
-        '.claude/hooks/typescript-validator.py'
-      ]
+        '.claude/hooks/typescript-validator.py',
+      ],
     };
   }
 
@@ -42,7 +43,7 @@ class PostInstallValidator {
       hooks: await this.validateHooks(options.projectPath),
       permissions: await this.validatePermissions(options.projectPath),
       configuration: await this.validateConfiguration(options.projectPath),
-      pythonHooks: await this.validatePythonHooks(options.projectPath)
+      pythonHooks: await this.validatePythonHooks(options.projectPath),
     };
 
     // Collect all errors
@@ -51,17 +52,17 @@ class PostInstallValidator {
         errors.addError({
           field: category,
           message: result.message,
-          code: `POST_INSTALL_${category.toUpperCase()}_ERROR`
+          code: `POST_INSTALL_${category.toUpperCase()}_ERROR`,
         });
       }
     }
 
     return {
       valid: !errors.hasErrors(),
-      errors: errors,
+      errors,
       details: results,
       successRate: this.calculateSuccessRate(results),
-      recommendations: this.getRecommendations(results)
+      recommendations: this.getRecommendations(results),
     };
   }
 
@@ -87,15 +88,15 @@ class PostInstallValidator {
       return {
         valid: commandFound,
         command: workingCommand,
-        message: commandFound 
-          ? `CLI command '${workingCommand}' is available` 
-          : 'CLI command not found in PATH'
+        message: commandFound
+          ? `CLI command '${workingCommand}' is available`
+          : 'CLI command not found in PATH',
       };
     } catch (error) {
       return {
         valid: false,
         message: 'Failed to validate CLI command',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -116,20 +117,20 @@ class PostInstallValidator {
 
         return {
           valid: true,
-          version: version,
-          message: `Global package installed (version: ${version})`
+          version,
+          message: `Global package installed (version: ${version})`,
         };
       }
 
       return {
         valid: false,
-        message: 'Global package not found'
+        message: 'Global package not found',
       };
     } catch (error) {
       return {
         valid: false,
         message: 'Failed to check global package',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -140,16 +141,10 @@ class PostInstallValidator {
    * @returns {Object} Validation result
    */
   async validateProjectStructure(projectPath = process.cwd()) {
-    const expectedDirs = [
-      '.claude',
-      '.claude/hooks',
-      '.claude/commands',
-      'scripts',
-      'workspaces'
-    ];
+    const expectedDirs = ['.claude', '.claude/hooks', '.claude/commands', 'scripts', 'workspaces'];
 
     const missingDirs = [];
-    
+
     for (const dir of expectedDirs) {
       const fullPath = path.join(projectPath, dir);
       if (!fs.existsSync(fullPath)) {
@@ -159,10 +154,11 @@ class PostInstallValidator {
 
     return {
       valid: missingDirs.length === 0,
-      missingDirs: missingDirs,
-      message: missingDirs.length === 0 
-        ? 'All required directories exist' 
-        : `Missing directories: ${missingDirs.join(', ')}`
+      missingDirs,
+      message:
+        missingDirs.length === 0
+          ? 'All required directories exist'
+          : `Missing directories: ${missingDirs.join(', ')}`,
     };
   }
 
@@ -178,18 +174,18 @@ class PostInstallValidator {
 
     for (const hookPath of this.expectedFiles.hooks) {
       const fullPath = path.join(projectPath, hookPath);
-      
+
       if (!fs.existsSync(fullPath)) {
         missingHooks.push(hookPath);
       } else {
         hookFiles.push(hookPath);
-        
+
         // Check if hook is executable
         const permissions = platformUtils.getFilePermissions(fullPath);
         if (permissions && !permissions.executable && !platformUtils.isWindows) {
           invalidHooks.push({
             path: hookPath,
-            issue: 'Not executable'
+            issue: 'Not executable',
           });
         }
 
@@ -199,7 +195,7 @@ class PostInstallValidator {
           if (!content.startsWith('#!/usr/bin/env python')) {
             invalidHooks.push({
               path: hookPath,
-              issue: 'Missing or incorrect shebang'
+              issue: 'Missing or incorrect shebang',
             });
           }
         }
@@ -209,11 +205,12 @@ class PostInstallValidator {
     return {
       valid: missingHooks.length === 0 && invalidHooks.length === 0,
       foundHooks: hookFiles,
-      missingHooks: missingHooks,
-      invalidHooks: invalidHooks,
-      message: missingHooks.length === 0 && invalidHooks.length === 0
-        ? `All ${this.expectedFiles.hooks.length} hooks are properly installed`
-        : `Hook issues found: ${missingHooks.length} missing, ${invalidHooks.length} invalid`
+      missingHooks,
+      invalidHooks,
+      message:
+        missingHooks.length === 0 && invalidHooks.length === 0
+          ? `All ${this.expectedFiles.hooks.length} hooks are properly installed`
+          : `Hook issues found: ${missingHooks.length} missing, ${invalidHooks.length} invalid`,
     };
   }
 
@@ -224,39 +221,32 @@ class PostInstallValidator {
    */
   async validatePermissions(projectPath = process.cwd()) {
     const issues = [];
-    
+
     // Check script files are executable
-    const scriptFiles = [
-      ...this.expectedFiles.scripts,
-      'bin/claude-code-hooks'
-    ];
+    const scriptFiles = [...this.expectedFiles.scripts, 'bin/claude-code-hooks'];
 
     for (const scriptPath of scriptFiles) {
       const fullPath = path.join(projectPath, scriptPath);
-      
+
       if (fs.existsSync(fullPath)) {
         const permissions = platformUtils.getFilePermissions(fullPath);
-        
+
         if (permissions && !permissions.executable && !platformUtils.isWindows) {
           issues.push({
             path: scriptPath,
             issue: 'Not executable',
-            fix: `chmod +x ${scriptPath}`
+            fix: `chmod +x ${scriptPath}`,
           });
         }
       }
     }
 
     // Check directories are writable
-    const writableDirs = [
-      '.claude',
-      'workspaces',
-      'shared'
-    ];
+    const writableDirs = ['.claude', 'workspaces', 'shared'];
 
     for (const dir of writableDirs) {
       const fullPath = path.join(projectPath, dir);
-      
+
       if (fs.existsSync(fullPath)) {
         try {
           const testFile = path.join(fullPath, '.write-test');
@@ -266,7 +256,7 @@ class PostInstallValidator {
           issues.push({
             path: dir,
             issue: 'Not writable',
-            fix: `Check directory permissions for ${dir}`
+            fix: `Check directory permissions for ${dir}`,
           });
         }
       }
@@ -274,10 +264,11 @@ class PostInstallValidator {
 
     return {
       valid: issues.length === 0,
-      issues: issues,
-      message: issues.length === 0 
-        ? 'All file permissions are correct' 
-        : `Permission issues found on ${issues.length} files/directories`
+      issues,
+      message:
+        issues.length === 0
+          ? 'All file permissions are correct'
+          : `Permission issues found on ${issues.length} files/directories`,
     };
   }
 
@@ -293,16 +284,16 @@ class PostInstallValidator {
         validate: (content) => {
           const pkg = JSON.parse(content);
           return pkg.name && pkg.version;
-        }
+        },
       },
       '.claude/CLAUDE.md': {
         required: false,
-        validate: (content) => content.length > 0
+        validate: (content) => content.length > 0,
       },
       'scripts/decompose-parallel.cjs': {
         required: true,
-        validate: (content) => content.includes('parallelAgents')
-      }
+        validate: (content) => content.includes('parallelAgents'),
+      },
     };
 
     const issues = [];
@@ -310,12 +301,12 @@ class PostInstallValidator {
 
     for (const [configPath, config] of Object.entries(configFiles)) {
       const fullPath = path.join(projectPath, configPath);
-      
+
       if (!fs.existsSync(fullPath)) {
         if (config.required) {
           issues.push({
             path: configPath,
-            issue: 'Missing required file'
+            issue: 'Missing required file',
           });
         }
       } else {
@@ -324,7 +315,7 @@ class PostInstallValidator {
           if (!config.validate(content)) {
             issues.push({
               path: configPath,
-              issue: 'Invalid content or format'
+              issue: 'Invalid content or format',
             });
           } else {
             validConfigs.push(configPath);
@@ -332,7 +323,7 @@ class PostInstallValidator {
         } catch (error) {
           issues.push({
             path: configPath,
-            issue: `Read error: ${error.message}`
+            issue: `Read error: ${error.message}`,
           });
         }
       }
@@ -340,11 +331,12 @@ class PostInstallValidator {
 
     return {
       valid: issues.length === 0,
-      validConfigs: validConfigs,
-      issues: issues,
-      message: issues.length === 0 
-        ? 'All configuration files are valid' 
-        : `Configuration issues found in ${issues.length} files`
+      validConfigs,
+      issues,
+      message:
+        issues.length === 0
+          ? 'All configuration files are valid'
+          : `Configuration issues found in ${issues.length} files`,
     };
   }
 
@@ -355,39 +347,39 @@ class PostInstallValidator {
    */
   async validatePythonHooks(projectPath = process.cwd()) {
     const pythonInfo = pythonDetector.getBestPython();
-    
+
     if (!pythonInfo) {
       return {
         valid: false,
-        message: 'Python not available for hooks'
+        message: 'Python not available for hooks',
       };
     }
 
     const testHook = path.join(projectPath, '.claude/hooks/api-standards-checker.py');
-    
+
     if (!fs.existsSync(testHook)) {
       return {
         valid: false,
-        message: 'Test hook not found'
+        message: 'Test hook not found',
       };
     }
 
     try {
       // Try to run the hook with --help
       const result = platformUtils.executeCommand(`"${pythonInfo.path}" "${testHook}" --help`);
-      
+
       return {
         valid: result.success,
         pythonVersion: pythonInfo.version,
-        message: result.success 
-          ? `Python hooks functional with Python ${pythonInfo.version}` 
-          : 'Python hooks failed to execute'
+        message: result.success
+          ? `Python hooks functional with Python ${pythonInfo.version}`
+          : 'Python hooks failed to execute',
       };
     } catch (error) {
       return {
         valid: false,
         message: 'Failed to test Python hooks',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -399,7 +391,7 @@ class PostInstallValidator {
    */
   calculateSuccessRate(results) {
     const total = Object.keys(results).length;
-    const successful = Object.values(results).filter(r => r.valid).length;
+    const successful = Object.values(results).filter((r) => r.valid).length;
     return Math.round((successful / total) * 100);
   }
 
@@ -427,9 +419,7 @@ class PostInstallValidator {
       if (platformUtils.isWindows) {
         recommendations.push('Check file permissions in Windows Security settings');
       } else {
-        const fixes = results.permissions.issues
-          .filter(i => i.fix)
-          .map(i => i.fix);
+        const fixes = results.permissions.issues.filter((i) => i.fix).map((i) => i.fix);
         if (fixes.length > 0) {
           recommendations.push(`Fix permissions: ${fixes.join('; ')}`);
         }
@@ -449,7 +439,7 @@ class PostInstallValidator {
    * @returns {string} Formatted report
    */
   getReport(validationResult) {
-    const lines = ['Post-Installation Validation Report', '=' .repeat(40)];
+    const lines = ['Post-Installation Validation Report', '='.repeat(40)];
 
     // Overall status
     lines.push(`Overall Status: ${validationResult.valid ? '✓ PASS' : '✗ FAIL'}`);
@@ -476,7 +466,7 @@ class PostInstallValidator {
     if (validationResult.errors.hasErrors()) {
       lines.push('');
       lines.push('Errors:');
-      validationResult.errors.getErrorMessages().forEach(error => {
+      validationResult.errors.getErrorMessages().forEach((error) => {
         lines.push(`  ✗ ${error}`);
       });
     }
@@ -491,7 +481,7 @@ class PostInstallValidator {
   async quickCheck() {
     const cliCheck = await this.validateCliCommand();
     const structureCheck = await this.validateProjectStructure();
-    
+
     return cliCheck.valid && structureCheck.valid;
   }
 }
@@ -501,5 +491,5 @@ const postInstallValidator = new PostInstallValidator();
 
 module.exports = {
   PostInstallValidator,
-  postInstallValidator
+  postInstallValidator,
 };

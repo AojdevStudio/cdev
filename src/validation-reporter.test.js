@@ -8,18 +8,18 @@ const { platformUtils } = require('./platform-utils');
 // Mock dependencies
 jest.mock('./platform-utils', () => ({
   platformUtils: {
-    isWindows: false
-  }
+    isWindows: false,
+  },
 }));
 
 // Mock chalk before requiring the module
 jest.mock('chalk', () => ({
-  green: jest.fn(s => `[GREEN]${s}[/GREEN]`),
-  red: jest.fn(s => `[RED]${s}[/RED]`),
-  yellow: jest.fn(s => `[YELLOW]${s}[/YELLOW]`),
-  blue: jest.fn(s => `[BLUE]${s}[/BLUE]`),
-  dim: jest.fn(s => `[DIM]${s}[/DIM]`),
-  bold: jest.fn(s => `[BOLD]${s}[/BOLD]`)
+  green: jest.fn((s) => `[GREEN]${s}[/GREEN]`),
+  red: jest.fn((s) => `[RED]${s}[/RED]`),
+  yellow: jest.fn((s) => `[YELLOW]${s}[/YELLOW]`),
+  blue: jest.fn((s) => `[BLUE]${s}[/BLUE]`),
+  dim: jest.fn((s) => `[DIM]${s}[/DIM]`),
+  bold: jest.fn((s) => `[BOLD]${s}[/BOLD]`),
 }));
 
 describe('ValidationReporter', () => {
@@ -31,19 +31,19 @@ describe('ValidationReporter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Save original values
     originalStdoutIsTTY = process.stdout.isTTY;
     originalNoColor = process.env.NO_COLOR;
-    
+
     // Mock stdout
     stdoutWriteSpy = jest.spyOn(process.stdout, 'write').mockImplementation();
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
-    
+
     // Default to TTY with color support
     process.stdout.isTTY = true;
     delete process.env.NO_COLOR;
-    
+
     // Clear module cache to ensure fresh instances
     jest.resetModules();
   });
@@ -58,7 +58,7 @@ describe('ValidationReporter', () => {
   describe('constructor', () => {
     test('enables colors when TTY and chalk available', () => {
       reporter = new ValidationReporter();
-      
+
       expect(reporter.supportsColor).toBe(true);
       expect(reporter.colors.success('test')).toBe('[GREEN]test[/GREEN]');
     });
@@ -67,7 +67,7 @@ describe('ValidationReporter', () => {
       process.env.NO_COLOR = '1';
       const { ValidationReporter } = require('./validation-reporter');
       reporter = new ValidationReporter();
-      
+
       expect(reporter.supportsColor).toBe(false);
       expect(reporter.colors.success('test')).toBe('test');
     });
@@ -76,7 +76,7 @@ describe('ValidationReporter', () => {
       process.stdout.isTTY = false;
       const { ValidationReporter } = require('./validation-reporter');
       reporter = new ValidationReporter();
-      
+
       expect(reporter.supportsColor).toBe(false);
       expect(reporter.colors.success('test')).toBe('test');
     });
@@ -85,10 +85,10 @@ describe('ValidationReporter', () => {
       jest.doMock('chalk', () => {
         throw new Error('Cannot find module');
       });
-      
+
       const { ValidationReporter } = require('./validation-reporter');
       reporter = new ValidationReporter();
-      
+
       expect(reporter.supportsColor).toBe(false);
       expect(reporter.colors.success('test')).toBe('test');
     });
@@ -96,7 +96,7 @@ describe('ValidationReporter', () => {
     test('uses Windows-specific symbols on Windows', () => {
       platformUtils.isWindows = true;
       reporter = new ValidationReporter();
-      
+
       expect(reporter.symbols.success).toBe('√');
       expect(reporter.symbols.error).toBe('×');
       expect(reporter.symbols.warning).toBe('!');
@@ -108,7 +108,7 @@ describe('ValidationReporter', () => {
     test('uses Unicode symbols on non-Windows', () => {
       platformUtils.isWindows = false;
       reporter = new ValidationReporter();
-      
+
       expect(reporter.symbols.success).toBe('✓');
       expect(reporter.symbols.error).toBe('✗');
       expect(reporter.symbols.warning).toBe('⚠');
@@ -137,17 +137,17 @@ describe('ValidationReporter', () => {
           git: { valid: true, version: '2.30.0', required: true },
           permissions: { valid: true, required: true },
           diskSpace: { valid: true, required: true },
-          network: { valid: true, required: false }
+          network: { valid: true, required: false },
         },
         warnings: [],
-        errors: null
+        errors: null,
       };
 
       const report = reporter.preInstallReport(validationResult);
-      
+
       // Debug: Log the actual report to see the formatting
       // console.log('ACTUAL REPORT:\n', report);
-      
+
       expect(report).toContain('Pre-Installation Validation Report');
       expect(report).toContain('[GREEN]✓ Overall Status: READY TO INSTALL[/GREEN]');
       expect(report).toContain('Platform: darwin (x64)');
@@ -160,7 +160,7 @@ describe('ValidationReporter', () => {
     test('generates report for failed installation', () => {
       const mockErrors = {
         hasErrors: () => true,
-        getErrorMessages: () => ['Node.js version too old', 'Git not found']
+        getErrorMessages: () => ['Node.js version too old', 'Git not found'],
       };
 
       const validationResult = {
@@ -168,26 +168,26 @@ describe('ValidationReporter', () => {
         canProceed: false,
         details: {
           system: { platform: 'linux', arch: 'x64' },
-          node: { 
-            valid: false, 
-            version: '14.0.0', 
+          node: {
+            valid: false,
+            version: '14.0.0',
             minVersion: '16.0.0',
             required: true,
-            message: 'Version 14.0.0 is below minimum required 16.0.0'
+            message: 'Version 14.0.0 is below minimum required 16.0.0',
           },
           npm: { valid: true, version: '7.0.0', required: true },
           python: { valid: false, version: null, required: false, message: 'Python not found' },
           git: { valid: false, version: null, required: true, message: 'Git not found' },
           permissions: { valid: true, required: true },
           diskSpace: { valid: true, required: true },
-          network: { valid: true, required: false }
+          network: { valid: true, required: false },
         },
         warnings: ['Python not found but is optional'],
-        errors: mockErrors
+        errors: mockErrors,
       };
 
       const report = reporter.preInstallReport(validationResult);
-      
+
       expect(report).toContain('[RED]✗ Overall Status: CANNOT INSTALL[/RED]');
       expect(report).toContain('[RED]✗ Installation blocked due to missing requirements[/RED]');
       expect(report).toContain('[RED]  ✗ Node.js (required)[/RED]');
@@ -214,12 +214,12 @@ describe('ValidationReporter', () => {
           git: { valid: true, version: '2.30.0', required: true },
           permissions: { valid: true, required: true },
           diskSpace: { valid: true, required: true },
-          network: { valid: true, required: false }
-        }
+          network: { valid: true, required: false },
+        },
       };
 
       const report = reporter.preInstallReport(validationResult);
-      
+
       expect(report).not.toContain('Warnings:');
       expect(report).not.toContain('Errors:');
     });
@@ -243,13 +243,13 @@ describe('ValidationReporter', () => {
           hooks: { valid: true },
           permissions: { valid: true },
           configuration: { valid: true },
-          pythonHooks: { valid: true }
+          pythonHooks: { valid: true },
         },
-        recommendations: []
+        recommendations: [],
       };
 
       const report = reporter.postInstallReport(validationResult);
-      
+
       expect(report).toContain('Post-Installation Validation Report');
       expect(report).toContain('[GREEN]✓ Installation Status: 100% Complete[/GREEN]');
       expect(report).toContain('[GREEN]  ✓ CLI Command[/GREEN]');
@@ -267,28 +267,28 @@ describe('ValidationReporter', () => {
         details: {
           cliCommand: { valid: true },
           globalPackage: { valid: true },
-          projectStructure: { 
-            valid: false, 
+          projectStructure: {
+            valid: false,
             message: 'Some directories are missing',
-            missingDirs: ['.claude/hooks', '.claude/commands']
+            missingDirs: ['.claude/hooks', '.claude/commands'],
           },
-          hooks: { 
-            valid: false, 
+          hooks: {
+            valid: false,
             message: 'Some hooks are missing',
-            missingHooks: ['pre-bash-validator.py', 'typescript-validator.py']
+            missingHooks: ['pre-bash-validator.py', 'typescript-validator.py'],
           },
           permissions: { valid: true },
           configuration: { valid: true },
-          pythonHooks: { valid: false, message: 'Python hooks not executable' }
+          pythonHooks: { valid: false, message: 'Python hooks not executable' },
         },
         recommendations: [
           'Run "claude-code-hooks repair" to fix missing components',
-          'Check file permissions for Python hooks'
-        ]
+          'Check file permissions for Python hooks',
+        ],
       };
 
       const report = reporter.postInstallReport(validationResult);
-      
+
       expect(report).toContain('[RED]✗ Installation Status: 75% Complete[/RED]');
       expect(report).toContain('[RED]  ✗ Project Structure[/RED]');
       expect(report).toContain('Missing: .claude/hooks, .claude/commands');
@@ -310,18 +310,18 @@ describe('ValidationReporter', () => {
 
     test('generates progress bar at different percentages', () => {
       let progress;
-      
+
       // 0%
       progress = reporter.progressReport('Installing', 0, 10, 'Starting...');
       expect(progress).toContain('[DIM]░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░[/DIM]');
       expect(progress).toContain('0% - Starting...');
-      
+
       // 50%
       progress = reporter.progressReport('Installing', 5, 10, 'Halfway there');
       expect(progress).toContain('[GREEN]███████████████[/GREEN]');
       expect(progress).toContain('[DIM]░░░░░░░░░░░░░░░[/DIM]');
       expect(progress).toContain('50% - Halfway there');
-      
+
       // 100%
       progress = reporter.progressReport('Installing', 10, 10, 'Complete!');
       expect(progress).toContain('[GREEN]██████████████████████████████[/GREEN]');
@@ -368,12 +368,12 @@ describe('ValidationReporter', () => {
       const data = [
         { name: 'Node.js', version: '18.0.0', status: 'OK' },
         { name: 'NPM', version: '9.0.0', status: 'OK' },
-        { name: 'Git', version: '2.30.0', status: 'OK' }
+        { name: 'Git', version: '2.30.0', status: 'OK' },
       ];
       const headers = ['name', 'version', 'status'];
-      
+
       const table = reporter.table(data, headers);
-      
+
       expect(table).toContain('[BOLD]name');
       expect(table).toContain('version');
       expect(table).toContain('status[/BOLD]');
@@ -393,14 +393,11 @@ describe('ValidationReporter', () => {
     });
 
     test('handles missing values', () => {
-      const data = [
-        { name: 'Test', version: null },
-        { name: 'Test2' }
-      ];
+      const data = [{ name: 'Test', version: null }, { name: 'Test2' }];
       const headers = ['name', 'version'];
-      
+
       const table = reporter.table(data, headers);
-      
+
       expect(table).toContain('Test  │');
       expect(table).toContain('Test2 │');
     });
@@ -415,7 +412,7 @@ describe('ValidationReporter', () => {
 
     test('generates box with title and items', () => {
       const box = reporter.box('Summary', ['3 tests passed', '0 tests failed', 'Coverage: 95%']);
-      
+
       expect(box).toContain('[DIM]┌');
       expect(box).toContain('[DIM]│[/DIM][BOLD] Summary');
       expect(box).toContain('[/BOLD][DIM]│[/DIM]');
@@ -427,8 +424,10 @@ describe('ValidationReporter', () => {
     });
 
     test('adjusts width to longest content', () => {
-      const box = reporter.box('Test', ['This is a very long line that should expand the box width']);
-      
+      const box = reporter.box('Test', [
+        'This is a very long line that should expand the box width',
+      ]);
+
       expect(box).toContain('[DIM]┌');
       expect(box).toContain('────────────────────────────────────────────────────────');
       expect(box).toContain('This is a very long line that should expand the box width');
@@ -445,32 +444,32 @@ describe('ValidationReporter', () => {
     test('clear clears console on TTY', () => {
       process.stdout.isTTY = true;
       reporter.clear();
-      
+
       expect(stdoutWriteSpy).toHaveBeenCalledWith('\x1Bc');
     });
 
     test('clear does nothing on non-TTY', () => {
       process.stdout.isTTY = false;
       reporter.clear();
-      
+
       expect(stdoutWriteSpy).not.toHaveBeenCalled();
     });
 
     test('write outputs text without newline', () => {
       reporter.write('Hello');
-      
+
       expect(stdoutWriteSpy).toHaveBeenCalledWith('Hello');
     });
 
     test('writeLine outputs text with newline', () => {
       reporter.writeLine('Hello');
-      
+
       expect(consoleLogSpy).toHaveBeenCalledWith('Hello');
     });
 
     test('writeLine outputs empty line when no text', () => {
       reporter.writeLine();
-      
+
       expect(consoleLogSpy).toHaveBeenCalledWith('');
     });
   });

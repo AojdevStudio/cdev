@@ -1,5 +1,7 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
+
 const HookCategorizer = require('./hook-categorizer');
 const HookSelector = require('./hook-selector');
 const HookOrganizer = require('./hook-organizer');
@@ -23,14 +25,14 @@ class HookManager {
   async initialize() {
     // Ensure hook directories exist
     await this.ensureHookDirectories();
-    
+
     // Load and categorize existing hooks
     const hooks = await this.loadExistingHooks();
     const categorizedHooks = await this.categorizer.categorize(hooks);
-    
+
     // Organize hooks into tier directories
     await this.organizer.organize(categorizedHooks);
-    
+
     return categorizedHooks;
   }
 
@@ -39,7 +41,7 @@ class HookManager {
    */
   async ensureHookDirectories() {
     const tiers = ['tier1', 'tier2', 'tier3', 'utils'];
-    
+
     for (const tier of tiers) {
       const tierPath = path.join(this.hooksPath, tier);
       await fs.ensureDir(tierPath);
@@ -51,34 +53,34 @@ class HookManager {
    */
   async loadExistingHooks() {
     const hooks = [];
-    
-    if (!await fs.pathExists(this.hooksPath)) {
+
+    if (!(await fs.pathExists(this.hooksPath))) {
       return hooks;
     }
 
     const files = await fs.readdir(this.hooksPath);
-    
+
     for (const file of files) {
       const filePath = path.join(this.hooksPath, file);
       const stat = await fs.stat(filePath);
-      
+
       // Skip directories and non-Python files
       if (stat.isDirectory() || !file.endsWith('.py')) {
         continue;
       }
-      
+
       // Read hook content for analysis
       const content = await fs.readFile(filePath, 'utf-8');
-      
+
       hooks.push({
         name: file,
         path: filePath,
-        content: content,
+        content,
         size: stat.size,
-        modified: stat.mtime
+        modified: stat.mtime,
       });
     }
-    
+
     return hooks;
   }
 
@@ -95,21 +97,21 @@ class HookManager {
    */
   async installHooks(selectedHooks) {
     const installedHooks = [];
-    
+
     for (const hook of selectedHooks) {
       const sourcePath = hook.currentPath || hook.path;
       const destPath = path.join(this.hooksPath, path.basename(hook.name));
-      
+
       // Copy hook to project hooks directory
       await fs.copy(sourcePath, destPath);
-      
+
       installedHooks.push({
         name: hook.name,
         tier: hook.tier,
-        path: destPath
+        path: destPath,
       });
     }
-    
+
     return installedHooks;
   }
 
@@ -118,32 +120,32 @@ class HookManager {
    */
   async getHookStats() {
     const categorizedHooks = await this.organizer.getCategorizedHooks();
-    
+
     const stats = {
       total: 0,
       byTier: {
         tier1: 0,
         tier2: 0,
         tier3: 0,
-        utils: 0
+        utils: 0,
       },
-      hooks: []
+      hooks: [],
     };
-    
+
     for (const [tier, hooks] of Object.entries(categorizedHooks)) {
       stats.byTier[tier] = hooks.length;
       stats.total += hooks.length;
-      
+
       for (const hook of hooks) {
         stats.hooks.push({
           name: hook.name,
-          tier: tier,
+          tier,
           category: hook.category,
-          description: hook.description
+          description: hook.description,
         });
       }
     }
-    
+
     return stats;
   }
 
@@ -153,13 +155,13 @@ class HookManager {
   async restructureHooks() {
     const hooks = await this.loadExistingHooks();
     const categorizedHooks = await this.categorizer.categorize(hooks);
-    
+
     // Move hooks to their appropriate tier directories
     for (const [tier, tierHooks] of Object.entries(categorizedHooks)) {
       for (const hook of tierHooks) {
         const oldPath = hook.path;
         const newPath = path.join(this.hooksPath, tier, hook.name);
-        
+
         // Only move if not already in correct location
         if (oldPath !== newPath) {
           await fs.move(oldPath, newPath, { overwrite: true });
@@ -167,7 +169,7 @@ class HookManager {
         }
       }
     }
-    
+
     return categorizedHooks;
   }
 }

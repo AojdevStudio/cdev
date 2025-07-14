@@ -1,6 +1,8 @@
+const path = require('path');
+
 const { describe, it, expect, beforeEach, afterEach, jest } = require('@jest/globals');
 const fs = require('fs-extra');
-const path = require('path');
+
 const { Installer } = require('./installer');
 const { InstallSteps } = require('./install-steps');
 const { InstallUtils } = require('./install-utils');
@@ -9,13 +11,13 @@ const { InstallUtils } = require('./install-utils');
 jest.mock('fs-extra');
 jest.mock('inquirer');
 jest.mock('chalk', () => ({
-  cyan: jest.fn(text => text),
-  blue: jest.fn(text => text),
-  green: jest.fn(text => text),
-  yellow: jest.fn(text => text),
-  red: jest.fn(text => text),
-  gray: jest.fn(text => text),
-  magenta: jest.fn(text => text)
+  cyan: jest.fn((text) => text),
+  blue: jest.fn((text) => text),
+  green: jest.fn((text) => text),
+  yellow: jest.fn((text) => text),
+  red: jest.fn((text) => text),
+  gray: jest.fn((text) => text),
+  magenta: jest.fn((text) => text),
 }));
 
 describe('Installer', () => {
@@ -25,14 +27,14 @@ describe('Installer', () => {
 
   beforeEach(() => {
     installer = new Installer();
-    
+
     // Mock console methods
     mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
     mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     // Mock process.exit
     jest.spyOn(process, 'exit').mockImplementation(() => {});
-    
+
     // Reset all mocks
     jest.clearAllMocks();
   });
@@ -71,10 +73,10 @@ describe('Installer', () => {
       installer.steps.setupGitHooks = jest.fn().mockResolvedValue(true);
       installer.steps.createExampleFiles = jest.fn().mockResolvedValue(true);
       installer.steps.finalValidation = jest.fn().mockResolvedValue(true);
-      
+
       // Mock utility methods
       installer.utils.resolveWorkTreePath = jest.fn().mockReturnValue('/test/worktrees');
-      
+
       // Mock inquirer
       const inquirer = require('inquirer');
       inquirer.prompt = jest.fn().mockResolvedValue({
@@ -82,13 +84,13 @@ describe('Installer', () => {
         setupLinear: true,
         linearApiKey: 'lin_api_test123',
         setupGitHooks: true,
-        workTreeLocation: 'alongside'
+        workTreeLocation: 'alongside',
       });
     });
 
     it('should complete installation successfully', async () => {
       await installer.install('/test/dir');
-      
+
       expect(installer.steps.validateTargetDirectory).toHaveBeenCalledWith('/test/dir', {});
       expect(installer.steps.validateEnvironment).toHaveBeenCalled();
       expect(installer.steps.createDirectoryStructure).toHaveBeenCalledWith('/test/dir');
@@ -103,21 +105,21 @@ describe('Installer', () => {
 
     it('should use current directory when no targetDir provided', async () => {
       const currentDir = process.cwd();
-      
+
       await installer.install();
-      
+
       expect(installer.steps.validateTargetDirectory).toHaveBeenCalledWith(currentDir, {});
     });
 
     it('should handle installation errors gracefully', async () => {
       const error = new Error('Installation failed');
       installer.steps.validateTargetDirectory.mockRejectedValue(error);
-      
+
       await installer.install('/test/dir');
-      
+
       expect(mockConsoleError).toHaveBeenCalledWith(
         expect.stringContaining('Installation failed:'),
-        error.message
+        error.message,
       );
       expect(process.exit).toHaveBeenCalledWith(1);
     });
@@ -128,11 +130,11 @@ describe('Installer', () => {
         projectName: 'test-project',
         setupLinear: false,
         setupGitHooks: false,
-        workTreeLocation: 'alongside'
+        workTreeLocation: 'alongside',
       });
-      
+
       await installer.install('/test/dir');
-      
+
       expect(installer.steps.setupGitHooks).not.toHaveBeenCalled();
     });
   });
@@ -145,19 +147,19 @@ describe('Installer', () => {
 
     it('should run all validation steps', async () => {
       await installer.preInstallValidation('/test/dir', {});
-      
+
       expect(installer.steps.validateTargetDirectory).toHaveBeenCalledWith('/test/dir', {});
       expect(installer.steps.validateEnvironment).toHaveBeenCalled();
     });
 
     it('should log validation phases', async () => {
       await installer.preInstallValidation('/test/dir', {});
-      
+
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Phase 1: Pre-installation validation')
+        expect.stringContaining('Phase 1: Pre-installation validation'),
       );
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Pre-installation validation complete')
+        expect.stringContaining('Pre-installation validation complete'),
       );
     });
   });
@@ -170,13 +172,13 @@ describe('Installer', () => {
         setupLinear: true,
         linearApiKey: 'lin_api_test123',
         setupGitHooks: true,
-        workTreeLocation: 'alongside'
+        workTreeLocation: 'alongside',
       });
-      
+
       installer.utils.resolveWorkTreePath = jest.fn().mockReturnValue('/test/worktrees');
-      
+
       const config = await installer.interactiveConfiguration('/test/project');
-      
+
       expect(config.projectName).toBe('my-project');
       expect(config.setupLinear).toBe(true);
       expect(config.linearApiKey).toBe('lin_api_test123');
@@ -187,17 +189,17 @@ describe('Installer', () => {
     it('should use default project name from directory', async () => {
       const inquirer = require('inquirer');
       inquirer.prompt.mockImplementation((questions) => {
-        const projectNameQuestion = questions.find(q => q.name === 'projectName');
+        const projectNameQuestion = questions.find((q) => q.name === 'projectName');
         expect(projectNameQuestion.default).toBe('my-project');
-        
+
         return Promise.resolve({
           projectName: 'my-project',
           setupLinear: false,
           setupGitHooks: false,
-          workTreeLocation: 'alongside'
+          workTreeLocation: 'alongside',
         });
       });
-      
+
       await installer.interactiveConfiguration('/test/my-project');
     });
   });
@@ -212,9 +214,9 @@ describe('Installer', () => {
     it('should complete uninstall when confirmed', async () => {
       const inquirer = require('inquirer');
       inquirer.prompt.mockResolvedValue({ confirmUninstall: true });
-      
+
       await installer.uninstall('/test/dir');
-      
+
       expect(installer.steps.removeWorkflowDirectories).toHaveBeenCalledWith('/test/dir');
       expect(installer.steps.cleanupWorktrees).toHaveBeenCalledWith('/test/dir');
       expect(installer.steps.removeConfigurationFiles).toHaveBeenCalledWith('/test/dir');
@@ -223,27 +225,25 @@ describe('Installer', () => {
     it('should cancel uninstall when not confirmed', async () => {
       const inquirer = require('inquirer');
       inquirer.prompt.mockResolvedValue({ confirmUninstall: false });
-      
+
       await installer.uninstall('/test/dir');
-      
+
       expect(installer.steps.removeWorkflowDirectories).not.toHaveBeenCalled();
-      expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Uninstall cancelled')
-      );
+      expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Uninstall cancelled'));
     });
 
     it('should handle uninstall errors gracefully', async () => {
       const inquirer = require('inquirer');
       inquirer.prompt.mockResolvedValue({ confirmUninstall: true });
-      
+
       const error = new Error('Uninstall failed');
       installer.steps.removeWorkflowDirectories.mockRejectedValue(error);
-      
+
       await installer.uninstall('/test/dir');
-      
+
       expect(mockConsoleError).toHaveBeenCalledWith(
         expect.stringContaining('Uninstall failed:'),
-        error.message
+        error.message,
       );
       expect(process.exit).toHaveBeenCalledWith(1);
     });
@@ -254,16 +254,16 @@ describe('Installer', () => {
       const config = {
         projectName: 'test-project',
         setupLinear: true,
-        linearApiKey: null
+        linearApiKey: null,
       };
-      
+
       installer.displaySuccessMessage('/test/dir', config);
-      
+
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Installation complete!')
+        expect.stringContaining('Installation complete!'),
       );
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Set your Linear API key:')
+        expect.stringContaining('Set your Linear API key:'),
       );
     });
 
@@ -271,17 +271,15 @@ describe('Installer', () => {
       const config = {
         projectName: 'test-project',
         setupLinear: true,
-        linearApiKey: 'lin_api_test123'
+        linearApiKey: 'lin_api_test123',
       };
-      
+
       installer.displaySuccessMessage('/test/dir', config);
-      
+
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Installation complete!')
+        expect.stringContaining('Installation complete!'),
       );
-      expect(mockConsoleLog).toHaveBeenCalledWith(
-        expect.stringContaining('Try the workflow:')
-      );
+      expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Try the workflow:'));
     });
   });
 });

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 const configDefaults = require('./config-defaults');
 const configLoader = require('./config-loader');
 
@@ -20,7 +21,7 @@ class ConfigManager {
       path.join(process.cwd(), 'claude-code-hooks.config.js'),
       path.join(process.cwd(), 'claude-code-hooks.config.json'),
       path.join(process.cwd(), '.claude-code-hooks.json'),
-      path.join(require('os').homedir(), '.claude-code-hooks.json')
+      path.join(require('os').homedir(), '.claude-code-hooks.json'),
     ];
 
     for (const configPath of possiblePaths) {
@@ -34,7 +35,7 @@ class ConfigManager {
 
   loadConfig() {
     let userConfig = {};
-    
+
     if (this.configPath && fs.existsSync(this.configPath)) {
       try {
         userConfig = configLoader.loadFromFile(this.configPath);
@@ -48,15 +49,19 @@ class ConfigManager {
 
   mergeConfigs(defaults, userConfig) {
     const merged = { ...defaults };
-    
+
     for (const key in userConfig) {
-      if (typeof userConfig[key] === 'object' && userConfig[key] !== null && !Array.isArray(userConfig[key])) {
+      if (
+        typeof userConfig[key] === 'object' &&
+        userConfig[key] !== null &&
+        !Array.isArray(userConfig[key])
+      ) {
         merged[key] = this.mergeConfigs(merged[key] || {}, userConfig[key]);
       } else {
         merged[key] = userConfig[key];
       }
     }
-    
+
     return merged;
   }
 
@@ -152,5 +157,5 @@ module.exports = {
   reset: () => configManager.reset(),
   validate: () => configManager.validate(),
   getConfigPath: () => configManager.configPath,
-  getConfig: () => configManager.config
+  getConfig: () => configManager.config,
 };

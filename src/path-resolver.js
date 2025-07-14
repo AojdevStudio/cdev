@@ -21,8 +21,10 @@ class PathResolver {
    * @returns {string} Normalized path
    */
   normalizePath(inputPath) {
-    if (!inputPath) return '';
-    
+    if (!inputPath) {
+      return '';
+    }
+
     // Replace forward slashes with backslashes on Windows
     if (this.isWindows) {
       inputPath = inputPath.replace(/\//g, '\\');
@@ -30,7 +32,7 @@ class PathResolver {
       // Replace backslashes with forward slashes on Unix-like systems
       inputPath = inputPath.replace(/\\/g, '/');
     }
-    
+
     return path.normalize(inputPath);
   }
 
@@ -40,16 +42,22 @@ class PathResolver {
    * @returns {string} Absolute path
    */
   resolveHome(relativePath) {
-    if (!relativePath) return os.homedir();
-    
+    if (!relativePath) {
+      return os.homedir();
+    }
+
     // Handle ~ prefix
     if (relativePath.startsWith('~')) {
       relativePath = relativePath.substring(1);
-      if (relativePath.startsWith(path.sep) || relativePath.startsWith('/') || relativePath.startsWith('\\')) {
+      if (
+        relativePath.startsWith(path.sep) ||
+        relativePath.startsWith('/') ||
+        relativePath.startsWith('\\')
+      ) {
         relativePath = relativePath.substring(1);
       }
     }
-    
+
     return path.join(os.homedir(), relativePath);
   }
 
@@ -61,15 +69,18 @@ class PathResolver {
   getConfigDir(appName) {
     if (this.isWindows) {
       // Windows: %APPDATA%\appName
-      return path.join(process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'), appName);
-    } else if (this.isMacOS) {
+      return path.join(
+        process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'),
+        appName,
+      );
+    }
+    if (this.isMacOS) {
       // macOS: ~/Library/Application Support/appName
       return path.join(os.homedir(), 'Library', 'Application Support', appName);
-    } else {
-      // Linux/Unix: ~/.config/appName
-      const xdgConfig = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
-      return path.join(xdgConfig, appName);
     }
+    // Linux/Unix: ~/.config/appName
+    const xdgConfig = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
+    return path.join(xdgConfig, appName);
   }
 
   /**
@@ -80,15 +91,18 @@ class PathResolver {
   getDataDir(appName) {
     if (this.isWindows) {
       // Windows: %LOCALAPPDATA%\appName
-      return path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'), appName);
-    } else if (this.isMacOS) {
+      return path.join(
+        process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'),
+        appName,
+      );
+    }
+    if (this.isMacOS) {
       // macOS: ~/Library/Application Support/appName
       return this.getConfigDir(appName);
-    } else {
-      // Linux/Unix: ~/.local/share/appName
-      const xdgData = process.env.XDG_DATA_HOME || path.join(os.homedir(), '.local', 'share');
-      return path.join(xdgData, appName);
     }
+    // Linux/Unix: ~/.local/share/appName
+    const xdgData = process.env.XDG_DATA_HOME || path.join(os.homedir(), '.local', 'share');
+    return path.join(xdgData, appName);
   }
 
   /**
@@ -179,7 +193,9 @@ class PathResolver {
    * @returns {string} Path with forward slashes
    */
   toPosixPath(inputPath) {
-    if (!inputPath) return '';
+    if (!inputPath) {
+      return '';
+    }
     return inputPath.split(path.sep).join('/');
   }
 
@@ -189,7 +205,9 @@ class PathResolver {
    * @returns {string} Path with native separators
    */
   toNativePath(inputPath) {
-    if (!inputPath) return '';
+    if (!inputPath) {
+      return '';
+    }
     if (this.isWindows) {
       return inputPath.replace(/\//g, '\\');
     }
@@ -203,7 +221,7 @@ class PathResolver {
   getEnvPaths() {
     const pathVar = process.env.PATH || process.env.Path || '';
     const separator = this.isWindows ? ';' : ':';
-    return pathVar.split(separator).filter(p => p.length > 0);
+    return pathVar.split(separator).filter((p) => p.length > 0);
   }
 
   /**
@@ -214,7 +232,7 @@ class PathResolver {
   findInPath(executable) {
     const paths = this.getEnvPaths();
     const extensions = this.isWindows ? ['.exe', '.cmd', '.bat', ''] : [''];
-    
+
     for (const dir of paths) {
       for (const ext of extensions) {
         const fullPath = path.join(dir, executable + ext);
@@ -226,7 +244,7 @@ class PathResolver {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -244,7 +262,7 @@ class PathResolver {
       homeDir: os.homedir(),
       tempDir: os.tmpdir(),
       pathSeparator: path.sep,
-      delimiter: path.delimiter
+      delimiter: path.delimiter,
     };
   }
 }
@@ -254,5 +272,5 @@ const pathResolver = new PathResolver();
 
 module.exports = {
   PathResolver,
-  pathResolver
+  pathResolver,
 };

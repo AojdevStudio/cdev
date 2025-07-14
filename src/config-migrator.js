@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 const { deepMerge } = require('./config-generator');
 
 /**
@@ -12,22 +13,22 @@ async function migrateConfig(projectPath, options = {}) {
   const claudeDir = path.join(projectPath, '.claude');
   const localConfigPath = path.join(claudeDir, 'settings.local.json');
   const targetConfigPath = path.join(claudeDir, 'settings.json');
-  
+
   const result = {
     migrated: false,
     source: localConfigPath,
     target: targetConfigPath,
     backup: null,
     changes: [],
-    warnings: []
+    warnings: [],
   };
-  
+
   // Check if source file exists
   if (!fs.existsSync(localConfigPath)) {
     result.warnings.push('No settings.local.json found to migrate');
     return result;
   }
-  
+
   // Load source configuration
   let sourceConfig;
   try {
@@ -36,7 +37,7 @@ async function migrateConfig(projectPath, options = {}) {
   } catch (error) {
     throw new Error(`Failed to read settings.local.json: ${error.message}`);
   }
-  
+
   // Check if target exists and handle accordingly
   let targetConfig = {};
   if (fs.existsSync(targetConfigPath)) {
@@ -46,7 +47,7 @@ async function migrateConfig(projectPath, options = {}) {
       fs.copyFileSync(targetConfigPath, backupPath);
       result.backup = backupPath;
     }
-    
+
     try {
       const content = fs.readFileSync(targetConfigPath, 'utf8');
       targetConfig = JSON.parse(content);
@@ -54,18 +55,18 @@ async function migrateConfig(projectPath, options = {}) {
       result.warnings.push(`Existing settings.json is invalid: ${error.message}`);
     }
   }
-  
+
   // Perform migration
   const migratedConfig = performMigration(sourceConfig, targetConfig, result);
-  
+
   // Validate migrated configuration
   if (!isValidConfiguration(migratedConfig)) {
     throw new Error('Migration resulted in invalid configuration');
   }
-  
+
   // Write migrated configuration
   fs.writeFileSync(targetConfigPath, JSON.stringify(migratedConfig, null, 2), 'utf8');
-  
+
   // Handle source file based on options
   if (options.removeSource) {
     fs.unlinkSync(localConfigPath);
@@ -75,7 +76,7 @@ async function migrateConfig(projectPath, options = {}) {
     fs.renameSync(localConfigPath, archivePath);
     result.changes.push(`Archived settings.local.json to ${path.basename(archivePath)}`);
   }
-  
+
   result.migrated = true;
   return result;
 }
@@ -91,25 +92,25 @@ function performMigration(source, target, result) {
   // Track what's being migrated
   const sourceKeys = Object.keys(source);
   const targetKeys = Object.keys(target);
-  
+
   // Identify new keys
-  const newKeys = sourceKeys.filter(key => !targetKeys.includes(key));
+  const newKeys = sourceKeys.filter((key) => !targetKeys.includes(key));
   if (newKeys.length > 0) {
     result.changes.push(`Added new keys: ${newKeys.join(', ')}`);
   }
-  
+
   // Identify conflicts
-  const conflicts = sourceKeys.filter(key => targetKeys.includes(key));
+  const conflicts = sourceKeys.filter((key) => targetKeys.includes(key));
   if (conflicts.length > 0) {
     result.changes.push(`Merged existing keys: ${conflicts.join(', ')}`);
   }
-  
+
   // Merge configurations
   const merged = deepMerge(target, source);
-  
+
   // Apply any necessary transformations
   const migrated = applyMigrationTransformations(merged, result);
-  
+
   return migrated;
 }
 
@@ -121,50 +122,50 @@ function performMigration(source, target, result) {
  */
 function applyMigrationTransformations(config, result) {
   const transformed = JSON.parse(JSON.stringify(config)); // Deep clone
-  
+
   // Transform old hook formats to new format
   if (transformed.hooks) {
     let hooksTransformed = false;
-    
+
     for (const [event, hooks] of Object.entries(transformed.hooks)) {
       // Convert string hooks to array format
       if (typeof hooks === 'string') {
         transformed.hooks[event] = [hooks];
         hooksTransformed = true;
       }
-      
+
       // Ensure all hook entries have required properties
       if (Array.isArray(transformed.hooks[event])) {
-        transformed.hooks[event] = transformed.hooks[event].map(hook => {
+        transformed.hooks[event] = transformed.hooks[event].map((hook) => {
           if (typeof hook === 'string') {
             return {
               command: hook,
-              blocking: true
+              blocking: true,
             };
           }
           return hook;
         });
       }
     }
-    
+
     if (hooksTransformed) {
       result.changes.push('Transformed legacy hook formats to current format');
     }
   }
-  
+
   // Transform old environment variable format
   if (transformed.env && !transformed.environment) {
     transformed.environment = transformed.env;
     delete transformed.env;
     result.changes.push('Migrated "env" to "environment"');
   }
-  
+
   // Ensure required fields exist
   if (!transformed.version) {
     transformed.version = '1.0';
     result.changes.push('Added version field');
   }
-  
+
   return transformed;
 }
 
@@ -178,7 +179,7 @@ function isValidConfiguration(config) {
   if (!config || typeof config !== 'object') {
     return false;
   }
-  
+
   // Check for required fields
   const requiredFields = ['version'];
   for (const field of requiredFields) {
@@ -186,20 +187,20 @@ function isValidConfiguration(config) {
       return false;
     }
   }
-  
+
   // Validate hooks structure if present
   if (config.hooks) {
     if (typeof config.hooks !== 'object') {
       return false;
     }
-    
+
     for (const hooks of Object.values(config.hooks)) {
       if (!Array.isArray(hooks)) {
         return false;
       }
     }
   }
-  
+
   return true;
 }
 
@@ -212,13 +213,13 @@ function checkMigrationStatus(projectPath) {
   const claudeDir = path.join(projectPath, '.claude');
   const localConfigPath = path.join(claudeDir, 'settings.local.json');
   const targetConfigPath = path.join(claudeDir, 'settings.json');
-  
+
   return {
     hasLocalConfig: fs.existsSync(localConfigPath),
     hasTargetConfig: fs.existsSync(targetConfigPath),
     needsMigration: fs.existsSync(localConfigPath) && !fs.existsSync(targetConfigPath),
     localConfigPath,
-    targetConfigPath
+    targetConfigPath,
   };
 }
 
@@ -227,5 +228,5 @@ module.exports = {
   performMigration,
   applyMigrationTransformations,
   isValidConfiguration,
-  checkMigrationStatus
+  checkMigrationStatus,
 };

@@ -2,11 +2,12 @@
  * Tests for python-detector.js
  */
 
-const { PythonDetector, pythonDetector } = require('./python-detector');
-const { pathResolver } = require('./path-resolver');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+
+const { pathResolver } = require('./path-resolver');
+const { PythonDetector, pythonDetector } = require('./python-detector');
 
 // Mock dependencies
 jest.mock('./path-resolver');
@@ -21,18 +22,18 @@ describe('PythonDetector', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset singleton state
     pythonDetector.detectedPython = null;
-    
+
     // Default mocks
     pathResolver.findInPath.mockReturnValue(mockPythonPath);
     pathResolver.getPlatformInfo.mockReturnValue({
       isWindows: false,
       isMacOS: false,
-      isLinux: true
+      isLinux: true,
     });
-    
+
     execSync.mockImplementation((cmd) => {
       if (cmd.includes('--version')) {
         return mockPythonVersion;
@@ -45,10 +46,10 @@ describe('PythonDetector', () => {
       }
       return '';
     });
-    
+
     fs.existsSync.mockReturnValue(true);
     fs.accessSync.mockImplementation();
-    
+
     detector = new PythonDetector();
   });
 
@@ -63,34 +64,32 @@ describe('PythonDetector', () => {
   describe('detectPythonInstallations', () => {
     test('detects Python from common commands', () => {
       const installations = detector.detectPythonInstallations();
-      
+
       expect(pathResolver.findInPath).toHaveBeenCalledWith('python3');
       expect(pathResolver.findInPath).toHaveBeenCalledWith('python');
       expect(pathResolver.findInPath).toHaveBeenCalledWith('py');
-      
+
       expect(installations).toHaveLength(1);
       expect(installations[0]).toMatchObject({
         path: mockPythonPath,
         version: '3.9.5',
-        hasPip: true
+        hasPip: true,
       });
     });
 
     test('avoids duplicates', () => {
       pathResolver.findInPath.mockReturnValue(mockPythonPath);
       fs.existsSync.mockImplementation((path) => path === mockPythonPath);
-      
+
       const installations = detector.detectPythonInstallations();
-      
+
       expect(installations).toHaveLength(1);
     });
 
     test('checks platform-specific paths', () => {
       pathResolver.findInPath.mockReturnValue(null);
-      fs.existsSync.mockImplementation((path) => {
-        return path === '/usr/bin/python3.9';
-      });
-      
+      fs.existsSync.mockImplementation((path) => path === '/usr/bin/python3.9');
+
       execSync.mockImplementation((cmd) => {
         if (cmd.includes('/usr/bin/python3.9') && cmd.includes('--version')) {
           return 'Python 3.9.0';
@@ -100,9 +99,9 @@ describe('PythonDetector', () => {
         }
         return '';
       });
-      
+
       const installations = detector.detectPythonInstallations();
-      
+
       expect(installations).toHaveLength(1);
       expect(installations[0].path).toBe('/usr/bin/python3.9');
     });
@@ -111,12 +110,18 @@ describe('PythonDetector', () => {
       let callCount = 0;
       pathResolver.findInPath.mockImplementation((cmd) => {
         callCount++;
-        if (callCount === 1) return '/usr/bin/python3.8';
-        if (callCount === 2) return '/usr/bin/python3.10';
-        if (callCount === 3) return '/usr/bin/python3.9';
+        if (callCount === 1) {
+          return '/usr/bin/python3.8';
+        }
+        if (callCount === 2) {
+          return '/usr/bin/python3.10';
+        }
+        if (callCount === 3) {
+          return '/usr/bin/python3.9';
+        }
         return null;
       });
-      
+
       execSync.mockImplementation((cmd) => {
         if (cmd.includes('python3.8') && cmd.includes('--version')) {
           return 'Python 3.8.0';
@@ -132,9 +137,9 @@ describe('PythonDetector', () => {
         }
         return '';
       });
-      
+
       const installations = detector.detectPythonInstallations();
-      
+
       expect(installations[0].version).toBe('3.10.0');
       expect(installations[1].version).toBe('3.9.0');
       expect(installations[2].version).toBe('3.8.0');
@@ -145,20 +150,24 @@ describe('PythonDetector', () => {
     test('returns cached result if available', () => {
       const cached = { path: '/cached/python', version: '3.9.0' };
       detector.detectedPython = cached;
-      
+
       const result = detector.getBestPython();
-      
+
       expect(result).toBe(cached);
       expect(execSync).not.toHaveBeenCalled();
     });
 
     test('returns first installation meeting minimum version', () => {
       pathResolver.findInPath.mockImplementation((cmd) => {
-        if (cmd === 'python3') return '/usr/bin/python3';
-        if (cmd === 'python') return '/usr/bin/python';
+        if (cmd === 'python3') {
+          return '/usr/bin/python3';
+        }
+        if (cmd === 'python') {
+          return '/usr/bin/python';
+        }
         return null;
       });
-      
+
       execSync.mockImplementation((cmd) => {
         if (cmd.includes('python3') && cmd.includes('--version')) {
           return 'Python 3.5.0'; // Below minimum
@@ -171,9 +180,9 @@ describe('PythonDetector', () => {
         }
         return '';
       });
-      
+
       const result = detector.getBestPython();
-      
+
       expect(result.version).toBe('3.7.0');
       expect(result.meetsMinimumVersion).toBe(true);
     });
@@ -188,9 +197,9 @@ describe('PythonDetector', () => {
         }
         return '';
       });
-      
+
       const result = detector.getBestPython();
-      
+
       expect(result.version).toBe('3.5.0');
       expect(result.meetsMinimumVersion).toBe(false);
     });
@@ -198,9 +207,9 @@ describe('PythonDetector', () => {
     test('returns null if no Python found', () => {
       pathResolver.findInPath.mockReturnValue(null);
       fs.existsSync.mockReturnValue(false);
-      
+
       const result = detector.getBestPython();
-      
+
       expect(result).toBeNull();
     });
   });
@@ -208,19 +217,19 @@ describe('PythonDetector', () => {
   describe('checkPythonCommand', () => {
     test('returns Python info for valid command', () => {
       const result = detector.checkPythonCommand('python3');
-      
+
       expect(pathResolver.findInPath).toHaveBeenCalledWith('python3');
       expect(result).toMatchObject({
         path: mockPythonPath,
-        version: '3.9.5'
+        version: '3.9.5',
       });
     });
 
     test('returns null for invalid command', () => {
       pathResolver.findInPath.mockReturnValue(null);
-      
+
       const result = detector.checkPythonCommand('python4');
-      
+
       expect(result).toBeNull();
     });
 
@@ -228,9 +237,9 @@ describe('PythonDetector', () => {
       pathResolver.findInPath.mockImplementation(() => {
         throw new Error('Command failed');
       });
-      
+
       const result = detector.checkPythonCommand('python3');
-      
+
       expect(result).toBeNull();
     });
   });
@@ -238,14 +247,14 @@ describe('PythonDetector', () => {
   describe('getPythonInfo', () => {
     test('extracts Python information', () => {
       const result = detector.getPythonInfo(mockPythonPath);
-      
+
       expect(result).toEqual({
         command: 'python3',
         path: mockPythonPath,
         version: '3.9.5',
         prefix: mockSysPrefix,
         hasPip: true,
-        meetsMinimumVersion: true
+        meetsMinimumVersion: true,
       });
     });
 
@@ -262,16 +271,16 @@ describe('PythonDetector', () => {
         }
         return '';
       });
-      
+
       const result = detector.getPythonInfo(mockPythonPath);
-      
+
       expect(result.hasPip).toBe(false);
     });
 
     test('handles Windows executable paths', () => {
       const windowsPath = 'C:\\Python39\\python.exe';
       const result = detector.getPythonInfo(windowsPath);
-      
+
       expect(result.command).toBe('python');
     });
 
@@ -279,9 +288,9 @@ describe('PythonDetector', () => {
       execSync.mockImplementation(() => {
         throw new Error('Invalid command');
       });
-      
+
       const result = detector.getPythonInfo('/invalid/python');
-      
+
       expect(result).toBeNull();
     });
 
@@ -292,9 +301,9 @@ describe('PythonDetector', () => {
         }
         return '';
       });
-      
+
       const result = detector.getPythonInfo(mockPythonPath);
-      
+
       expect(result).toBeNull();
     });
   });
@@ -302,11 +311,11 @@ describe('PythonDetector', () => {
   describe('isPythonExecutable', () => {
     test('validates Python executable', () => {
       const result = detector.isPythonExecutable(mockPythonPath);
-      
+
       expect(fs.accessSync).toHaveBeenCalledWith(mockPythonPath, fs.constants.X_OK);
       expect(execSync).toHaveBeenCalledWith(
         expect.stringContaining('--version'),
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(result).toBe(true);
     });
@@ -315,17 +324,17 @@ describe('PythonDetector', () => {
       fs.accessSync.mockImplementation(() => {
         throw new Error('Not executable');
       });
-      
+
       const result = detector.isPythonExecutable('/not/executable');
-      
+
       expect(result).toBe(false);
     });
 
     test('returns false for non-Python executable', () => {
       execSync.mockReturnValue('node v16.0.0');
-      
+
       const result = detector.isPythonExecutable('/usr/bin/node');
-      
+
       expect(result).toBe(false);
     });
   });
@@ -335,40 +344,37 @@ describe('PythonDetector', () => {
       pathResolver.getPlatformInfo.mockReturnValue({
         isWindows: true,
         isMacOS: false,
-        isLinux: false
+        isLinux: false,
       });
-      
+
       process.env.ProgramFiles = 'C:\\Program Files';
       process.env['ProgramFiles(x86)'] = 'C:\\Program Files (x86)';
       process.env.LOCALAPPDATA = 'C:\\Users\\Test\\AppData\\Local';
       process.env.USERPROFILE = 'C:\\Users\\Test';
-      
-      fs.existsSync.mockImplementation((path) => {
-        return path.includes('Python39');
-      });
-      
+
+      fs.existsSync.mockImplementation((path) => path.includes('Python39'));
+
       const paths = detector.getPlatformSpecificPaths();
-      
-      expect(paths.some(p => p.includes('Python39'))).toBe(true);
-      expect(paths.some(p => p.includes('WindowsApps'))).toBe(false);
+
+      expect(paths.some((p) => p.includes('Python39'))).toBe(true);
+      expect(paths.some((p) => p.includes('WindowsApps'))).toBe(false);
     });
 
     test('returns macOS paths on macOS', () => {
       pathResolver.getPlatformInfo.mockReturnValue({
         isWindows: false,
         isMacOS: true,
-        isLinux: false
+        isLinux: false,
       });
-      
+
       process.env.HOME = '/Users/test';
-      
-      fs.existsSync.mockImplementation((path) => {
-        return path === '/usr/local/bin/python3' || 
-               path === '/opt/homebrew/bin/python3';
-      });
-      
+
+      fs.existsSync.mockImplementation(
+        (path) => path === '/usr/local/bin/python3' || path === '/opt/homebrew/bin/python3',
+      );
+
       const paths = detector.getPlatformSpecificPaths();
-      
+
       expect(paths).toContain('/usr/local/bin/python3');
       expect(paths).toContain('/opt/homebrew/bin/python3');
     });
@@ -377,27 +383,26 @@ describe('PythonDetector', () => {
       pathResolver.getPlatformInfo.mockReturnValue({
         isWindows: false,
         isMacOS: false,
-        isLinux: true
+        isLinux: true,
       });
-      
+
       process.env.HOME = '/home/test';
-      
-      fs.existsSync.mockImplementation((path) => {
-        return path === '/usr/bin/python3' || 
-               path === '/usr/bin/python3.9';
-      });
-      
+
+      fs.existsSync.mockImplementation(
+        (path) => path === '/usr/bin/python3' || path === '/usr/bin/python3.9',
+      );
+
       const paths = detector.getPlatformSpecificPaths();
-      
+
       expect(paths).toContain('/usr/bin/python3');
       expect(paths).toContain('/usr/bin/python3.9');
     });
 
     test('filters out non-existent paths', () => {
       fs.existsSync.mockReturnValue(false);
-      
+
       const paths = detector.getPlatformSpecificPaths();
-      
+
       expect(paths).toHaveLength(0);
     });
   });
@@ -407,10 +412,10 @@ describe('PythonDetector', () => {
       expect(detector.compareVersions('3.9.0', '3.10.0')).toBe(-1);
       expect(detector.compareVersions('3.10.0', '3.9.0')).toBe(1);
       expect(detector.compareVersions('3.9.0', '3.9.0')).toBe(0);
-      
+
       expect(detector.compareVersions('3.9', '3.9.0')).toBe(0);
       expect(detector.compareVersions('3.9.1', '3.9')).toBe(1);
-      
+
       expect(detector.compareVersions('3.10.2', '3.10.10')).toBe(-1);
     });
   });
@@ -427,33 +432,33 @@ describe('PythonDetector', () => {
   describe('createVirtualEnvironment', () => {
     test('creates virtual environment with best Python', () => {
       const venvPath = '/test/venv';
-      
+
       detector.createVirtualEnvironment(venvPath);
-      
+
       expect(execSync).toHaveBeenCalledWith(
         `"${mockPythonPath}" -m venv "${venvPath}"`,
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
     test('uses specified Python installation', () => {
       const customPython = {
         path: '/custom/python',
-        version: '3.10.0'
+        version: '3.10.0',
       };
-      
+
       detector.createVirtualEnvironment('/test/venv', customPython);
-      
+
       expect(execSync).toHaveBeenCalledWith(
         expect.stringContaining('/custom/python'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
     test('throws error if no Python available', () => {
       pathResolver.findInPath.mockReturnValue(null);
       fs.existsSync.mockReturnValue(false);
-      
+
       expect(() => {
         detector.createVirtualEnvironment('/test/venv');
       }).toThrow('No suitable Python installation found');
@@ -466,7 +471,7 @@ describe('PythonDetector', () => {
         }
         return mockPythonVersion;
       });
-      
+
       expect(() => {
         detector.createVirtualEnvironment('/test/venv');
       }).toThrow('Failed to create virtual environment: venv failed');
@@ -477,20 +482,20 @@ describe('PythonDetector', () => {
     test('returns pip command for Python with pip', () => {
       const pythonInfo = {
         path: mockPythonPath,
-        hasPip: true
+        hasPip: true,
       };
-      
+
       const result = detector.getPipCommand(pythonInfo);
-      
+
       expect(result).toBe(`"${mockPythonPath}" -m pip`);
     });
 
     test('throws error for Python without pip', () => {
       const pythonInfo = {
         path: mockPythonPath,
-        hasPip: false
+        hasPip: false,
       };
-      
+
       expect(() => {
         detector.getPipCommand(pythonInfo);
       }).toThrow('pip is not available for this Python installation');
@@ -500,9 +505,9 @@ describe('PythonDetector', () => {
   describe('ensurePip', () => {
     test('returns true if pip already available', () => {
       const pythonInfo = { hasPip: true };
-      
+
       const result = detector.ensurePip(pythonInfo);
-      
+
       expect(result).toBe(true);
       expect(execSync).not.toHaveBeenCalled();
     });
@@ -510,14 +515,14 @@ describe('PythonDetector', () => {
     test('installs pip if not available', () => {
       const pythonInfo = {
         path: mockPythonPath,
-        hasPip: false
+        hasPip: false,
       };
-      
+
       const result = detector.ensurePip(pythonInfo);
-      
+
       expect(execSync).toHaveBeenCalledWith(
         expect.stringContaining('ensurepip'),
-        expect.any(Object)
+        expect.any(Object),
       );
       expect(pythonInfo.hasPip).toBe(true);
       expect(result).toBe(true);
@@ -527,14 +532,14 @@ describe('PythonDetector', () => {
       execSync.mockImplementation(() => {
         throw new Error('ensurepip failed');
       });
-      
+
       const pythonInfo = {
         path: mockPythonPath,
-        hasPip: false
+        hasPip: false,
       };
-      
+
       const result = detector.ensurePip(pythonInfo);
-      
+
       expect(result).toBe(false);
       expect(pythonInfo.hasPip).toBe(false);
     });
@@ -551,19 +556,19 @@ describe('PythonDetector', () => {
         executable: mockPythonPath,
         paths: { stdlib: '/usr/lib/python3.9' },
         pip_available: true,
-        pip_version: '21.0.0'
+        pip_version: '21.0.0',
       };
-      
+
       execSync.mockImplementation((cmd) => {
         if (cmd.includes('json.dumps')) {
           return JSON.stringify(mockEnvInfo);
         }
         return '';
       });
-      
+
       const pythonInfo = { path: mockPythonPath };
       const result = detector.getEnvironmentInfo(pythonInfo);
-      
+
       expect(result).toEqual(mockEnvInfo);
     });
 
@@ -571,10 +576,10 @@ describe('PythonDetector', () => {
       execSync.mockImplementation(() => {
         throw new Error('Script failed');
       });
-      
+
       const pythonInfo = { path: mockPythonPath };
       const result = detector.getEnvironmentInfo(pythonInfo);
-      
+
       expect(result).toBeNull();
     });
   });

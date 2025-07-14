@@ -1,5 +1,6 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const ora = require('ora');
@@ -11,76 +12,77 @@ class InteractiveInstaller {
 
   async install(targetDir = '.', options = {}) {
     console.log(chalk.cyan.bold('\n🚀 Welcome to cdev (Claude Development) Installation\n'));
-    
+
     try {
       const resolvedTargetDir = path.resolve(targetDir);
-      
+
       // Ensure target directory exists
       await fs.ensureDir(resolvedTargetDir);
-      
+
       // Check if already installed
       const claudeDir = path.join(resolvedTargetDir, '.claude');
-      if (await fs.pathExists(claudeDir) && !options.force) {
-        const { overwrite } = await inquirer.prompt([{
-          type: 'confirm',
-          name: 'overwrite',
-          message: '.claude directory already exists. Overwrite?',
-          default: false
-        }]);
-        
+      if ((await fs.pathExists(claudeDir)) && !options.force) {
+        const { overwrite } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'overwrite',
+            message: '.claude directory already exists. Overwrite?',
+            default: false,
+          },
+        ]);
+
         if (!overwrite) {
           console.log(chalk.yellow('Installation cancelled.'));
           return;
         }
       }
-      
+
       // Interactive configuration
       const config = await this.getConfiguration();
-      
+
       // Installation with progress
       const spinner = ora('Installing cdev files...').start();
-      
+
       // Create directory structure
       spinner.text = 'Creating directory structure...';
       await this.createDirectoryStructure(resolvedTargetDir);
-      
+
       // Install hooks based on user selection
       spinner.text = 'Installing selected hooks...';
       await this.installHooks(resolvedTargetDir, config);
-      
+
       // Copy command templates
       spinner.text = 'Installing command templates...';
       await this.copyCommandTemplates(resolvedTargetDir);
-      
+
       // Copy workflow scripts if requested
       if (config.installWorkflowScripts) {
         spinner.text = 'Installing workflow scripts...';
         await this.copyWorkflowScripts(resolvedTargetDir);
       }
-      
+
       // Copy AI documentation if requested
       if (config.installAIDocs) {
         spinner.text = 'Installing AI documentation...';
         await this.copyAIDocs(resolvedTargetDir);
       }
-      
+
       // Create environment configuration
       spinner.text = 'Creating environment configuration...';
       await this.createEnvironmentConfig(resolvedTargetDir, config);
-      
+
       // Create CLAUDE.md
       spinner.text = 'Creating CLAUDE.md...';
       await this.createClaudeMD(resolvedTargetDir, config);
-      
+
       // Set permissions
       spinner.text = 'Setting file permissions...';
       await this.setPermissions(resolvedTargetDir);
-      
+
       spinner.succeed('Installation complete!');
-      
+
       // Display success message
       this.displaySuccessMessage(resolvedTargetDir, config);
-      
     } catch (error) {
       console.error(chalk.red('\n❌ Installation failed:'), error.message);
       process.exit(1);
@@ -88,8 +90,8 @@ class InteractiveInstaller {
   }
 
   async getConfiguration() {
-    console.log(chalk.blue('📋 Let\'s configure your cdev installation:\n'));
-    
+    console.log(chalk.blue("📋 Let's configure your cdev installation:\n"));
+
     const config = await inquirer.prompt([
       {
         type: 'checkbox',
@@ -99,72 +101,72 @@ class InteractiveInstaller {
           {
             name: 'Pre-bash validator (blocks dangerous commands)',
             value: 'pre-bash-validator',
-            checked: true
+            checked: true,
           },
           {
             name: 'TypeScript validator (checks TypeScript syntax)',
             value: 'typescript-validator',
-            checked: true
+            checked: true,
           },
           {
             name: 'Import organizer (sorts imports)',
             value: 'import-organizer',
-            checked: true
+            checked: true,
           },
           {
             name: 'Code quality reporter (identifies code smells)',
             value: 'code-quality-reporter',
-            checked: true
+            checked: true,
           },
           {
             name: 'Task completion enforcer (tracks TODOs)',
             value: 'task-completion-enforcer',
-            checked: true
+            checked: true,
           },
           {
             name: 'Commit message validator (semantic commits)',
             value: 'commit-message-validator',
-            checked: true
+            checked: true,
           },
           {
             name: 'Notification system (desktop alerts)',
             value: 'notification',
-            checked: true
+            checked: true,
           },
           {
             name: 'pnpm enforcer (prevents npm/yarn usage)',
             value: 'pnpm-enforcer',
-            checked: false
+            checked: false,
           },
           {
             name: 'API standards checker (REST/GraphQL validation)',
             value: 'api-standards-checker',
-            checked: false
+            checked: false,
           },
           {
             name: 'Universal linter (multi-language linting)',
             value: 'universal-linter',
-            checked: false
-          }
-        ]
+            checked: false,
+          },
+        ],
       },
       {
         type: 'confirm',
         name: 'installWorkflowScripts',
         message: 'Install parallel workflow scripts (for Linear integration)?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'installAIDocs',
         message: 'Install AI documentation templates?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'setupLinear',
         message: 'Do you use Linear for issue tracking?',
-        default: true
+        default: true,
       },
       {
         type: 'input',
@@ -176,23 +178,23 @@ class InteractiveInstaller {
             return 'Linear API key should start with "lin_api_"';
           }
           return true;
-        }
+        },
       },
       {
         type: 'input',
         name: 'engineerName',
         message: 'Your name (for personalized notifications):',
-        default: 'Developer'
+        default: 'Developer',
       },
       {
         type: 'list',
         name: 'defaultEditor',
         message: 'Default code editor:',
         choices: ['cursor', 'code', 'vim', 'emacs', 'other'],
-        default: 'cursor'
-      }
+        default: 'cursor',
+      },
     ]);
-    
+
     return config;
   }
 
@@ -202,9 +204,9 @@ class InteractiveInstaller {
       '.claude/hooks',
       '.claude/commands',
       '.claude/logs',
-      '.claude/templates'
+      '.claude/templates',
     ];
-    
+
     for (const dir of dirs) {
       await fs.ensureDir(path.join(targetDir, dir));
     }
@@ -212,108 +214,112 @@ class InteractiveInstaller {
 
   async installHooks(targetDir, config) {
     const claudeDir = path.join(targetDir, '.claude');
-    
+
     // Map of hook names to their configurations
     const hookConfigs = {
       'pre-bash-validator': {
         event: 'PreToolUse',
         matcher: 'Bash',
-        script: 'pre-bash-validator.py'
+        script: 'pre-bash-validator.py',
       },
       'typescript-validator': {
         event: 'PreToolUse',
         matcher: 'Write|Edit|MultiEdit',
-        script: 'typescript-validator.py'
+        script: 'typescript-validator.py',
       },
       'import-organizer': {
         event: 'PostToolUse',
         matcher: 'Write|Edit|MultiEdit',
-        script: 'import-organizer.py'
+        script: 'import-organizer.py',
       },
       'code-quality-reporter': {
         event: 'PostToolUse',
         matcher: 'Write|Edit|MultiEdit',
-        script: 'code-quality-reporter.py'
+        script: 'code-quality-reporter.py',
       },
       'task-completion-enforcer': {
         event: 'Stop',
         matcher: '',
-        script: 'task-completion-enforcer.py'
+        script: 'task-completion-enforcer.py',
       },
       'commit-message-validator': {
         event: 'PreToolUse',
         matcher: 'Bash',
-        script: 'commit-message-validator.py'
+        script: 'commit-message-validator.py',
       },
-      'notification': {
+      notification: {
         event: 'Notification',
         matcher: '',
-        script: 'notification.py'
+        script: 'notification.py',
       },
       'pnpm-enforcer': {
         event: 'PreToolUse',
         matcher: 'Bash',
-        script: 'pnpm-enforcer.py'
+        script: 'pnpm-enforcer.py',
       },
       'api-standards-checker': {
         event: 'PostToolUse',
         matcher: 'Write|Edit|MultiEdit',
-        script: 'api-standards-checker.py'
+        script: 'api-standards-checker.py',
       },
       'universal-linter': {
         event: 'PostToolUse',
         matcher: 'Write|Edit|MultiEdit',
-        script: 'universal-linter.py'
-      }
+        script: 'universal-linter.py',
+      },
     };
-    
+
     // Build settings.json based on selected hooks
     const settings = {
       version: '1.0',
       description: 'cdev hooks configuration',
-      hooks: {}
+      hooks: {},
     };
-    
+
     // Group hooks by event
     for (const hookName of config.hooks) {
       const hookConfig = hookConfigs[hookName];
-      if (!hookConfig) continue;
-      
+      if (!hookConfig) {
+        continue;
+      }
+
       const { event, matcher, script } = hookConfig;
-      
+
       if (!settings.hooks[event]) {
         settings.hooks[event] = [];
       }
-      
+
       // Find or create matcher group
-      let matcherGroup = settings.hooks[event].find(g => g.matcher === matcher);
+      let matcherGroup = settings.hooks[event].find((g) => g.matcher === matcher);
       if (!matcherGroup) {
         matcherGroup = { matcher, hooks: [] };
         settings.hooks[event].push(matcherGroup);
       }
-      
+
       matcherGroup.hooks.push({
         type: 'command',
-        command: `python3 .claude/hooks/${script}`
+        command: `python3 .claude/hooks/${script}`,
       });
     }
-    
+
     // Write settings.json
     await fs.writeJson(path.join(claudeDir, 'settings.json'), settings, { spaces: 2 });
-    
+
     // Copy hook scripts
     const hooksDir = path.join(claudeDir, 'hooks');
     const hooksSourceDir = path.join(this.packageRoot, '.claude', 'hooks');
-    
+
     // If hook scripts exist in the package, copy them
     if (await fs.pathExists(hooksSourceDir)) {
       for (const hookName of config.hooks) {
         const hookConfig = hookConfigs[hookName];
-        if (!hookConfig) continue;
-        
+        if (!hookConfig) {
+          continue;
+        }
+
         const sourcePath = path.join(hooksSourceDir, hookConfig.script);
         const targetPath = path.join(hooksDir, hookConfig.script);
-        
+
         if (await fs.pathExists(sourcePath)) {
           await fs.copy(sourcePath, targetPath);
         } else {
@@ -325,8 +331,10 @@ class InteractiveInstaller {
       // Create all selected hook scripts
       for (const hookName of config.hooks) {
         const hookConfig = hookConfigs[hookName];
-        if (!hookConfig) continue;
-        
+        if (!hookConfig) {
+          continue;
+        }
+
         const targetPath = path.join(hooksDir, hookConfig.script);
         await this.createHookScript(targetPath, hookName);
       }
@@ -387,7 +395,7 @@ except Exception as e:
     print(f"Hook error: {e}", file=sys.stderr)
     sys.exit(1)
 `,
-      'notification': `#!/usr/bin/env python3
+      notification: `#!/usr/bin/env python3
 import json
 import sys
 import subprocess
@@ -409,8 +417,10 @@ except Exception as e:
 `,
       // Add more hook scripts as needed
     };
-    
-    const script = hookScripts[hookType] || `#!/usr/bin/env python3
+
+    const script =
+      hookScripts[hookType] ||
+      `#!/usr/bin/env python3
 # ${hookType} hook
 import json
 import sys
@@ -423,14 +433,14 @@ except Exception as e:
     print(f"Hook error: {e}", file=sys.stderr)
     sys.exit(1)
 `;
-    
+
     await fs.writeFile(filePath, script);
   }
 
   async copyCommandTemplates(targetDir) {
     const commandsDir = path.join(targetDir, '.claude', 'commands');
     const commandsSourceDir = path.join(this.packageRoot, '.claude', 'commands');
-    
+
     // Copy commands if they exist in the package
     if (await fs.pathExists(commandsSourceDir)) {
       await fs.copy(commandsSourceDir, commandsDir);
@@ -460,9 +470,9 @@ echo "✅ Changes committed"
 # /agent-status command implementation
 echo "Checking agent status..."
 git status
-`
+`,
     };
-    
+
     for (const [filename, content] of Object.entries(commands)) {
       await fs.writeFile(path.join(commandsDir, filename), content);
     }
@@ -471,7 +481,7 @@ git status
   async copyWorkflowScripts(targetDir) {
     const scriptsDir = path.join(targetDir, 'scripts');
     await fs.ensureDir(scriptsDir);
-    
+
     const scriptsSourceDir = path.join(this.packageRoot, 'scripts');
     const essentialScripts = [
       'cache-linear-issue.sh',
@@ -479,22 +489,22 @@ git status
       'spawn-agents.sh',
       'monitor-agents.sh',
       'agent-commit-enhanced.sh',
-      'intelligent-agent-generator.js'
+      'intelligent-agent-generator.js',
     ];
-    
+
     for (const script of essentialScripts) {
       const sourcePath = path.join(scriptsSourceDir, script);
       const targetPath = path.join(scriptsDir, script);
-      
+
       if (await fs.pathExists(sourcePath)) {
         await fs.copy(sourcePath, targetPath);
       }
     }
-    
+
     // Also copy the utils directory since scripts depend on it
     const utilsDir = path.join(targetDir, 'utils');
     await fs.ensureDir(utilsDir);
-    
+
     const utilsSourceDir = path.join(this.packageRoot, 'utils');
     if (await fs.pathExists(utilsSourceDir)) {
       await fs.copy(utilsSourceDir, utilsDir);
@@ -504,7 +514,7 @@ git status
   async copyAIDocs(targetDir) {
     const aiDocsDir = path.join(targetDir, 'ai-docs');
     await fs.ensureDir(aiDocsDir);
-    
+
     const sourceAiDocs = path.join(this.packageRoot, 'ai-docs');
     if (await fs.pathExists(sourceAiDocs)) {
       await fs.copy(sourceAiDocs, aiDocsDir);
@@ -515,11 +525,11 @@ git status
     // Copy the actual .env.example from the package
     const envExampleSource = path.join(this.packageRoot, '.env.example');
     const envExampleTarget = path.join(targetDir, '.env.example');
-    
+
     if (await fs.pathExists(envExampleSource)) {
       await fs.copy(envExampleSource, envExampleTarget);
     }
-    
+
     // If user provided Linear API key, create .env with it
     if (config.linearApiKey) {
       const envPath = path.join(targetDir, '.env');
@@ -528,7 +538,7 @@ git status
         .replace('<your-linear-api-key>', config.linearApiKey)
         .replace('YourName', config.engineerName)
         .replace('cursor', config.defaultEditor);
-      
+
       await fs.writeFile(envPath, updatedContent);
     }
   }
@@ -540,13 +550,17 @@ This project uses cdev (Claude Development) for enhanced development workflows.
 
 ## Installed Hooks
 
-${config.hooks.map(hook => `- ${hook.replace(/-/g, ' ')}`).join('\n')}
+${config.hooks.map((hook) => `- ${hook.replace(/-/g, ' ')}`).join('\n')}
 
 ## Custom Commands
 
-${config.installWorkflowScripts ? `- \`/agent-start [workspace]\` - Start working on an agent task
+${
+  config.installWorkflowScripts
+    ? `- \`/agent-start [workspace]\` - Start working on an agent task
 - \`/agent-commit [workspace] [message]\` - Commit agent work  
-- \`/agent-status [filter]\` - Check agent status` : '- No workflow commands installed'}
+- \`/agent-status [filter]\` - Check agent status`
+    : '- No workflow commands installed'
+}
 
 ## Configuration
 
@@ -568,7 +582,7 @@ See \`.claude/settings.json\` to customize hook behavior.
 
 *Generated by cdev installer*
 `;
-    
+
     await fs.writeFile(path.join(targetDir, 'CLAUDE.md'), claudeMdContent);
   }
 
@@ -576,9 +590,9 @@ See \`.claude/settings.json\` to customize hook behavior.
     const executableDirs = [
       path.join(targetDir, 'scripts'),
       path.join(targetDir, '.claude', 'commands'),
-      path.join(targetDir, '.claude', 'hooks')
+      path.join(targetDir, '.claude', 'hooks'),
     ];
-    
+
     for (const dir of executableDirs) {
       if (await fs.pathExists(dir)) {
         const files = await fs.readdir(dir);
@@ -598,7 +612,7 @@ See \`.claude/settings.json\` to customize hook behavior.
     console.log('');
     console.log(chalk.yellow('📁 Installed files:'));
     console.log('   • .claude/           - Claude Code configuration');
-    console.log('   • .claude/hooks/     - ' + config.hooks.length + ' hooks installed');
+    console.log(`   • .claude/hooks/     - ${config.hooks.length} hooks installed`);
     console.log('   • .claude/commands/  - Custom Claude commands');
     if (config.installWorkflowScripts) {
       console.log('   • scripts/           - Workflow automation scripts');
@@ -611,14 +625,14 @@ See \`.claude/settings.json\` to customize hook behavior.
     console.log('   • .env.example       - Environment configuration template');
     console.log('');
     console.log(chalk.cyan('🚀 Next steps:'));
-    
+
     let step = 1;
     if (config.setupLinear && !config.linearApiKey) {
       console.log(`   ${step++}. Copy .env.example to .env and add your Linear API key`);
     }
     console.log(`   ${step++}. Run ${chalk.bold('claude')} to start using Claude Code with hooks`);
     console.log(`   ${step++}. Review .claude/settings.json to customize hook behavior`);
-    
+
     console.log('');
     console.log(chalk.blue('📚 Documentation:'));
     console.log('   • Hook reference: https://docs.anthropic.com/en/docs/claude-code/hooks');

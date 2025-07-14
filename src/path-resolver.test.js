@@ -5,6 +5,7 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
+
 const { PathResolver, pathResolver } = require('./path-resolver');
 
 // Mock dependencies
@@ -17,20 +18,20 @@ describe('PathResolver', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset environment
     process.env = { ...originalEnv };
-    
+
     // Default OS mocks
     os.platform.mockReturnValue('linux');
     os.arch.mockReturnValue('x64');
     os.homedir.mockReturnValue('/home/test');
     os.tmpdir.mockReturnValue('/tmp');
-    
+
     // Default fs mocks
     fs.mkdirSync.mockImplementation();
     fs.accessSync.mockImplementation();
-    
+
     resolver = new PathResolver();
   });
 
@@ -49,7 +50,7 @@ describe('PathResolver', () => {
     test('detects Windows platform', () => {
       os.platform.mockReturnValue('win32');
       const winResolver = new PathResolver();
-      
+
       expect(winResolver.platform).toBe('win32');
       expect(winResolver.isWindows).toBe(true);
       expect(winResolver.isLinux).toBe(false);
@@ -59,7 +60,7 @@ describe('PathResolver', () => {
     test('detects macOS platform', () => {
       os.platform.mockReturnValue('darwin');
       const macResolver = new PathResolver();
-      
+
       expect(macResolver.platform).toBe('darwin');
       expect(macResolver.isMacOS).toBe(true);
       expect(macResolver.isWindows).toBe(false);
@@ -81,7 +82,7 @@ describe('PathResolver', () => {
     test('converts forward slashes to backslashes on Windows', () => {
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
-      
+
       expect(resolver.normalizePath('C:/Users/Test')).toBe('C:\\Users\\Test');
     });
 
@@ -116,9 +117,9 @@ describe('PathResolver', () => {
   describe('getConfigDir', () => {
     test('returns Linux config directory', () => {
       process.env.XDG_CONFIG_HOME = '/custom/config';
-      
+
       expect(resolver.getConfigDir('myapp')).toBe('/custom/config/myapp');
-      
+
       delete process.env.XDG_CONFIG_HOME;
       expect(resolver.getConfigDir('myapp')).toBe('/home/test/.config/myapp');
     });
@@ -127,9 +128,9 @@ describe('PathResolver', () => {
       os.platform.mockReturnValue('win32');
       process.env.APPDATA = 'C:\\Users\\Test\\AppData\\Roaming';
       resolver = new PathResolver();
-      
+
       expect(resolver.getConfigDir('myapp')).toBe('C:\\Users\\Test\\AppData\\Roaming\\myapp');
-      
+
       delete process.env.APPDATA;
       os.homedir.mockReturnValue('C:\\Users\\Test');
       expect(resolver.getConfigDir('myapp')).toBe('C:\\Users\\Test\\AppData\\Roaming\\myapp');
@@ -138,7 +139,7 @@ describe('PathResolver', () => {
     test('returns macOS config directory', () => {
       os.platform.mockReturnValue('darwin');
       resolver = new PathResolver();
-      
+
       expect(resolver.getConfigDir('myapp')).toBe('/home/test/Library/Application Support/myapp');
     });
   });
@@ -146,9 +147,9 @@ describe('PathResolver', () => {
   describe('getDataDir', () => {
     test('returns Linux data directory', () => {
       process.env.XDG_DATA_HOME = '/custom/data';
-      
+
       expect(resolver.getDataDir('myapp')).toBe('/custom/data/myapp');
-      
+
       delete process.env.XDG_DATA_HOME;
       expect(resolver.getDataDir('myapp')).toBe('/home/test/.local/share/myapp');
     });
@@ -157,9 +158,9 @@ describe('PathResolver', () => {
       os.platform.mockReturnValue('win32');
       process.env.LOCALAPPDATA = 'C:\\Users\\Test\\AppData\\Local';
       resolver = new PathResolver();
-      
+
       expect(resolver.getDataDir('myapp')).toBe('C:\\Users\\Test\\AppData\\Local\\myapp');
-      
+
       delete process.env.LOCALAPPDATA;
       os.homedir.mockReturnValue('C:\\Users\\Test');
       expect(resolver.getDataDir('myapp')).toBe('C:\\Users\\Test\\AppData\\Local\\myapp');
@@ -168,7 +169,7 @@ describe('PathResolver', () => {
     test('returns macOS data directory (same as config)', () => {
       os.platform.mockReturnValue('darwin');
       resolver = new PathResolver();
-      
+
       expect(resolver.getDataDir('myapp')).toBe('/home/test/Library/Application Support/myapp');
     });
   });
@@ -176,7 +177,7 @@ describe('PathResolver', () => {
   describe('getTempDir', () => {
     test('returns app-specific temp directory', () => {
       expect(resolver.getTempDir('myapp')).toBe('/tmp/myapp');
-      
+
       os.tmpdir.mockReturnValue('C:\\Temp');
       expect(resolver.getTempDir('myapp')).toBe('C:\\Temp\\myapp');
     });
@@ -185,7 +186,7 @@ describe('PathResolver', () => {
   describe('ensureDir', () => {
     test('creates directory successfully', () => {
       const result = resolver.ensureDir('/test/dir');
-      
+
       expect(fs.mkdirSync).toHaveBeenCalledWith('/test/dir', { recursive: true });
       expect(result).toBe(true);
     });
@@ -193,18 +194,22 @@ describe('PathResolver', () => {
     test('returns true if directory exists', () => {
       const error = new Error('Directory exists');
       error.code = 'EEXIST';
-      fs.mkdirSync.mockImplementation(() => { throw error; });
-      
+      fs.mkdirSync.mockImplementation(() => {
+        throw error;
+      });
+
       const result = resolver.ensureDir('/existing/dir');
-      
+
       expect(result).toBe(true);
     });
 
     test('throws other errors', () => {
       const error = new Error('Permission denied');
       error.code = 'EACCES';
-      fs.mkdirSync.mockImplementation(() => { throw error; });
-      
+      fs.mkdirSync.mockImplementation(() => {
+        throw error;
+      });
+
       expect(() => resolver.ensureDir('/protected/dir')).toThrow('Permission denied');
     });
   });
@@ -213,7 +218,7 @@ describe('PathResolver', () => {
     test('isAbsolute', () => {
       expect(resolver.isAbsolute('/home/user')).toBe(true);
       expect(resolver.isAbsolute('relative/path')).toBe(false);
-      
+
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
       expect(resolver.isAbsolute('C:\\Users')).toBe(true);
@@ -226,10 +231,10 @@ describe('PathResolver', () => {
     test('resolve', () => {
       const originalCwd = process.cwd();
       process.cwd = jest.fn().mockReturnValue('/current');
-      
+
       expect(resolver.resolve('file.txt')).toBe('/current/file.txt');
       expect(resolver.resolve('/absolute', 'file.txt')).toBe('/absolute/file.txt');
-      
+
       process.cwd = originalCwd;
     });
 
@@ -252,7 +257,7 @@ describe('PathResolver', () => {
   describe('path conversion methods', () => {
     test('toPosixPath converts to forward slashes', () => {
       expect(resolver.toPosixPath('/home/user')).toBe('/home/user');
-      
+
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
       expect(resolver.toPosixPath('C:\\Users\\Test')).toBe('C:/Users/Test');
@@ -265,7 +270,7 @@ describe('PathResolver', () => {
 
     test('toNativePath converts to platform separators', () => {
       expect(resolver.toNativePath('C:\\Users\\Test')).toBe('C:/Users/Test');
-      
+
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
       expect(resolver.toNativePath('C:/Users/Test')).toBe('C:\\Users\\Test');
@@ -280,9 +285,9 @@ describe('PathResolver', () => {
   describe('getEnvPaths', () => {
     test('splits Unix PATH variable', () => {
       process.env.PATH = '/usr/bin:/usr/local/bin:/home/user/bin';
-      
+
       const paths = resolver.getEnvPaths();
-      
+
       expect(paths).toEqual(['/usr/bin', '/usr/local/bin', '/home/user/bin']);
     });
 
@@ -290,9 +295,9 @@ describe('PathResolver', () => {
       os.platform.mockReturnValue('win32');
       process.env.PATH = 'C:\\Windows\\System32;C:\\Program Files\\Git\\bin';
       resolver = new PathResolver();
-      
+
       const paths = resolver.getEnvPaths();
-      
+
       expect(paths).toEqual(['C:\\Windows\\System32', 'C:\\Program Files\\Git\\bin']);
     });
 
@@ -301,26 +306,26 @@ describe('PathResolver', () => {
       delete process.env.PATH;
       process.env.Path = 'C:\\Windows';
       resolver = new PathResolver();
-      
+
       const paths = resolver.getEnvPaths();
-      
+
       expect(paths).toEqual(['C:\\Windows']);
     });
 
     test('filters empty paths', () => {
       process.env.PATH = '/usr/bin:::/usr/local/bin';
-      
+
       const paths = resolver.getEnvPaths();
-      
+
       expect(paths).toEqual(['/usr/bin', '/usr/local/bin']);
     });
 
     test('returns empty array when PATH is not set', () => {
       delete process.env.PATH;
       delete process.env.Path;
-      
+
       const paths = resolver.getEnvPaths();
-      
+
       expect(paths).toEqual([]);
     });
   });
@@ -329,12 +334,14 @@ describe('PathResolver', () => {
     test('finds executable on Unix', () => {
       process.env.PATH = '/usr/bin:/usr/local/bin';
       fs.accessSync.mockImplementation((path) => {
-        if (path === '/usr/bin/git') return;
+        if (path === '/usr/bin/git') {
+          return;
+        }
         throw new Error('Not found');
       });
-      
+
       const result = resolver.findInPath('git');
-      
+
       expect(result).toBe('/usr/bin/git');
     });
 
@@ -342,14 +349,16 @@ describe('PathResolver', () => {
       os.platform.mockReturnValue('win32');
       process.env.PATH = 'C:\\Windows\\System32;C:\\Program Files\\Git\\bin';
       resolver = new PathResolver();
-      
+
       fs.accessSync.mockImplementation((path) => {
-        if (path === 'C:\\Program Files\\Git\\bin\\git.exe') return;
+        if (path === 'C:\\Program Files\\Git\\bin\\git.exe') {
+          return;
+        }
         throw new Error('Not found');
       });
-      
+
       const result = resolver.findInPath('git');
-      
+
       expect(result).toBe('C:\\Program Files\\Git\\bin\\git.exe');
     });
 
@@ -357,15 +366,15 @@ describe('PathResolver', () => {
       os.platform.mockReturnValue('win32');
       process.env.PATH = 'C:\\Windows\\System32';
       resolver = new PathResolver();
-      
+
       const accessCalls = [];
       fs.accessSync.mockImplementation((path) => {
         accessCalls.push(path);
         throw new Error('Not found');
       });
-      
+
       resolver.findInPath('test');
-      
+
       expect(accessCalls).toContain('C:\\Windows\\System32\\test.exe');
       expect(accessCalls).toContain('C:\\Windows\\System32\\test.cmd');
       expect(accessCalls).toContain('C:\\Windows\\System32\\test.bat');
@@ -377,9 +386,9 @@ describe('PathResolver', () => {
       fs.accessSync.mockImplementation(() => {
         throw new Error('Not found');
       });
-      
+
       const result = resolver.findInPath('nonexistent');
-      
+
       expect(result).toBeNull();
     });
   });
@@ -387,7 +396,7 @@ describe('PathResolver', () => {
   describe('getPlatformInfo', () => {
     test('returns complete platform information', () => {
       const info = resolver.getPlatformInfo();
-      
+
       expect(info).toEqual({
         platform: 'linux',
         isWindows: false,
@@ -397,7 +406,7 @@ describe('PathResolver', () => {
         homeDir: '/home/test',
         tempDir: '/tmp',
         pathSeparator: path.sep,
-        delimiter: path.delimiter
+        delimiter: path.delimiter,
       });
     });
 
@@ -406,9 +415,9 @@ describe('PathResolver', () => {
       os.homedir.mockReturnValue('C:\\Users\\Test');
       os.tmpdir.mockReturnValue('C:\\Temp');
       resolver = new PathResolver();
-      
+
       const info = resolver.getPlatformInfo();
-      
+
       expect(info.isWindows).toBe(true);
       expect(info.homeDir).toBe('C:\\Users\\Test');
       expect(info.pathSeparator).toBe('\\');
@@ -425,7 +434,7 @@ describe('PathResolver', () => {
   describe('edge cases', () => {
     test('handles paths with multiple separators', () => {
       expect(resolver.normalizePath('///home///user///')).toBe('/home/user/');
-      
+
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
       expect(resolver.normalizePath('C:\\\\Users\\\\\\Test\\\\')).toBe('C:\\Users\\Test\\');
@@ -433,9 +442,9 @@ describe('PathResolver', () => {
 
     test('handles mixed separators', () => {
       const mixed = 'C:\\Users/Test\\Documents/file.txt';
-      
+
       expect(resolver.normalizePath(mixed)).toBe('C:/Users/Test/Documents/file.txt');
-      
+
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
       expect(resolver.normalizePath(mixed)).toBe('C:\\Users\\Test\\Documents\\file.txt');
@@ -444,7 +453,7 @@ describe('PathResolver', () => {
     test('handles UNC paths on Windows', () => {
       os.platform.mockReturnValue('win32');
       resolver = new PathResolver();
-      
+
       const uncPath = '\\\\server\\share\\folder';
       expect(resolver.normalizePath(uncPath)).toBe('\\\\server\\share\\folder');
     });

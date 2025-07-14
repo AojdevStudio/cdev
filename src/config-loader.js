@@ -16,9 +16,11 @@ class ConfigLoader {
     }
 
     const ext = path.extname(filePath).toLowerCase();
-    
+
     if (!this.supportedFormats.includes(ext)) {
-      throw new Error(`Unsupported config file format: ${ext}. Supported formats: ${this.supportedFormats.join(', ')}`);
+      throw new Error(
+        `Unsupported config file format: ${ext}. Supported formats: ${this.supportedFormats.join(', ')}`,
+      );
     }
 
     try {
@@ -54,17 +56,17 @@ class ConfigLoader {
   loadJsConfig(filePath) {
     try {
       const absolutePath = path.resolve(filePath);
-      
+
       if (require.cache[absolutePath]) {
         delete require.cache[absolutePath];
       }
 
       const config = require(absolutePath);
-      
+
       if (typeof config === 'function') {
         return config();
       }
-      
+
       return config;
     } catch (error) {
       throw new Error(`Error loading JavaScript config: ${error.message}`);
@@ -87,15 +89,23 @@ class ConfigLoader {
   }
 
   parseEnvironmentValue(value) {
-    if (value === 'true') return true;
-    if (value === 'false') return false;
-    if (value === 'null') return null;
-    if (value === 'undefined') return undefined;
-    
+    if (value === 'true') {
+      return true;
+    }
+    if (value === 'false') {
+      return false;
+    }
+    if (value === 'null') {
+      return null;
+    }
+    if (value === 'undefined') {
+      return undefined;
+    }
+
     if (!isNaN(value) && !isNaN(parseFloat(value))) {
       return parseFloat(value);
     }
-    
+
     try {
       return JSON.parse(value);
     } catch {
@@ -109,7 +119,7 @@ class ConfigLoader {
     for (const source of sources) {
       try {
         let config = {};
-        
+
         if (source.type === 'file') {
           config = this.loadFromFile(source.path);
         } else if (source.type === 'env') {
@@ -135,7 +145,11 @@ class ConfigLoader {
 
     for (const key in source) {
       if (source.hasOwnProperty(key)) {
-        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+        if (
+          typeof source[key] === 'object' &&
+          source[key] !== null &&
+          !Array.isArray(source[key])
+        ) {
           result[key] = this.mergeConfigs(result[key] || {}, source[key]);
         } else {
           result[key] = source[key];
@@ -152,7 +166,7 @@ class ConfigLoader {
     }
 
     const errors = [];
-    
+
     for (const key in schema) {
       const rule = schema[key];
       const value = config[key];
@@ -176,7 +190,7 @@ class ConfigLoader {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }
@@ -190,5 +204,5 @@ module.exports = {
   loadFromMultipleSources: (sources) => configLoader.loadFromMultipleSources(sources),
   mergeConfigs: (target, source) => configLoader.mergeConfigs(target, source),
   validateConfig: (config, schema) => configLoader.validateConfig(config, schema),
-  parseEnvironmentValue: (value) => configLoader.parseEnvironmentValue(value)
+  parseEnvironmentValue: (value) => configLoader.parseEnvironmentValue(value),
 };

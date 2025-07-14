@@ -7,6 +7,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const { execSync, spawn } = require('child_process');
+
 const { pathResolver } = require('./path-resolver');
 
 class PlatformUtils {
@@ -27,7 +28,7 @@ class PlatformUtils {
       username: os.userInfo().username,
       homedir: os.homedir(),
       shell: process.env.SHELL || null,
-      isAdmin: false
+      isAdmin: false,
     };
 
     // Check if user has admin/root privileges
@@ -61,7 +62,7 @@ class PlatformUtils {
       freeMemory: os.freemem(),
       uptime: os.uptime(),
       nodeVersion: process.version,
-      npmVersion: this.getNpmVersion()
+      npmVersion: this.getNpmVersion(),
     };
   }
 
@@ -87,7 +88,7 @@ class PlatformUtils {
     const defaultOptions = {
       encoding: 'utf8',
       shell: true,
-      timeout: 30000
+      timeout: 30000,
     };
 
     const execOptions = { ...defaultOptions, ...options };
@@ -104,13 +105,13 @@ class PlatformUtils {
       return {
         success: true,
         output: output.toString().trim(),
-        error: null
+        error: null,
       };
     } catch (error) {
       return {
         success: false,
         output: error.stdout ? error.stdout.toString() : '',
-        error: error.stderr ? error.stderr.toString() : error.message
+        error: error.stderr ? error.stderr.toString() : error.message,
       };
     }
   }
@@ -183,7 +184,7 @@ class PlatformUtils {
    */
   setEnvironmentVariable(name, value) {
     process.env[name] = value;
-    
+
     // On Windows, also set Path if PATH is being set
     if (this.isWindows && name === 'PATH') {
       process.env.Path = value;
@@ -229,7 +230,7 @@ class PlatformUtils {
       scriptExt = '.sh';
       // Add shebang if not present
       if (!scriptContent.startsWith('#!')) {
-        scriptContent = '#!/bin/sh\n' + scriptContent;
+        scriptContent = `#!/bin/sh\n${scriptContent}`;
       }
     }
 
@@ -247,24 +248,24 @@ class PlatformUtils {
   getFilePermissions(filePath) {
     try {
       const stats = fs.statSync(filePath);
-      const mode = stats.mode;
+      const { mode } = stats;
 
       if (this.isWindows) {
         // Windows doesn't have Unix-style permissions
         return {
           readable: true,
           writable: !((mode & 0o200) === 0),
-          executable: filePath.endsWith('.exe') || filePath.endsWith('.cmd') || filePath.endsWith('.bat')
-        };
-      } else {
-        // Unix-style permissions
-        return {
-          readable: (mode & 0o400) !== 0,
-          writable: (mode & 0o200) !== 0,
-          executable: (mode & 0o100) !== 0,
-          mode: (mode & 0o777).toString(8)
+          executable:
+            filePath.endsWith('.exe') || filePath.endsWith('.cmd') || filePath.endsWith('.bat'),
         };
       }
+      // Unix-style permissions
+      return {
+        readable: (mode & 0o400) !== 0,
+        writable: (mode & 0o200) !== 0,
+        executable: (mode & 0o100) !== 0,
+        mode: (mode & 0o777).toString(8),
+      };
     } catch {
       return null;
     }
@@ -286,13 +287,19 @@ class PlatformUtils {
       } else {
         // Unix: Full permission control
         let mode = 0;
-        if (permissions.readable) mode |= 0o400;
-        if (permissions.writable) mode |= 0o200;
-        if (permissions.executable) mode |= 0o100;
-        
+        if (permissions.readable) {
+          mode |= 0o400;
+        }
+        if (permissions.writable) {
+          mode |= 0o200;
+        }
+        if (permissions.executable) {
+          mode |= 0o100;
+        }
+
         // Apply to group and others as well
         mode = mode | (mode >> 3) | (mode >> 6);
-        
+
         fs.chmodSync(filePath, mode);
       }
       return true;
@@ -330,29 +337,33 @@ class PlatformUtils {
 
     try {
       if (this.isWindows) {
-        const output = execSync('wmic process get ProcessId,Name,CommandLine /format:csv', { encoding: 'utf8' });
-        const lines = output.split('\n').filter(line => line.trim());
-        
+        const output = execSync('wmic process get ProcessId,Name,CommandLine /format:csv', {
+          encoding: 'utf8',
+        });
+        const lines = output.split('\n').filter((line) => line.trim());
+
         for (let i = 2; i < lines.length; i++) {
           const parts = lines[i].split(',');
           if (parts.length >= 3 && parts[2].toLowerCase().includes(processName.toLowerCase())) {
             processes.push({
               pid: parseInt(parts[3]),
               name: parts[2],
-              command: parts[1]
+              command: parts[1],
             });
           }
         }
       } else {
-        const output = execSync(`ps aux | grep -i ${processName} | grep -v grep`, { encoding: 'utf8' });
-        const lines = output.split('\n').filter(line => line.trim());
-        
+        const output = execSync(`ps aux | grep -i ${processName} | grep -v grep`, {
+          encoding: 'utf8',
+        });
+        const lines = output.split('\n').filter((line) => line.trim());
+
         for (const line of lines) {
           const parts = line.split(/\s+/);
           processes.push({
             pid: parseInt(parts[1]),
             name: processName,
-            command: parts.slice(10).join(' ')
+            command: parts.slice(10).join(' '),
           });
         }
       }
@@ -372,10 +383,10 @@ class PlatformUtils {
     const result = {};
 
     for (const [name, addresses] of Object.entries(interfaces)) {
-      result[name] = addresses.map(addr => ({
+      result[name] = addresses.map((addr) => ({
         address: addr.address,
         family: addr.family,
-        internal: addr.internal
+        internal: addr.internal,
       }));
     }
 
@@ -388,8 +399,10 @@ class PlatformUtils {
    */
   isInContainer() {
     // Check for Docker
-    if (fs.existsSync('/.dockerenv')) return true;
-    
+    if (fs.existsSync('/.dockerenv')) {
+      return true;
+    }
+
     // Check for containerd
     try {
       const cgroup = fs.readFileSync('/proc/1/cgroup', 'utf8');
@@ -408,7 +421,9 @@ class PlatformUtils {
    * @returns {boolean} True if in WSL
    */
   isWSL() {
-    if (!this.isLinux) return false;
+    if (!this.isLinux) {
+      return false;
+    }
 
     try {
       const version = fs.readFileSync('/proc/version', 'utf8').toLowerCase();
@@ -442,5 +457,5 @@ const platformUtils = new PlatformUtils();
 
 module.exports = {
   PlatformUtils,
-  platformUtils
+  platformUtils,
 };

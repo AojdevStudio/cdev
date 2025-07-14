@@ -12,11 +12,11 @@ function processTemplate(template, variables = {}) {
   if (typeof template === 'string') {
     return substituteVariables(template, variables);
   }
-  
+
   if (Array.isArray(template)) {
-    return template.map(item => processTemplate(item, variables));
+    return template.map((item) => processTemplate(item, variables));
   }
-  
+
   if (template && typeof template === 'object') {
     const processed = {};
     for (const [key, value] of Object.entries(template)) {
@@ -24,7 +24,7 @@ function processTemplate(template, variables = {}) {
     }
     return processed;
   }
-  
+
   return template;
 }
 
@@ -39,24 +39,24 @@ function substituteVariables(str, variables) {
   // {{variable}} - double braces
   // ${variable} - template literal style
   // %variable% - Windows style
-  
+
   let result = str;
-  
+
   // Replace {{variable}} format
-  result = result.replace(/\{\{(\w+)\}\}/g, (match, varName) => {
-    return getVariableValue(varName, variables, match);
-  });
-  
+  result = result.replace(/\{\{(\w+)\}\}/g, (match, varName) =>
+    getVariableValue(varName, variables, match),
+  );
+
   // Replace ${variable} format
-  result = result.replace(/\$\{(\w+)\}/g, (match, varName) => {
-    return getVariableValue(varName, variables, match);
-  });
-  
+  result = result.replace(/\$\{(\w+)\}/g, (match, varName) =>
+    getVariableValue(varName, variables, match),
+  );
+
   // Replace %variable% format
-  result = result.replace(/%(\w+)%/g, (match, varName) => {
-    return getVariableValue(varName, variables, match);
-  });
-  
+  result = result.replace(/%(\w+)%/g, (match, varName) =>
+    getVariableValue(varName, variables, match),
+  );
+
   return result;
 }
 
@@ -76,7 +76,7 @@ function getVariableValue(varName, variables, originalMatch) {
     }
     return value;
   }
-  
+
   // Check for case-insensitive match
   const lowerVarName = varName.toLowerCase();
   for (const [key, value] of Object.entries(variables)) {
@@ -87,7 +87,7 @@ function getVariableValue(varName, variables, originalMatch) {
       return value;
     }
   }
-  
+
   // Return original match if variable not found
   return originalMatch;
 }
@@ -99,15 +99,11 @@ function getVariableValue(varName, variables, originalMatch) {
  */
 function extractVariables(template) {
   const variables = new Set();
-  
+
   if (typeof template === 'string') {
     // Extract from all supported formats
-    const patterns = [
-      /\{\{(\w+)\}\}/g,
-      /\$\{(\w+)\}/g,
-      /%(\w+)%/g
-    ];
-    
+    const patterns = [/\{\{(\w+)\}\}/g, /\$\{(\w+)\}/g, /%(\w+)%/g];
+
     for (const pattern of patterns) {
       let match;
       while ((match = pattern.exec(template)) !== null) {
@@ -115,17 +111,17 @@ function extractVariables(template) {
       }
     }
   } else if (Array.isArray(template)) {
-    template.forEach(item => {
+    template.forEach((item) => {
       const itemVars = extractVariables(item);
-      itemVars.forEach(v => variables.add(v));
+      itemVars.forEach((v) => variables.add(v));
     });
   } else if (template && typeof template === 'object') {
-    Object.values(template).forEach(value => {
+    Object.values(template).forEach((value) => {
       const valueVars = extractVariables(value);
-      valueVars.forEach(v => variables.add(v));
+      valueVars.forEach((v) => variables.add(v));
     });
   }
-  
+
   return variables;
 }
 
@@ -139,24 +135,22 @@ function validateVariables(template, variables) {
   const required = extractVariables(template);
   const provided = new Set(Object.keys(variables));
   const missing = [];
-  
+
   for (const varName of required) {
     if (!provided.has(varName)) {
       // Check case-insensitive
-      const found = Array.from(provided).some(
-        p => p.toLowerCase() === varName.toLowerCase()
-      );
+      const found = Array.from(provided).some((p) => p.toLowerCase() === varName.toLowerCase());
       if (!found) {
         missing.push(varName);
       }
     }
   }
-  
+
   return {
     valid: missing.length === 0,
     missing,
     required: Array.from(required),
-    provided: Array.from(provided)
+    provided: Array.from(provided),
   };
 }
 
@@ -180,7 +174,7 @@ function createProcessor(defaultVariables = {}) {
  */
 function loadAndProcessTemplate(filePath, variables = {}) {
   const fs = require('fs');
-  
+
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     const template = JSON.parse(content);
@@ -198,29 +192,29 @@ function loadAndProcessTemplate(filePath, variables = {}) {
 function getDefaultVariables(options = {}) {
   const os = require('os');
   const path = require('path');
-  
+
   return {
     // System variables
     platform: os.platform(),
     arch: os.arch(),
     homedir: os.homedir(),
     tmpdir: os.tmpdir(),
-    
+
     // Time variables
     timestamp: new Date().toISOString(),
     date: new Date().toISOString().split('T')[0],
     year: new Date().getFullYear(),
-    
+
     // Project variables
     projectPath: options.projectPath || process.cwd(),
     projectName: options.projectName || path.basename(process.cwd()),
     projectType: options.projectType || 'unknown',
-    
+
     // User variables
     username: os.userInfo().username,
-    
+
     // Custom variables
-    ...options.custom
+    ...options.custom,
   };
 }
 
@@ -231,5 +225,5 @@ module.exports = {
   validateVariables,
   createProcessor,
   loadAndProcessTemplate,
-  getDefaultVariables
+  getDefaultVariables,
 };

@@ -1,6 +1,7 @@
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+
 const { showHelp } = require('./cli-parser');
 const { InteractiveInstaller } = require('./interactive-installer');
 
@@ -56,7 +57,7 @@ async function executeCommand(args) {
 
 async function installCommand(args, options) {
   const targetDir = args[0] || '.';
-  
+
   const installer = new InteractiveInstaller();
   await installer.install(targetDir, options);
 }
@@ -70,12 +71,12 @@ async function cacheCommand(args, options) {
   }
 
   console.log(`Caching Linear issue: ${issueId}`);
-  
+
   try {
-    const scriptPath = path.join(__dirname, '..', 'scripts', 'cache-linear-issue.sh');
-    execSync(`bash "${scriptPath}" ${issueId}`, { 
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'python', 'cache-linear-issue.py');
+    execSync(`"${scriptPath}" ${issueId}`, {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
   } catch (error) {
     console.error('Failed to cache issue:', error.message);
@@ -92,12 +93,12 @@ async function decomposeCommand(args, options) {
   }
 
   console.log(`Decomposing issue into parallel agents: ${issueId}`);
-  
+
   try {
-    const scriptPath = path.join(__dirname, '..', 'scripts', 'decompose-parallel.cjs');
-    execSync(`node "${scriptPath}" ${issueId}`, { 
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'python', 'decompose-parallel.py');
+    execSync(`"${scriptPath}" ${issueId}`, {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
   } catch (error) {
     console.error('Failed to decompose issue:', error.message);
@@ -114,12 +115,12 @@ async function spawnCommand(args, options) {
   }
 
   console.log(`Spawning agents from plan: ${planFile}`);
-  
+
   try {
-    const scriptPath = path.join(__dirname, '..', 'scripts', 'spawn-agents.sh');
-    execSync(`bash "${scriptPath}" "${planFile}"`, { 
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'python', 'spawn-agents.py');
+    execSync(`"${scriptPath}" "${planFile}"`, {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
   } catch (error) {
     console.error('Failed to spawn agents:', error.message);
@@ -129,15 +130,15 @@ async function spawnCommand(args, options) {
 
 async function statusCommand(args, options) {
   const filter = args[0];
-  
+
   console.log('Checking agent status...');
-  
+
   try {
-    const scriptPath = path.join(__dirname, '..', 'scripts', 'monitor-agents.sh');
-    const command = filter ? `bash "${scriptPath}" ${filter}` : `bash "${scriptPath}"`;
-    execSync(command, { 
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'python', 'monitor-agents.py');
+    const command = filter ? `"${scriptPath}" ${filter}` : `"${scriptPath}"`;
+    execSync(command, {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
   } catch (error) {
     console.error('Failed to check status:', error.message);
@@ -148,23 +149,23 @@ async function statusCommand(args, options) {
 async function commitCommand(args, options) {
   const workspace = args[0];
   const customMessage = args[1];
-  
+
   console.log(`Committing agent work${workspace ? ` for ${workspace}` : ''}...`);
-  
+
   try {
-    const scriptPath = path.join(__dirname, '..', 'scripts', 'agent-commit-enhanced.sh');
-    let command = `bash "${scriptPath}"`;
-    
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'python', 'agent-commit.py');
+    let command = `"${scriptPath}"`;
+
     if (workspace) {
       command += ` "${workspace}"`;
     }
     if (customMessage) {
       command += ` "${customMessage}"`;
     }
-    
-    execSync(command, { 
+
+    execSync(command, {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
   } catch (error) {
     console.error('Failed to commit work:', error.message);
@@ -179,5 +180,5 @@ module.exports = {
   decomposeCommand,
   spawnCommand,
   statusCommand,
-  commitCommand
+  commitCommand,
 };

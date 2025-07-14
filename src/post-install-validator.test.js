@@ -2,13 +2,14 @@
  * Tests for PostInstallValidator
  */
 
+const fs = require('fs');
+const path = require('path');
+
 const { PostInstallValidator, postInstallValidator } = require('./post-install-validator');
 const { pathResolver } = require('./path-resolver');
 const { pythonDetector } = require('./python-detector');
 const { platformUtils } = require('./platform-utils');
 const { ValidationErrorCollection } = require('./validation-errors');
-const fs = require('fs');
-const path = require('path');
 
 // Mock dependencies
 jest.mock('./path-resolver');
@@ -22,23 +23,23 @@ describe('PostInstallValidator', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Default mocks
     platformUtils.isWindows = false;
     platformUtils.executeCommand.mockReturnValue({ success: true, output: 'command output' });
     platformUtils.getFilePermissions.mockReturnValue({ executable: true });
-    
+
     pythonDetector.getBestPython.mockReturnValue({
       version: '3.9.0',
       path: '/usr/bin/python3',
-      hasPip: true
+      hasPip: true,
     });
-    
+
     fs.existsSync.mockReturnValue(true);
     fs.readFileSync.mockReturnValue('#!/usr/bin/env python\nprint("test")');
     fs.writeFileSync.mockImplementation();
     fs.unlinkSync.mockImplementation();
-    
+
     validator = new PostInstallValidator();
   });
 
@@ -50,13 +51,13 @@ describe('PostInstallValidator', () => {
         scripts: expect.arrayContaining([
           'scripts/cache-linear-issue.sh',
           'scripts/decompose-parallel.cjs',
-          'scripts/spawn-agents.sh'
+          'scripts/spawn-agents.sh',
         ]),
         hooks: expect.arrayContaining([
           '.claude/hooks/api-standards-checker.py',
           '.claude/hooks/code-quality-reporter.py',
-          '.claude/hooks/typescript-validator.py'
-        ])
+          '.claude/hooks/typescript-validator.py',
+        ]),
       });
     });
   });
@@ -76,7 +77,7 @@ describe('PostInstallValidator', () => {
         }
         return { success: true, output: '' };
       });
-      
+
       fs.readFileSync.mockImplementation((filePath) => {
         if (filePath.includes('package.json')) {
           return JSON.stringify({ name: 'test', version: '1.0.0' });
@@ -89,9 +90,9 @@ describe('PostInstallValidator', () => {
         }
         return 'test content';
       });
-      
+
       const result = await validator.validate({ projectPath: testProjectPath });
-      
+
       expect(result.valid).toBe(true);
       expect(result.successRate).toBe(100);
       expect(result.errors.hasErrors()).toBe(false);
@@ -101,9 +102,9 @@ describe('PostInstallValidator', () => {
     test('returns invalid result when checks fail', async () => {
       platformUtils.executeCommand.mockReturnValue({ success: false });
       fs.existsSync.mockReturnValue(false);
-      
+
       const result = await validator.validate({ projectPath: testProjectPath });
-      
+
       expect(result.valid).toBe(false);
       expect(result.successRate).toBeLessThan(100);
       expect(result.errors.hasErrors()).toBe(true);
@@ -112,10 +113,8 @@ describe('PostInstallValidator', () => {
 
     test('uses current directory when no project path provided', async () => {
       await validator.validate();
-      
-      expect(fs.existsSync).toHaveBeenCalledWith(
-        expect.stringContaining(process.cwd())
-      );
+
+      expect(fs.existsSync).toHaveBeenCalledWith(expect.stringContaining(process.cwd()));
     });
   });
 
@@ -127,9 +126,9 @@ describe('PostInstallValidator', () => {
         }
         return { success: false };
       });
-      
+
       const result = await validator.validateCliCommand();
-      
+
       expect(result.valid).toBe(true);
       expect(result.command).toBe('claude-code-hooks');
       expect(result.message).toBe("CLI command 'claude-code-hooks' is available");
@@ -142,18 +141,18 @@ describe('PostInstallValidator', () => {
         }
         return { success: false };
       });
-      
+
       const result = await validator.validateCliCommand();
-      
+
       expect(result.valid).toBe(true);
       expect(result.command).toBe('npx claude-code-hooks');
     });
 
     test('reports failure when no command works', async () => {
       platformUtils.executeCommand.mockReturnValue({ success: false });
-      
+
       const result = await validator.validateCliCommand();
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('CLI command not found in PATH');
     });
@@ -162,9 +161,9 @@ describe('PostInstallValidator', () => {
       platformUtils.executeCommand.mockImplementation(() => {
         throw new Error('Command failed');
       });
-      
+
       const result = await validator.validateCliCommand();
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Failed to validate CLI command');
       expect(result.error).toBe('Command failed');
@@ -175,11 +174,11 @@ describe('PostInstallValidator', () => {
     test('validates installed global package', async () => {
       platformUtils.executeCommand.mockReturnValue({
         success: true,
-        output: '└── claude-code-hooks@1.2.3'
+        output: '└── claude-code-hooks@1.2.3',
       });
-      
+
       const result = await validator.validateGlobalPackage();
-      
+
       expect(result.valid).toBe(true);
       expect(result.version).toBe('1.2.3');
       expect(result.message).toBe('Global package installed (version: 1.2.3)');
@@ -188,11 +187,11 @@ describe('PostInstallValidator', () => {
     test('detects missing global package', async () => {
       platformUtils.executeCommand.mockReturnValue({
         success: false,
-        output: 'npm ERR! not found'
+        output: 'npm ERR! not found',
       });
-      
+
       const result = await validator.validateGlobalPackage();
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Global package not found');
     });
@@ -200,11 +199,11 @@ describe('PostInstallValidator', () => {
     test('handles version parsing errors', async () => {
       platformUtils.executeCommand.mockReturnValue({
         success: true,
-        output: 'claude-code-hooks without version'
+        output: 'claude-code-hooks without version',
       });
-      
+
       const result = await validator.validateGlobalPackage();
-      
+
       expect(result.valid).toBe(true);
       expect(result.version).toBe('unknown');
     });
@@ -213,9 +212,9 @@ describe('PostInstallValidator', () => {
       platformUtils.executeCommand.mockImplementation(() => {
         throw new Error('NPM error');
       });
-      
+
       const result = await validator.validateGlobalPackage();
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Failed to check global package');
       expect(result.error).toBe('NPM error');
@@ -225,21 +224,21 @@ describe('PostInstallValidator', () => {
   describe('validateProjectStructure', () => {
     test('validates all directories exist', async () => {
       fs.existsSync.mockReturnValue(true);
-      
+
       const result = await validator.validateProjectStructure(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
       expect(result.missingDirs).toEqual([]);
       expect(result.message).toBe('All required directories exist');
     });
 
     test('detects missing directories', async () => {
-      fs.existsSync.mockImplementation((path) => {
-        return !path.includes('scripts') && !path.includes('workspaces');
-      });
-      
+      fs.existsSync.mockImplementation(
+        (path) => !path.includes('scripts') && !path.includes('workspaces'),
+      );
+
       const result = await validator.validateProjectStructure(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.missingDirs).toContain('scripts');
       expect(result.missingDirs).toContain('workspaces');
@@ -252,9 +251,9 @@ describe('PostInstallValidator', () => {
       fs.existsSync.mockReturnValue(true);
       fs.readFileSync.mockReturnValue('#!/usr/bin/env python\nimport sys');
       platformUtils.getFilePermissions.mockReturnValue({ executable: true });
-      
+
       const result = await validator.validateHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
       expect(result.missingHooks).toEqual([]);
       expect(result.invalidHooks).toEqual([]);
@@ -262,12 +261,10 @@ describe('PostInstallValidator', () => {
     });
 
     test('detects missing hooks', async () => {
-      fs.existsSync.mockImplementation((path) => {
-        return !path.includes('api-standards-checker.py');
-      });
-      
+      fs.existsSync.mockImplementation((path) => !path.includes('api-standards-checker.py'));
+
       const result = await validator.validateHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.missingHooks).toContain('.claude/hooks/api-standards-checker.py');
     });
@@ -275,33 +272,33 @@ describe('PostInstallValidator', () => {
     test('detects non-executable hooks on Unix', async () => {
       platformUtils.isWindows = false;
       platformUtils.getFilePermissions.mockReturnValue({ executable: false });
-      
+
       const result = await validator.validateHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.invalidHooks).toHaveLength(3);
       expect(result.invalidHooks[0]).toMatchObject({
-        issue: 'Not executable'
+        issue: 'Not executable',
       });
     });
 
     test('ignores executable check on Windows', async () => {
       platformUtils.isWindows = true;
       platformUtils.getFilePermissions.mockReturnValue({ executable: false });
-      
+
       const result = await validator.validateHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
     });
 
     test('detects missing shebang in Python hooks', async () => {
       fs.readFileSync.mockReturnValue('import sys\nprint("no shebang")');
-      
+
       const result = await validator.validateHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.invalidHooks[0]).toMatchObject({
-        issue: 'Missing or incorrect shebang'
+        issue: 'Missing or incorrect shebang',
       });
     });
   });
@@ -310,9 +307,9 @@ describe('PostInstallValidator', () => {
     test('validates correct permissions', async () => {
       fs.existsSync.mockReturnValue(true);
       platformUtils.getFilePermissions.mockReturnValue({ executable: true });
-      
+
       const result = await validator.validatePermissions(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
       expect(result.issues).toEqual([]);
       expect(result.message).toBe('All file permissions are correct');
@@ -321,14 +318,14 @@ describe('PostInstallValidator', () => {
     test('detects non-executable scripts on Unix', async () => {
       platformUtils.isWindows = false;
       platformUtils.getFilePermissions.mockReturnValue({ executable: false });
-      
+
       const result = await validator.validatePermissions(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.issues.length).toBeGreaterThan(0);
       expect(result.issues[0]).toMatchObject({
         issue: 'Not executable',
-        fix: expect.stringContaining('chmod +x')
+        fix: expect.stringContaining('chmod +x'),
       });
     });
 
@@ -338,24 +335,24 @@ describe('PostInstallValidator', () => {
           throw new Error('Permission denied');
         }
       });
-      
+
       const result = await validator.validatePermissions(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.issues).toContainEqual(
         expect.objectContaining({
           path: '.claude',
-          issue: 'Not writable'
-        })
+          issue: 'Not writable',
+        }),
       );
     });
 
     test('ignores executable check on Windows', async () => {
       platformUtils.isWindows = true;
       platformUtils.getFilePermissions.mockReturnValue({ executable: false });
-      
+
       const result = await validator.validatePermissions(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
     });
   });
@@ -375,27 +372,25 @@ describe('PostInstallValidator', () => {
         }
         return 'test content';
       });
-      
+
       const result = await validator.validateConfiguration(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
       expect(result.issues).toEqual([]);
       expect(result.validConfigs).toContain('package.json');
     });
 
     test('detects missing required files', async () => {
-      fs.existsSync.mockImplementation((path) => {
-        return !path.includes('package.json');
-      });
-      
+      fs.existsSync.mockImplementation((path) => !path.includes('package.json'));
+
       const result = await validator.validateConfiguration(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.issues).toContainEqual(
         expect.objectContaining({
           path: 'package.json',
-          issue: 'Missing required file'
-        })
+          issue: 'Missing required file',
+        }),
       );
     });
 
@@ -406,15 +401,15 @@ describe('PostInstallValidator', () => {
         }
         return 'test';
       });
-      
+
       const result = await validator.validateConfiguration(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.issues).toContainEqual(
         expect.objectContaining({
           path: 'package.json',
-          issue: 'Invalid content or format'
-        })
+          issue: 'Invalid content or format',
+        }),
       );
     });
 
@@ -422,12 +417,12 @@ describe('PostInstallValidator', () => {
       fs.readFileSync.mockImplementation(() => {
         throw new Error('Read error');
       });
-      
+
       const result = await validator.validateConfiguration(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.issues[0]).toMatchObject({
-        issue: 'Read error: Read error'
+        issue: 'Read error: Read error',
       });
     });
   });
@@ -436,15 +431,15 @@ describe('PostInstallValidator', () => {
     test('validates working Python hooks', async () => {
       pythonDetector.getBestPython.mockReturnValue({
         version: '3.9.0',
-        path: '/usr/bin/python3'
+        path: '/usr/bin/python3',
       });
       platformUtils.executeCommand.mockReturnValue({
         success: true,
-        output: 'Usage: api-standards-checker.py [options]'
+        output: 'Usage: api-standards-checker.py [options]',
       });
-      
+
       const result = await validator.validatePythonHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(true);
       expect(result.pythonVersion).toBe('3.9.0');
       expect(result.message).toBe('Python hooks functional with Python 3.9.0');
@@ -452,20 +447,18 @@ describe('PostInstallValidator', () => {
 
     test('reports missing Python', async () => {
       pythonDetector.getBestPython.mockReturnValue(null);
-      
+
       const result = await validator.validatePythonHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Python not available for hooks');
     });
 
     test('reports missing test hook', async () => {
-      fs.existsSync.mockImplementation((path) => {
-        return !path.includes('api-standards-checker.py');
-      });
-      
+      fs.existsSync.mockImplementation((path) => !path.includes('api-standards-checker.py'));
+
       const result = await validator.validatePythonHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Test hook not found');
     });
@@ -473,11 +466,11 @@ describe('PostInstallValidator', () => {
     test('reports hook execution failure', async () => {
       platformUtils.executeCommand.mockReturnValue({
         success: false,
-        output: 'Python error'
+        output: 'Python error',
       });
-      
+
       const result = await validator.validatePythonHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Python hooks failed to execute');
     });
@@ -486,9 +479,9 @@ describe('PostInstallValidator', () => {
       platformUtils.executeCommand.mockImplementation(() => {
         throw new Error('Execution failed');
       });
-      
+
       const result = await validator.validatePythonHooks(testProjectPath);
-      
+
       expect(result.valid).toBe(false);
       expect(result.message).toBe('Failed to test Python hooks');
       expect(result.error).toBe('Execution failed');
@@ -501,9 +494,9 @@ describe('PostInstallValidator', () => {
         test1: { valid: true },
         test2: { valid: true },
         test3: { valid: false },
-        test4: { valid: true }
+        test4: { valid: true },
       };
-      
+
       const rate = validator.calculateSuccessRate(results);
       expect(rate).toBe(75); // 3 out of 4 = 75%
     });
@@ -511,9 +504,9 @@ describe('PostInstallValidator', () => {
     test('returns 0 for all failures', () => {
       const results = {
         test1: { valid: false },
-        test2: { valid: false }
+        test2: { valid: false },
       };
-      
+
       const rate = validator.calculateSuccessRate(results);
       expect(rate).toBe(0);
     });
@@ -521,9 +514,9 @@ describe('PostInstallValidator', () => {
     test('returns 100 for all successes', () => {
       const results = {
         test1: { valid: true },
-        test2: { valid: true }
+        test2: { valid: true },
       };
-      
+
       const rate = validator.calculateSuccessRate(results);
       expect(rate).toBe(100);
     });
@@ -536,13 +529,13 @@ describe('PostInstallValidator', () => {
         projectStructure: { valid: true },
         hooks: { valid: true, missingHooks: [] },
         permissions: { valid: true, issues: [] },
-        pythonHooks: { valid: true }
+        pythonHooks: { valid: true },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
+
       expect(recommendations).toContain(
-        'Run "npm install -g claude-code-hooks" to install the CLI globally'
+        'Run "npm install -g claude-code-hooks" to install the CLI globally',
       );
     });
 
@@ -552,13 +545,13 @@ describe('PostInstallValidator', () => {
         projectStructure: { valid: false },
         hooks: { valid: true, missingHooks: [] },
         permissions: { valid: true, issues: [] },
-        pythonHooks: { valid: true }
+        pythonHooks: { valid: true },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
+
       expect(recommendations).toContain(
-        'Run "claude-code-hooks init" to create missing directories'
+        'Run "claude-code-hooks init" to create missing directories',
       );
     });
 
@@ -568,14 +561,12 @@ describe('PostInstallValidator', () => {
         projectStructure: { valid: true },
         hooks: { valid: false, missingHooks: ['hook1.py'] },
         permissions: { valid: true, issues: [] },
-        pythonHooks: { valid: true }
+        pythonHooks: { valid: true },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
-      expect(recommendations).toContain(
-        'Re-run installation to restore missing hooks'
-      );
+
+      expect(recommendations).toContain('Re-run installation to restore missing hooks');
     });
 
     test('provides permission fix recommendations for Unix', () => {
@@ -586,18 +577,14 @@ describe('PostInstallValidator', () => {
         hooks: { valid: true, missingHooks: [] },
         permissions: {
           valid: false,
-          issues: [
-            { path: 'script.sh', fix: 'chmod +x script.sh' }
-          ]
+          issues: [{ path: 'script.sh', fix: 'chmod +x script.sh' }],
         },
-        pythonHooks: { valid: true }
+        pythonHooks: { valid: true },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
-      expect(recommendations).toContain(
-        'Fix permissions: chmod +x script.sh'
-      );
+
+      expect(recommendations).toContain('Fix permissions: chmod +x script.sh');
     });
 
     test('provides permission recommendation for Windows', () => {
@@ -608,16 +595,14 @@ describe('PostInstallValidator', () => {
         hooks: { valid: true, missingHooks: [] },
         permissions: {
           valid: false,
-          issues: [{ path: 'file.txt' }]
+          issues: [{ path: 'file.txt' }],
         },
-        pythonHooks: { valid: true }
+        pythonHooks: { valid: true },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
-      expect(recommendations).toContain(
-        'Check file permissions in Windows Security settings'
-      );
+
+      expect(recommendations).toContain('Check file permissions in Windows Security settings');
     });
 
     test('provides Python installation recommendation', () => {
@@ -626,14 +611,12 @@ describe('PostInstallValidator', () => {
         projectStructure: { valid: true },
         hooks: { valid: true, missingHooks: [] },
         permissions: { valid: true, issues: [] },
-        pythonHooks: { valid: false }
+        pythonHooks: { valid: false },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
-      expect(recommendations).toContain(
-        'Install Python 3.6+ to enable hook functionality'
-      );
+
+      expect(recommendations).toContain('Install Python 3.6+ to enable hook functionality');
     });
 
     test('returns empty array when all valid', () => {
@@ -642,11 +625,11 @@ describe('PostInstallValidator', () => {
         projectStructure: { valid: true },
         hooks: { valid: true, missingHooks: [] },
         permissions: { valid: true, issues: [] },
-        pythonHooks: { valid: true }
+        pythonHooks: { valid: true },
       };
-      
+
       const recommendations = validator.getRecommendations(results);
-      
+
       expect(recommendations).toEqual([]);
     });
   });
@@ -655,7 +638,7 @@ describe('PostInstallValidator', () => {
     test('generates comprehensive report', async () => {
       const validationResult = await validator.validate({ projectPath: testProjectPath });
       const report = validator.getReport(validationResult);
-      
+
       expect(report).toContain('Post-Installation Validation Report');
       expect(report).toContain('Overall Status:');
       expect(report).toContain('Success Rate:');
@@ -664,20 +647,20 @@ describe('PostInstallValidator', () => {
 
     test('includes recommendations in report', async () => {
       platformUtils.executeCommand.mockReturnValue({ success: false });
-      
+
       const validationResult = await validator.validate({ projectPath: testProjectPath });
       const report = validator.getReport(validationResult);
-      
+
       expect(report).toContain('Recommendations:');
       expect(report).toMatch(/\d+\./); // Numbered recommendations
     });
 
     test('includes errors in report', async () => {
       fs.existsSync.mockReturnValue(false);
-      
+
       const validationResult = await validator.validate({ projectPath: testProjectPath });
       const report = validator.getReport(validationResult);
-      
+
       expect(report).toContain('Errors:');
       expect(report).toContain('✗');
     });
@@ -687,30 +670,30 @@ describe('PostInstallValidator', () => {
     test('returns true when basic checks pass', async () => {
       platformUtils.executeCommand.mockReturnValue({
         success: true,
-        output: 'claude-code-hooks version 1.0.0'
+        output: 'claude-code-hooks version 1.0.0',
       });
       fs.existsSync.mockReturnValue(true);
-      
+
       const result = await validator.quickCheck();
-      
+
       expect(result).toBe(true);
     });
 
     test('returns false when CLI check fails', async () => {
       platformUtils.executeCommand.mockReturnValue({ success: false });
       fs.existsSync.mockReturnValue(true);
-      
+
       const result = await validator.quickCheck();
-      
+
       expect(result).toBe(false);
     });
 
     test('returns false when structure check fails', async () => {
       platformUtils.executeCommand.mockReturnValue({ success: true });
       fs.existsSync.mockReturnValue(false);
-      
+
       const result = await validator.quickCheck();
-      
+
       expect(result).toBe(false);
     });
   });

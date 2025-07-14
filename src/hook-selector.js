@@ -5,48 +5,48 @@ class HookSelector {
   constructor() {
     // Define project type configurations
     this.projectConfigs = {
-      'node': {
+      node: {
         requiredTiers: ['tier1'],
         recommendedHooks: [
           'commit-message-validator.py',
           'code-quality-reporter.py',
-          'universal-linter.py'
+          'universal-linter.py',
         ],
-        excludeHooks: ['typescript-validator.py']
+        excludeHooks: ['typescript-validator.py'],
       },
-      'typescript': {
+      typescript: {
         requiredTiers: ['tier1'],
         recommendedHooks: [
           'commit-message-validator.py',
           'typescript-validator.py',
           'code-quality-reporter.py',
           'universal-linter.py',
-          'import-organizer.py'
+          'import-organizer.py',
         ],
-        excludeHooks: []
+        excludeHooks: [],
       },
-      'react': {
+      react: {
         requiredTiers: ['tier1'],
         recommendedHooks: [
           'commit-message-validator.py',
           'typescript-validator.py',
           'code-quality-reporter.py',
           'universal-linter.py',
-          'import-organizer.py'
+          'import-organizer.py',
         ],
-        excludeHooks: []
+        excludeHooks: [],
       },
-      'python': {
+      python: {
         requiredTiers: ['tier1'],
         recommendedHooks: [
           'commit-message-validator.py',
           'code-quality-reporter.py',
           'universal-linter.py',
-          'import-organizer.py'
+          'import-organizer.py',
         ],
-        excludeHooks: ['typescript-validator.py', 'pnpm-enforcer.py']
+        excludeHooks: ['typescript-validator.py', 'pnpm-enforcer.py'],
       },
-      'monorepo': {
+      monorepo: {
         requiredTiers: ['tier1', 'tier2'],
         recommendedHooks: [
           'commit-message-validator.py',
@@ -55,29 +55,29 @@ class HookSelector {
           'task-completion-enforcer.py',
           'code-quality-reporter.py',
           'universal-linter.py',
-          'import-organizer.py'
+          'import-organizer.py',
         ],
-        excludeHooks: []
+        excludeHooks: [],
       },
-      'api': {
+      api: {
         requiredTiers: ['tier1'],
         recommendedHooks: [
           'commit-message-validator.py',
           'api-standards-checker.py',
           'code-quality-reporter.py',
-          'universal-linter.py'
+          'universal-linter.py',
         ],
-        excludeHooks: []
+        excludeHooks: [],
       },
-      'default': {
+      default: {
         requiredTiers: ['tier1'],
         recommendedHooks: [
           'commit-message-validator.py',
           'code-quality-reporter.py',
-          'universal-linter.py'
+          'universal-linter.py',
         ],
-        excludeHooks: []
-      }
+        excludeHooks: [],
+      },
     };
   }
 
@@ -91,11 +91,7 @@ class HookSelector {
     // Get hooks from required tiers
     for (const tier of config.requiredTiers) {
       if (categorizedHooks[tier]) {
-        const tierHooks = this.filterTierHooks(
-          categorizedHooks[tier],
-          config,
-          preferences
-        );
+        const tierHooks = this.filterTierHooks(categorizedHooks[tier], config, preferences);
         selectedHooks.push(...tierHooks);
       }
     }
@@ -104,7 +100,7 @@ class HookSelector {
     if (!preferences.minimalSetup) {
       for (const hookName of config.recommendedHooks) {
         const hook = this.findHookByName(categorizedHooks, hookName);
-        if (hook && !selectedHooks.some(h => h.name === hookName)) {
+        if (hook && !selectedHooks.some((h) => h.name === hookName)) {
           selectedHooks.push(hook);
         }
       }
@@ -114,7 +110,7 @@ class HookSelector {
     if (preferences.includeHooks) {
       for (const hookName of preferences.includeHooks) {
         const hook = this.findHookByName(categorizedHooks, hookName);
-        if (hook && !selectedHooks.some(h => h.name === hookName)) {
+        if (hook && !selectedHooks.some((h) => h.name === hookName)) {
           selectedHooks.push(hook);
         }
       }
@@ -135,7 +131,7 @@ class HookSelector {
    * Filter hooks from a tier based on configuration
    */
   filterTierHooks(tierHooks, config, preferences) {
-    return tierHooks.filter(hook => {
+    return tierHooks.filter((hook) => {
       // Exclude hooks in the exclude list
       if (config.excludeHooks.includes(hook.name)) {
         return false;
@@ -166,7 +162,7 @@ class HookSelector {
    */
   findHookByName(categorizedHooks, hookName) {
     for (const [tier, hooks] of Object.entries(categorizedHooks)) {
-      const hook = hooks.find(h => h.name === hookName);
+      const hook = hooks.find((h) => h.name === hookName);
       if (hook) {
         return hook;
       }
@@ -182,23 +178,19 @@ class HookSelector {
 
     // Apply category filters
     if (preferences.includeCategories) {
-      filtered = filtered.filter(hook => 
-        preferences.includeCategories.includes(hook.category)
-      );
+      filtered = filtered.filter((hook) => preferences.includeCategories.includes(hook.category));
     }
 
     if (preferences.excludeCategories) {
-      filtered = filtered.filter(hook => 
-        !preferences.excludeCategories.includes(hook.category)
-      );
+      filtered = filtered.filter((hook) => !preferences.excludeCategories.includes(hook.category));
     }
 
     // Apply importance filter
     if (preferences.minImportance) {
       const importanceLevels = ['optional', 'important', 'critical'];
       const minIndex = importanceLevels.indexOf(preferences.minImportance);
-      
-      filtered = filtered.filter(hook => {
+
+      filtered = filtered.filter((hook) => {
         const hookIndex = importanceLevels.indexOf(hook.importance);
         return hookIndex >= minIndex;
       });
@@ -221,7 +213,7 @@ class HookSelector {
     const recommendations = {
       required: [],
       recommended: [],
-      optional: []
+      optional: [],
     };
 
     // Check for missing required hooks
@@ -255,28 +247,28 @@ class HookSelector {
       const packageJsonPath = path.join(projectPath, 'package.json');
       if (await fs.pathExists(packageJsonPath)) {
         const packageJson = await fs.readJson(packageJsonPath);
-        
+
         // Check for TypeScript
-        if (packageJson.devDependencies?.typescript || 
-            packageJson.dependencies?.typescript) {
-          
+        if (packageJson.devDependencies?.typescript || packageJson.dependencies?.typescript) {
           // Check for React
           if (packageJson.dependencies?.react) {
             return 'react';
           }
-          
+
           return 'typescript';
         }
 
         // Check for monorepo
-        if (packageJson.workspaces || await fs.pathExists(path.join(projectPath, 'lerna.json'))) {
+        if (packageJson.workspaces || (await fs.pathExists(path.join(projectPath, 'lerna.json')))) {
           return 'monorepo';
         }
 
         // Check for API frameworks
-        if (packageJson.dependencies?.express || 
-            packageJson.dependencies?.fastify ||
-            packageJson.dependencies?.['@nestjs/core']) {
+        if (
+          packageJson.dependencies?.express ||
+          packageJson.dependencies?.fastify ||
+          packageJson.dependencies?.['@nestjs/core']
+        ) {
           return 'api';
         }
 
@@ -284,9 +276,11 @@ class HookSelector {
       }
 
       // Check for Python
-      if (await fs.pathExists(path.join(projectPath, 'requirements.txt')) ||
-          await fs.pathExists(path.join(projectPath, 'setup.py')) ||
-          await fs.pathExists(path.join(projectPath, 'pyproject.toml'))) {
+      if (
+        (await fs.pathExists(path.join(projectPath, 'requirements.txt'))) ||
+        (await fs.pathExists(path.join(projectPath, 'setup.py'))) ||
+        (await fs.pathExists(path.join(projectPath, 'pyproject.toml')))
+      ) {
         return 'python';
       }
 

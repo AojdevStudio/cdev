@@ -1,8 +1,8 @@
 /**
  * HookCategorizer - Categorizes hooks into tiers based on security and importance
- * 
+ *
  * Tier 1 (Critical): Security, validation, and enforcement hooks
- * Tier 2 (Important): Quality, standards, and automation hooks  
+ * Tier 2 (Important): Quality, standards, and automation hooks
  * Tier 3 (Optional): Convenience and notification hooks
  * Utils: Shared utilities and helper functions
  */
@@ -14,26 +14,42 @@ class HookCategorizer {
         description: 'Critical security and validation hooks',
         keywords: ['security', 'validation', 'enforcer', 'validator', 'auth', 'permission'],
         patterns: [/validator\.py$/, /enforcer\.py$/, /security/i],
-        hooks: ['commit-message-validator.py', 'typescript-validator.py', 'task-completion-enforcer.py', 'pnpm-enforcer.py']
+        hooks: [
+          'commit-message-validator.py',
+          'typescript-validator.py',
+          'task-completion-enforcer.py',
+          'pnpm-enforcer.py',
+        ],
       },
       tier2: {
         description: 'Important quality and standards hooks',
         keywords: ['quality', 'standards', 'linter', 'checker', 'reporter', 'organizer'],
         patterns: [/checker\.py$/, /reporter\.py$/, /linter\.py$/, /organizer\.py$/],
-        hooks: ['api-standards-checker.py', 'code-quality-reporter.py', 'universal-linter.py', 'import-organizer.py']
+        hooks: [
+          'api-standards-checker.py',
+          'code-quality-reporter.py',
+          'universal-linter.py',
+          'import-organizer.py',
+        ],
       },
       tier3: {
         description: 'Optional convenience and notification hooks',
         keywords: ['notification', 'helper', 'utility', 'optional'],
         patterns: [/notification\.py$/, /helper\.py$/],
-        hooks: ['notification.py', 'stop.py', 'subagent_stop.py', 'pre_tool_use.py', 'post_tool_use.py']
+        hooks: [
+          'notification.py',
+          'stop.py',
+          'subagent_stop.py',
+          'pre_tool_use.py',
+          'post_tool_use.py',
+        ],
       },
       utils: {
         description: 'Shared utilities and helper functions',
         keywords: ['util', 'utils', 'helper', 'shared', 'common'],
         patterns: [/utils?\//],
-        hooks: []
-      }
+        hooks: [],
+      },
     };
   }
 
@@ -45,19 +61,19 @@ class HookCategorizer {
       tier1: [],
       tier2: [],
       tier3: [],
-      utils: []
+      utils: [],
     };
 
     for (const hook of hooks) {
       const tier = this.determineHookTier(hook);
       const categorizedHook = {
         ...hook,
-        tier: tier,
+        tier,
         category: this.getHookCategory(hook),
         description: this.getHookDescription(hook),
-        importance: this.getImportanceLevel(tier)
+        importance: this.getImportanceLevel(tier),
       };
-      
+
       categorized[tier].push(categorizedHook);
     }
 
@@ -157,7 +173,7 @@ class HookCategorizer {
       'stop.py': 'Handles stop events',
       'subagent_stop.py': 'Handles subagent stop events',
       'pre_tool_use.py': 'Runs before tool usage',
-      'post_tool_use.py': 'Runs after tool usage'
+      'post_tool_use.py': 'Runs after tool usage',
     };
 
     return descriptions[hook.name] || this.generateDescription(hook);
@@ -169,11 +185,11 @@ class HookCategorizer {
   generateDescription(hook) {
     const name = hook.name.replace('.py', '').replace(/-/g, ' ').replace(/_/g, ' ');
     const words = name.split(' ');
-    
+
     // Capitalize first letter of each word
-    const formatted = words.map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ');
+    const formatted = words
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
 
     return `${formatted} hook`;
   }
@@ -186,9 +202,9 @@ class HookCategorizer {
       tier1: 'critical',
       tier2: 'important',
       tier3: 'optional',
-      utils: 'utility'
+      utils: 'utility',
     };
-    
+
     return levels[tier] || 'optional';
   }
 
@@ -203,7 +219,7 @@ class HookCategorizer {
       hasReporting: /report|log|track|monitor/i.test(content),
       hasNotification: /notify|alert|message|email/i.test(content),
       isAsync: /async|await|promise/i.test(content),
-      usesExternalAPI: /request|fetch|api|http/i.test(content)
+      usesExternalAPI: /request|fetch|api|http/i.test(content),
     };
 
     return features;

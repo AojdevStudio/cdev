@@ -6,6 +6,7 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+
 const { pathResolver } = require('./path-resolver');
 
 class PythonDetector {
@@ -60,7 +61,7 @@ class PythonDetector {
     }
 
     const installations = this.detectPythonInstallations();
-    
+
     // Find the first installation that meets minimum version
     for (const installation of installations) {
       if (this.meetsMinimumVersion(installation.version)) {
@@ -86,7 +87,9 @@ class PythonDetector {
   checkPythonCommand(command) {
     try {
       const pythonPath = pathResolver.findInPath(command);
-      if (!pythonPath) return null;
+      if (!pythonPath) {
+        return null;
+      }
 
       return this.getPythonInfo(pythonPath);
     } catch {
@@ -102,20 +105,22 @@ class PythonDetector {
   getPythonInfo(pythonPath) {
     try {
       // Get version
-      const versionOutput = execSync(`"${pythonPath}" --version`, { 
+      const versionOutput = execSync(`"${pythonPath}" --version`, {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       }).trim();
-      
+
       const versionMatch = versionOutput.match(/Python (\d+\.\d+\.\d+)/);
-      if (!versionMatch) return null;
+      if (!versionMatch) {
+        return null;
+      }
 
       const version = versionMatch[1];
 
       // Get sys.prefix (Python installation root)
       const prefixOutput = execSync(`"${pythonPath}" -c "import sys; print(sys.prefix)"`, {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       }).trim();
 
       // Get pip availability
@@ -123,7 +128,7 @@ class PythonDetector {
       try {
         execSync(`"${pythonPath}" -m pip --version`, {
           encoding: 'utf8',
-          stdio: ['pipe', 'pipe', 'pipe']
+          stdio: ['pipe', 'pipe', 'pipe'],
         });
         hasPip = true;
       } catch {
@@ -133,10 +138,10 @@ class PythonDetector {
       return {
         command: path.basename(pythonPath, path.extname(pythonPath)),
         path: pythonPath,
-        version: version,
+        version,
         prefix: prefixOutput,
-        hasPip: hasPip,
-        meetsMinimumVersion: this.meetsMinimumVersion(version)
+        hasPip,
+        meetsMinimumVersion: this.meetsMinimumVersion(version),
       };
     } catch {
       return null;
@@ -153,7 +158,7 @@ class PythonDetector {
       fs.accessSync(pythonPath, fs.constants.X_OK);
       const output = execSync(`"${pythonPath}" --version`, {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       });
       return output.includes('Python');
     } catch {
@@ -174,7 +179,7 @@ class PythonDetector {
       const programFiles = [
         process.env.ProgramFiles,
         process.env['ProgramFiles(x86)'],
-        process.env.LOCALAPPDATA
+        process.env.LOCALAPPDATA,
       ].filter(Boolean);
 
       for (const base of programFiles) {
@@ -183,7 +188,7 @@ class PythonDetector {
         paths.push(path.join(base, 'Python', 'Python310', 'python.exe'));
         paths.push(path.join(base, 'Python', 'Python311', 'python.exe'));
         paths.push(path.join(base, 'Python', 'Python312', 'python.exe'));
-        
+
         // Older versions
         paths.push(path.join(base, 'Python39', 'python.exe'));
         paths.push(path.join(base, 'Python310', 'python.exe'));
@@ -211,7 +216,7 @@ class PythonDetector {
       paths.push('/usr/local/bin/python3');
       paths.push('/opt/homebrew/bin/python3');
       paths.push('/usr/local/opt/python/bin/python3');
-      
+
       // Homebrew Python versions
       for (let minor = 9; minor <= 12; minor++) {
         paths.push(`/usr/local/bin/python3.${minor}`);
@@ -233,7 +238,7 @@ class PythonDetector {
       paths.push('/usr/bin/python3');
       paths.push('/usr/local/bin/python3');
       paths.push('/bin/python3');
-      
+
       // Version-specific paths
       for (let minor = 6; minor <= 12; minor++) {
         paths.push(`/usr/bin/python3.${minor}`);
@@ -253,7 +258,7 @@ class PythonDetector {
       paths.push('/snap/bin/python3');
     }
 
-    return paths.filter(p => fs.existsSync(p));
+    return paths.filter((p) => fs.existsSync(p));
   }
 
   /**
@@ -265,15 +270,19 @@ class PythonDetector {
   compareVersions(v1, v2) {
     const parts1 = v1.split('.').map(Number);
     const parts2 = v2.split('.').map(Number);
-    
+
     for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
       const part1 = parts1[i] || 0;
       const part2 = parts2[i] || 0;
-      
-      if (part1 < part2) return -1;
-      if (part1 > part2) return 1;
+
+      if (part1 < part2) {
+        return -1;
+      }
+      if (part1 > part2) {
+        return 1;
+      }
     }
-    
+
     return 0;
   }
 
@@ -301,7 +310,7 @@ class PythonDetector {
     try {
       execSync(`"${python.path}" -m venv "${venvPath}"`, {
         encoding: 'utf8',
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
       return true;
     } catch (error) {
@@ -328,12 +337,14 @@ class PythonDetector {
    * @returns {boolean} True if successful
    */
   ensurePip(pythonInfo) {
-    if (pythonInfo.hasPip) return true;
+    if (pythonInfo.hasPip) {
+      return true;
+    }
 
     try {
       execSync(`"${pythonInfo.path}" -m ensurepip --default-pip`, {
         encoding: 'utf8',
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
       pythonInfo.hasPip = true;
       return true;
@@ -378,7 +389,7 @@ print(json.dumps(info))
 
       const output = execSync(`"${pythonInfo.path}" -c "${script}"`, {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       });
 
       return JSON.parse(output);
@@ -393,5 +404,5 @@ const pythonDetector = new PythonDetector();
 
 module.exports = {
   PythonDetector,
-  pythonDetector
+  pythonDetector,
 };

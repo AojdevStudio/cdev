@@ -11,43 +11,43 @@ describe('HookCategorizer', () => {
     {
       name: 'commit-message-validator.py',
       path: '/hooks/commit-message-validator.py',
-      content: '# Validates commit messages'
+      content: '# Validates commit messages',
     },
     {
       name: 'typescript-validator.py',
       path: '/hooks/typescript-validator.py',
-      content: '# TypeScript validation logic'
+      content: '# TypeScript validation logic',
     },
     {
       name: 'api-standards-checker.py',
       path: '/hooks/api-standards-checker.py',
-      content: '# Check API standards'
+      content: '# Check API standards',
     },
     {
       name: 'notification.py',
       path: '/hooks/notification.py',
-      content: '# Send notifications'
+      content: '# Send notifications',
     },
     {
       name: 'utils/helper.py',
       path: '/hooks/utils/helper.py',
-      content: '# Helper utilities'
+      content: '# Helper utilities',
     },
     {
       name: 'custom-security.py',
       path: '/hooks/custom-security.py',
-      content: '# Custom security checks with authentication'
+      content: '# Custom security checks with authentication',
     },
     {
       name: 'data-quality-reporter.py',
       path: '/hooks/data-quality-reporter.py',
-      content: '# Reports data quality metrics'
+      content: '# Reports data quality metrics',
     },
     {
       name: 'optional-helper.py',
       path: '/hooks/optional-helper.py',
-      content: '# Optional helper functionality'
-    }
+      content: '# Optional helper functionality',
+    },
   ];
 
   beforeEach(() => {
@@ -64,10 +64,18 @@ describe('HookCategorizer', () => {
     });
 
     test('defines correct tier descriptions', () => {
-      expect(categorizer.categoryRules.tier1.description).toBe('Critical security and validation hooks');
-      expect(categorizer.categoryRules.tier2.description).toBe('Important quality and standards hooks');
-      expect(categorizer.categoryRules.tier3.description).toBe('Optional convenience and notification hooks');
-      expect(categorizer.categoryRules.utils.description).toBe('Shared utilities and helper functions');
+      expect(categorizer.categoryRules.tier1.description).toBe(
+        'Critical security and validation hooks',
+      );
+      expect(categorizer.categoryRules.tier2.description).toBe(
+        'Important quality and standards hooks',
+      );
+      expect(categorizer.categoryRules.tier3.description).toBe(
+        'Optional convenience and notification hooks',
+      );
+      expect(categorizer.categoryRules.utils.description).toBe(
+        'Shared utilities and helper functions',
+      );
     });
   });
 
@@ -127,15 +135,15 @@ describe('HookCategorizer', () => {
     });
 
     test('categorizes by content keywords', () => {
-      const securityHook = { 
-        name: 'custom.py', 
-        content: 'This hook handles security authentication' 
+      const securityHook = {
+        name: 'custom.py',
+        content: 'This hook handles security authentication',
       };
       expect(categorizer.determineHookTier(securityHook)).toBe('tier1');
 
-      const qualityHook = { 
-        name: 'custom.py', 
-        content: 'This hook checks code quality standards' 
+      const qualityHook = {
+        name: 'custom.py',
+        content: 'This hook checks code quality standards',
       };
       expect(categorizer.determineHookTier(qualityHook)).toBe('tier2');
     });
@@ -189,7 +197,9 @@ describe('HookCategorizer', () => {
 
     test('identifies utility category', () => {
       expect(categorizer.getHookCategory({ name: 'utils.py' })).toBe('utility');
-      expect(categorizer.getHookCategory({ name: 'helper.py', content: 'utility functions' })).toBe('utility');
+      expect(categorizer.getHookCategory({ name: 'helper.py', content: 'utility functions' })).toBe(
+        'utility',
+      );
     });
 
     test('identifies lifecycle category', () => {
@@ -204,24 +214,27 @@ describe('HookCategorizer', () => {
 
   describe('getHookDescription', () => {
     test('returns predefined descriptions', () => {
-      expect(categorizer.getHookDescription({ name: 'commit-message-validator.py' }))
-        .toBe('Validates commit message format and content');
-      
-      expect(categorizer.getHookDescription({ name: 'typescript-validator.py' }))
-        .toBe('Validates TypeScript code and type safety');
+      expect(categorizer.getHookDescription({ name: 'commit-message-validator.py' })).toBe(
+        'Validates commit message format and content',
+      );
+
+      expect(categorizer.getHookDescription({ name: 'typescript-validator.py' })).toBe(
+        'Validates TypeScript code and type safety',
+      );
     });
 
     test('generates descriptions for unknown hooks', () => {
-      expect(categorizer.getHookDescription({ name: 'custom-hook.py' }))
-        .toBe('Custom Hook hook');
-      
-      expect(categorizer.getHookDescription({ name: 'data_processor.py' }))
-        .toBe('Data Processor hook');
+      expect(categorizer.getHookDescription({ name: 'custom-hook.py' })).toBe('Custom Hook hook');
+
+      expect(categorizer.getHookDescription({ name: 'data_processor.py' })).toBe(
+        'Data Processor hook',
+      );
     });
 
     test('handles complex hook names', () => {
-      expect(categorizer.getHookDescription({ name: 'api-response-validator.py' }))
-        .toBe('Api Response Validator hook');
+      expect(categorizer.getHookDescription({ name: 'api-response-validator.py' })).toBe(
+        'Api Response Validator hook',
+      );
     });
   });
 
@@ -242,7 +255,7 @@ describe('HookCategorizer', () => {
     test('detects security features', () => {
       const content = 'Check user authentication and permissions';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.hasSecurityChecks).toBe(true);
       expect(features.hasValidation).toBe(false);
     });
@@ -250,7 +263,7 @@ describe('HookCategorizer', () => {
     test('detects validation features', () => {
       const content = 'Validate input and ensure data integrity';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.hasValidation).toBe(true);
       expect(features.hasEnforcement).toBe(true);
     });
@@ -258,41 +271,41 @@ describe('HookCategorizer', () => {
     test('detects enforcement features', () => {
       const content = 'Enforce rules and block invalid requests';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.hasEnforcement).toBe(true);
     });
 
     test('detects reporting features', () => {
       const content = 'Track metrics and report statistics';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.hasReporting).toBe(true);
     });
 
     test('detects notification features', () => {
       const content = 'Send email alerts when errors occur';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.hasNotification).toBe(true);
     });
 
     test('detects async features', () => {
       const content = 'async def process(): await fetch_data()';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.isAsync).toBe(true);
     });
 
     test('detects external API usage', () => {
       const content = 'Make HTTP request to external API';
       const features = categorizer.analyzeHookContent(content);
-      
+
       expect(features.usesExternalAPI).toBe(true);
     });
 
     test('handles empty content', () => {
       const features = categorizer.analyzeHookContent('');
-      
+
       expect(features.hasSecurityChecks).toBe(false);
       expect(features.hasValidation).toBe(false);
       expect(features.hasEnforcement).toBe(false);
@@ -303,21 +316,21 @@ describe('HookCategorizer', () => {
     test('handles hooks without content', async () => {
       const hooks = [{ name: 'test.py' }];
       const result = await categorizer.categorize(hooks);
-      
+
       expect(result.tier3).toHaveLength(1);
     });
 
     test('handles hooks without path', async () => {
       const hooks = [{ name: 'validator.py', content: 'validation logic' }];
       const result = await categorizer.categorize(hooks);
-      
+
       expect(result.tier1).toHaveLength(1);
     });
 
     test('handles hooks with only path', async () => {
       const hooks = [{ path: '/hooks/utils/helper.py' }];
       const result = await categorizer.categorize(hooks);
-      
+
       expect(result.utils).toHaveLength(1);
     });
 
@@ -325,12 +338,12 @@ describe('HookCategorizer', () => {
       const hook = {
         name: 'test.py',
         customProp: 'value',
-        size: 100
+        size: 100,
       };
-      
+
       const result = await categorizer.categorize([hook]);
       const categorizedHook = result.tier3[0];
-      
+
       expect(categorizedHook.customProp).toBe('value');
       expect(categorizedHook.size).toBe(100);
     });

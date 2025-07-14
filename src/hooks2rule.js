@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra');
 const path = require('path');
 const { execSync } = require('child_process');
+
+const fs = require('fs-extra');
 
 /**
  * Hooks2Rule - Analyze existing Claude Code hooks and generate rules
@@ -13,7 +14,11 @@ class Hooks2Rule {
     this.projectPath = process.cwd();
     this.hooksPath = path.join(this.projectPath, '.claude', 'hooks');
     this.settingsPath = path.join(this.projectPath, '.claude', 'settings.json');
-    this.userSettingsPath = path.join(process.env.HOME || process.env.USERPROFILE, '.claude', 'settings.json');
+    this.userSettingsPath = path.join(
+      process.env.HOME || process.env.USERPROFILE,
+      '.claude',
+      'settings.json',
+    );
   }
 
   /**
@@ -25,7 +30,7 @@ class Hooks2Rule {
 
       // Discover hooks from various sources
       const hooks = await this.discoverHooks();
-      
+
       if (hooks.length === 0) {
         console.log('No hooks found to analyze.');
         return;
@@ -35,12 +40,11 @@ class Hooks2Rule {
 
       // Analyze each hook to extract rules
       const rules = await this.generateRules(hooks);
-      
+
       console.log(`Generated ${rules.length} rules\n`);
 
       // Output the rules
       await this.outputRules(rules, options);
-
     } catch (error) {
       console.error('Error analyzing hooks:', error.message);
       process.exit(1);
@@ -70,23 +74,23 @@ class Hooks2Rule {
   async discoverFileHooks() {
     const hooks = [];
 
-    if (!await fs.pathExists(this.hooksPath)) {
+    if (!(await fs.pathExists(this.hooksPath))) {
       return hooks;
     }
 
     const discoverInDir = async (dir, tier = null) => {
       const files = await fs.readdir(dir);
-      
+
       for (const file of files) {
         const filePath = path.join(dir, file);
         const stat = await fs.stat(filePath);
-        
+
         if (stat.isDirectory()) {
           // Recursively check subdirectories (like tier1, tier2, etc.)
           await discoverInDir(filePath, file);
         } else if (file.endsWith('.py') || file.endsWith('.sh') || file.endsWith('.js')) {
           const content = await fs.readFile(filePath, 'utf-8');
-          
+
           hooks.push({
             type: 'file',
             name: file,
@@ -94,7 +98,7 @@ class Hooks2Rule {
             content,
             tier,
             size: stat.size,
-            modified: stat.mtime
+            modified: stat.mtime,
           });
         }
       }
@@ -127,7 +131,7 @@ class Hooks2Rule {
                     matcher: matcher.matcher,
                     command: hook.command,
                     timeout: hook.timeout,
-                    source: settingsFile
+                    source: settingsFile,
                   });
                 }
               }
@@ -168,7 +172,8 @@ class Hooks2Rule {
   async analyzeHook(hook) {
     if (hook.type === 'file') {
       return this.analyzeFileHook(hook);
-    } else if (hook.type === 'settings') {
+    }
+    if (hook.type === 'settings') {
       return this.analyzeSettingsHook(hook);
     }
     return null;
@@ -188,7 +193,7 @@ class Hooks2Rule {
       toolMatchers: this.extractToolMatchers(hook),
       behavior: this.analyzeBehavior(hook),
       security: this.analyzeSecurityFeatures(hook),
-      rule: null
+      rule: null,
     };
 
     // Generate human-readable rule
@@ -211,7 +216,7 @@ class Hooks2Rule {
       source: hook.source,
       purpose: this.extractPurposeFromCommand(hook.command),
       behavior: this.analyzeBehaviorFromCommand(hook.command),
-      rule: null
+      rule: null,
     };
 
     // Generate human-readable rule
@@ -226,13 +231,13 @@ class Hooks2Rule {
   extractPurpose(hook) {
     const content = hook.content.toLowerCase();
     const comments = this.extractComments(hook.content);
-    
+
     // Look for explicit purpose statements
     const purposePatterns = [
       /purpose:\s*(.+)/i,
       /description:\s*(.+)/i,
       /what it does:\s*(.+)/i,
-      /this hook\s+(.+)/i
+      /this hook\s+(.+)/i,
     ];
 
     for (const comment of comments) {
@@ -292,7 +297,7 @@ class Hooks2Rule {
     if (command.includes('test')) {
       return 'runs tests';
     }
-    
+
     return 'executes command';
   }
 
@@ -301,7 +306,7 @@ class Hooks2Rule {
    */
   detectEventType(hook) {
     const content = hook.content.toLowerCase();
-    
+
     if (content.includes('pretooluse') || content.includes('pre_tool_use')) {
       return 'PreToolUse';
     }
@@ -346,7 +351,7 @@ class Hooks2Rule {
     const toolPatterns = [
       /tool_name.*["']([^"']+)["']/gi,
       /matcher.*["']([^"']+)["']/gi,
-      /\b(Bash|Write|Edit|MultiEdit|Read|Glob|Grep|Task|WebFetch|WebSearch)\b/gi
+      /\b(Bash|Write|Edit|MultiEdit|Read|Glob|Grep|Task|WebFetch|WebSearch)\b/gi,
     ];
 
     for (const pattern of toolPatterns) {
@@ -372,7 +377,7 @@ class Hooks2Rule {
       formats: content.includes('format') || content.includes('prettier'),
       notifies: content.includes('notify') || content.includes('notification'),
       async: content.includes('async') || content.includes('await'),
-      usesApi: content.includes('request') || content.includes('fetch') || content.includes('api')
+      usesApi: content.includes('request') || content.includes('fetch') || content.includes('api'),
     };
 
     return behavior;
@@ -390,7 +395,7 @@ class Hooks2Rule {
       formats: command.includes('format') || command.includes('prettier'),
       notifies: command.includes('notify') || command.includes('notification'),
       async: false,
-      usesApi: command.includes('curl') || command.includes('wget') || command.includes('api')
+      usesApi: command.includes('curl') || command.includes('wget') || command.includes('api'),
     };
 
     return behavior;
@@ -401,13 +406,14 @@ class Hooks2Rule {
    */
   analyzeSecurityFeatures(hook) {
     const content = hook.content.toLowerCase();
-    
+
     return {
-      hasPathValidation: content.includes('path') && (content.includes('validate') || content.includes('check')),
+      hasPathValidation:
+        content.includes('path') && (content.includes('validate') || content.includes('check')),
       hasInputSanitization: content.includes('sanitize') || content.includes('escape'),
       hasPermissionChecks: content.includes('permission') || content.includes('access'),
       blocksSensitiveOps: content.includes('sensitive') || content.includes('block'),
-      hasSecurityKeywords: /security|auth|permission|access|sensitive/.test(content)
+      hasSecurityKeywords: /security|auth|permission|access|sensitive/.test(content),
     };
   }
 
@@ -416,9 +422,9 @@ class Hooks2Rule {
    */
   generateRuleFromAnalysis(analysis) {
     const { name, purpose, eventType, behavior, tier } = analysis;
-    
+
     let rule = '';
-    
+
     // Start with the event type
     if (eventType === 'PreToolUse') {
       rule += 'Before using tools, ';
@@ -460,9 +466,9 @@ class Hooks2Rule {
    */
   generateRuleFromSettingsAnalysis(analysis) {
     const { event, matcher, purpose, behavior } = analysis;
-    
+
     let rule = '';
-    
+
     // Event context
     if (event === 'PreToolUse') {
       rule += 'Before using ';
@@ -501,19 +507,19 @@ class Hooks2Rule {
    */
   extractComments(content) {
     const comments = [];
-    
+
     // Python comments
     const pythonComments = content.match(/^#.*$/gm) || [];
-    comments.push(...pythonComments.map(c => c.replace(/^#\s*/, '')));
-    
+    comments.push(...pythonComments.map((c) => c.replace(/^#\s*/, '')));
+
     // Shell comments
     const shellComments = content.match(/^#.*$/gm) || [];
-    comments.push(...shellComments.map(c => c.replace(/^#\s*/, '')));
-    
+    comments.push(...shellComments.map((c) => c.replace(/^#\s*/, '')));
+
     // Multi-line comments
     const multilineComments = content.match(/"""[\s\S]*?"""/g) || [];
-    comments.push(...multilineComments.map(c => c.replace(/"""/g, '')));
-    
+    comments.push(...multilineComments.map((c) => c.replace(/"""/g, '')));
+
     return comments;
   }
 
@@ -522,7 +528,7 @@ class Hooks2Rule {
    */
   async outputRules(rules, options) {
     const format = options.format || 'markdown';
-    
+
     switch (format) {
       case 'json':
         console.log(JSON.stringify(rules, null, 2));
@@ -550,13 +556,15 @@ class Hooks2Rule {
       tier3: [],
       settings: [],
       utils: [],
-      unknown: []
+      unknown: [],
     };
 
     // Categorize rules
     for (const rule of rules) {
-      if (!rule) continue; // Skip undefined rules
-      
+      if (!rule) {
+        continue;
+      } // Skip undefined rules
+
       try {
         if (rule.tier && rulesByTier[rule.tier]) {
           rulesByTier[rule.tier].push(rule);
@@ -578,25 +586,28 @@ class Hooks2Rule {
 
     // Output by tier
     for (const [tier, tierRules] of Object.entries(rulesByTier)) {
-      if (tierRules.length === 0) continue;
+      if (tierRules.length === 0) {
+        continue;
+      }
 
-      const tierName = {
-        tier1: 'Tier 1 - Critical Security & Validation',
-        tier2: 'Tier 2 - Important Quality & Standards',
-        tier3: 'Tier 3 - Optional Convenience',
-        settings: 'Settings-Based Hooks',
-        utils: 'Utility Hooks',
-        llm: 'LLM Integration Hooks',
-        tts: 'Text-to-Speech Hooks',
-        unknown: 'Other Hooks'
-      }[tier] || `${tier.charAt(0).toUpperCase() + tier.slice(1)} Hooks`;
+      const tierName =
+        {
+          tier1: 'Tier 1 - Critical Security & Validation',
+          tier2: 'Tier 2 - Important Quality & Standards',
+          tier3: 'Tier 3 - Optional Convenience',
+          settings: 'Settings-Based Hooks',
+          utils: 'Utility Hooks',
+          llm: 'LLM Integration Hooks',
+          tts: 'Text-to-Speech Hooks',
+          unknown: 'Other Hooks',
+        }[tier] || `${tier.charAt(0).toUpperCase() + tier.slice(1)} Hooks`;
 
       console.log(`## ${tierName}\n`);
 
       for (const rule of tierRules) {
         console.log(`### ${rule.name}`);
         console.log(`**Rule:** ${rule.rule}\n`);
-        
+
         if (rule.type === 'file') {
           console.log(`- **File:** ${rule.path}`);
           console.log(`- **Event:** ${rule.eventType}`);
@@ -608,7 +619,7 @@ class Hooks2Rule {
           console.log(`- **Matcher:** ${rule.matcher || 'all tools'}`);
           console.log(`- **Command:** \`${rule.command}\``);
         }
-        
+
         console.log();
       }
     }
@@ -635,7 +646,7 @@ class Hooks2Rule {
     }
 
     console.log('\n## Hook Categories\n');
-    
+
     const categories = {};
     for (const rule of rules) {
       const category = rule.tier || 'settings';
@@ -659,7 +670,7 @@ class Hooks2Rule {
 if (require.main === module) {
   const args = process.argv.slice(2);
   const options = {};
-  
+
   // Parse command line arguments
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -686,7 +697,7 @@ Examples:
   }
 
   const analyzer = new Hooks2Rule();
-  analyzer.analyze(options).catch(error => {
+  analyzer.analyze(options).catch((error) => {
     console.error('Error:', error.message);
     process.exit(1);
   });

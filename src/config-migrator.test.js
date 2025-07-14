@@ -4,12 +4,13 @@
 
 const fs = require('fs');
 const path = require('path');
+
 const {
   migrateConfig,
   performMigration,
   applyMigrationTransformations,
   isValidConfiguration,
-  checkMigrationStatus
+  checkMigrationStatus,
 } = require('./config-migrator');
 const { deepMerge } = require('./config-generator');
 
@@ -27,31 +28,31 @@ describe('ConfigMigrator', () => {
     version: '0.9',
     hooks: {
       pre: 'old-hook-format',
-      post: ['hook1', 'hook2']
+      post: ['hook1', 'hook2'],
     },
     env: {
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
     },
     customSettings: {
-      feature: true
-    }
+      feature: true,
+    },
   };
 
   const mockTargetConfig = {
     version: '1.0',
     hooks: {
-      pre: [{ command: 'existing-hook', blocking: true }]
+      pre: [{ command: 'existing-hook', blocking: true }],
     },
     existingSettings: {
-      value: 42
-    }
+      value: 42,
+    },
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
     deepMerge.mockImplementation((target, source) => ({
       ...target,
-      ...source
+      ...source,
     }));
   });
 
@@ -67,30 +68,30 @@ describe('ConfigMigrator', () => {
         target: targetConfigPath,
         backup: null,
         changes: [],
-        warnings: ['No settings.local.json found to migrate']
+        warnings: ['No settings.local.json found to migrate'],
       });
     });
 
     test('performs basic migration without existing target', async () => {
-      fs.existsSync.mockImplementation(path => path === localConfigPath);
+      fs.existsSync.mockImplementation((path) => path === localConfigPath);
       fs.readFileSync.mockReturnValue(JSON.stringify(mockSourceConfig));
       fs.writeFileSync.mockImplementation();
 
       const result = await migrateConfig(testProjectPath);
 
       expect(result.migrated).toBe(true);
-      expect(fs.writeFileSync).toHaveBeenCalledWith(
-        targetConfigPath,
-        expect.any(String),
-        'utf8'
-      );
+      expect(fs.writeFileSync).toHaveBeenCalledWith(targetConfigPath, expect.any(String), 'utf8');
     });
 
     test('creates backup when target exists', async () => {
       fs.existsSync.mockReturnValue(true);
       fs.readFileSync.mockImplementation((path) => {
-        if (path === localConfigPath) return JSON.stringify(mockSourceConfig);
-        if (path === targetConfigPath) return JSON.stringify(mockTargetConfig);
+        if (path === localConfigPath) {
+          return JSON.stringify(mockSourceConfig);
+        }
+        if (path === targetConfigPath) {
+          return JSON.stringify(mockTargetConfig);
+        }
       });
       fs.copyFileSync.mockImplementation();
       fs.writeFileSync.mockImplementation();
@@ -98,17 +99,18 @@ describe('ConfigMigrator', () => {
       const result = await migrateConfig(testProjectPath);
 
       expect(result.backup).toMatch(/settings\.json\.backup\.\d+$/);
-      expect(fs.copyFileSync).toHaveBeenCalledWith(
-        targetConfigPath,
-        result.backup
-      );
+      expect(fs.copyFileSync).toHaveBeenCalledWith(targetConfigPath, result.backup);
     });
 
     test('skips backup when option is false', async () => {
       fs.existsSync.mockReturnValue(true);
       fs.readFileSync.mockImplementation((path) => {
-        if (path === localConfigPath) return JSON.stringify(mockSourceConfig);
-        if (path === targetConfigPath) return JSON.stringify(mockTargetConfig);
+        if (path === localConfigPath) {
+          return JSON.stringify(mockSourceConfig);
+        }
+        if (path === targetConfigPath) {
+          return JSON.stringify(mockTargetConfig);
+        }
       });
 
       const result = await migrateConfig(testProjectPath, { backup: false });
@@ -118,7 +120,7 @@ describe('ConfigMigrator', () => {
     });
 
     test('removes source file when removeSource option is true', async () => {
-      fs.existsSync.mockImplementation(path => path === localConfigPath);
+      fs.existsSync.mockImplementation((path) => path === localConfigPath);
       fs.readFileSync.mockReturnValue(JSON.stringify(mockSourceConfig));
       fs.unlinkSync.mockImplementation();
 
@@ -129,7 +131,7 @@ describe('ConfigMigrator', () => {
     });
 
     test('archives source file when archiveSource option is true', async () => {
-      fs.existsSync.mockImplementation(path => path === localConfigPath);
+      fs.existsSync.mockImplementation((path) => path === localConfigPath);
       fs.readFileSync.mockReturnValue(JSON.stringify(mockSourceConfig));
       fs.renameSync.mockImplementation();
 
@@ -137,41 +139,45 @@ describe('ConfigMigrator', () => {
 
       expect(fs.renameSync).toHaveBeenCalledWith(
         localConfigPath,
-        expect.stringMatching(/settings\.local\.json\.migrated\.\d+$/)
+        expect.stringMatching(/settings\.local\.json\.migrated\.\d+$/),
       );
-      expect(result.changes).toContain(
-        expect.stringMatching(/^Archived settings\.local\.json to/)
-      );
+      expect(result.changes).toContain(expect.stringMatching(/^Archived settings\.local\.json to/));
     });
 
     test('handles invalid source JSON', async () => {
-      fs.existsSync.mockImplementation(path => path === localConfigPath);
+      fs.existsSync.mockImplementation((path) => path === localConfigPath);
       fs.readFileSync.mockReturnValue('invalid json');
 
       await expect(migrateConfig(testProjectPath)).rejects.toThrow(
-        'Failed to read settings.local.json'
+        'Failed to read settings.local.json',
       );
     });
 
     test('handles invalid target JSON gracefully', async () => {
       fs.existsSync.mockReturnValue(true);
       fs.readFileSync.mockImplementation((path) => {
-        if (path === localConfigPath) return JSON.stringify(mockSourceConfig);
-        if (path === targetConfigPath) return 'invalid json';
+        if (path === localConfigPath) {
+          return JSON.stringify(mockSourceConfig);
+        }
+        if (path === targetConfigPath) {
+          return 'invalid json';
+        }
       });
 
       const result = await migrateConfig(testProjectPath);
 
-      expect(result.warnings).toContain(expect.stringMatching(/Existing settings\.json is invalid/));
+      expect(result.warnings).toContain(
+        expect.stringMatching(/Existing settings\.json is invalid/),
+      );
       expect(result.migrated).toBe(true);
     });
 
     test('validates migrated configuration', async () => {
-      fs.existsSync.mockImplementation(path => path === localConfigPath);
+      fs.existsSync.mockImplementation((path) => path === localConfigPath);
       fs.readFileSync.mockReturnValue(JSON.stringify({ invalid: 'config' }));
 
       await expect(migrateConfig(testProjectPath)).rejects.toThrow(
-        'Migration resulted in invalid configuration'
+        'Migration resulted in invalid configuration',
       );
     });
   });
@@ -214,27 +220,23 @@ describe('ConfigMigrator', () => {
       const config = {
         hooks: {
           pre: 'single-hook',
-          post: ['already-array']
-        }
+          post: ['already-array'],
+        },
       };
       const result = { changes: [] };
 
       const transformed = applyMigrationTransformations(config, result);
 
-      expect(transformed.hooks.pre).toEqual([
-        { command: 'single-hook', blocking: true }
-      ]);
-      expect(transformed.hooks.post).toEqual([
-        { command: 'already-array', blocking: true }
-      ]);
+      expect(transformed.hooks.pre).toEqual([{ command: 'single-hook', blocking: true }]);
+      expect(transformed.hooks.post).toEqual([{ command: 'already-array', blocking: true }]);
       expect(result.changes).toContain('Transformed legacy hook formats to current format');
     });
 
     test('transforms hook arrays with string elements', () => {
       const config = {
         hooks: {
-          pre: ['hook1', { command: 'hook2', blocking: false }]
-        }
+          pre: ['hook1', { command: 'hook2', blocking: false }],
+        },
       };
       const result = { changes: [] };
 
@@ -242,13 +244,13 @@ describe('ConfigMigrator', () => {
 
       expect(transformed.hooks.pre).toEqual([
         { command: 'hook1', blocking: true },
-        { command: 'hook2', blocking: false }
+        { command: 'hook2', blocking: false },
       ]);
     });
 
     test('migrates env to environment', () => {
       const config = {
-        env: { NODE_ENV: 'production' }
+        env: { NODE_ENV: 'production' },
       };
       const result = { changes: [] };
 
@@ -262,7 +264,7 @@ describe('ConfigMigrator', () => {
     test('does not migrate if environment already exists', () => {
       const config = {
         env: { OLD_ENV: 'value' },
-        environment: { NODE_ENV: 'production' }
+        environment: { NODE_ENV: 'production' },
       };
       const result = { changes: [] };
 
@@ -309,8 +311,8 @@ describe('ConfigMigrator', () => {
       const config = {
         version: '1.0',
         hooks: {
-          pre: [{ command: 'hook', blocking: true }]
-        }
+          pre: [{ command: 'hook', blocking: true }],
+        },
       };
 
       expect(isValidConfiguration(config)).toBe(true);
@@ -348,9 +350,7 @@ describe('ConfigMigrator', () => {
 
   describe('checkMigrationStatus', () => {
     test('detects when migration is needed', () => {
-      fs.existsSync.mockImplementation(path => {
-        return path === localConfigPath;
-      });
+      fs.existsSync.mockImplementation((path) => path === localConfigPath);
 
       const status = checkMigrationStatus(testProjectPath);
 
@@ -359,7 +359,7 @@ describe('ConfigMigrator', () => {
         hasTargetConfig: false,
         needsMigration: true,
         localConfigPath,
-        targetConfigPath
+        targetConfigPath,
       });
     });
 
@@ -373,7 +373,7 @@ describe('ConfigMigrator', () => {
         hasTargetConfig: true,
         needsMigration: false,
         localConfigPath,
-        targetConfigPath
+        targetConfigPath,
       });
     });
 
@@ -387,14 +387,12 @@ describe('ConfigMigrator', () => {
         hasTargetConfig: false,
         needsMigration: false,
         localConfigPath,
-        targetConfigPath
+        targetConfigPath,
       });
     });
 
     test('detects when only target exists', () => {
-      fs.existsSync.mockImplementation(path => {
-        return path === targetConfigPath;
-      });
+      fs.existsSync.mockImplementation((path) => path === targetConfigPath);
 
       const status = checkMigrationStatus(testProjectPath);
 
@@ -403,7 +401,7 @@ describe('ConfigMigrator', () => {
         hasTargetConfig: true,
         needsMigration: false,
         localConfigPath,
-        targetConfigPath
+        targetConfigPath,
       });
     });
   });
@@ -421,9 +419,9 @@ describe('ConfigMigrator', () => {
       const config = {
         hooks: {
           pre: {
-            nested: ['should-become-array']
-          }
-        }
+            nested: ['should-become-array'],
+          },
+        },
       };
       const result = { changes: [] };
 
@@ -431,23 +429,21 @@ describe('ConfigMigrator', () => {
 
       // Non-array hooks should be preserved as-is (invalid structure)
       expect(transformed.hooks.pre).toEqual({
-        nested: ['should-become-array']
+        nested: ['should-become-array'],
       });
     });
 
     test('handles multiple transformation passes', () => {
       const config = {
         env: { test: true },
-        hooks: { pre: 'hook' }
+        hooks: { pre: 'hook' },
       };
       const result = { changes: [] };
 
       const transformed = applyMigrationTransformations(config, result);
 
       expect(transformed.environment).toEqual({ test: true });
-      expect(transformed.hooks.pre).toEqual([
-        { command: 'hook', blocking: true }
-      ]);
+      expect(transformed.hooks.pre).toEqual([{ command: 'hook', blocking: true }]);
       expect(transformed.version).toBe('1.0');
       expect(result.changes).toHaveLength(3);
     });

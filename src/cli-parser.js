@@ -6,13 +6,13 @@ function parseArgs(args) {
   const parsed = {
     command: null,
     options: {},
-    positional: []
+    positional: [],
   };
 
   let i = 0;
   while (i < args.length) {
     const arg = args[i];
-    
+
     if (arg.startsWith('--')) {
       // Long option
       const [key, value] = arg.substring(2).split('=');
@@ -81,5 +81,5 @@ Examples:
 
 module.exports = {
   parseArgs,
-  showHelp
+  showHelp,
 };

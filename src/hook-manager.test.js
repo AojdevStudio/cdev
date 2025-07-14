@@ -2,8 +2,10 @@
  * Tests for hook-manager.js
  */
 
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
+
 const HookManager = require('./hook-manager');
 const HookCategorizer = require('./hook-categorizer');
 const HookSelector = require('./hook-selector');
@@ -26,37 +28,41 @@ describe('HookManager', () => {
       path: '/test/project/.claude/hooks/pre_tool_use.py',
       content: '# Pre tool use hook',
       size: 100,
-      modified: new Date('2024-01-01')
+      modified: new Date('2024-01-01'),
     },
     {
       name: 'typescript-validator.py',
       path: '/test/project/.claude/hooks/typescript-validator.py',
       content: '# TypeScript validator',
       size: 200,
-      modified: new Date('2024-01-02')
-    }
+      modified: new Date('2024-01-02'),
+    },
   ];
 
   const mockCategorizedHooks = {
-    tier1: [{
-      name: 'pre_tool_use.py',
-      tier: 'tier1',
-      category: 'security',
-      description: 'Pre-tool validation'
-    }],
-    tier2: [{
-      name: 'typescript-validator.py',
-      tier: 'tier2',
-      category: 'validation',
-      description: 'TypeScript validation'
-    }],
+    tier1: [
+      {
+        name: 'pre_tool_use.py',
+        tier: 'tier1',
+        category: 'security',
+        description: 'Pre-tool validation',
+      },
+    ],
+    tier2: [
+      {
+        name: 'typescript-validator.py',
+        tier: 'tier2',
+        category: 'validation',
+        description: 'TypeScript validation',
+      },
+    ],
     tier3: [],
-    utils: []
+    utils: [],
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock fs-extra methods
     fs.ensureDir.mockResolvedValue();
     fs.pathExists.mockResolvedValue(true);
@@ -66,16 +72,16 @@ describe('HookManager', () => {
       if (fileName === 'README.md') {
         return Promise.resolve({ isDirectory: () => false, size: 50 });
       }
-      const hook = mockHooks.find(h => h.name === fileName);
+      const hook = mockHooks.find((h) => h.name === fileName);
       return Promise.resolve({
         isDirectory: () => false,
         size: hook?.size || 0,
-        mtime: hook?.modified || new Date()
+        mtime: hook?.modified || new Date(),
       });
     });
     fs.readFile.mockImplementation((filePath) => {
       const fileName = path.basename(filePath);
-      const hook = mockHooks.find(h => h.name === fileName);
+      const hook = mockHooks.find((h) => h.name === fileName);
       return Promise.resolve(hook?.content || '');
     });
     fs.copy.mockResolvedValue();
@@ -83,21 +89,20 @@ describe('HookManager', () => {
 
     // Mock HookCategorizer
     HookCategorizer.mockImplementation(() => ({
-      categorize: jest.fn().mockResolvedValue(mockCategorizedHooks)
+      categorize: jest.fn().mockResolvedValue(mockCategorizedHooks),
     }));
 
     // Mock HookSelector
     HookSelector.mockImplementation(() => ({
-      selectHooks: jest.fn().mockReturnValue([
-        mockCategorizedHooks.tier1[0],
-        mockCategorizedHooks.tier2[0]
-      ])
+      selectHooks: jest
+        .fn()
+        .mockReturnValue([mockCategorizedHooks.tier1[0], mockCategorizedHooks.tier2[0]]),
     }));
 
     // Mock HookOrganizer
     HookOrganizer.mockImplementation(() => ({
       organize: jest.fn().mockResolvedValue(),
-      getCategorizedHooks: jest.fn().mockResolvedValue(mockCategorizedHooks)
+      getCategorizedHooks: jest.fn().mockResolvedValue(mockCategorizedHooks),
     }));
 
     hookManager = new HookManager(testProjectPath);
@@ -126,23 +131,23 @@ describe('HookManager', () => {
       expect(fs.ensureDir).toHaveBeenCalledWith(path.join(hooksPath, 'tier2'));
       expect(fs.ensureDir).toHaveBeenCalledWith(path.join(hooksPath, 'tier3'));
       expect(fs.ensureDir).toHaveBeenCalledWith(path.join(hooksPath, 'utils'));
-      
+
       expect(hookManager.categorizer.categorize).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ name: 'pre_tool_use.py' }),
-          expect.objectContaining({ name: 'typescript-validator.py' })
-        ])
+          expect.objectContaining({ name: 'typescript-validator.py' }),
+        ]),
       );
-      
+
       expect(hookManager.organizer.organize).toHaveBeenCalledWith(mockCategorizedHooks);
       expect(result).toEqual(mockCategorizedHooks);
     });
 
     test('handles missing hooks directory', async () => {
       fs.pathExists.mockResolvedValue(false);
-      
+
       const result = await hookManager.initialize();
-      
+
       expect(hookManager.categorizer.categorize).toHaveBeenCalledWith([]);
       expect(result).toEqual(mockCategorizedHooks);
     });
@@ -154,8 +159,8 @@ describe('HookManager', () => {
 
       const expectedTiers = ['tier1', 'tier2', 'tier3', 'utils'];
       expect(fs.ensureDir).toHaveBeenCalledTimes(expectedTiers.length);
-      
-      expectedTiers.forEach(tier => {
+
+      expectedTiers.forEach((tier) => {
         expect(fs.ensureDir).toHaveBeenCalledWith(path.join(hooksPath, tier));
       });
     });
@@ -171,7 +176,7 @@ describe('HookManager', () => {
         path: path.join(hooksPath, 'pre_tool_use.py'),
         content: '# Pre tool use hook',
         size: 100,
-        modified: expect.any(Date)
+        modified: expect.any(Date),
       });
     });
 
@@ -182,7 +187,7 @@ describe('HookManager', () => {
         return Promise.resolve({
           isDirectory: () => false,
           size: 100,
-          mtime: new Date()
+          mtime: new Date(),
         });
       });
       fs.readFile.mockResolvedValue('# Content');
@@ -200,7 +205,7 @@ describe('HookManager', () => {
         return Promise.resolve({
           isDirectory: () => fileName === 'tier1',
           size: 100,
-          mtime: new Date()
+          mtime: new Date(),
         });
       });
 
@@ -228,16 +233,16 @@ describe('HookManager', () => {
       expect(hookManager.selector.selectHooks).toHaveBeenCalledWith(
         mockCategorizedHooks,
         'nodejs',
-        { tier1Only: false }
+        { tier1Only: false },
       );
-      
+
       expect(selected).toHaveLength(2);
     });
 
     test('passes preferences to selector', async () => {
       const preferences = {
         tier1Only: true,
-        excludeCategories: ['validation']
+        excludeCategories: ['validation'],
       };
 
       await hookManager.selectHooks('python', preferences);
@@ -245,7 +250,7 @@ describe('HookManager', () => {
       expect(hookManager.selector.selectHooks).toHaveBeenCalledWith(
         mockCategorizedHooks,
         'python',
-        preferences
+        preferences,
       );
     });
   });
@@ -256,37 +261,37 @@ describe('HookManager', () => {
         {
           name: 'pre_tool_use.py',
           tier: 'tier1',
-          path: '/source/pre_tool_use.py'
+          path: '/source/pre_tool_use.py',
         },
         {
           name: 'typescript-validator.py',
           tier: 'tier2',
-          currentPath: '/current/typescript-validator.py'
-        }
+          currentPath: '/current/typescript-validator.py',
+        },
       ];
 
       const installed = await hookManager.installHooks(selectedHooks);
 
       expect(fs.copy).toHaveBeenCalledWith(
         '/source/pre_tool_use.py',
-        path.join(hooksPath, 'pre_tool_use.py')
+        path.join(hooksPath, 'pre_tool_use.py'),
       );
       expect(fs.copy).toHaveBeenCalledWith(
         '/current/typescript-validator.py',
-        path.join(hooksPath, 'typescript-validator.py')
+        path.join(hooksPath, 'typescript-validator.py'),
       );
 
       expect(installed).toEqual([
         {
           name: 'pre_tool_use.py',
           tier: 'tier1',
-          path: path.join(hooksPath, 'pre_tool_use.py')
+          path: path.join(hooksPath, 'pre_tool_use.py'),
         },
         {
           name: 'typescript-validator.py',
           tier: 'tier2',
-          path: path.join(hooksPath, 'typescript-validator.py')
-        }
+          path: path.join(hooksPath, 'typescript-validator.py'),
+        },
       ]);
     });
 
@@ -295,15 +300,12 @@ describe('HookManager', () => {
         name: 'hook.py',
         tier: 'tier1',
         path: '/old/path/hook.py',
-        currentPath: '/new/path/hook.py'
+        currentPath: '/new/path/hook.py',
       };
 
       await hookManager.installHooks([hook]);
 
-      expect(fs.copy).toHaveBeenCalledWith(
-        '/new/path/hook.py',
-        expect.any(String)
-      );
+      expect(fs.copy).toHaveBeenCalledWith('/new/path/hook.py', expect.any(String));
     });
   });
 
@@ -317,22 +319,22 @@ describe('HookManager', () => {
           tier1: 1,
           tier2: 1,
           tier3: 0,
-          utils: 0
+          utils: 0,
         },
         hooks: [
           {
             name: 'pre_tool_use.py',
             tier: 'tier1',
             category: 'security',
-            description: 'Pre-tool validation'
+            description: 'Pre-tool validation',
           },
           {
             name: 'typescript-validator.py',
             tier: 'tier2',
             category: 'validation',
-            description: 'TypeScript validation'
-          }
-        ]
+            description: 'TypeScript validation',
+          },
+        ],
       });
     });
 
@@ -341,7 +343,7 @@ describe('HookManager', () => {
         tier1: [],
         tier2: [],
         tier3: [],
-        utils: []
+        utils: [],
       });
 
       const stats = await hookManager.getHookStats();
@@ -358,12 +360,12 @@ describe('HookManager', () => {
       expect(fs.move).toHaveBeenCalledWith(
         path.join(hooksPath, 'pre_tool_use.py'),
         path.join(hooksPath, 'tier1', 'pre_tool_use.py'),
-        { overwrite: true }
+        { overwrite: true },
       );
       expect(fs.move).toHaveBeenCalledWith(
         path.join(hooksPath, 'typescript-validator.py'),
         path.join(hooksPath, 'tier2', 'typescript-validator.py'),
-        { overwrite: true }
+        { overwrite: true },
       );
 
       expect(result).toEqual(mockCategorizedHooks);
@@ -371,14 +373,16 @@ describe('HookManager', () => {
 
     test('skips hooks already in correct location', async () => {
       const categorizedHooks = {
-        tier1: [{
-          name: 'pre_tool_use.py',
-          path: path.join(hooksPath, 'tier1', 'pre_tool_use.py'),
-          tier: 'tier1'
-        }],
+        tier1: [
+          {
+            name: 'pre_tool_use.py',
+            path: path.join(hooksPath, 'tier1', 'pre_tool_use.py'),
+            tier: 'tier1',
+          },
+        ],
         tier2: [],
         tier3: [],
-        utils: []
+        utils: [],
       };
 
       hookManager.categorizer.categorize.mockResolvedValue(categorizedHooks);
@@ -390,13 +394,15 @@ describe('HookManager', () => {
 
     test('updates hook paths after moving', async () => {
       const hooks = {
-        tier1: [{
-          name: 'hook.py',
-          path: '/old/path/hook.py'
-        }],
+        tier1: [
+          {
+            name: 'hook.py',
+            path: '/old/path/hook.py',
+          },
+        ],
         tier2: [],
         tier3: [],
-        utils: []
+        utils: [],
       };
 
       hookManager.categorizer.categorize.mockResolvedValue(hooks);
@@ -434,10 +440,14 @@ describe('HookManager', () => {
     test('handles copy errors during installation', async () => {
       fs.copy.mockRejectedValue(new Error('Copy failed'));
 
-      await expect(hookManager.installHooks([{
-        name: 'hook.py',
-        path: '/source/hook.py'
-      }])).rejects.toThrow('Copy failed');
+      await expect(
+        hookManager.installHooks([
+          {
+            name: 'hook.py',
+            path: '/source/hook.py',
+          },
+        ]),
+      ).rejects.toThrow('Copy failed');
     });
 
     test('handles move errors during restructuring', async () => {

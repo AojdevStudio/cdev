@@ -48,7 +48,7 @@ class Validator {
    */
   validate(data, schema) {
     const schemaToUse = typeof schema === 'string' ? this.getSchema(schema) : schema;
-    
+
     if (!schemaToUse) {
       throw new Error(`Schema not found: ${schema}`);
     }
@@ -60,9 +60,9 @@ class Validator {
     for (const [fieldPath, fieldSchema] of Object.entries(schemaToUse)) {
       const fieldValue = this.getNestedValue(data, fieldPath);
       const fieldErrors = this.validateField(fieldValue, fieldPath, fieldSchema, data);
-      
+
       if (fieldErrors.hasErrors()) {
-        fieldErrors.getErrors().forEach(error => allErrors.addError(error));
+        fieldErrors.getErrors().forEach((error) => allErrors.addError(error));
       } else {
         this.setNestedValue(validatedData, fieldPath, fieldValue);
       }
@@ -73,7 +73,7 @@ class Validator {
       errors: allErrors,
       data: validatedData,
       errorCount: allErrors.errors.length,
-      errorMessages: allErrors.getErrorMessages()
+      errorMessages: allErrors.getErrorMessages(),
     };
   }
 
@@ -92,18 +92,18 @@ class Validator {
     if (Array.isArray(fieldSchema)) {
       // Array of rule specifications
       const fieldErrors = this.rules.validateWithRules(value, fieldPath, fieldSchema);
-      fieldErrors.getErrors().forEach(error => errors.addError(error));
+      fieldErrors.getErrors().forEach((error) => errors.addError(error));
     } else if (typeof fieldSchema === 'object' && fieldSchema !== null) {
       if (fieldSchema.rules) {
         // Object with rules property
         const fieldErrors = this.rules.validateWithRules(value, fieldPath, fieldSchema.rules);
-        fieldErrors.getErrors().forEach(error => errors.addError(error));
+        fieldErrors.getErrors().forEach((error) => errors.addError(error));
       }
-      
+
       // Handle nested object validation
       if (fieldSchema.schema && typeof value === 'object' && value !== null) {
         const nestedResult = this.validate(value, fieldSchema.schema);
-        nestedResult.errors.getErrors().forEach(error => {
+        nestedResult.errors.getErrors().forEach((error) => {
           error.field = `${fieldPath}.${error.field}`;
           errors.addError(error);
         });
@@ -120,16 +120,20 @@ class Validator {
    * @returns {any} Value at path
    */
   getNestedValue(obj, path) {
-    if (!obj || typeof obj !== 'object') return undefined;
-    
+    if (!obj || typeof obj !== 'object') {
+      return undefined;
+    }
+
     const keys = path.split('.');
     let current = obj;
-    
+
     for (const key of keys) {
-      if (current === null || current === undefined) return undefined;
+      if (current === null || current === undefined) {
+        return undefined;
+      }
       current = current[key];
     }
-    
+
     return current;
   }
 
@@ -142,7 +146,7 @@ class Validator {
   setNestedValue(obj, path, value) {
     const keys = path.split('.');
     let current = obj;
-    
+
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
       if (!(key in current) || typeof current[key] !== 'object') {
@@ -150,7 +154,7 @@ class Validator {
       }
       current = current[key];
     }
-    
+
     current[keys[keys.length - 1]] = value;
   }
 
@@ -195,7 +199,7 @@ class Validator {
    */
   validateRequired(data, requiredFields) {
     const errors = new ValidationErrorCollection();
-    
+
     for (const field of requiredFields) {
       const value = this.getNestedValue(data, field);
       try {
@@ -204,12 +208,12 @@ class Validator {
         errors.addError(error);
       }
     }
-    
+
     return {
       isValid: !errors.hasErrors(),
-      errors: errors,
+      errors,
       errorCount: errors.errors.length,
-      errorMessages: errors.getErrorMessages()
+      errorMessages: errors.getErrorMessages(),
     };
   }
 }
@@ -219,5 +223,5 @@ const defaultValidator = new Validator();
 
 module.exports = {
   Validator,
-  validator: defaultValidator
+  validator: defaultValidator,
 };

@@ -1,5 +1,7 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
+
 const HookManager = require('./hook-manager');
 
 /**
@@ -18,9 +20,9 @@ class HooksRestructure {
    */
   async restructure(options = {}) {
     const { backup = true, dryRun = false } = options;
-    
+
     console.log('🔄 Starting hook restructuring process...');
-    
+
     // Create backup if requested
     if (backup && !dryRun) {
       await this.createBackup();
@@ -32,7 +34,7 @@ class HooksRestructure {
 
     // Categorize hooks
     const categorizedHooks = await this.hookManager.categorizer.categorize(existingHooks);
-    
+
     // Display restructuring plan
     const plan = this.generateRestructuringPlan(categorizedHooks);
     this.displayPlan(plan);
@@ -44,17 +46,13 @@ class HooksRestructure {
 
     // Execute restructuring
     const result = await this.executePlan(plan);
-    
+
     // Create tier README files
     await this.hookManager.organizer.createTierReadmeFiles();
-    
+
     // Generate and save manifest
     const manifest = await this.hookManager.organizer.generateManifest();
-    await fs.writeJson(
-      path.join(this.hooksPath, 'hooks-manifest.json'), 
-      manifest, 
-      { spaces: 2 }
-    );
+    await fs.writeJson(path.join(this.hooksPath, 'hooks-manifest.json'), manifest, { spaces: 2 });
 
     console.log('\n✅ Hook restructuring complete!');
     this.displaySummary(result);
@@ -67,7 +65,7 @@ class HooksRestructure {
    */
   async createBackup() {
     console.log('📦 Creating backup of current hooks...');
-    
+
     if (await fs.pathExists(this.backupPath)) {
       // Add timestamp to existing backup
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -92,14 +90,14 @@ class HooksRestructure {
         tier2: 0,
         tier3: 0,
         utils: 0,
-        total: 0
-      }
+        total: 0,
+      },
     };
 
     for (const [tier, hooks] of Object.entries(categorizedHooks)) {
       for (const hook of hooks) {
         const targetPath = path.join(this.hooksPath, tier, path.basename(hook.name));
-        
+
         // Check if hook needs to be moved
         if (hook.path !== targetPath) {
           // Check if it's in utils subdirectory
@@ -108,21 +106,21 @@ class HooksRestructure {
             plan.preserves.push({
               hook: hook.name,
               path: hook.path,
-              reason: 'Already in correct utils subdirectory'
+              reason: 'Already in correct utils subdirectory',
             });
           } else {
             plan.moves.push({
               hook: hook.name,
               from: hook.path,
               to: targetPath,
-              tier: tier
+              tier,
             });
           }
         } else {
           plan.preserves.push({
             hook: hook.name,
             path: hook.path,
-            reason: 'Already in correct location'
+            reason: 'Already in correct location',
           });
         }
 
@@ -135,7 +133,7 @@ class HooksRestructure {
     for (const tier of ['tier1', 'tier2', 'tier3']) {
       plan.creates.push({
         type: 'directory',
-        path: path.join(this.hooksPath, tier)
+        path: path.join(this.hooksPath, tier),
       });
     }
 
@@ -148,7 +146,7 @@ class HooksRestructure {
   displayPlan(plan) {
     console.log('\n📋 Restructuring Plan:');
     console.log('====================');
-    
+
     console.log('\n📁 Directories to create:');
     for (const create of plan.creates) {
       console.log(`  - ${create.path}`);
@@ -185,7 +183,7 @@ class HooksRestructure {
       created: [],
       moved: [],
       preserved: plan.preserves.length,
-      errors: []
+      errors: [],
     };
 
     // Create directories
@@ -197,7 +195,7 @@ class HooksRestructure {
         result.errors.push({
           action: 'create',
           path: create.path,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -207,17 +205,17 @@ class HooksRestructure {
       try {
         // Ensure target directory exists
         await fs.ensureDir(path.dirname(move.to));
-        
+
         // Move the file
         await fs.move(move.from, move.to, { overwrite: false });
         result.moved.push(move.hook);
-        
+
         console.log(`✅ Moved ${move.hook} to ${move.tier}`);
       } catch (error) {
         result.errors.push({
           action: 'move',
           hook: move.hook,
-          error: error.message
+          error: error.message,
         });
         console.error(`❌ Failed to move ${move.hook}: ${error.message}`);
       }
@@ -238,7 +236,7 @@ class HooksRestructure {
     console.log(`✅ Directories created: ${result.created.length}`);
     console.log(`✅ Hooks moved: ${result.moved.length}`);
     console.log(`✅ Hooks preserved: ${result.preserved}`);
-    
+
     if (result.errors.length > 0) {
       console.log(`❌ Errors: ${result.errors.length}`);
       for (const error of result.errors) {
@@ -251,18 +249,18 @@ class HooksRestructure {
    * Restore from backup
    */
   async restoreFromBackup() {
-    if (!await fs.pathExists(this.backupPath)) {
+    if (!(await fs.pathExists(this.backupPath))) {
       throw new Error('No backup found. Cannot restore.');
     }
 
     console.log('🔄 Restoring hooks from backup...');
-    
+
     // Remove current hooks directory
     await fs.remove(this.hooksPath);
-    
+
     // Copy backup to hooks directory
     await fs.copy(this.backupPath, this.hooksPath);
-    
+
     console.log('✅ Hooks restored from backup successfully');
   }
 
@@ -271,16 +269,16 @@ class HooksRestructure {
    */
   async verify() {
     console.log('\n🔍 Verifying hook structure...');
-    
+
     const verificationResult = {
       valid: true,
-      issues: []
+      issues: [],
     };
 
     // Check tier directories exist
     for (const tier of ['tier1', 'tier2', 'tier3', 'utils']) {
       const tierPath = path.join(this.hooksPath, tier);
-      if (!await fs.pathExists(tierPath)) {
+      if (!(await fs.pathExists(tierPath))) {
         verificationResult.valid = false;
         verificationResult.issues.push(`Missing tier directory: ${tier}`);
       }
@@ -288,7 +286,7 @@ class HooksRestructure {
 
     // Check hook registry exists
     const registryPath = path.join(this.hooksPath, 'hook-registry.json');
-    if (!await fs.pathExists(registryPath)) {
+    if (!(await fs.pathExists(registryPath))) {
       verificationResult.valid = false;
       verificationResult.issues.push('Missing hook registry');
     }
@@ -298,7 +296,7 @@ class HooksRestructure {
     for (const file of rootFiles) {
       const filePath = path.join(this.hooksPath, file);
       const stat = await fs.stat(filePath);
-      
+
       if (!stat.isDirectory() && file.endsWith('.py')) {
         verificationResult.valid = false;
         verificationResult.issues.push(`Hook in root directory: ${file}`);

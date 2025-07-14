@@ -21,7 +21,11 @@ class RequiredFieldError extends ValidationError {
 
 class TypeValidationError extends ValidationError {
   constructor(field, expectedType, actualType) {
-    super(`Field '${field}' must be of type '${expectedType}', got '${actualType}'`, field, 'TYPE_MISMATCH');
+    super(
+      `Field '${field}' must be of type '${expectedType}', got '${actualType}'`,
+      field,
+      'TYPE_MISMATCH',
+    );
     this.name = 'TypeValidationError';
     this.expectedType = expectedType;
     this.actualType = actualType;
@@ -30,7 +34,11 @@ class TypeValidationError extends ValidationError {
 
 class FormatValidationError extends ValidationError {
   constructor(field, format, value) {
-    super(`Field '${field}' does not match expected format '${format}': ${value}`, field, 'FORMAT_INVALID');
+    super(
+      `Field '${field}' does not match expected format '${format}': ${value}`,
+      field,
+      'FORMAT_INVALID',
+    );
     this.name = 'FormatValidationError';
     this.format = format;
     this.value = value;
@@ -39,7 +47,11 @@ class FormatValidationError extends ValidationError {
 
 class RangeValidationError extends ValidationError {
   constructor(field, min, max, value) {
-    super(`Field '${field}' value '${value}' is outside allowed range [${min}, ${max}]`, field, 'RANGE_INVALID');
+    super(
+      `Field '${field}' value '${value}' is outside allowed range [${min}, ${max}]`,
+      field,
+      'RANGE_INVALID',
+    );
     this.name = 'RangeValidationError';
     this.min = min;
     this.max = max;
@@ -69,11 +81,11 @@ class ValidationErrorCollection {
   }
 
   getErrorsByField(field) {
-    return this.errors.filter(error => error.field === field);
+    return this.errors.filter((error) => error.field === field);
   }
 
   getErrorMessages() {
-    return this.errors.map(error => error.message);
+    return this.errors.map((error) => error.message);
   }
 
   clear() {
@@ -84,13 +96,13 @@ class ValidationErrorCollection {
     return {
       hasErrors: this.hasErrors(),
       errorCount: this.errors.length,
-      errors: this.errors.map(error => ({
+      errors: this.errors.map((error) => ({
         name: error.name,
         message: error.message,
         field: error.field,
         code: error.code,
-        timestamp: error.timestamp
-      }))
+        timestamp: error.timestamp,
+      })),
     };
   }
 }
@@ -101,5 +113,5 @@ module.exports = {
   TypeValidationError,
   FormatValidationError,
   RangeValidationError,
-  ValidationErrorCollection
+  ValidationErrorCollection,
 };

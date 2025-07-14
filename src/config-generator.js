@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 const { detectProjectType } = require('./install-utils');
 const templateEngine = require('./template-engine');
 
@@ -13,9 +14,9 @@ function generateConfig(projectPath, options = {}) {
   const projectType = detectProjectType(projectPath);
   const templatePath = path.join(__dirname, '..', 'templates', `${projectType}.json`);
   const defaultTemplatePath = path.join(__dirname, '..', 'templates', 'default.json');
-  
+
   let template;
-  
+
   // Try to load project-specific template, fall back to default
   try {
     if (fs.existsSync(templatePath)) {
@@ -26,18 +27,18 @@ function generateConfig(projectPath, options = {}) {
   } catch (error) {
     throw new Error(`Failed to load configuration template: ${error.message}`);
   }
-  
+
   // Merge template with user options
   const config = mergeConfigurations(template, options);
-  
+
   // Apply template variables
   const processedConfig = templateEngine.processTemplate(config, {
     projectPath,
     projectType,
     timestamp: new Date().toISOString(),
-    ...options.variables
+    ...options.variables,
   });
-  
+
   return processedConfig;
 }
 
@@ -49,13 +50,13 @@ function generateConfig(projectPath, options = {}) {
  */
 function mergeConfigurations(base, overrides) {
   const result = JSON.parse(JSON.stringify(base)); // Deep clone
-  
+
   // Handle hooks specially - append rather than replace
   if (overrides.hooks && base.hooks) {
     result.hooks = mergeHooks(base.hooks, overrides.hooks);
     delete overrides.hooks;
   }
-  
+
   // Merge other properties recursively
   return deepMerge(result, overrides);
 }
@@ -68,7 +69,7 @@ function mergeConfigurations(base, overrides) {
  */
 function mergeHooks(baseHooks, overrideHooks) {
   const merged = { ...baseHooks };
-  
+
   for (const [event, hooks] of Object.entries(overrideHooks)) {
     if (!merged[event]) {
       merged[event] = hooks;
@@ -80,7 +81,7 @@ function mergeHooks(baseHooks, overrideHooks) {
       merged[event] = hooks;
     }
   }
-  
+
   return merged;
 }
 
@@ -92,9 +93,9 @@ function mergeHooks(baseHooks, overrideHooks) {
  */
 function deepMerge(target, source) {
   const output = { ...target };
-  
+
   if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
+    Object.keys(source).forEach((key) => {
       if (isObject(source[key])) {
         if (!(key in target)) {
           Object.assign(output, { [key]: source[key] });
@@ -106,7 +107,7 @@ function deepMerge(target, source) {
       }
     });
   }
-  
+
   return output;
 }
 
@@ -127,13 +128,13 @@ function isObject(obj) {
  */
 async function writeConfig(filePath, config) {
   const configStr = JSON.stringify(config, null, 2);
-  
+
   // Ensure directory exists
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  
+
   // Write configuration
   fs.writeFileSync(filePath, configStr, 'utf8');
 }
@@ -147,13 +148,13 @@ async function writeConfig(filePath, config) {
 async function generateAndWriteConfig(projectPath, options = {}) {
   const config = generateConfig(projectPath, options);
   const configPath = path.join(projectPath, '.claude', 'settings.json');
-  
+
   await writeConfig(configPath, config);
-  
+
   return {
     config,
     path: configPath,
-    projectType: detectProjectType(projectPath)
+    projectType: detectProjectType(projectPath),
   };
 }
 
@@ -163,5 +164,5 @@ module.exports = {
   mergeHooks,
   deepMerge,
   writeConfig,
-  generateAndWriteConfig
+  generateAndWriteConfig,
 };

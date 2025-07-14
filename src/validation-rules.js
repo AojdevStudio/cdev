@@ -8,7 +8,7 @@ const {
   TypeValidationError,
   FormatValidationError,
   RangeValidationError,
-  ValidationErrorCollection
+  ValidationErrorCollection,
 } = require('./validation-errors');
 
 class ValidationRule {
@@ -93,7 +93,8 @@ class ValidationRules {
     });
 
     this.addRule('uuid', (value, field) => {
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(value)) {
         throw new FormatValidationError(field, 'uuid', value);
       }
@@ -102,7 +103,7 @@ class ValidationRules {
 
     // Range validation
     this.addRule('min', (value, field, context, options) => {
-      const min = options.min;
+      const { min } = options;
       if (min === undefined) {
         throw new Error('min rule requires a "min" option');
       }
@@ -119,7 +120,7 @@ class ValidationRules {
     });
 
     this.addRule('max', (value, field, context, options) => {
-      const max = options.max;
+      const { max } = options;
       if (typeof value === 'string' && value.length > max) {
         throw new RangeValidationError(field, -Infinity, max, value.length);
       }
@@ -145,7 +146,7 @@ class ValidationRules {
 
     // Pattern validation
     this.addRule('pattern', (value, field, context, options) => {
-      const pattern = options.pattern;
+      const { pattern } = options;
       const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
       if (!regex.test(value)) {
         throw new FormatValidationError(field, pattern.toString(), value);
@@ -159,7 +160,11 @@ class ValidationRules {
       if (typeof customValidator === 'function') {
         const result = customValidator(value, field, context);
         if (result !== true) {
-          throw new ValidationError(result || `Custom validation failed for field '${field}'`, field, 'CUSTOM_VALIDATION');
+          throw new ValidationError(
+            result || `Custom validation failed for field '${field}'`,
+            field,
+            'CUSTOM_VALIDATION',
+          );
         }
       }
       return true;
@@ -190,7 +195,7 @@ class ValidationRules {
 
   validateWithRules(value, field, ruleSpecs) {
     const errors = new ValidationErrorCollection();
-    
+
     for (const ruleSpec of ruleSpecs) {
       try {
         if (typeof ruleSpec === 'string') {
@@ -203,7 +208,7 @@ class ValidationRules {
         errors.addError(error);
       }
     }
-    
+
     return errors;
   }
 
@@ -214,5 +219,5 @@ class ValidationRules {
 
 module.exports = {
   ValidationRule,
-  ValidationRules
+  ValidationRules,
 };

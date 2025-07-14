@@ -1,8 +1,9 @@
-const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+
+const fs = require('fs-extra');
 
 const execAsync = promisify(exec);
 
@@ -50,19 +51,19 @@ class InstallUtils {
   }
 
   resolveWorkTreePath(targetDir, config) {
-    const projectName = config.projectName;
-    
+    const { projectName } = config;
+
     switch (config.workTreeLocation) {
       case 'alongside':
         const parentDir = path.dirname(targetDir);
         return path.join(parentDir, `${projectName}-worktrees`);
-      
+
       case 'tmp':
         return path.join(os.tmpdir(), 'parallel-claude-worktrees', projectName);
-      
+
       case 'custom':
         return path.resolve(config.customWorkTreePath);
-      
+
       default:
         return path.join(path.dirname(targetDir), `${projectName}-worktrees`);
     }
@@ -80,30 +81,30 @@ class InstallUtils {
 
   async copyFileWithBackup(source, target) {
     const targetExists = await fs.pathExists(target);
-    
+
     if (targetExists) {
       const backupPath = `${target}.backup.${Date.now()}`;
       await fs.copy(target, backupPath);
       console.log(`Backed up existing file to: ${backupPath}`);
     }
-    
+
     await fs.copy(source, target);
     return targetExists;
   }
 
   async findPackageJson(startDir) {
     let currentDir = startDir;
-    
+
     while (currentDir !== path.parse(currentDir).root) {
       const packageJsonPath = path.join(currentDir, 'package.json');
-      
+
       if (await fs.pathExists(packageJsonPath)) {
         return packageJsonPath;
       }
-      
+
       currentDir = path.dirname(currentDir);
     }
-    
+
     return null;
   }
 
@@ -115,21 +116,21 @@ class InstallUtils {
       'go.mod': 'go',
       'composer.json': 'php',
       'pom.xml': 'java',
-      'Gemfile': 'ruby',
+      Gemfile: 'ruby',
       'requirements.txt': 'python',
       'yarn.lock': 'node-yarn',
-      'pnpm-lock.yaml': 'node-pnpm'
+      'pnpm-lock.yaml': 'node-pnpm',
     };
-    
+
     const detectedTypes = [];
-    
+
     for (const [file, type] of Object.entries(indicators)) {
       const filePath = path.join(dirPath, file);
       if (await fs.pathExists(filePath)) {
         detectedTypes.push(type);
       }
     }
-    
+
     // Check for framework-specific files
     const frameworkIndicators = {
       'next.config.js': 'nextjs',
@@ -138,16 +139,16 @@ class InstallUtils {
       'vue.config.js': 'vue',
       'svelte.config.js': 'svelte',
       'gatsby-config.js': 'gatsby',
-      'remix.config.js': 'remix'
+      'remix.config.js': 'remix',
     };
-    
+
     for (const [file, framework] of Object.entries(frameworkIndicators)) {
       const filePath = path.join(dirPath, file);
       if (await fs.pathExists(filePath)) {
         detectedTypes.push(framework);
       }
     }
-    
+
     return detectedTypes;
   }
 
@@ -171,43 +172,43 @@ class InstallUtils {
 
   async mergePackageJson(targetPath, additions) {
     const packageJsonPath = path.join(targetPath, 'package.json');
-    
+
     let packageJson = {};
-    
+
     if (await fs.pathExists(packageJsonPath)) {
       packageJson = await this.readJsonFile(packageJsonPath);
     }
-    
+
     // Merge scripts
     if (additions.scripts) {
       packageJson.scripts = {
         ...packageJson.scripts,
-        ...additions.scripts
+        ...additions.scripts,
       };
     }
-    
+
     // Merge dependencies
     if (additions.dependencies) {
       packageJson.dependencies = {
         ...packageJson.dependencies,
-        ...additions.dependencies
+        ...additions.dependencies,
       };
     }
-    
+
     // Merge devDependencies
     if (additions.devDependencies) {
       packageJson.devDependencies = {
         ...packageJson.devDependencies,
-        ...additions.devDependencies
+        ...additions.devDependencies,
       };
     }
-    
+
     // Add keywords
     if (additions.keywords) {
       const existingKeywords = packageJson.keywords || [];
       packageJson.keywords = [...new Set([...existingKeywords, ...additions.keywords])];
     }
-    
+
     await this.writeJsonFile(packageJsonPath, packageJson);
     return packageJson;
   }
@@ -216,15 +217,15 @@ class InstallUtils {
     if (!apiKey) {
       return { valid: false, reason: 'API key is required' };
     }
-    
+
     if (!apiKey.startsWith('lin_api_')) {
       return { valid: false, reason: 'Invalid API key format. Should start with "lin_api_"' };
     }
-    
+
     if (apiKey.length < 50) {
       return { valid: false, reason: 'API key appears to be too short' };
     }
-    
+
     // TODO: Add actual API validation by making a test request
     return { valid: true };
   }
@@ -246,23 +247,23 @@ class InstallUtils {
       nodeVersion: process.version,
       homeDirectory: this.homeDir,
       currentDirectory: process.cwd(),
-      tempDirectory: os.tmpdir()
+      tempDirectory: os.tmpdir(),
     };
-    
+
     try {
       const { stdout: gitVersion } = await execAsync('git --version');
       info.gitVersion = gitVersion.trim();
     } catch (error) {
       info.gitVersion = 'Not installed';
     }
-    
+
     try {
       const { stdout: claudeVersion } = await execAsync('claude --version');
       info.claudeVersion = claudeVersion.trim();
     } catch (error) {
       info.claudeVersion = 'Not installed';
     }
-    
+
     return info;
   }
 
@@ -295,20 +296,18 @@ class InstallUtils {
 
   async createProgressTracker(totalSteps) {
     let currentStep = 0;
-    
+
     return {
       increment: () => {
         currentStep++;
         return currentStep;
       },
-      getProgress: () => {
-        return {
-          current: currentStep,
-          total: totalSteps,
-          percentage: Math.round((currentStep / totalSteps) * 100)
-        };
-      },
-      isComplete: () => currentStep >= totalSteps
+      getProgress: () => ({
+        current: currentStep,
+        total: totalSteps,
+        percentage: Math.round((currentStep / totalSteps) * 100),
+      }),
+      isComplete: () => currentStep >= totalSteps,
     };
   }
 
@@ -320,9 +319,9 @@ class InstallUtils {
         if (attempt === maxRetries) {
           throw error;
         }
-        
+
         console.log(`Attempt ${attempt} failed, retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
@@ -330,7 +329,7 @@ class InstallUtils {
   async findExecutable(command) {
     const paths = process.env.PATH.split(path.delimiter);
     const extensions = this.platform === 'win32' ? ['.exe', '.cmd', '.bat'] : [''];
-    
+
     for (const dir of paths) {
       for (const ext of extensions) {
         const fullPath = path.join(dir, command + ext);
@@ -342,7 +341,7 @@ class InstallUtils {
         }
       }
     }
-    
+
     return null;
   }
 
@@ -352,8 +351,8 @@ class InstallUtils {
         linear: {
           apiKey: config.linearApiKey || 'your_linear_api_key',
           teamId: config.linearTeamId || 'your_team_id',
-          projectId: config.linearProjectId || 'your_project_id'
-        }
+          projectId: config.linearProjectId || 'your_project_id',
+        },
       },
       'workflow-config': {
         workflow: {
@@ -361,31 +360,33 @@ class InstallUtils {
           workTreePath: config.workTreePath,
           maxParallelAgents: config.maxParallelAgents || 4,
           autoOpenEditor: config.autoOpenEditor !== false,
-          editor: config.editor || 'cursor'
-        }
+          editor: config.editor || 'cursor',
+        },
       },
       'git-config': {
         git: {
           defaultBranch: config.defaultBranch || 'main',
           autoCommit: config.autoCommit !== false,
-          commitMessagePrefix: config.commitMessagePrefix || '[Agent]'
-        }
-      }
+          commitMessagePrefix: config.commitMessagePrefix || '[Agent]',
+        },
+      },
     };
-    
+
     return templates[templateName] || {};
   }
 
   formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-    
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
+
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+
+    return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
   }
 
   async logOperation(operation, result) {
@@ -395,12 +396,12 @@ class InstallUtils {
       operation,
       result,
       platform: this.platform,
-      nodeVersion: process.version
+      nodeVersion: process.version,
     };
-    
+
     // In a real implementation, you might want to write this to a log file
     console.log(`[${timestamp}] ${operation}: ${result}`);
-    
+
     return logEntry;
   }
 }

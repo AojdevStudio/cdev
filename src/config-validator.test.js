@@ -3,6 +3,7 @@
  */
 
 const fs = require('fs');
+
 const {
   validateConfig,
   validateConfigFile,
@@ -11,7 +12,7 @@ const {
   validateFieldTypes,
   validateHooks,
   validateEnvironment,
-  validateTools
+  validateTools,
 } = require('./config-validator');
 
 // Mock fs
@@ -27,8 +28,8 @@ describe('ConfigValidator', () => {
       const config = {
         version: '1.0.0',
         hooks: {
-          pre_tool_use: ['hook1.py', 'hook2.py']
-        }
+          pre_tool_use: ['hook1.py', 'hook2.py'],
+        },
       };
 
       const result = validateConfig(config);
@@ -36,7 +37,7 @@ describe('ConfigValidator', () => {
       expect(result).toEqual({
         valid: true,
         errors: [],
-        warnings: []
+        warnings: [],
       });
     });
 
@@ -46,7 +47,7 @@ describe('ConfigValidator', () => {
       expect(result).toEqual({
         valid: false,
         errors: ['Configuration must be a valid object'],
-        warnings: []
+        warnings: [],
       });
     });
 
@@ -56,7 +57,7 @@ describe('ConfigValidator', () => {
       expect(result).toEqual({
         valid: false,
         errors: ['Configuration must be a valid object'],
-        warnings: []
+        warnings: [],
       });
     });
 
@@ -82,7 +83,7 @@ describe('ConfigValidator', () => {
     test('validates field types', () => {
       const config = {
         version: 123, // Should be string
-        debug: 'yes' // Should be boolean
+        debug: 'yes', // Should be boolean
       };
 
       const result = validateConfig(config);
@@ -96,8 +97,8 @@ describe('ConfigValidator', () => {
       const config = {
         version: '1.0.0',
         hooks: {
-          pre_tool_use: 'not-an-array' // Should be array
-        }
+          pre_tool_use: 'not-an-array', // Should be array
+        },
       };
 
       const result = validateConfig(config);
@@ -110,16 +111,20 @@ describe('ConfigValidator', () => {
       const config = {
         version: '1.0.0',
         environment: {
-          'lowercase': 'value', // Should warn about naming
-          'VALID_VAR': {}  // Should error on object value
-        }
+          lowercase: 'value', // Should warn about naming
+          VALID_VAR: {}, // Should error on object value
+        },
       };
 
       const result = validateConfig(config);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Environment variable "VALID_VAR" must be a string, number, or boolean');
-      expect(result.warnings).toContain('Environment variable "lowercase" should follow UPPER_SNAKE_CASE convention');
+      expect(result.errors).toContain(
+        'Environment variable "VALID_VAR" must be a string, number, or boolean',
+      );
+      expect(result.warnings).toContain(
+        'Environment variable "lowercase" should follow UPPER_SNAKE_CASE convention',
+      );
     });
 
     test('validates tools configuration', () => {
@@ -127,9 +132,9 @@ describe('ConfigValidator', () => {
         version: '1.0.0',
         tools: {
           bash: {
-            enabled: 'yes' // Should be boolean
-          }
-        }
+            enabled: 'yes', // Should be boolean
+          },
+        },
       };
 
       const result = validateConfig(config);
@@ -142,21 +147,23 @@ describe('ConfigValidator', () => {
       const config = {
         version: '1.0.0',
         env: { NODE_ENV: 'test' }, // Deprecated
-        pre_hook: 'hook.py' // Deprecated
+        pre_hook: 'hook.py', // Deprecated
       };
 
       const result = validateConfig(config);
 
       expect(result.valid).toBe(true);
       expect(result.warnings).toContain('Deprecated field "env": Use "environment" instead');
-      expect(result.warnings).toContain('Deprecated field "pre_hook": Use "hooks.pre_command" instead');
+      expect(result.warnings).toContain(
+        'Deprecated field "pre_hook": Use "hooks.pre_command" instead',
+      );
     });
 
     test('applies custom validation rules', () => {
       const config = { version: '1.0.0' };
       const customRules = [
-        (cfg) => cfg.version === '2.0.0' ? {} : { error: 'Version must be 2.0.0' },
-        (cfg) => ({ warning: 'Custom warning' })
+        (cfg) => (cfg.version === '2.0.0' ? {} : { error: 'Version must be 2.0.0' }),
+        (cfg) => ({ warning: 'Custom warning' }),
       ];
 
       const result = validateConfig(config, { customRules });
@@ -169,7 +176,9 @@ describe('ConfigValidator', () => {
     test('handles custom rule errors gracefully', () => {
       const config = { version: '1.0.0' };
       const customRules = [
-        () => { throw new Error('Rule failed'); }
+        () => {
+          throw new Error('Rule failed');
+        },
       ];
 
       const result = validateConfig(config, { customRules });
@@ -208,7 +217,7 @@ describe('ConfigValidator', () => {
         environment: {},
         tools: {},
         disabled: false,
-        debug: true
+        debug: true,
       };
 
       validateFieldTypes(config, errors);
@@ -221,7 +230,7 @@ describe('ConfigValidator', () => {
       const config = {
         version: 123,
         hooks: [],
-        disabled: 'false'
+        disabled: 'false',
       };
 
       validateFieldTypes(config, errors);
@@ -238,9 +247,7 @@ describe('ConfigValidator', () => {
       const warnings = [];
       const hooks = {
         pre_tool_use: ['hook1.py'],
-        post_tool_use: [
-          { command: 'hook2.py', blocking: true, timeout: 5000 }
-        ]
+        post_tool_use: [{ command: 'hook2.py', blocking: true, timeout: 5000 }],
       };
 
       validateHooks(hooks, errors, warnings);
@@ -253,7 +260,7 @@ describe('ConfigValidator', () => {
       const errors = [];
       const warnings = [];
       const hooks = {
-        unknown_event: ['hook.py']
+        unknown_event: ['hook.py'],
       };
 
       validateHooks(hooks, errors, warnings);
@@ -265,7 +272,7 @@ describe('ConfigValidator', () => {
       const errors = [];
       const warnings = [];
       const hooks = {
-        pre_tool_use: 'not-an-array'
+        pre_tool_use: 'not-an-array',
       };
 
       validateHooks(hooks, errors, warnings);
@@ -279,10 +286,12 @@ describe('ConfigValidator', () => {
       const hooks = {
         pre_tool_use: [
           123, // Invalid type
-          { /* Missing command */ },
+          {
+            /* Missing command */
+          },
           { command: 'hook.py', blocking: 'yes' }, // Invalid blocking type
-          { command: 'hook.py', timeout: '5000' } // Invalid timeout type
-        ]
+          { command: 'hook.py', timeout: '5000' }, // Invalid timeout type
+        ],
       };
 
       validateHooks(hooks, errors, warnings);
@@ -301,7 +310,7 @@ describe('ConfigValidator', () => {
       const environment = {
         NODE_ENV: 'production',
         PORT: 3000,
-        DEBUG: false
+        DEBUG: false,
       };
 
       validateEnvironment(environment, errors, warnings);
@@ -314,15 +323,15 @@ describe('ConfigValidator', () => {
       const errors = [];
       const warnings = [];
       const environment = {
-        'camelCase': 'value',
+        camelCase: 'value',
         'lower-case': 'value',
-        '123_START': 'value'
+        '123_START': 'value',
       };
 
       validateEnvironment(environment, errors, warnings);
 
       expect(warnings).toHaveLength(3);
-      warnings.forEach(warning => {
+      warnings.forEach((warning) => {
         expect(warning).toContain('should follow UPPER_SNAKE_CASE convention');
       });
     });
@@ -335,13 +344,17 @@ describe('ConfigValidator', () => {
         VALID_NUMBER: 123,
         VALID_BOOL: true,
         INVALID_ARRAY: [],
-        INVALID_OBJECT: {}
+        INVALID_OBJECT: {},
       };
 
       validateEnvironment(environment, errors, warnings);
 
-      expect(errors).toContain('Environment variable "INVALID_ARRAY" must be a string, number, or boolean');
-      expect(errors).toContain('Environment variable "INVALID_OBJECT" must be a string, number, or boolean');
+      expect(errors).toContain(
+        'Environment variable "INVALID_ARRAY" must be a string, number, or boolean',
+      );
+      expect(errors).toContain(
+        'Environment variable "INVALID_OBJECT" must be a string, number, or boolean',
+      );
     });
   });
 
@@ -351,7 +364,7 @@ describe('ConfigValidator', () => {
       const warnings = [];
       const tools = {
         bash: { enabled: true, timeout: 30000 },
-        read: { enabled: false }
+        read: { enabled: false },
       };
 
       validateTools(tools, errors, warnings);
@@ -364,7 +377,7 @@ describe('ConfigValidator', () => {
       const errors = [];
       const warnings = [];
       const tools = {
-        'custom-tool': { enabled: true }
+        'custom-tool': { enabled: true },
       };
 
       validateTools(tools, errors, warnings);
@@ -376,7 +389,7 @@ describe('ConfigValidator', () => {
       const errors = [];
       const warnings = [];
       const tools = {
-        bash: 'not-an-object'
+        bash: 'not-an-object',
       };
 
       validateTools(tools, errors, warnings);
@@ -390,8 +403,8 @@ describe('ConfigValidator', () => {
       const tools = {
         bash: {
           enabled: 'yes', // Should be boolean
-          timeout: '5000' // Should be number
-        }
+          timeout: '5000', // Should be number
+        },
       };
 
       validateTools(tools, errors, warnings);
@@ -404,8 +417,8 @@ describe('ConfigValidator', () => {
       const errors = [];
       const warnings = [];
       const tools = {
-        'BASH': { enabled: true },
-        'Read': { enabled: true }
+        BASH: { enabled: true },
+        Read: { enabled: true },
       };
 
       validateTools(tools, errors, warnings);
@@ -418,7 +431,7 @@ describe('ConfigValidator', () => {
     test('validates configuration from file', async () => {
       const config = {
         version: '1.0.0',
-        hooks: { pre_tool_use: ['hook.py'] }
+        hooks: { pre_tool_use: ['hook.py'] },
       };
       fs.readFileSync.mockReturnValue(JSON.stringify(config));
 
@@ -438,7 +451,7 @@ describe('ConfigValidator', () => {
       expect(result).toEqual({
         valid: false,
         errors: ['Failed to read or parse configuration file: File not found'],
-        warnings: []
+        warnings: [],
       });
     });
 
@@ -457,7 +470,7 @@ describe('ConfigValidator', () => {
       const result = {
         valid: true,
         errors: [],
-        warnings: []
+        warnings: [],
       };
 
       const formatted = formatValidationResult(result);
@@ -469,7 +482,7 @@ describe('ConfigValidator', () => {
       const result = {
         valid: false,
         errors: ['Error 1', 'Error 2'],
-        warnings: []
+        warnings: [],
       };
 
       const formatted = formatValidationResult(result);
@@ -484,7 +497,7 @@ describe('ConfigValidator', () => {
       const result = {
         valid: true,
         errors: [],
-        warnings: ['Warning 1', 'Warning 2']
+        warnings: ['Warning 1', 'Warning 2'],
       };
 
       const formatted = formatValidationResult(result);
@@ -499,7 +512,7 @@ describe('ConfigValidator', () => {
       const result = {
         valid: false,
         errors: ['Error 1'],
-        warnings: ['Warning 1']
+        warnings: ['Warning 1'],
       };
 
       const formatted = formatValidationResult(result);
@@ -524,7 +537,7 @@ describe('ConfigValidator', () => {
       const config = {
         version: '1.0.0',
         customField: 'value',
-        anotherField: 123
+        anotherField: 123,
       };
 
       const result = validateConfig(config);
@@ -541,12 +554,12 @@ describe('ConfigValidator', () => {
               command: 'hook.py',
               options: {
                 nested: {
-                  invalid: undefined // undefined should cause JSON stringify to fail
-                }
-              }
-            }
-          ]
-        }
+                  invalid: undefined, // undefined should cause JSON stringify to fail
+                },
+              },
+            },
+          ],
+        },
       };
 
       const result = validateConfig(config);

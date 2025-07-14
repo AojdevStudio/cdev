@@ -1,6 +1,8 @@
-const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
+
+const fs = require('fs-extra');
+
 const Hooks2Rule = require('./hooks2rule');
 
 describe('Hooks2Rule', () => {
@@ -13,7 +15,7 @@ describe('Hooks2Rule', () => {
     tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'hooks2rule-test-'));
     originalCwd = process.cwd();
     process.chdir(tempDir);
-    
+
     hooks2rule = new Hooks2Rule();
   });
 
@@ -28,7 +30,7 @@ describe('Hooks2Rule', () => {
       // Create test hook files
       const hooksDir = path.join(tempDir, '.claude', 'hooks');
       await fs.ensureDir(hooksDir);
-      
+
       const hookContent = `#!/usr/bin/env python3
 # Purpose: Validate TypeScript syntax before editing
 import json
@@ -44,11 +46,11 @@ def validate_typescript():
 if __name__ == "__main__":
     validate_typescript()
 `;
-      
+
       await fs.writeFile(path.join(hooksDir, 'typescript-validator.py'), hookContent);
-      
+
       const hooks = await hooks2rule.discoverFileHooks();
-      
+
       expect(hooks).toHaveLength(1);
       expect(hooks[0].name).toBe('typescript-validator.py');
       expect(hooks[0].type).toBe('file');
@@ -59,11 +61,14 @@ if __name__ == "__main__":
       // Create tiered hook structure
       const tier1Dir = path.join(tempDir, '.claude', 'hooks', 'tier1');
       await fs.ensureDir(tier1Dir);
-      
-      await fs.writeFile(path.join(tier1Dir, 'security-enforcer.py'), '# Security enforcement hook\nprint("Security check")');
-      
+
+      await fs.writeFile(
+        path.join(tier1Dir, 'security-enforcer.py'),
+        '# Security enforcement hook\nprint("Security check")',
+      );
+
       const hooks = await hooks2rule.discoverFileHooks();
-      
+
       expect(hooks).toHaveLength(1);
       expect(hooks[0].tier).toBe('tier1');
       expect(hooks[0].name).toBe('security-enforcer.py');
@@ -73,7 +78,7 @@ if __name__ == "__main__":
       // Create settings file with hooks
       const settingsDir = path.join(tempDir, '.claude');
       await fs.ensureDir(settingsDir);
-      
+
       const settings = {
         hooks: {
           PreToolUse: [
@@ -82,18 +87,19 @@ if __name__ == "__main__":
               hooks: [
                 {
                   type: 'command',
-                  command: 'jq -r \'"\(.tool_input.command) - \(.tool_input.description // "No description")"\' >> ~/.claude/bash-command-log.txt'
-                }
-              ]
-            }
-          ]
-        }
+                  command:
+                    'jq -r \'"\(.tool_input.command) - \(.tool_input.description // "No description")"\' >> ~/.claude/bash-command-log.txt',
+                },
+              ],
+            },
+          ],
+        },
       };
-      
+
       await fs.writeJson(path.join(settingsDir, 'settings.json'), settings);
-      
+
       const hooks = await hooks2rule.discoverSettingsHooks();
-      
+
       expect(hooks).toHaveLength(1);
       expect(hooks[0].type).toBe('settings');
       expect(hooks[0].event).toBe('PreToolUse');
@@ -103,12 +109,12 @@ if __name__ == "__main__":
     it('should handle malformed settings files gracefully', async () => {
       const settingsDir = path.join(tempDir, '.claude');
       await fs.ensureDir(settingsDir);
-      
+
       // Write invalid JSON
       await fs.writeFile(path.join(settingsDir, 'settings.json'), '{ invalid json }');
-      
+
       const hooks = await hooks2rule.discoverSettingsHooks();
-      
+
       expect(hooks).toHaveLength(0);
     });
   });
@@ -122,9 +128,9 @@ if __name__ == "__main__":
 # This hook ensures type safety
 import sys
 `,
-        type: 'file'
+        type: 'file',
       };
-      
+
       const purpose = hooks2rule.extractPurpose(hook);
       expect(purpose).toBe('Validate TypeScript syntax before editing');
     });
@@ -133,9 +139,9 @@ import sys
       const hook = {
         name: 'typescript-validator.py',
         content: 'import sys',
-        type: 'file'
+        type: 'file',
       };
-      
+
       const purpose = hooks2rule.extractPurpose(hook);
       expect(purpose).toBe('validates code or input');
     });
@@ -144,9 +150,9 @@ import sys
       const hook = {
         name: 'test-hook.py',
         content: 'PreToolUse hook implementation',
-        type: 'file'
+        type: 'file',
       };
-      
+
       const eventType = hooks2rule.detectEventType(hook);
       expect(eventType).toBe('PreToolUse');
     });
@@ -155,9 +161,9 @@ import sys
       const hook = {
         name: 'post_tool_use.py',
         content: 'import sys',
-        type: 'file'
+        type: 'file',
       };
-      
+
       const eventType = hooks2rule.detectEventType(hook);
       expect(eventType).toBe('PostToolUse');
     });
@@ -171,9 +177,9 @@ if tool_name == "Bash":
 elif tool_name in ["Write", "Edit"]:
     print("File operations")
 `,
-        type: 'file'
+        type: 'file',
       };
-      
+
       const matchers = hooks2rule.extractToolMatchers(hook);
       expect(matchers).toContain('Bash');
       expect(matchers).toContain('Write');
@@ -193,9 +199,9 @@ def validate():
         sys.exit(2)  # Block execution
     print("Validation passed")
 `,
-        type: 'file'
+        type: 'file',
       };
-      
+
       const behavior = hooks2rule.analyzeBehavior(hook);
       expect(behavior.blocks).toBe(true);
       expect(behavior.logs).toBe(true);
@@ -218,9 +224,9 @@ def check_permissions():
         print("Blocking sensitive operation", file=sys.stderr)
         sys.exit(2)
 `,
-        type: 'file'
+        type: 'file',
       };
-      
+
       const security = hooks2rule.analyzeSecurityFeatures(hook);
       expect(security.hasPermissionChecks).toBe(true);
       expect(security.blocksSensitiveOps).toBe(true);
@@ -238,13 +244,15 @@ def check_permissions():
         behavior: {
           blocks: true,
           validates: true,
-          logs: false
+          logs: false,
         },
-        tier: 'tier1'
+        tier: 'tier1',
       };
-      
+
       const rule = hooks2rule.generateRuleFromAnalysis(analysis);
-      expect(rule).toBe('Before using tools, validates TypeScript syntax and block execution if validation fails (tier1 hook)');
+      expect(rule).toBe(
+        'Before using tools, validates TypeScript syntax and block execution if validation fails (tier1 hook)',
+      );
     });
 
     it('should generate rule from settings hook analysis', () => {
@@ -254,10 +262,10 @@ def check_permissions():
         purpose: 'logs information',
         behavior: {
           logs: true,
-          blocks: false
-        }
+          blocks: false,
+        },
       };
-      
+
       const rule = hooks2rule.generateRuleFromSettingsAnalysis(analysis);
       expect(rule).toBe('Before using Bash tools, logs information and log to file');
     });
@@ -268,10 +276,10 @@ def check_permissions():
         matcher: '',
         purpose: 'sends notifications',
         behavior: {
-          notifies: true
-        }
+          notifies: true,
+        },
       };
-      
+
       const rule = hooks2rule.generateRuleFromSettingsAnalysis(analysis);
       expect(rule).toBe('When sending notifications, sends notifications');
     });
@@ -287,19 +295,19 @@ def check_permissions():
           rule: 'Before using tools, validates TypeScript syntax',
           eventType: 'PreToolUse',
           toolMatchers: ['Edit', 'Write'],
-          path: '/test/path'
-        }
+          path: '/test/path',
+        },
       ];
-      
+
       // Capture console output
       const originalLog = console.log;
       const output = [];
       console.log = (...args) => output.push(args.join(' '));
-      
+
       await hooks2rule.outputMarkdownFormat(rules);
-      
+
       console.log = originalLog;
-      
+
       const fullOutput = output.join('\n');
       expect(fullOutput).toContain('# Claude Code Hook Rules');
       expect(fullOutput).toContain('## Tier 1 - Critical Security & Validation');
@@ -313,19 +321,19 @@ def check_permissions():
           name: 'test-hook',
           rule: 'Before using tools, validates input',
           tier: 'tier1',
-          purpose: 'validates input'
-        }
+          purpose: 'validates input',
+        },
       ];
-      
+
       // Capture console output
       const originalLog = console.log;
       const output = [];
       console.log = (...args) => output.push(args.join(' '));
-      
+
       await hooks2rule.outputClaudeFormat(rules);
-      
+
       console.log = originalLog;
-      
+
       const fullOutput = output.join('\n');
       expect(fullOutput).toContain('# Hook Rules for Claude');
       expect(fullOutput).toContain('- Before using tools, validates input');
@@ -337,19 +345,19 @@ def check_permissions():
         {
           name: 'test-hook',
           rule: 'Test rule',
-          type: 'file'
-        }
+          type: 'file',
+        },
       ];
-      
+
       // Capture console output
       const originalLog = console.log;
       const output = [];
       console.log = (...args) => output.push(args.join(' '));
-      
+
       await hooks2rule.outputRules(rules, { format: 'json' });
-      
+
       console.log = originalLog;
-      
+
       const jsonOutput = output.join('\n');
       const parsed = JSON.parse(jsonOutput);
       expect(parsed).toHaveLength(1);
@@ -364,7 +372,7 @@ def check_permissions():
 # Another comment
 import sys
 `;
-      
+
       const comments = hooks2rule.extractComments(content);
       expect(comments).toContain('This is a comment');
       expect(comments).toContain('Another comment');
@@ -378,9 +386,9 @@ describing the hook purpose
 """
 import sys
 `;
-      
+
       const comments = hooks2rule.extractComments(content);
-      expect(comments.some(c => c.includes('multi-line comment'))).toBe(true);
+      expect(comments.some((c) => c.includes('multi-line comment'))).toBe(true);
     });
   });
 
@@ -416,10 +424,10 @@ import sys
       const hooksDir = path.join(tempDir, '.claude', 'hooks');
       const tier1Dir = path.join(hooksDir, 'tier1');
       const settingsDir = path.join(tempDir, '.claude');
-      
+
       await fs.ensureDir(tier1Dir);
       await fs.ensureDir(settingsDir);
-      
+
       // File-based hook
       const hookContent = `#!/usr/bin/env python3
 # Purpose: Validate TypeScript syntax before editing .ts/.tsx files
@@ -447,9 +455,9 @@ def validate_typescript():
 if __name__ == "__main__":
     validate_typescript()
 `;
-      
+
       await fs.writeFile(path.join(tier1Dir, 'typescript-validator.py'), hookContent);
-      
+
       // Settings-based hook
       const settings = {
         hooks: {
@@ -459,10 +467,11 @@ if __name__ == "__main__":
               hooks: [
                 {
                   type: 'command',
-                  command: 'jq -r \'"\(.tool_input.command) - \(.tool_input.description // "No description")"\' >> ~/.claude/bash-command-log.txt'
-                }
-              ]
-            }
+                  command:
+                    'jq -r \'"\(.tool_input.command) - \(.tool_input.description // "No description")"\' >> ~/.claude/bash-command-log.txt',
+                },
+              ],
+            },
           ],
           PostToolUse: [
             {
@@ -470,33 +479,33 @@ if __name__ == "__main__":
               hooks: [
                 {
                   type: 'command',
-                  command: 'prettier --write "$FILE" 2>/dev/null || true'
-                }
-              ]
-            }
-          ]
-        }
+                  command: 'prettier --write "$FILE" 2>/dev/null || true',
+                },
+              ],
+            },
+          ],
+        },
       };
-      
+
       await fs.writeJson(path.join(settingsDir, 'settings.json'), settings);
-      
+
       // Analyze the complete setup
       const rules = await hooks2rule.generateRules(await hooks2rule.discoverHooks());
-      
+
       expect(rules).toHaveLength(3);
-      
+
       // Check file-based hook
-      const fileHook = rules.find(r => r.name === 'typescript-validator.py');
+      const fileHook = rules.find((r) => r.name === 'typescript-validator.py');
       expect(fileHook).toBeDefined();
       expect(fileHook.tier).toBe('tier1');
       expect(fileHook.rule).toContain('TypeScript syntax');
-      
+
       // Check settings-based hooks
-      const bashHook = rules.find(r => r.event === 'PreToolUse' && r.matcher === 'Bash');
+      const bashHook = rules.find((r) => r.event === 'PreToolUse' && r.matcher === 'Bash');
       expect(bashHook).toBeDefined();
       expect(bashHook.rule).toContain('logs information');
-      
-      const formattingHook = rules.find(r => r.event === 'PostToolUse');
+
+      const formattingHook = rules.find((r) => r.event === 'PostToolUse');
       expect(formattingHook).toBeDefined();
       expect(formattingHook.rule).toContain('formats code');
     });

@@ -1,5 +1,6 @@
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
 
 /**
  * HookOrganizer - Organizes hooks into tier directories and maintains references
@@ -11,7 +12,7 @@ class HookOrganizer {
       tier1: path.join(hooksPath, 'tier1'),
       tier2: path.join(hooksPath, 'tier2'),
       tier3: path.join(hooksPath, 'tier3'),
-      utils: path.join(hooksPath, 'utils')
+      utils: path.join(hooksPath, 'utils'),
     };
     this.hookRegistry = path.join(hooksPath, 'hook-registry.json');
   }
@@ -28,32 +29,32 @@ class HookOrganizer {
       version: '1.0.0',
       lastUpdated: new Date().toISOString(),
       hooks: {},
-      tiers: {}
+      tiers: {},
     };
 
     // Organize hooks by tier
     for (const [tier, hooks] of Object.entries(categorizedHooks)) {
       registry.tiers[tier] = [];
-      
+
       for (const hook of hooks) {
         // Determine target path
         const targetPath = await this.getTargetPath(hook, tier);
-        
+
         // Store hook information in registry
         registry.hooks[hook.name] = {
           name: hook.name,
-          tier: tier,
+          tier,
           category: hook.category,
           description: hook.description,
           importance: hook.importance,
           originalPath: hook.path,
           currentPath: targetPath,
           size: hook.size,
-          modified: hook.modified
+          modified: hook.modified,
         };
-        
+
         registry.tiers[tier].push(hook.name);
-        
+
         // Update hook object with new path
         hook.currentPath = targetPath;
       }
@@ -61,7 +62,7 @@ class HookOrganizer {
 
     // Save registry
     await fs.writeJson(this.hookRegistry, registry, { spaces: 2 });
-    
+
     return registry;
   }
 
@@ -88,7 +89,7 @@ class HookOrganizer {
         return targetPath;
       }
     }
-    
+
     // Standard tier path
     return path.join(this.tierPaths[tier], hook.name);
   }
@@ -101,18 +102,18 @@ class HookOrganizer {
       tier1: [],
       tier2: [],
       tier3: [],
-      utils: []
+      utils: [],
     };
 
     // Try to load from registry first
     if (await fs.pathExists(this.hookRegistry)) {
       const registry = await fs.readJson(this.hookRegistry);
-      
+
       for (const [hookName, hookInfo] of Object.entries(registry.hooks)) {
-        const tier = hookInfo.tier;
+        const { tier } = hookInfo;
         categorized[tier].push(hookInfo);
       }
-      
+
       return categorized;
     }
 
@@ -140,25 +141,21 @@ class HookOrganizer {
 
       if (stat.isDirectory()) {
         // Recursively scan subdirectories (for utils)
-        const subHooks = await this.scanDirectory(
-          itemPath, 
-          tier, 
-          path.join(subPath, item)
-        );
+        const subHooks = await this.scanDirectory(itemPath, tier, path.join(subPath, item));
         hooks.push(...subHooks);
       } else if (item.endsWith('.py')) {
         // Read hook content
         const content = await fs.readFile(itemPath, 'utf-8');
-        
+
         hooks.push({
           name: item,
           path: itemPath,
           currentPath: itemPath,
-          tier: tier,
-          content: content,
+          tier,
+          content,
           size: stat.size,
           modified: stat.mtime,
-          subPath: subPath
+          subPath,
         });
       }
     }
@@ -182,15 +179,15 @@ class HookOrganizer {
     // Update registry if it exists
     if (await fs.pathExists(this.hookRegistry)) {
       const registry = await fs.readJson(this.hookRegistry);
-      
+
       if (registry.hooks[hookName]) {
         registry.hooks[hookName].tier = toTier;
         registry.hooks[hookName].currentPath = toPath;
-        
+
         // Update tier arrays
-        registry.tiers[fromTier] = registry.tiers[fromTier].filter(h => h !== hookName);
+        registry.tiers[fromTier] = registry.tiers[fromTier].filter((h) => h !== hookName);
         registry.tiers[toTier].push(hookName);
-        
+
         registry.lastUpdated = new Date().toISOString();
         await fs.writeJson(this.hookRegistry, registry, { spaces: 2 });
       }
@@ -284,7 +281,7 @@ These utilities are imported and used by various hooks. They provide common func
 
 ## Note:
 Do not run these files directly. They are meant to be imported by hooks.
-`
+`,
     };
 
     for (const [tier, content] of Object.entries(readmeContents)) {
@@ -302,19 +299,19 @@ Do not run these files directly. They are meant to be imported by hooks.
       version: '1.0.0',
       generated: new Date().toISOString(),
       tiers: {},
-      totalHooks: 0
+      totalHooks: 0,
     };
 
     for (const [tier, hooks] of Object.entries(categorizedHooks)) {
       manifest.tiers[tier] = {
         description: this.getTierDescription(tier),
         hookCount: hooks.length,
-        hooks: hooks.map(hook => ({
+        hooks: hooks.map((hook) => ({
           name: hook.name,
           category: hook.category,
           description: hook.description,
-          size: hook.size
-        }))
+          size: hook.size,
+        })),
       };
       manifest.totalHooks += hooks.length;
     }
@@ -330,9 +327,9 @@ Do not run these files directly. They are meant to be imported by hooks.
       tier1: 'Critical security and validation hooks',
       tier2: 'Important quality and standards hooks',
       tier3: 'Optional convenience and notification hooks',
-      utils: 'Shared utilities and helper functions'
+      utils: 'Shared utilities and helper functions',
     };
-    
+
     return descriptions[tier] || 'Unknown tier';
   }
 }
