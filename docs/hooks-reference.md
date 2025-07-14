@@ -15,20 +15,20 @@
 
 ## Quick Reference
 
-| Hook Name | Tier | Purpose | Can Disable? |
-|-----------|------|---------|--------------|
-| pre_tool_use.py | 1 | Blocks dangerous operations & date hallucinations | ❌ No |
-| typescript-validator.py | 1 | Validates TypeScript syntax | ❌ No |
-| commit-message-validator.py | 1 | Enforces commit conventions | ❌ No |
-| task-completion-enforcer.py | 1 | Blocks commits with TODOs | ❌ No |
-| pnpm-enforcer.py | 1 | Prevents package manager conflicts | ❌ No |
-| api-standards-checker.py | 2 | Ensures REST/GraphQL standards | ✅ Yes |
-| code-quality-reporter.py | 2 | Reports code metrics | ✅ Yes |
-| import-organizer.py | 2 | Organizes import statements | ✅ Yes |
-| universal-linter.py | 2 | Multi-language linting | ✅ Yes |
-| notification.py | 3 | System notifications | ✅ Yes |
-| stop.py | 3 | Session cleanup | ✅ Yes |
-| post_tool_use.py | 3 | Action logging | ✅ Yes |
+| Hook Name                   | Tier | Purpose                                           | Can Disable? |
+| --------------------------- | ---- | ------------------------------------------------- | ------------ |
+| pre_tool_use.py             | 1    | Blocks dangerous operations & date hallucinations | ❌ No        |
+| typescript-validator.py     | 1    | Validates TypeScript syntax                       | ❌ No        |
+| commit-message-validator.py | 1    | Enforces commit conventions                       | ❌ No        |
+| task-completion-enforcer.py | 1    | Blocks commits with TODOs                         | ❌ No        |
+| pnpm-enforcer.py            | 1    | Prevents package manager conflicts                | ❌ No        |
+| api-standards-checker.py    | 2    | Ensures REST/GraphQL standards                    | ✅ Yes       |
+| code-quality-reporter.py    | 2    | Reports code metrics                              | ✅ Yes       |
+| import-organizer.py         | 2    | Organizes import statements                       | ✅ Yes       |
+| universal-linter.py         | 2    | Multi-language linting                            | ✅ Yes       |
+| notification.py             | 3    | System notifications                              | ✅ Yes       |
+| stop.py                     | 3    | Session cleanup                                   | ✅ Yes       |
+| post_tool_use.py            | 3    | Action logging                                    | ✅ Yes       |
 
 ## What Are Hooks?
 
@@ -37,6 +37,7 @@ Think of hooks as **intelligent assistants** that watch over Claude's shoulder, 
 ### Why Hooks Matter
 
 Without hooks:
+
 ```bash
 # Claude might accidentally:
 - Edit .env files with secrets
@@ -46,6 +47,7 @@ Without hooks:
 ```
 
 With hooks:
+
 ```bash
 # Claude is protected:
 ✅ Dangerous commands are blocked
@@ -78,9 +80,11 @@ Results processed/logged
 These hooks **cannot be disabled** - they protect your codebase from critical errors.
 
 #### 1. pre_tool_use.py
+
 **Purpose**: Your first line of defense against dangerous operations and AI hallucinations
 
 **What it does**:
+
 - Blocks destructive commands (`rm -rf`, `dd`, `format`)
 - Prevents editing sensitive files (`.env`, private keys)
 - Enforces command template reading before creating new commands
@@ -90,6 +94,7 @@ These hooks **cannot be disabled** - they protect your codebase from critical er
 **Example protections**:
 
 1. **Dangerous Command Protection**:
+
 ```bash
 # This would be blocked:
 rm -rf /important-directory
@@ -99,6 +104,7 @@ rm -rf /important-directory
 ```
 
 2. **Date Hallucination Prevention** (NEW):
+
 ```python
 # When writing "Released in January 2025":
 📅 Date Awareness Check: Content contains date references
@@ -107,6 +113,7 @@ rm -rf /important-directory
 ```
 
 3. **Command Template Protection**:
+
 ```bash
 # When creating new command without reading template:
 ❌ BLOCKED: You must read and understand the custom command template first!
@@ -118,24 +125,28 @@ rm -rf /important-directory
 ---
 
 #### 2. typescript-validator.py
+
 **Purpose**: Ensures TypeScript code is valid before saving
 
 **What it does**:
+
 - Runs TypeScript compiler in check mode
 - Validates syntax and basic type errors
 - Prevents broken code from entering codebase
 - Provides clear error messages
 
 **Example**:
+
 ```typescript
 // Claude tries to save:
 const user: string = 123; // Type error!
 
 // Hook response:
-"TypeScript Error: Type 'number' is not assignable to type 'string'"
+("TypeScript Error: Type 'number' is not assignable to type 'string'");
 ```
 
-**Configuration**: 
+**Configuration**:
+
 ```json
 {
   "strictMode": true,
@@ -147,15 +158,18 @@ const user: string = 123; // Type error!
 ---
 
 #### 3. commit-message-validator.py
+
 **Purpose**: Maintains clean, semantic git history
 
 **What it does**:
+
 - Enforces conventional commit format
 - Validates commit message length
 - Ensures proper emoji usage
 - Checks for issue references
 
 **Valid formats**:
+
 ```
 ✅ feat: add user authentication
 ✅ 🐛 fix: resolve memory leak in renderer
@@ -165,6 +179,7 @@ const user: string = 123; // Type error!
 ```
 
 **Configuration**:
+
 ```json
 {
   "enforceEmoji": true,
@@ -176,15 +191,18 @@ const user: string = 123; // Type error!
 ---
 
 #### 4. task-completion-enforcer.py
+
 **Purpose**: Ensures no TODOs or FIXMEs are left behind
 
 **What it does**:
+
 - Scans for TODO/FIXME comments
 - Blocks commits with unresolved tasks
 - Tracks task completion
 - Generates task reports
 
 **Example**:
+
 ```javascript
 // This would block commit:
 function processPayment() {
@@ -194,6 +212,7 @@ function processPayment() {
 ```
 
 **Configuration**:
+
 ```json
 {
   "blockOnTodo": true,
@@ -205,15 +224,18 @@ function processPayment() {
 ---
 
 #### 5. pnpm-enforcer.py
+
 **Purpose**: Prevents package manager conflicts
 
 **What it does**:
+
 - Detects pnpm projects
 - Blocks npm/yarn commands
 - Suggests correct pnpm alternatives
 - Maintains lockfile integrity
 
 **Example**:
+
 ```bash
 # In pnpm project, this is blocked:
 npm install express
@@ -227,15 +249,18 @@ npm install express
 These hooks improve workflow but can be selectively disabled.
 
 #### 6. api-standards-checker.py
+
 **Purpose**: Ensures consistent API design
 
 **What it does**:
+
 - Validates REST endpoint patterns
 - Checks GraphQL schema conventions
 - Ensures consistent error responses
 - Validates OpenAPI specifications
 
 **Example validations**:
+
 ```javascript
 ✅ GET /api/v1/users
 ✅ POST /api/v1/users
@@ -246,15 +271,18 @@ These hooks improve workflow but can be selectively disabled.
 ---
 
 #### 7. code-quality-reporter.py
+
 **Purpose**: Real-time code quality feedback
 
 **What it does**:
+
 - Identifies code smells
 - Suggests refactoring opportunities
 - Checks complexity metrics
 - Monitors technical debt
 
 **Metrics tracked**:
+
 - Cyclomatic complexity
 - Function length
 - Duplicate code
@@ -263,15 +291,18 @@ These hooks improve workflow but can be selectively disabled.
 ---
 
 #### 8. import-organizer.py
+
 **Purpose**: Maintains clean import statements
 
 **What it does**:
+
 - Groups imports by type (external, internal, relative)
 - Sorts alphabetically within groups
 - Removes unused imports
 - Adds missing imports
 
 **Before**:
+
 ```javascript
 import { z } from 'zod';
 import React from 'react';
@@ -280,6 +311,7 @@ import axios from 'axios';
 ```
 
 **After**:
+
 ```javascript
 // External
 import axios from 'axios';
@@ -293,15 +325,18 @@ import { useUser } from './hooks';
 ---
 
 #### 9. universal-linter.py
+
 **Purpose**: Multi-language code quality
 
 **What it does**:
+
 - Detects file type automatically
 - Applies appropriate linter
 - Provides consistent formatting
 - Supports 15+ languages
 
 **Supported linters**:
+
 - JavaScript/TypeScript: ESLint
 - Python: Flake8, Black
 - Go: golint
@@ -313,15 +348,18 @@ import { useUser } from './hooks';
 Nice-to-have features for enhanced development experience.
 
 #### 10. notification.py
+
 **Purpose**: System notifications for important events
 
 **What it does**:
+
 - Notifies when Claude needs input
 - Alerts on task completion
 - Error notifications
 - Progress updates
 
 **Notification types**:
+
 - 🔔 Input needed
 - ✅ Task complete
 - ❌ Error occurred
@@ -330,9 +368,11 @@ Nice-to-have features for enhanced development experience.
 ---
 
 #### 11. stop.py
+
 **Purpose**: Graceful session cleanup
 
 **What it does**:
+
 - Saves work progress
 - Closes open resources
 - Updates task status
@@ -341,9 +381,11 @@ Nice-to-have features for enhanced development experience.
 ---
 
 #### 12. post_tool_use.py
+
 **Purpose**: Action logging and analysis
 
 **What it does**:
+
 - Logs all tool usage
 - Tracks action patterns
 - Generates usage reports
@@ -361,15 +403,15 @@ import sys
 def main():
     # Read input from Claude
     input_data = json.load(sys.stdin)
-    
+
     tool_name = input_data.get('tool_name')
     tool_input = input_data.get('tool_input', {})
-    
+
     # Your validation logic here
     if should_block_action(tool_name, tool_input):
         print("BLOCKED: Reason for blocking")
         sys.exit(1)
-    
+
     # Allow action
     sys.exit(0)
 
@@ -400,18 +442,19 @@ if __name__ == "__main__":
 ## Hook Configuration
 
 ### Global Configuration
+
 Location: `~/.cdev/hooks.config.json`
 
 ```json
 {
   "enabled": true,
   "tiers": {
-    "1": true,  // Cannot actually be disabled
+    "1": true, // Cannot actually be disabled
     "2": true,
     "3": true
   },
   "individual": {
-    "notification": false,  // Disable specific hook
+    "notification": false, // Disable specific hook
     "import-organizer": {
       "grouping": "custom",
       "sortOrder": ["react", "external", "internal"]
@@ -421,6 +464,7 @@ Location: `~/.cdev/hooks.config.json`
 ```
 
 ### Project Configuration
+
 Location: `.cdev/hooks.config.json`
 
 ```json
@@ -428,12 +472,10 @@ Location: `.cdev/hooks.config.json`
   "extends": "global",
   "overrides": {
     "typescript-validator": {
-      "strictMode": false  // Project-specific setting
+      "strictMode": false // Project-specific setting
     }
   },
-  "custom": [
-    ".cdev/hooks/my-custom-hook.py"
-  ]
+  "custom": [".cdev/hooks/my-custom-hook.py"]
 }
 ```
 
@@ -442,6 +484,7 @@ Location: `.cdev/hooks.config.json`
 ### Common Issues
 
 #### Hook Blocking Legitimate Action
+
 ```bash
 # Temporarily bypass specific hook
 CDEV_DISABLE_HOOK=typescript-validator claude
@@ -451,6 +494,7 @@ cdev debug-hook typescript-validator
 ```
 
 #### Hook Not Running
+
 ```bash
 # Verify hook is installed
 cdev list-hooks
@@ -460,6 +504,7 @@ echo '{"tool_name":"Edit","tool_input":{}}' | python .claude/hooks/pre_tool_use.
 ```
 
 #### Performance Issues
+
 ```bash
 # Profile hook execution
 cdev profile-hooks
@@ -471,6 +516,7 @@ cdev hook-stats
 ### Debug Mode
 
 Enable detailed hook logging:
+
 ```bash
 export CDEV_HOOK_DEBUG=true
 claude
@@ -479,6 +525,7 @@ claude
 ## Advanced Hook Patterns
 
 ### Conditional Hooks
+
 ```python
 # Only run in production branches
 if get_current_branch().startswith('prod'):
@@ -486,6 +533,7 @@ if get_current_branch().startswith('prod'):
 ```
 
 ### Async Hooks
+
 ```python
 # Non-blocking notifications
 async def notify_team():
@@ -493,6 +541,7 @@ async def notify_team():
 ```
 
 ### Hook Chains
+
 ```python
 # One hook triggers another
 if validation_passed:
@@ -522,18 +571,22 @@ log_action(action: str, details: dict)
 ## Additional Hooks
 
 ### pre_tool_use_command_template_guard.py
+
 **Purpose**: Ensures proper command creation workflow
 
 **What it does**:
+
 - Validates command file structure
 - Enforces template compliance
 - Prevents malformed commands
 - Guides proper command creation
 
 ### subagent_stop.py
+
 **Purpose**: Manages sub-agent lifecycle
 
 **What it does**:
+
 - Tracks sub-agent completion
 - Aggregates sub-agent results
 - Manages resource cleanup
@@ -571,7 +624,9 @@ const processPayment = (amount) => {
 
 ```markdown
 // Scenario: Claude updates README
+
 ## Version History
+
 - v1.0.0 - Released January 2025
 - v1.1.0 - Planned for Q2 2025
 
@@ -594,6 +649,7 @@ router.get('/api/getUsers', fetchUsers);
 ## Hook Development Best Practices
 
 ### 1. Performance Optimization
+
 ```python
 # ❌ Bad: Reading entire file for every check
 content = open(large_file).read()
@@ -608,6 +664,7 @@ with open(large_file) as f:
 ```
 
 ### 2. User-Friendly Messages
+
 ```python
 # ❌ Bad: Technical jargon
 print("E_INVALID_AST_NODE: Unexpected token at position 42")
@@ -618,6 +675,7 @@ print("Hint: Check if all parentheses are properly matched")
 ```
 
 ### 3. Graceful Degradation
+
 ```python
 # ✅ Good: Handle missing dependencies
 try:
@@ -631,6 +689,7 @@ except ImportError:
 ## Integration with CI/CD
 
 ### GitHub Actions
+
 ```yaml
 name: CDEV Hooks Validation
 on: [push, pull_request]
@@ -647,6 +706,7 @@ jobs:
 ```
 
 ### Pre-commit Integration
+
 ```yaml
 # .pre-commit-config.yaml
 repos:
@@ -664,7 +724,7 @@ repos:
 The cdev hook system provides multiple layers of protection and enhancement for AI-assisted development:
 
 1. **Safety First**: Tier 1 hooks prevent catastrophic mistakes before they happen
-2. **Quality Assurance**: Tier 2 hooks maintain code standards automatically  
+2. **Quality Assurance**: Tier 2 hooks maintain code standards automatically
 3. **Developer Experience**: Tier 3 hooks enhance workflow with notifications and logging
 4. **Extensibility**: Custom hooks allow project-specific validations
 5. **AI Awareness**: Special features like date detection prevent common AI hallucinations
@@ -680,6 +740,6 @@ Whether you're working solo or in a team, hooks ensure that AI assistance remain
 
 ---
 
-*For more examples and patterns, check the [hooks directory](.claude/hooks/) in your cdev installation.*
+_For more examples and patterns, check the [hooks directory](.claude/hooks/) in your cdev installation._
 
 **Last Updated**: July 2025

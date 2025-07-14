@@ -126,6 +126,7 @@ templates/
 **Purpose**: Standard Claude Code hooks that provide core functionality
 
 **Hooks**:
+
 - `notification.py` - User notifications
 - `pre_tool_use.py` - Pre-execution hooks
 - `post_tool_use.py` - Post-execution hooks
@@ -139,11 +140,13 @@ templates/
 **Purpose**: Hooks that only apply to specific project types
 
 **Hooks**:
+
 - `typescript-validator.py` - TypeScript projects only
 - `pnpm-enforcer.py` - pnpm-based projects only
 - `api-standards-checker.py` - API-heavy projects
 
 **Detection Logic**:
+
 - **TypeScript**: Check for `tsconfig.json`, `*.ts` files
 - **pnpm**: Check for `pnpm-lock.yaml`, `.pnpmrc`
 - **API**: Check for `pages/api/`, `app/api/`, `routes/` directories
@@ -153,6 +156,7 @@ templates/
 **Purpose**: Advanced workflow features that enhance the parallel development experience
 
 **Hooks**:
+
 - `code-quality-reporter.py` - Detailed quality reporting
 - `import-organizer.py` - Code organization improvements
 - `commit-message-validator.py` - Validates git commit messages
@@ -166,34 +170,27 @@ templates/
 #### 3.1 Detection Methods
 
 **File-based Detection**:
+
 ```javascript
 const detectionRules = {
   typescript: [
     'tsconfig.json',
     '*.ts files count > 0',
-    'package.json dependencies include typescript'
+    'package.json dependencies include typescript',
   ],
-  pnpm: [
-    'pnpm-lock.yaml',
-    '.pnpmrc',
-    'package.json packageManager field includes pnpm'
-  ],
-  nextjs: [
-    'next.config.js',
-    'next.config.ts',
-    'package.json dependencies include next'
-  ],
+  pnpm: ['pnpm-lock.yaml', '.pnpmrc', 'package.json packageManager field includes pnpm'],
+  nextjs: ['next.config.js', 'next.config.ts', 'package.json dependencies include next'],
   react: [
     'package.json dependencies include react',
     '*.jsx files count > 0',
-    '*.tsx files count > 0'
+    '*.tsx files count > 0',
   ],
   api: [
     'pages/api directory exists',
     'app/api directory exists',
     'routes/ directory exists',
-    'api/ directory exists'
-  ]
+    'api/ directory exists',
+  ],
 };
 ```
 
@@ -209,11 +206,11 @@ const detectionRules = {
 
 ```javascript
 const confidenceWeights = {
-  configFile: 10,      // tsconfig.json, next.config.js
-  lockFile: 8,         // pnpm-lock.yaml
-  packageJson: 6,      // dependencies in package.json
-  fileCount: 4,        // *.ts, *.jsx file counts
-  directory: 3         // api/, routes/ directories
+  configFile: 10, // tsconfig.json, next.config.js
+  lockFile: 8, // pnpm-lock.yaml
+  packageJson: 6, // dependencies in package.json
+  fileCount: 4, // *.ts, *.jsx file counts
+  directory: 3, // api/, routes/ directories
 };
 ```
 
@@ -225,9 +222,16 @@ const confidenceWeights = {
 {
   "permissions": {
     "allow": [
-      "Read", "Write", "Edit", "MultiEdit",
-      "Grep", "Glob", "LS",
-      "Bash(git *)", "Bash(npm *)", "Bash(node *)",
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Grep",
+      "Glob",
+      "LS",
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(node *)",
       "mcp__*"
     ],
     "deny": []
@@ -253,24 +257,26 @@ const confidenceWeights = {
 #### 4.3 Path Resolution System
 
 **Placeholders**:
+
 - `{{PYTHON_INTERPRETER}}` - Detected Python executable
 - `{{HOOKS_PATH}}` - Installed hooks directory path
 - `{{PROJECT_ROOT}}` - Project root directory
 - `{{PACKAGE_ROOT}}` - NPM package installation directory
 
 **Resolution Logic**:
+
 ```javascript
 function resolvePaths(template, context) {
   const replacements = {
     '{{PYTHON_INTERPRETER}}': context.pythonPath,
     '{{HOOKS_PATH}}': context.hooksPath,
     '{{PROJECT_ROOT}}': context.projectRoot,
-    '{{PACKAGE_ROOT}}': context.packageRoot
+    '{{PACKAGE_ROOT}}': context.packageRoot,
   };
 
   return JSON.stringify(template).replace(
     /\{\{(\w+)\}\}/g,
-    (match, key) => replacements[`{{${key}}}`] || match
+    (match, key) => replacements[`{{${key}}}`] || match,
   );
 }
 ```
@@ -280,11 +286,13 @@ function resolvePaths(template, context) {
 #### 5.1 Python Interpreter Detection
 
 **Detection Order**:
+
 1. `python3` (preferred on Unix systems)
 2. `python` (fallback)
 3. `py` (Windows Python launcher)
 
 **Validation Requirements**:
+
 - Verify executable exists in PATH
 - Check Python version compatibility (>= 3.7)
 - Test basic script execution
@@ -292,6 +300,7 @@ function resolvePaths(template, context) {
 #### 5.2 Path Handling
 
 **Requirements**:
+
 - Use Node.js path module for all path operations
 - Convert backslashes to forward slashes in JSON
 - Handle spaces in paths with proper quoting
@@ -300,6 +309,7 @@ function resolvePaths(template, context) {
 #### 5.3 Shell Command Execution
 
 **Platform-specific considerations**:
+
 - **Windows**: Use cmd shell with proper escaping
 - **Unix**: Use `/bin/bash` with POSIX compatibility
 - Handle permission issues gracefully
@@ -344,12 +354,14 @@ function resolvePaths(template, context) {
 #### 6.2 User Interface Requirements
 
 **Question Types**:
+
 - Confirmation prompts for recommendations
 - Multi-select for optional hooks
 - Text input for custom paths
 - Yes/no for feature toggles
 
 **Progress Indicators**:
+
 - Phase completion status
 - File copying progress
 - Validation checkpoints
@@ -360,6 +372,7 @@ function resolvePaths(template, context) {
 #### 7.1 Existing Configuration Detection
 
 **Supported Formats**:
+
 - `settings.local.json` (current format)
 - `settings.json` (Claude Code standard)
 - Legacy configuration files
@@ -434,14 +447,7 @@ function resolvePaths(template, context) {
   "bin": {
     "claude-hooks": "bin/claude-hooks.js"
   },
-  "files": [
-    "bin/",
-    "lib/",
-    "hooks/",
-    "templates/",
-    "README.md",
-    "CHANGELOG.md"
-  ],
+  "files": ["bin/", "lib/", "hooks/", "templates/", "README.md", "CHANGELOG.md"],
   "engines": {
     "node": ">=14.0.0"
   },

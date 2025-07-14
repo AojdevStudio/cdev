@@ -30,18 +30,21 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Execute structured 7-phase Test-Driven Development workflow with agent_context.json files.
 
 **Key Features**:
+
 - Systematic 7-phase TDD approach
 - Quality-focused development process
 - Progressive validation and testing
 - Comprehensive documentation
 
 **Usage**:
+
 ```bash
 /agent-start                     # Load agent_context.json from current directory
 /agent-start ./agent-workspace   # Specific workspace path
 ```
 
 **7-Phase Workflow**:
+
 1. 🔍 **Explore** - Understand requirements and codebase
 2. 📋 **Plan** - Create implementation strategy
 3. 🧪 **Write Tests** - TDD red phase (tests first)
@@ -59,12 +62,14 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Intelligently transform any task format into concurrent sub-agents for orchestrated execution within a single Claude instance.
 
 **Key Features**:
+
 - Universal format support (markdown, text, JSON, Linear issues)
 - Intelligent LLM-based task decomposition
 - Concurrent sub-agent orchestration
 - Progress tracking and error recovery
 
 **Usage**:
+
 ```bash
 /orchestrate                                    # Auto-detect agent_context.json
 /orchestrate PUBLISHING-PLAN.md                 # Parse markdown checklist
@@ -75,6 +80,7 @@ This document provides a comprehensive reference for all custom commands availab
 ```
 
 **How it works**:
+
 1. Parses input using TaskParser (auto-detects format)
 2. Uses SubagentDecomposer with LLM for intelligent grouping
 3. Creates concurrent sub-agents for parallel execution
@@ -90,6 +96,7 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Validate completion and safely integrate agent work with automated git workflow.
 
 **Usage**:
+
 ```bash
 /agent-commit                    # Commit current agent work
 /agent-commit --message "Custom" # Use custom commit message
@@ -97,6 +104,7 @@ This document provides a comprehensive reference for all custom commands availab
 ```
 
 **Features**:
+
 - Validates all checklist items complete
 - Generates contextual commit messages
 - Handles merge conflicts
@@ -109,6 +117,7 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Comprehensive view of parallel workflow progress across all agents.
 
 **Usage**:
+
 ```bash
 /agent-status                    # Show all agents
 /agent-status --filter active    # Show only active agents
@@ -117,6 +126,7 @@ This document provides a comprehensive reference for all custom commands availab
 ```
 
 **Output includes**:
+
 - Agent completion percentages
 - Dependency status
 - Recommended next actions
@@ -140,7 +150,7 @@ This document provides a comprehensive reference for all custom commands availab
 2. **Intelligent Protocol Selection**
    - Uses scoring algorithm:
      ```
-     Project Complexity = 
+     Project Complexity =
        (File Count × 0.2) +
        (Language Diversity × 0.3) +
        (Framework Count × 0.2) +
@@ -155,6 +165,7 @@ This document provides a comprehensive reference for all custom commands availab
    - Includes appropriate workflow protocols
 
 **Usage**:
+
 ```bash
 /init-protocol                                    # Auto-analyze and generate
 /init-protocol --force                           # Overwrite existing CLAUDE.md
@@ -163,6 +174,7 @@ This document provides a comprehensive reference for all custom commands availab
 ```
 
 **How It Works**:
+
 1. Analyzes project using shell commands in Context section
 2. Determines complexity based on codebase characteristics
 3. Selects appropriate protocols from framework template
@@ -170,6 +182,7 @@ This document provides a comprehensive reference for all custom commands availab
 5. Generates complete CLAUDE.md with all relevant frameworks
 
 **Benefits**:
+
 - Simple as `/init` to use
 - Powerful as the protocol framework in output
 - Intelligent adaptation to your specific project needs
@@ -184,12 +197,14 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Analyzes project structure and generates comprehensive README following established templates with Feynman Technique for clarity.
 
 **Usage**:
+
 ```bash
 /generate-readme                          # Generate to README.md
 /generate-readme --output docs/README.md  # Custom output location
 ```
 
 **Features**:
+
 - Template-based generation with variable substitution
 - Project structure analysis using EZA CLI
 - Feynman Technique for clear explanations
@@ -205,6 +220,7 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Comprehensive TDD workflow with systematic exploration, planning, testing, and implementation phases.
 
 **Workflow Phases**:
+
 1. **Explore**: Understand codebase and requirements
 2. **Plan**: Create detailed implementation strategy
 3. **Test**: Write comprehensive tests first (TDD)
@@ -213,6 +229,7 @@ This document provides a comprehensive reference for all custom commands availab
 6. **Commit**: Finalize with proper git workflow
 
 **Usage**:
+
 ```bash
 /explore-plan-test-code           # Full workflow
 /explore-plan-test-code --phase plan  # Start at specific phase
@@ -225,12 +242,14 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Intelligent git commit workflow with automated message generation and validation.
 
 **Usage**:
+
 ```bash
 /commit                          # Auto-generate commit message
 /commit --message "feat: add feature"  # Custom message
 ```
 
 **Features**:
+
 - Analyzes staged changes
 - Generates semantic commit messages
 - Validates commit conventions
@@ -245,6 +264,7 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Generate visual file tree representations with filtering and formatting options.
 
 **Usage**:
+
 ```bash
 /file-tree                       # Current directory tree
 /file-tree src/                  # Specific directory
@@ -261,6 +281,7 @@ This document provides a comprehensive reference for all custom commands availab
 **Description**: Run project tests with coverage analysis and reporting.
 
 **Usage**:
+
 ```bash
 /test                           # Run all tests
 /test --coverage                # Include coverage report
@@ -312,14 +333,15 @@ To add a new custom command:
 
 1. Create command file in `.claude/commands/`
 2. Follow the established format or use the command `.claude/commands/create-command.md` to create a new command:
+
    ```markdown
    ---
    allowed-tools: Read, Write, Edit, MultiEdit, Bash, Grep, Task
    description: Brief description of command purpose
    ---
-   
+
    # Command Name
-   
+
    Detailed description...
    ```
 

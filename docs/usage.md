@@ -55,6 +55,7 @@ The `pre_tool_use` hook validates actions before Claude executes them:
 ```
 
 **Common validations:**
+
 - TypeScript type checking
 - Import statement verification
 - File permission checks
@@ -74,6 +75,7 @@ The `post_tool_use` hook reports on completed actions:
 ```
 
 **Common reports:**
+
 - Code complexity metrics
 - Test coverage changes
 - New TODO/FIXME items
@@ -167,6 +169,7 @@ node scripts/decompose-parallel.cjs PROJ-123
 ```
 
 **What happens during decomposition:**
+
 - AI analyzes the issue description and requirements
 - Identifies distinct work domains (frontend, backend, testing, etc.)
 - Creates agents with exclusive file ownership
@@ -176,6 +179,7 @@ node scripts/decompose-parallel.cjs PROJ-123
 **Step 4: Review the Output**
 
 After decomposition, you'll see:
+
 ```
 🧠 Analyzing: "Add user authentication with OAuth"
 📊 Created 4 parallel agents:
@@ -208,6 +212,7 @@ Next steps:
 **Step 6: Work with Agents**
 
 In each opened editor window:
+
 ```bash
 # Start Claude
 claude
@@ -239,18 +244,21 @@ claude
 
 **LLM Configuration Error:**
 If you see "LLM analysis failed", check:
+
 - Your API key is valid
 - LLM provider is correctly set
 - You have credits/quota available
 
 **No Agents Created:**
 This happens when:
+
 - The task is too simple for parallelization
 - The issue description lacks detail
 - Consider adding more context to the Linear issue
 
 **File Conflicts:**
 The system prevents this by design, but if you see conflicts:
+
 - Check that agents have exclusive file ownership
 - Review the deployment plan for overlaps
 - Report the issue - this shouldn't happen!
@@ -316,6 +324,7 @@ Create a new React component with TypeScript, tests, and stories.
 Usage: /create-component ComponentName
 
 This will:
+
 1. Create component file with TypeScript interface
 2. Add unit tests with React Testing Library
 3. Create Storybook stories
@@ -325,6 +334,7 @@ This will:
 ### Using Commands
 
 In Claude:
+
 ```
 You: /create-component UserProfile
 Claude: I'll create a new UserProfile component with tests and stories...
@@ -342,6 +352,7 @@ Extract component logic into a custom React hook.
 Usage: /refactor-to-hook ComponentName hookName
 
 Steps:
+
 1. Analyze component for extractable logic
 2. Create new hook with TypeScript
 3. Update component to use hook
@@ -431,12 +442,14 @@ your-project/
 ### 2. Effective Hook Usage
 
 **DO:**
+
 - ✓ Let hooks guide better practices
 - ✓ Review hook output for insights
 - ✓ Customize hooks for your team's standards
 - ✓ Use debug mode when troubleshooting
 
 **DON'T:**
+
 - ✗ Disable hooks to bypass validation
 - ✗ Ignore repeated hook warnings
 - ✗ Modify core hook files directly
@@ -445,11 +458,14 @@ your-project/
 ### 3. Linear Integration Tips
 
 **Effective Issue Writing:**
+
 ```markdown
 # Good Linear issue for decomposition
+
 Title: Implement user authentication system
 
 Description:
+
 1. Create login/signup forms with validation
 2. Implement JWT authentication middleware
 3. Add password reset functionality
@@ -458,6 +474,7 @@ Description:
 ```
 
 **Parallel Development:**
+
 - Keep agents focused on specific domains
 - Use semantic task descriptions
 - Define clear acceptance criteria
@@ -466,6 +483,7 @@ Description:
 ### 4. Custom Command Guidelines
 
 **Effective Commands:**
+
 - Start with a clear action verb
 - Include usage examples
 - List expected outcomes
@@ -495,6 +513,7 @@ Description:
 ### 6. Team Collaboration
 
 **Shared Configuration:**
+
 ```bash
 # Commit team settings
 git add .claude/settings.json
@@ -506,12 +525,14 @@ echo ".claude/settings.local.json" >> .gitignore
 ```
 
 **Documentation:**
+
 ```markdown
 # .claude/README.md
 
 ## Team Claude Configuration
 
 Our project uses these hooks:
+
 - TypeScript validation (strict mode)
 - API standards (REST/OpenAPI)
 - Commit message format (conventional)

@@ -19,12 +19,14 @@ This guide helps you resolve common issues with Claude Code Hooks.
 ### NPX Command Not Found
 
 **Problem:**
+
 ```bash
 $ npx @aojdevstudio/cdev get PROJ-123
 command not found: npx
 ```
 
 **Solution:**
+
 ```bash
 # Ensure Node.js is installed with npm 5.2+
 node --version  # Should be v16+
@@ -41,11 +43,13 @@ cdev get PROJ-123
 ### Permission Denied During Installation
 
 **Problem:**
+
 ```bash
 Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'
 ```
 
 **Solution:**
+
 ```bash
 # Option 1: Use npx (recommended)
 npx @aojdevstudio/cdev get PROJ-123
@@ -65,11 +69,13 @@ nvm use 18
 ### Python Not Found
 
 **Problem:**
+
 ```bash
 Error: Python executable not found
 ```
 
 **Solution:**
+
 ```bash
 # Check Python installation
 python3 --version
@@ -96,6 +102,7 @@ export CLAUDE_PYTHON_PATH=$(which python3)
 **Problem:** Hooks are installed but not executing when using Claude.
 
 **Diagnosis:**
+
 ```bash
 # Check hook configuration
 cat .claude/settings.json | jq .hooks
@@ -111,6 +118,7 @@ claude --show-settings
 **Solutions:**
 
 1. **Verify hook paths:**
+
    ```json
    {
      "hooks": {
@@ -121,6 +129,7 @@ claude --show-settings
    ```
 
 2. **Check file permissions:**
+
    ```bash
    chmod +x .claude/hooks/*.py
    ls -la .claude/hooks/
@@ -135,22 +144,25 @@ claude --show-settings
 ### Hook Timeout Errors
 
 **Problem:**
+
 ```
 Hook execution timed out after 5000ms
 ```
 
 **Solution:**
+
 ```json
 // .claude/settings.json
 {
-  "hookTimeout": 10000,  // Increase timeout to 10 seconds
-  "asyncHooks": true     // Enable async execution
+  "hookTimeout": 10000, // Increase timeout to 10 seconds
+  "asyncHooks": true // Enable async execution
 }
 ```
 
 ### TypeScript Validation Failing
 
 **Problem:**
+
 ```
 TypeScript validation failed: Cannot find module 'typescript'
 ```
@@ -158,11 +170,13 @@ TypeScript validation failed: Cannot find module 'typescript'
 **Solutions:**
 
 1. **Install TypeScript locally:**
+
    ```bash
    npm install --save-dev typescript
    ```
 
 2. **Configure TypeScript path:**
+
    ```json
    {
      "typescript": {
@@ -187,6 +201,7 @@ TypeScript validation failed: Cannot find module 'typescript'
 ### Linear API Key Issues
 
 **Problem:**
+
 ```
 Error: Linear API key not found or invalid
 ```
@@ -194,14 +209,16 @@ Error: Linear API key not found or invalid
 **Solutions:**
 
 1. **Set environment variable:**
+
    ```bash
    export LINEAR_API_KEY="lin_api_xxxxxxxxxxxxx"
-   
+
    # Add to shell profile
    echo 'export LINEAR_API_KEY="lin_api_xxxxxxxxxxxxx"' >> ~/.bashrc
    ```
 
 2. **Use .env file:**
+
    ```bash
    echo "LINEAR_API_KEY=lin_api_xxxxxxxxxxxxx" >> .env
    ```
@@ -217,6 +234,7 @@ Error: Linear API key not found or invalid
 ### Issue Not Found
 
 **Problem:**
+
 ```
 Error: Linear issue PROJ-123 not found
 ```
@@ -224,11 +242,12 @@ Error: Linear issue PROJ-123 not found
 **Solutions:**
 
 1. **Check issue ID format:**
+
    ```bash
    # Correct formats:
    PROJ-123
    ABC-1234
-   
+
    # Incorrect:
    proj-123 (lowercase)
    123 (missing prefix)
@@ -242,6 +261,7 @@ Error: Linear issue PROJ-123 not found
 ### Git Worktree Errors
 
 **Problem:**
+
 ```
 fatal: could not create work tree dir: Permission denied
 ```
@@ -249,11 +269,13 @@ fatal: could not create work tree dir: Permission denied
 **Solutions:**
 
 1. **Check Git version:**
+
    ```bash
    git --version  # Should be 2.0+
    ```
 
 2. **Verify repository state:**
+
    ```bash
    git status
    git worktree list
@@ -270,6 +292,7 @@ fatal: could not create work tree dir: Permission denied
 ### LLM Analysis Failed Error
 
 **Problem:**
+
 ```
 ❌ LLM analysis failed. Please configure your LLM provider:
    1. Copy .env.example to .env
@@ -281,11 +304,13 @@ fatal: could not create work tree dir: Permission denied
 **Solutions:**
 
 1. **Create .env file from example:**
+
    ```bash
    cp .env.example .env
    ```
 
 2. **Configure your LLM provider:**
+
    ```bash
    # For OpenAI
    LLM_PROVIDER=openai
@@ -304,10 +329,11 @@ fatal: could not create work tree dir: Permission denied
    ```
 
 3. **Verify configuration:**
+
    ```bash
    # Check environment variables
    grep "LLM_" .env
-   
+
    # Test the configuration
    node scripts/decompose-parallel.cjs --test
    ```
@@ -315,23 +341,27 @@ fatal: could not create work tree dir: Permission denied
 ### Unsupported LLM Provider
 
 **Problem:**
+
 ```
 Error: Unsupported LLM provider: azure
 ```
 
 **Solution:**
 Currently supported providers are:
+
 - `openai` - OpenAI GPT models
 - `anthropic` - Claude models
 - `openrouter` - Access to multiple models (recommended)
 
 To use other providers, you can:
+
 1. Use OpenRouter which supports many providers
 2. Contribute a provider implementation to the project
 
 ### API Key Invalid or Expired
 
 **Problem:**
+
 ```
 Error: Authentication failed - check your API key
 ```
@@ -344,11 +374,12 @@ Error: Authentication failed - check your API key
    - OpenRouter: Starts with `sk-or-v1-`
 
 2. **Test API key directly:**
+
    ```bash
    # OpenAI
    curl https://api.openai.com/v1/models \
      -H "Authorization: Bearer $OPENAI_API_KEY"
-   
+
    # Anthropic
    curl https://api.anthropic.com/v1/messages \
      -H "x-api-key: $ANTHROPIC_API_KEY" \
@@ -365,6 +396,7 @@ Error: Authentication failed - check your API key
 ### Script Not Found
 
 **Problem:**
+
 ```
 bash: node scripts/decompose-parallel.cjs: No such file or directory
 ```
@@ -372,10 +404,11 @@ bash: node scripts/decompose-parallel.cjs: No such file or directory
 **Solutions:**
 
 1. **Ensure you're in the project root:**
+
    ```bash
    # Check current directory
    pwd
-   
+
    # Should contain these files
    ls scripts/decompose-parallel.cjs
    ```
@@ -389,11 +422,13 @@ bash: node scripts/decompose-parallel.cjs: No such file or directory
 ### No Linear Issue Cached
 
 **Problem:**
+
 ```
 Error: No cached Linear issue found for TASK-123
 ```
 
 **Solution:**
+
 ```bash
 # First cache the Linear issue
 ./scripts/cache-linear-issue.sh TASK-123
@@ -405,12 +440,14 @@ node scripts/decompose-parallel.cjs TASK-123
 ### Decomposition Produces No Agents
 
 **Problem:**
+
 ```
 Warning: Task too simple for parallel decomposition
 ```
 
 **Solution:**
 This occurs when the task is too small to benefit from parallelization. Consider:
+
 1. Combining with related tasks
 2. Adding more detail to the Linear issue
 3. Working on it sequentially instead
@@ -418,6 +455,7 @@ This occurs when the task is too small to benefit from parallelization. Consider
 ### Next Steps After Decomposition
 
 After running `decompose-parallel.cjs`, you'll see output like:
+
 ```
 ✅ Deployment plan created: shared/deployment-plans/task-123-deployment-plan.json
 📊 Created 4 parallel agents:
@@ -435,16 +473,19 @@ Next steps:
 **Follow these steps:**
 
 1. **Review the deployment plan:**
+
    ```bash
    cat shared/deployment-plans/task-123-deployment-plan.json | jq
    ```
 
 2. **Spawn agent worktrees:**
+
    ```bash
    ./scripts/spawn-agents.sh shared/deployment-plans/task-123-deployment-plan.json
    ```
 
 3. **Work with each agent:**
+
    ```bash
    # Cursor will auto-open for each agent
    # In each window:
@@ -453,6 +494,7 @@ Next steps:
    ```
 
 4. **Monitor progress:**
+
    ```bash
    ./scripts/monitor-agents.sh
    # or in Claude:
@@ -474,11 +516,13 @@ Next steps:
 **Solutions:**
 
 1. **Profile hook performance:**
+
    ```bash
    time python3 .claude/hooks/pre_tool_use.py < sample-input.json
    ```
 
 2. **Disable expensive validations:**
+
    ```json
    {
      "validation": {
@@ -503,6 +547,7 @@ Next steps:
 **Solutions:**
 
 1. **Limit file scanning:**
+
    ```json
    {
      "scanning": {
@@ -527,6 +572,7 @@ Next steps:
 ### Windows
 
 **Path Separator Issues:**
+
 ```bash
 # Error: Cannot find module at path\to\file
 
@@ -539,6 +585,7 @@ Next steps:
 ```
 
 **Python Command:**
+
 ```bash
 # Windows often uses 'python' instead of 'python3'
 where python
@@ -553,6 +600,7 @@ python --version
 ### macOS
 
 **Shell Integration:**
+
 ```bash
 # If using zsh (default on macOS Catalina+)
 echo 'export LINEAR_API_KEY="xxx"' >> ~/.zshrc
@@ -564,6 +612,7 @@ source ~/.bash_profile
 ```
 
 **Python SSL Certificates:**
+
 ```bash
 # If SSL errors occur
 pip3 install --upgrade certifi
@@ -572,6 +621,7 @@ pip3 install --upgrade certifi
 ### Linux
 
 **Python Package Dependencies:**
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get install python3-dev python3-pip
@@ -588,12 +638,14 @@ sudo pacman -S python python-pip
 ### Common Errors and Solutions
 
 **"Module not found: fs"**
+
 ```bash
 # Ensure you're not trying to use Node.js modules in browser
 # Check if running in correct environment
 ```
 
 **"ENOENT: no such file or directory"**
+
 ```bash
 # Verify file paths
 ls -la .claude/
@@ -604,6 +656,7 @@ git clone https://github.com/AOJDevStudio/cdev.git temp-cdev && cp -r temp-cdev/
 ```
 
 **"Invalid hook response"**
+
 ```bash
 # Ensure hooks return valid JSON
 python3 .claude/hooks/pre_tool_use.py test
@@ -616,6 +669,7 @@ python3 .claude/hooks/pre_tool_use.py test
 ```
 
 **"Git worktree already exists"**
+
 ```bash
 # Remove existing worktree
 git worktree remove ../project-work-trees/branch-name
@@ -673,6 +727,7 @@ cdev status
 ### Before Asking for Help
 
 1. **Update to latest version:**
+
    ```bash
    npm update -g cdev
    ```
@@ -707,6 +762,7 @@ cdev status
 When reporting issues, include:
 
 1. **Environment info:**
+
    ```bash
    node --version
    npm --version
@@ -716,12 +772,14 @@ When reporting issues, include:
    ```
 
 2. **Error messages:**
+
    ```bash
    # Copy full error output
    # Include stack traces
    ```
 
 3. **Steps to reproduce:**
+
    ```markdown
    1. Run command X
    2. See error Y

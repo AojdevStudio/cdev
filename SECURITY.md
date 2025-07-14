@@ -9,6 +9,7 @@ We take security seriously. If you discover a security vulnerability in CDEV (Cl
 **DO NOT** open a public issue for security vulnerabilities.
 
 Instead:
+
 1. Email: admin@kamdental.com or open a private security advisory on GitHub
 2. Include a detailed description of the vulnerability
 3. Provide steps to reproduce the issue

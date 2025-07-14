@@ -16,6 +16,7 @@
 ## Pre-Publishing Checklist
 
 ### 1. 🔍 Code Quality & Testing
+
 - [ ] **Run all tests**: `npm test`
 - [ ] **Run integration tests**: `npm run test:integration`
 - [ ] **Check test coverage**: `npm run test:coverage` (ensure adequate coverage)
@@ -24,6 +25,7 @@
 - [ ] **Fix any issues**: `npm run quality:fix`
 
 ### 2. 🔒 Security & Dependencies
+
 - [ ] **Security audit**: `npm run security:audit`
 - [ ] **Security check**: `npm run security:check`
 - [ ] **Check for outdated dependencies**: `npm outdated`
@@ -31,6 +33,7 @@
 - [ ] **Check .npmignore or files field**: Ensure sensitive files aren't published
 
 ### 3. 📦 Package Configuration
+
 - [ ] **Version number**: Currently 1.0.0 - is this correct?
 - [ ] ⚠️ **Package name**: "cdev" is **ALREADY TAKEN** on npm! Need to choose alternative:
   - Suggested alternatives:
@@ -48,7 +51,8 @@
 - [ ] **Bin field**: CLI entry point is executable
 
 ### 4. 📚 Documentation
-- [ ] **README.md**: 
+
+- [ ] **README.md**:
   - Clear installation instructions
   - Usage examples
   - Feature list
@@ -59,6 +63,7 @@
 - [ ] **Command documentation**: All commands documented
 
 ### 5. 🧪 Installation Testing
+
 - [ ] **Local install test**: `npm pack` then install tarball
 - [ ] **Global install test**: Test with `-g` flag
 - [ ] **npx test**: Verify `npx @aojdevstudio/cdev` works
@@ -66,6 +71,7 @@
 - [ ] **Node version compatibility**: Test with minimum Node version (16.0.0)
 
 ### 6. 🔧 Functionality Verification
+
 - [ ] **CLI commands work**: Test all major commands
 - [ ] **Hook system functions**: Verify pre/post hooks
 - [ ] **Linear integration**: Test with API if applicable
@@ -73,6 +79,7 @@
 - [ ] **Help command**: `cdev --help` provides useful info
 
 ### 7. 📋 Final Checks
+
 - [ ] **Git status clean**: All changes committed
 - [ ] **Git tags**: Ready to tag release after publish
 - [ ] **Branch**: On main/master branch
@@ -82,6 +89,7 @@
 ## Publishing Steps
 
 1. **Final quality check**:
+
    ```bash
    npm run quality
    npm test
@@ -89,12 +97,14 @@
    ```
 
 2. **Dry run** (see what would be published):
+
    ```bash
    npm pack --dry-run
    npm publish --dry-run
    ```
 
 3. **Build and verify package**:
+
    ```bash
    npm pack
    # Check the generated .tgz file
@@ -102,16 +112,18 @@
    ```
 
 4. **Publish to npm**:
+
    ```bash
    npm publish
    ```
 
 5. **Post-publish**:
+
    ```bash
    # Tag the release
    git tag -a v1.0.0 -m "Release version 1.0.0"
    git push origin v1.0.0
-   
+
    # Create GitHub release
    # Test installation
    npm install -g @aojdevstudio/cdev
@@ -123,6 +135,7 @@
 If issues are discovered post-publish:
 
 1. **Deprecate broken version**:
+
    ```bash
    npm deprecate cdev@1.0.0 "Critical bug - use 1.0.1 instead"
    ```
@@ -150,16 +163,19 @@ If issues are discovered post-publish:
 ## Future Roadmap Template
 
 ### Version 1.1.0 (Next Minor)
+
 - [ ] Feature: _[To be determined based on user feedback]_
 - [ ] Enhancement: _[Performance improvements]_
 - [ ] Fix: _[Bug fixes from 1.0.0]_
 
 ### Version 2.0.0 (Next Major)
+
 - [ ] Breaking Change: _[API improvements]_
 - [ ] Feature: _[Major new capabilities]_
 - [ ] Architecture: _[Scalability improvements]_
 
 ### Backlog Ideas
+
 - Enhanced Linear integration features
 - Additional framework support
 - Plugin system for custom hooks
@@ -179,7 +195,7 @@ npm run prepublishOnly
 # Quality checks
 npm run quality
 
-# Security validation  
+# Security validation
 npm run security:check && npm run security:audit
 
 # Test everything
@@ -196,11 +212,13 @@ npm publish
 ## Summary of Key Findings
 
 ### 🚨 Must Fix Before Publishing:
+
 1. **Package name "cdev" is taken** - Must choose alternative:
    - Recommended: `@aojdevstudio/cdev` (scoped package)
    - Alternative: `claude-code-dev`
 
 ### ✅ Ready for Publishing:
+
 1. **Linting & Formatting**: ESLint + Prettier configured
 2. **Testing**: Jest framework with unit and integration tests
 3. **Security**: Security check scripts in place
@@ -208,6 +226,7 @@ npm publish
 5. **Build Process**: prepublishOnly script validates everything
 
 ### 📋 Next Steps:
+
 1. Choose and update package name throughout codebase
 2. Run full test suite: `npm test`
 3. Check code quality: `npm run quality`
@@ -216,4 +235,5 @@ npm publish
 6. Follow publishing steps in order
 
 ### 🎯 Recommendation:
+
 Use `@aojdevstudio/cdev` as the package name. This maintains the "cdev" branding while avoiding conflicts, and scoped packages are increasingly common for organization-owned packages.

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New `/orchestrate` command with universal task format support (markdown, text, JSON, Linear issues)
 - Intelligent sub-agent decomposition using LLM for concurrent execution
 - Task parser utility for automatic format detection
@@ -17,19 +18,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dry-run mode for previewing sub-agent execution plans
 - Progress tracking for concurrent sub-agent execution
 - Error recovery and retry mechanisms for failed sub-agents
+- Python to JavaScript/CJS script migration infrastructure
+- YAML documentation format for AI docs with structured metadata
+- Comprehensive linting configuration with Ruff for Python scripts
+- UV package manager integration for Python dependency management
+- Standalone scripts guide and migration documentation
+- Script wrapper pattern for seamless Python-to-JS transition
 
 ### Changed
+
 - Restored `/agent-start` command to original 7-phase TDD workflow for agent_context.json files
 - Separated flexible task orchestration into new `/orchestrate` command
 - Improved command documentation with Feynman Technique for clarity
 - Enhanced pre_tool_use hook with better validation and error messages
+- Migrated all Python scripts to JavaScript/CJS format for consistency
+- Updated project configuration with ESLint ignore patterns
+- Enhanced GitHub Actions workflows for testing and publishing
+- Improved Prettier configuration for better code formatting
+
+### Fixed
+
+- Python linting issues across hook scripts
+- Script execution permissions and shebang lines
+- Test file imports and module references
 
 ### Removed
+
 - Obsolete `/update-claude` command
+- Legacy Python script implementations (moved to archived/)
+- Test files for migrated Python scripts
 
 ## [1.0.0] - 2025-07-11
 
 ### Added
+
 - Initial public release of @aojdevstudio/cdev
 - Comprehensive linting and formatting setup with ESLint and Prettier
 - `.editorconfig` file for consistent coding styles across editors
@@ -58,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multiple package manager support (npm, pnpm, yarn, bun)
 
 ### Changed
+
 - Package name from `cdev` to `@aojdevstudio/cdev` due to npm naming conflict
 - Enhanced CLAUDE.md with comprehensive meta-cognitive framework
 - Improved user guidance for decompose-parallel.cjs workflow
@@ -68,24 +91,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - License from MIT to CC-BY-NC-SA-4.0
 
 ### Removed
+
 - Obsolete deployment plan files
 - Obsolete TypeScript files and test infrastructure
 - Redundant directory structure and files
 - Hardcoded secrets from test files
 
 ### Fixed
+
 - Syntax error in monitor-agents.sh for macOS watch compatibility
 - LLM decomposer configuration and API issues
 - Security vulnerabilities in example API keys
 - Date inaccuracies in roadmap and documentation
 
 ### Security
+
 - Removed hardcoded API keys from source code
 - Added comprehensive security check script
 - Enhanced .npmignore patterns for sensitive files
 - Implemented pre-publish security validation
 
 ## Links
+
 - [npm Package](https://www.npmjs.com/package/@aojdevstudio/cdev)
 - [GitHub Repository](https://github.com/AOJDevStudio/cdev)
 - [Documentation](https://github.com/AOJDevStudio/cdev/tree/main/docs)

@@ -5,6 +5,7 @@ This guide helps you test CDEV locally before publishing to NPM.
 ## Prerequisites
 
 1. Ensure your CDEV package is ready:
+
 ```bash
 cd /path/to/cdev
 npm install
@@ -115,30 +116,36 @@ npm install -g /path/to/cdev
 ## Testing Checklist
 
 ### Basic Functionality
+
 - [ ] `cdev help` shows command list
 - [ ] `cdev --version` shows correct version
 - [ ] Commands run without Node.js errors
 
 ### Linear Integration
+
 - [ ] `cdev get ISSUE-ID` caches issue
 - [ ] `.linear-cache/` directory created
 - [ ] Issue JSON file contains correct data
 
 ### Task Decomposition
+
 - [ ] `cdev split ISSUE-ID` creates deployment plan
 - [ ] `shared/deployment-plans/` directory created
 - [ ] JSON plan has correct structure
 
 ### Agent Management
+
 - [ ] `cdev run plan.json` spawns worktrees
 - [ ] Git worktrees created in correct location
 - [ ] Agent context files generated
 
 ### Status Monitoring
+
 - [ ] `cdev status` shows worktree status
 - [ ] Filters work (`ready`, `complete`, etc.)
 
 ### Integration
+
 - [ ] `cdev commit` validates checklist
 - [ ] Merge process works correctly
 - [ ] Cleanup removes worktrees
@@ -146,6 +153,7 @@ npm install -g /path/to/cdev
 ## Common Issues During Testing
 
 ### Issue: Command not found
+
 ```bash
 # Ensure global install or link
 npm list -g | grep cdev
@@ -156,6 +164,7 @@ npm config get prefix
 ```
 
 ### Issue: Hooks not working
+
 ```bash
 # Check Python is available
 python3 --version
@@ -165,6 +174,7 @@ python3 .claude/hooks/pre_tool_use.py
 ```
 
 ### Issue: Scripts fail
+
 ```bash
 # Make scripts executable
 chmod +x scripts/*.sh
@@ -176,6 +186,7 @@ which bash
 ## Cleanup After Testing
 
 ### Remove npm link
+
 ```bash
 # In test project
 npm unlink cdev
@@ -185,6 +196,7 @@ npm unlink
 ```
 
 ### Remove installed package
+
 ```bash
 # If installed locally
 npm uninstall cdev
@@ -194,6 +206,7 @@ npm uninstall -g cdev
 ```
 
 ### Clean up files
+
 ```bash
 rm -rf .claude/
 rm -rf scripts/
@@ -229,6 +242,7 @@ echo "# Test Project" > README.md
 ## Debugging During Testing
 
 Enable debug output:
+
 ```bash
 export CDEV_DEBUG=true
 export NODE_ENV=development
@@ -238,6 +252,7 @@ cdev get PROJ-123 --verbose
 ```
 
 Check logs:
+
 ```bash
 # If your package creates logs
 tail -f logs/*.log
@@ -246,6 +261,7 @@ tail -f logs/*.log
 ## Next Steps
 
 Once testing is complete and everything works:
+
 1. Update version in package.json if needed
 2. Run `npm publish` to publish to NPM
 3. Test installation from NPM registry

@@ -7,6 +7,7 @@ The enhanced `/agent-start` command now supports intelligent transformation of v
 ## Key Features
 
 ### 1. Universal Format Support
+
 - **Markdown Checklists**: Parse `- [ ]` format from .md files
 - **Numbered Lists**: Handle `1.` or `1)` formats
 - **Plain Text**: Simple line-by-line task lists
@@ -15,12 +16,14 @@ The enhanced `/agent-start` command now supports intelligent transformation of v
 - **Direct Text**: Quick tasks from command line
 
 ### 2. Intelligent Task Decomposition
+
 - Uses LLM to group related tasks
 - Creates concurrent sub-agents for parallel execution
 - Identifies dependencies automatically
 - Optimizes for single-worktree execution
 
 ### 3. Concurrent Orchestration
+
 - Spawns sub-agents using Claude's Task tool
 - Manages concurrent execution phases
 - Tracks progress across all sub-agents
@@ -29,6 +32,7 @@ The enhanced `/agent-start` command now supports intelligent transformation of v
 ## Usage Examples
 
 ### Basic Usage
+
 ```bash
 # Auto-detect agent_context.json in current directory
 /agent-start
@@ -52,6 +56,7 @@ The enhanced `/agent-start` command now supports intelligent transformation of v
 ### Real-World Example: Publishing Plan
 
 When you run:
+
 ```bash
 /agent-start PUBLISHING-PLAN.md
 ```
@@ -72,6 +77,7 @@ The command will:
 ## How It Works
 
 ### 1. Task Parsing
+
 The `TaskParser` class automatically detects and parses various formats:
 
 ```javascript
@@ -81,6 +87,7 @@ const parsed = await parser.parse(input);
 ```
 
 ### 2. Sub-agent Decomposition
+
 The `SubagentDecomposer` uses LLM to create optimal groupings:
 
 ```javascript
@@ -90,18 +97,18 @@ const decomposition = await decomposer.decomposeForSubagents(tasks);
 ```
 
 ### 3. Concurrent Execution
+
 Sub-agents are launched via the Task tool and run concurrently:
 
 ```javascript
 // Phase 1: Launch concurrent sub-agents
-const results = await Promise.all(
-  phase.concurrent.map(agentId => launchSubagent(context))
-);
+const results = await Promise.all(phase.concurrent.map((agentId) => launchSubagent(context)));
 ```
 
 ## Configuration
 
 ### Environment Variables
+
 ```bash
 # LLM Provider (optional - falls back to rule-based)
 LLM_PROVIDER=openai  # or anthropic, openrouter, ollama
@@ -114,6 +121,7 @@ OPENROUTER_API_KEY=your-key
 ```
 
 ### Supported File Locations
+
 - Current directory: `./agent_context.json`
 - Relative paths: `../tasks/checklist.md`
 - Absolute paths: `/home/user/projects/tasks.txt`
@@ -121,19 +129,24 @@ OPENROUTER_API_KEY=your-key
 ## Advanced Features
 
 ### Dry Run Mode
+
 Preview the decomposition without executing:
+
 ```bash
 /agent-start PUBLISHING-PLAN.md --dry-run
 ```
 
 Output shows:
+
 - Proposed sub-agents
 - Task assignments
 - Execution phases
 - Dependencies
 
 ### Progress Tracking
+
 Real-time progress updates during execution:
+
 ```
 📊 Overall progress: 67%
 ✅ validation_subagent: Complete
@@ -142,6 +155,7 @@ Real-time progress updates during execution:
 ```
 
 ### Error Recovery
+
 - Automatic retry for failed sub-agents
 - Saves partial results
 - Detailed error reporting
@@ -149,28 +163,33 @@ Real-time progress updates during execution:
 ## Task Format Examples
 
 ### Markdown Checklist
+
 ```markdown
 ## Code Quality
+
 - [ ] Run all tests
 - [ ] Check linting
 - [ ] Format code
 
 ## Documentation
+
 - [ ] Update README
 - [ ] Write changelog
 ```
 
 ### JSON Array
+
 ```json
 {
   "tasks": [
-    {"text": "Run tests", "priority": "high"},
-    {"text": "Update docs", "priority": "medium"}
+    { "text": "Run tests", "priority": "high" },
+    { "text": "Update docs", "priority": "medium" }
   ]
 }
 ```
 
 ### Plain Text
+
 ```
 Run all unit tests
 Fix linting errors
@@ -188,16 +207,20 @@ Deploy to staging
 ## Troubleshooting
 
 ### No LLM API Key
+
 If you see: `⚠️ No API key found, using rule-based analysis only`
+
 - The tool will still work using pattern-based grouping
 - For best results, configure an LLM provider
 
 ### Task Parsing Issues
+
 - Ensure proper markdown formatting for checklists
 - Use consistent formatting within a file
 - Check file encoding (UTF-8 recommended)
 
 ### Sub-agent Failures
+
 - Check individual sub-agent logs in `/shared/coordination/`
 - Review error files: `error-<agentId>.json`
 - Retry with `--dry-run` to validate plan

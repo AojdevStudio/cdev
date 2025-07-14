@@ -18,18 +18,24 @@ This guide covers all installation methods for Claude Code Hooks, from quick set
 Before installing Claude Code Hooks, ensure you have:
 
 1. **Node.js v16.0.0 or higher**
+
    ```bash
    node --version  # Should output v16.0.0 or higher
    ```
 
 2. **Git v2.0.0 or higher**
+
    ```bash
    git --version  # Should output 2.0.0 or higher
    ```
 
-3. **Python v3.7 or higher**
+3. **Python v3.7 or higher with UV package manager**
+
    ```bash
    python3 --version  # Should output Python 3.7 or higher
+   
+   # Install UV package manager
+   curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
 4. **Claude Code installed**
@@ -54,10 +60,11 @@ npx @aojdevstudio/cdev get PROJ-123
 After installing CDEV globally, you need to set up the hooks and scripts in your project:
 
 1. **Clone the hooks and scripts**
+
    ```bash
    # Navigate to your project
    cd your-project
-   
+
    # Get the necessary files from the CDEV repository
    git clone https://github.com/AOJDevStudio/cdev.git temp-cdev
    cp -r temp-cdev/.claude .
@@ -66,14 +73,15 @@ After installing CDEV globally, you need to set up the hooks and scripts in your
    ```
 
 2. **Set up environment variables**
+
    ```bash
    # Create .env file from example
    cp .env.example .env
-   
+
    # Edit .env and configure:
    # Linear API (optional, for issue tracking)
    LINEAR_API_KEY=lin_api_xxxxx
-   
+
    # LLM Configuration (required for decompose-parallel.cjs)
    LLM_PROVIDER=openrouter  # or "openai" or "anthropic"
    LLM_MODEL=mistralai/mistral-large-2411
@@ -83,6 +91,16 @@ After installing CDEV globally, you need to set up the hooks and scripts in your
 3. **Make scripts executable**
    ```bash
    chmod +x scripts/*.sh
+   chmod +x scripts/python/*.py
+   ```
+
+4. **Verify Python scripts setup**
+   ```bash
+   # Test that Python scripts are working
+   ./scripts/python/test-locally.py --help
+   
+   # Run security check
+   ./scripts/python/security-check.py
    ```
 
 ## Manual Setup
@@ -238,6 +256,7 @@ logs/
 ### 4. Configure IDE Integration
 
 For VS Code:
+
 ```json
 {
   "claude.hooksPath": ".claude/hooks",
@@ -294,6 +313,7 @@ npm pkg delete scripts.claude:spawn
 ### Installation Fails
 
 **Permission Denied**
+
 ```bash
 # Better: use a Node version manager
 nvm use 18
@@ -304,6 +324,7 @@ npx @aojdevstudio/cdev get PROJ-123
 ```
 
 **Python Not Found**
+
 ```bash
 # Install Python 3
 # macOS
@@ -317,6 +338,7 @@ sudo apt-get install python3 python3-pip
 ```
 
 **Git Worktree Issues**
+
 ```bash
 # Ensure Git is updated
 git --version  # Should be 2.0.0+
@@ -328,6 +350,7 @@ git config --global extensions.worktreeConfig true
 ### Hooks Not Working
 
 **Check Claude Settings**
+
 ```bash
 # Verify hooks are configured
 cat .claude/settings.json
@@ -337,6 +360,7 @@ python3 .claude/hooks/pre_tool_use.py test
 ```
 
 **Debug Mode**
+
 ```bash
 # Enable verbose logging
 export CLAUDE_DEBUG=true
@@ -348,6 +372,7 @@ tail -f logs/claude-hooks.log
 ### Package Manager Conflicts
 
 **Lock File Conflicts**
+
 ```bash
 # When using the scripts, ensure you use the right package manager
 # Check which lockfile exists
@@ -395,6 +420,15 @@ export CLAUDE_ENV=development
     npm install -g @aojdevstudio/cdev
     # Copy hooks and scripts from your repository
     # (assumes they're already committed to your repo)
+
+- name: Setup Python and UV
+  run: |
+    # Install UV package manager
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    
+    # Make Python scripts executable
+    chmod +x scripts/python/*.py
 ```
 
 ## Next Steps

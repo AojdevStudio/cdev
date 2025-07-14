@@ -57,13 +57,36 @@ npm update -g @aojdevstudio/cdev
 ✅ Automatic Claude configuration with CLAUDE.md generation  
 ✅ Intelligent project analysis and complexity scoring  
 ✅ Cross-platform support (Windows, macOS, Linux)  
-✅ Multiple package managers (npm, pnpm, yarn, bun)  
+✅ Multiple package managers (npm, pnpm, yarn, bun)
+
+### 🐍 Python Scripts Requirements
+
+CDEV now uses Python scripts with UV package manager for improved performance and cross-platform compatibility:
+
+**Prerequisites:**
+- Python 3.11 or higher
+- UV package manager ([Installation Guide](docs/uv-installation-guide.md))
+
+```bash
+# Quick UV installation
+# macOS
+brew install uv
+
+# Linux/WSL
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+All Python scripts are self-contained with inline dependencies - no virtual environment setup required!
 
 ⸻
 
 ⚡ Quick Start Options
 
 **Option 1: Interactive Setup (Recommended)**
+
 1. Run `npx @aojdevstudio/cdev` in your project
 2. Let CDEV analyze your project structure automatically
 3. Choose between simple or advanced protocol generation
@@ -71,6 +94,7 @@ npm update -g @aojdevstudio/cdev
 5. Start using enhanced Claude commands immediately
 
 **Option 2: Manual Installation**
+
 1. Clone the repository
 
 ```bash
@@ -90,21 +114,31 @@ npm link
 ## 🚀 Two Powerful Workflows
 
 ### 1. Parallel Agent Workflow (Multiple Claude Instances)
+
 Perfect for large features requiring true parallel development:
 
 ```bash
 # Decompose a Linear issue into parallel agents
 cdev decompose LINEAR-123
+# Uses: scripts/python/decompose-parallel.py
 
 # Spawn agents in separate Git worktrees
 cdev spawn deployment-plan.json
+# Uses: scripts/python/spawn-agents.py
 # Opens: frontend_agent, backend_agent, test_agent in separate directories
+
+# Monitor agent progress
+cdev status
+# Uses: scripts/python/monitor-agents.py
 
 # Each developer/Claude instance works independently
 # Merge when complete
+cdev commit
+# Uses: scripts/python/agent-commit.py
 ```
 
 ### 2. Concurrent Sub-Agent Workflow (Single Claude Instance)
+
 Ideal for complex tasks within one conversation:
 
 ```bash
@@ -122,12 +156,14 @@ Ideal for complex tasks within one conversation:
 ## 🎯 Intelligent Commands
 
 ### /agent-start - 7-Phase TDD Workflow
+
 ```bash
 /agent-start                   # Execute TDD workflow from current directory
 /agent-start ./agent-workspace # Start in specific agent workspace
 ```
 
 ### /orchestrate - Universal Task Orchestrator
+
 ```bash
 /orchestrate tasks.md          # Markdown checklists
 /orchestrate TODO.txt          # Plain text lists
@@ -137,6 +173,7 @@ Ideal for complex tasks within one conversation:
 ```
 
 ### /init-protocol - Smart Project Configuration
+
 ```bash
 /init-protocol                 # Analyzes project and generates CLAUDE.md
 /init-protocol --level advanced # Force comprehensive protocols
@@ -144,12 +181,14 @@ Ideal for complex tasks within one conversation:
 ```
 
 The complexity scoring algorithm considers:
+
 - File count and language diversity
 - Framework detection
 - Team indicators
 - Special project types (microservices, AI/ML)
 
 ### /commit - Intelligent Git Workflow
+
 ```bash
 /commit                        # Analyzes changes, generates semantic commit
 /commit --message "custom"     # Override with custom message
@@ -162,17 +201,20 @@ The complexity scoring algorithm considers:
 CDEV's hooks act like quality gates, catching issues before they happen:
 
 ### Pre-Tool Hooks
+
 - **Date Awareness**: Prevents AI from using outdated dates
 - **Template Guard**: Protects command templates from modification
 - **API Validation**: Ensures REST/GraphQL standards
 - **TypeScript Checking**: Validates types before edits
 
 ### Post-Tool Hooks
+
 - **Security Scanner**: Checks for exposed secrets
 - **Code Quality**: Reports metrics and improvements
 - **Test Coverage**: Tracks testing completeness
 
 Example hook preventing a common mistake:
+
 ```python
 # When AI tries to modify a template file
 if "{{VARIABLE}}" in file_content:
@@ -195,23 +237,35 @@ CDEV can be extended to support use cases such as:
 ⸻
 
 ## 📚 Documentation & Resources
+
 • 📖 [Installation Guide](docs/installation.md)
 • 🏗️ [Parallel Workflow Tutorial](docs/parallel-workflow.md)
 • 🚀 [Custom Commands Reference](docs/custom-commands.md)
 • 🧑‍💻 [Hook Development Guide](docs/hooks-reference.md)
+
+### 🐍 Python Scripts Documentation
+
+• 🔧 [UV Installation Guide](docs/uv-installation-guide.md) - Set up UV package manager
+• 📘 [Standalone Scripts Guide](docs/standalone-scripts-guide.md) - Understanding the script architecture
+• 🔄 [Migration Guide](docs/migration-guide.md) - Migrate from Shell/JS to Python
+• 📝 [Script Usage Examples](docs/script-usage-examples.md) - Practical examples for all scripts
+• 📊 [YAML Output Formats](docs/yaml-output-formats.md) - Output schema documentation
+• 🔍 [Troubleshooting Guide](docs/troubleshooting-python-scripts.md) - Common issues and solutions
+• 📈 [Old vs New Comparison](docs/old-vs-new-comparison.md) - Benefits of the migration
 
 ⸻
 
 ## 💡 Real-World Examples
 
 ### Example 1: Feature Development with Parallel Agents
+
 ```bash
 # Linear ticket: "Add user authentication system"
 cdev decompose LINEAR-789
 
 # Creates specialized agents:
 # - auth_backend_agent: JWT implementation
-# - auth_frontend_agent: Login/signup forms  
+# - auth_frontend_agent: Login/signup forms
 # - auth_test_agent: Integration tests
 
 # Each runs in isolated Git worktree
@@ -219,6 +273,7 @@ cdev decompose LINEAR-789
 ```
 
 ### Example 2: Quick Tasks with Sub-Agents
+
 ```bash
 /orchestrate "Refactor user service, add logging, update tests"
 
@@ -233,6 +288,7 @@ cdev decompose LINEAR-789
 ⸻
 
 ## 🤝 Support & Community
+
 • 💬 [GitHub Discussions](https://github.com/AOJDevStudio/cdev/discussions)
 • 🐞 [Report Issues](https://github.com/AOJDevStudio/cdev/issues)
 • 🗨️ [Feature Requests](https://github.com/AOJDevStudio/cdev/issues/new?labels=enhancement)
@@ -259,6 +315,7 @@ We welcome all contributions!
 Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
 
 This means:
+
 - ✅ Use freely for personal and internal projects
 - ✅ Modify and build upon the work
 - ✅ Share with attribution
