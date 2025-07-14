@@ -50,3 +50,11 @@ workspaces/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Deprecated JS files (moved to Python)
+scripts/archived/
+scripts/*.js
+scripts/*.cjs
+scripts/intelligent-agent-generator.test.js
+scripts/postpublish.test.js
+scripts/prepublish.test.js

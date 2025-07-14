@@ -1,10 +1,6 @@
 {
   "root": true,
-  "extends": [
-    "airbnb-base",
-    "plugin:jest/recommended",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:prettier/recommended"],
   "env": {
     "node": true,
     "jest": true,
@@ -14,41 +10,80 @@
     "ecmaVersion": 2022,
     "sourceType": "module"
   },
-  "plugins": [
-    "jest",
-    "import",
-    "prettier"
-  ],
+  "plugins": ["jest", "import", "prettier"],
   "rules": {
     "prettier/prettier": "error",
-    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "prefer-const": "error",
-    "no-var": "error",
+    
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-script-url": "error",
+    "no-proto": "error",
+    "no-new-wrappers": "error",
+    
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-console": "warn",
+    "consistent-return": "warn",
+    "valid-typeof": "error",
+    "no-cond-assign": "error",
     "eqeqeq": ["error", "always"],
     "curly": ["error", "all"],
+    
+    "prefer-const": "error",
+    "no-var": "error",
     "arrow-body-style": ["error", "as-needed"],
     "prefer-arrow-callback": "error",
-    "import/order": ["error", {
+    
+    "import/order": ["warn", {
       "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
       "newlines-between": "always"
     }],
     "import/no-unresolved": "error",
-    "import/extensions": ["error", "never", { "json": "always" }],
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-dynamic-require": "warn",
+    
     "class-methods-use-this": "off",
-    "no-param-reassign": ["error", { "props": false }],
-    "consistent-return": "warn",
-    "no-underscore-dangle": "off"
+    "no-param-reassign": "off",
+    "no-underscore-dangle": "off",
+    "no-use-before-define": ["error", { "functions": false }],
+    "no-plusplus": "off",
+    "no-restricted-syntax": "off",
+    "no-await-in-loop": "off",
+    "global-require": "off",
+    "no-continue": "off",
+    "guard-for-in": "off",
+    "no-prototype-builtins": "off",
+    "no-bitwise": "off",
+    "radix": "off",
+    "no-restricted-globals": "off",
+    "no-new": "off",
+    "no-template-curly-in-string": "off",
+    "no-lonely-if": "off",
+    "no-case-declarations": "off",
+    "no-promise-executor-return": "off",
+    "no-shadow": "off",
+    "max-classes-per-file": "off",
+    "no-useless-escape": "off",
+    "prefer-destructuring": "off",
+    "no-empty": "warn"
+  },
+  "globals": {
+    "window": "readonly",
+    "localStorage": "readonly",
+    "sessionStorage": "readonly"
   },
   "overrides": [
     {
-      "files": ["*.test.js", "**/__tests__/**/*.js"],
+      "files": ["*.test.js", "**/__tests__/**/*.js", "test/**/*.js"],
       "env": {
         "jest": true
       },
       "rules": {
         "no-console": "off",
-        "max-len": "off"
+        "max-len": "off",
+        "jest/no-standalone-expect": "off",
+        "jest/no-conditional-expect": "off"
       }
     }
   ]

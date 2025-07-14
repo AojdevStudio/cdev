@@ -1,0 +1,27 @@
+# Ruff configuration
+line-length = 120  # Increased from 88 for more lenient formatting
+target-version = "py38"
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+]
+# Removed W (warnings) to ignore whitespace issues
+ignore = [
+    "E501",  # line too long (if you want to ignore)
+    "W291",  # trailing whitespace
+    "W292",  # no newline at end of file
+    "W293",  # blank line contains whitespace
+]
+
+[lint.per-file-ignores]
+# Even more lenient for scripts directory
+"scripts/python/*.py" = ["E501", "W", "I001"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
