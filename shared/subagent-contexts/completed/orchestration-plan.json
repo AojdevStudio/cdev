@@ -1,0 +1,23 @@
+{
+  "plan": {
+    "phases": [
+      {
+        "phase": 1,
+        "concurrent": [
+          "script_conversion_1",
+          "script_conversion_2",
+          "script_conversion_3",
+          "script_conversion_4",
+          "script_conversion_5"
+        ],
+        "description": "All script conversion tasks can run concurrently as they operate on different files and have no shared resources."
+      }
+    ],
+    "criticalPath": [
+      "script_conversion_3"
+    ],
+    "estimatedTotalTime": 50
+  },
+  "totalSubagents": 5,
+  "timestamp": "2025-07-12T03:35:59.437Z"
+}

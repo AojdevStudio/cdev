@@ -1,0 +1,23 @@
+{
+  "plan": {
+    "phases": [
+      {
+        "phase": 1,
+        "concurrent": [
+          "simple_scripts_agent",
+          "agent_scripts_agent",
+          "workflow_scripts_agent",
+          "complex_scripts_agent",
+          "publishing_scripts_agent"
+        ],
+        "description": "Run all 5 script conversion agents concurrently",
+        "estimatedTime": 30
+      }
+    ],
+    "totalEstimatedTime": 30,
+    "strategy": "parallel_conversion"
+  },
+  "totalSubagents": 5,
+  "totalScriptsToConvert": 14,
+  "timestamp": "2025-07-12T03:16:20.530Z"
+}

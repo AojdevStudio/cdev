@@ -1,0 +1,34 @@
+{
+  "identity": {
+    "agentId": "validation_subagent",
+    "taskId": "subagent_1752290112582_validation_subagent",
+    "agentRole": "Validation Tasks",
+    "focusArea": "validation",
+    "taskSource": "RAPID_SCRIPT_CONVERSION_PLAN.md"
+  },
+  "execution": {
+    "canStartImmediately": true,
+    "dependencies": [],
+    "estimatedTime": 10
+  },
+  "deliverables": {
+    "tasks": [
+      "Agent 3: Convert validate-parallel-work.sh, integrate-parallel-work.sh, resolve-conflicts.sh to Python",
+      "Agent 5: Convert prepublish.js, postpublish.js, security-check.js to Python"
+    ],
+    "validationCriteria": [
+      "Complete: Agent 3: Convert validate-parallel-work.sh, integrate-parallel-work.sh, resolve-conflicts.sh to Python",
+      "Complete: Agent 5: Convert prepublish.js, postpublish.js, security-check.js to Python"
+    ],
+    "successMetrics": [
+      "All validation tasks completed successfully"
+    ]
+  },
+  "orchestration": {
+    "phase": 1,
+    "concurrentWith": [
+      "testing_subagent",
+      "general_subagent"
+    ]
+  }
+}

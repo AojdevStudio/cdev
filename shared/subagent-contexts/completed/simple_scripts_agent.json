@@ -1,0 +1,47 @@
+{
+  "identity": {
+    "agentId": "simple_scripts_agent",
+    "taskId": "script_conv_1752290180528_simple_scripts_agent",
+    "agentRole": "Convert Simple Shell Scripts to Python",
+    "focusArea": "Simple utility scripts with direct shell-to-Python translation",
+    "taskSource": "RAPID_SCRIPT_CONVERSION_PLAN.md"
+  },
+  "execution": {
+    "canStartImmediately": true,
+    "dependencies": [],
+    "estimatedTime": 30
+  },
+  "deliverables": {
+    "tasks": [
+      "Convert cache-linear-issue.sh to cache-linear-issue.py",
+      "Convert test-locally.sh to test-locally.py",
+      "Convert deploy.sh to deploy.py"
+    ],
+    "filesToCreate": [
+      "scripts/python/cache-linear-issue.py",
+      "scripts/python/test-locally.py",
+      "scripts/python/deploy.py"
+    ],
+    "validationCriteria": [
+      "All scripts converted with UV shebang and inline metadata",
+      "YAML output replaces JSON output",
+      "Click CLI for command-line arguments",
+      "Scripts are executable (chmod +x)",
+      "Basic smoke tests pass"
+    ],
+    "conversionPatterns": {
+      "header": "#!/usr/bin/env -S uv run --script\n# /// script\n# requires-python = \">=3.11\"\n# dependencies = [\n#   \"pyyaml>=6.0\",\n#   \"click>=8.1\", \n#   \"rich>=13.0\"\n# ]\n# ///",
+      "yamlSave": "def save_yaml(data, filepath):\n    with open(filepath, 'w') as f:\n        yaml.dump(data, f, default_flow_style=False, sort_keys=False)",
+      "gitCommand": "def run_git(args):\n    return subprocess.run(['git'] + args, capture_output=True, text=True)"
+    }
+  },
+  "orchestration": {
+    "phase": 1,
+    "concurrentWith": [
+      "agent_scripts_agent",
+      "workflow_scripts_agent",
+      "complex_scripts_agent",
+      "publishing_scripts_agent"
+    ]
+  }
+}
