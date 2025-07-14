@@ -1,0 +1,7 @@
+# scripts/python/.ruff.toml
+# More relaxed rules for scripts
+extend = "../../.ruff.toml"
+line-length = 120
+
+[lint]
+ignore = ["E501", "W291", "W292", "W293", "E722", "E402"]
