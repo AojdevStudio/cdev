@@ -2,10 +2,10 @@
 
 /**
  * Sub-agent Decomposer - Intelligent task decomposition for concurrent sub-agents
- * 
+ *
  * This module specializes in decomposing tasks for concurrent execution
  * within a single Claude instance using the Task tool for sub-agent spawning.
- * 
+ *
  * Key differences from parallel decomposer:
  * - Optimized for single worktree (no git worktrees)
  * - Focuses on concurrent sub-agent execution
@@ -30,7 +30,9 @@ if (typeof global.fetch === 'undefined') {
   try {
     fetch = require('node-fetch');
   } catch (error) {
-    console.error('❌ node-fetch is required for Node.js < 18. Install with: npm install node-fetch');
+    console.error(
+      '❌ node-fetch is required for Node.js < 18. Install with: npm install node-fetch',
+    );
     process.exit(1);
   }
 } else {
@@ -44,14 +46,14 @@ class SubagentDecomposer {
     this.llmProvider = process.env.LLM_PROVIDER || 'openai';
     this.llmModel = process.env.LLM_MODEL || 'gpt-4';
     this.apiKey = this.getApiKey();
-    
+
     // Log configuration on startup
     if (this.apiKey) {
       console.log(`🔑 LLM configured: ${this.llmProvider} (${this.llmModel})`);
     } else {
       console.warn('⚠️  No LLM API key found - will use rule-based analysis only');
     }
-    
+
     this.ensureCacheDir();
   }
 
@@ -69,7 +71,11 @@ class SubagentDecomposer {
       case 'ollama':
         return null; // Ollama doesn't require an API key for local instances
       default:
-        return process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.OPENROUTER_API_KEY;
+        return (
+          process.env.OPENAI_API_KEY ||
+          process.env.ANTHROPIC_API_KEY ||
+          process.env.OPENROUTER_API_KEY
+        );
     }
   }
 
@@ -86,14 +92,14 @@ class SubagentDecomposer {
    */
   async decomposeForSubagents(tasks, projectContext = {}) {
     console.log('🔍 Starting sub-agent decomposition analysis...');
-    
+
     try {
       // Check if API keys are configured
       if (!this.apiKey && this.llmProvider !== 'ollama') {
         console.log('⚠️  No API key found, using rule-based analysis only');
         return await this.analyzeWithRules(tasks, projectContext);
       }
-      
+
       // Try LLM analysis for intelligent grouping
       try {
         console.log('🤖 Using LLM for intelligent concurrent sub-agent grouping...');
@@ -102,13 +108,12 @@ class SubagentDecomposer {
       } catch (llmError) {
         console.warn(`⚠️  LLM analysis failed: ${llmError.message}`);
         console.log('🔄 Falling back to rule-based analysis...');
-        
+
         // Fallback to rule-based analysis
         const ruleBasedResult = await this.analyzeWithRules(tasks, projectContext);
         console.log(`✅ Rule-based analysis completed`);
         return ruleBasedResult;
       }
-      
     } catch (error) {
       console.error('❌ Sub-agent decomposition failed:', error.message);
       throw error;
@@ -126,7 +131,7 @@ class SubagentDecomposer {
       testing: [],
       security: [],
       publishing: [],
-      general: []
+      general: [],
     };
 
     // Categorize tasks based on keywords
@@ -136,7 +141,7 @@ class SubagentDecomposer {
       configuration: /\b(package\.json|config|version|name|dependency|dependencies)\b/i,
       testing: /\b(test|spec|coverage|jest|mocha|unit|integration)\b/i,
       security: /\b(security|audit|vulnerability|secret|token|api key)\b/i,
-      publishing: /\b(publish|npm|release|deploy|tag|push)\b/i
+      publishing: /\b(publish|npm|release|deploy|tag|push)\b/i,
     };
 
     // Categorize each task
@@ -159,7 +164,7 @@ class SubagentDecomposer {
 
     // Convert to sub-agent structure
     const subagents = [];
-    
+
     for (const [category, categoryTasks] of Object.entries(taskGroups)) {
       if (categoryTasks.length > 0) {
         subagents.push({
@@ -169,7 +174,7 @@ class SubagentDecomposer {
           tasks: categoryTasks,
           canStartImmediately: !['publishing'].includes(category), // Publishing waits
           dependencies: category === 'publishing' ? ['validation', 'testing', 'configuration'] : [],
-          estimatedTime: categoryTasks.length * 5 // Simple estimate
+          estimatedTime: categoryTasks.length * 5, // Simple estimate
         });
       }
     }
@@ -182,16 +187,16 @@ class SubagentDecomposer {
         phases: [
           {
             phase: 1,
-            concurrent: subagents.filter(a => a.canStartImmediately).map(a => a.agentId),
-            description: 'Run validation, testing, documentation, and configuration concurrently'
+            concurrent: subagents.filter((a) => a.canStartImmediately).map((a) => a.agentId),
+            description: 'Run validation, testing, documentation, and configuration concurrently',
           },
           {
             phase: 2,
-            concurrent: subagents.filter(a => !a.canStartImmediately).map(a => a.agentId),
-            description: 'Run publishing tasks after prerequisites complete'
-          }
-        ]
-      }
+            concurrent: subagents.filter((a) => !a.canStartImmediately).map((a) => a.agentId),
+            description: 'Run publishing tasks after prerequisites complete',
+          },
+        ],
+      },
     };
   }
 
@@ -201,7 +206,7 @@ class SubagentDecomposer {
   async analyzeWithLLM(tasks, projectContext) {
     const cacheKey = this.getCacheKey(tasks, projectContext);
     const cached = await this.getCachedResult(cacheKey);
-    
+
     if (cached) {
       console.log('📋 Using cached LLM result');
       return cached;
@@ -220,12 +225,14 @@ class SubagentDecomposer {
    */
   buildSubagentPrompt(tasks, projectContext) {
     const taskList = Array.isArray(tasks) ? tasks : [tasks];
-    const formattedTasks = taskList.map((task, idx) => {
-      if (typeof task === 'string') {
-        return `${idx + 1}. ${task}`;
-      }
-      return `${idx + 1}. ${task.text || task.content || JSON.stringify(task)}`;
-    }).join('\n');
+    const formattedTasks = taskList
+      .map((task, idx) => {
+        if (typeof task === 'string') {
+          return `${idx + 1}. ${task}`;
+        }
+        return `${idx + 1}. ${task.text || task.content || JSON.stringify(task)}`;
+      })
+      .join('\n');
 
     return `You are an expert at organizing tasks for CONCURRENT SUB-AGENT execution within a single Claude instance.
 
@@ -322,18 +329,21 @@ Focus on creating sub-agents that can work independently and concurrently to min
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: this.llmModel,
         messages: [
-          { role: 'system', content: 'You are an expert at organizing tasks for concurrent sub-agent execution.' },
-          { role: 'user', content: prompt }
+          {
+            role: 'system',
+            content: 'You are an expert at organizing tasks for concurrent sub-agent execution.',
+          },
+          { role: 'user', content: prompt },
         ],
         max_tokens: 2000,
-        temperature: 0.1
-      })
+        temperature: 0.1,
+      }),
     });
 
     if (!response.ok) {
@@ -352,17 +362,15 @@ Focus on creating sub-agents that can work independently and concurrently to min
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
         model: this.llmModel || 'claude-3-sonnet-20240229',
         max_tokens: 2000,
-        messages: [
-          { role: 'user', content: prompt }
-        ]
-      })
+        messages: [{ role: 'user', content: prompt }],
+      }),
     });
 
     if (!response.ok) {
@@ -381,25 +389,30 @@ Focus on creating sub-agents that can work independently and concurrently to min
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
         'HTTP-Referer': 'https://github.com/paralell-development-claude',
-        'X-Title': 'Sub-agent Decomposer'
+        'X-Title': 'Sub-agent Decomposer',
       },
       body: JSON.stringify({
         model: this.llmModel,
         messages: [
-          { role: 'system', content: 'You are an expert at organizing tasks for concurrent sub-agent execution.' },
-          { role: 'user', content: prompt }
+          {
+            role: 'system',
+            content: 'You are an expert at organizing tasks for concurrent sub-agent execution.',
+          },
+          { role: 'user', content: prompt },
         ],
         max_tokens: 2000,
-        temperature: 0.1
-      })
+        temperature: 0.1,
+      }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`);
+      throw new Error(
+        `OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`,
+      );
     }
 
     const data = await response.json();
@@ -415,8 +428,8 @@ Focus on creating sub-agents that can work independently and concurrently to min
       body: JSON.stringify({
         model: this.llmModel || 'llama2',
         prompt: prompt,
-        stream: false
-      })
+        stream: false,
+      }),
     });
 
     if (!response.ok) {
@@ -439,7 +452,7 @@ Focus on creating sub-agents that can work independently and concurrently to min
       }
 
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
       // Validate required fields
       if (!parsed.subagents || !Array.isArray(parsed.subagents)) {
         throw new Error('Invalid LLM response structure - missing subagents array');
@@ -451,7 +464,7 @@ Focus on creating sub-agents that can work independently and concurrently to min
 
       // Ensure high confidence for LLM results
       parsed.confidence = Math.max(parsed.confidence || 0.9, 0.9);
-      
+
       return parsed;
     } catch (error) {
       console.error('Failed to parse LLM response:', error.message);
@@ -475,13 +488,13 @@ Focus on creating sub-agents that can work independently and concurrently to min
       const cacheFile = path.join(this.cacheDir, `${cacheKey}.json`);
       const cached = await fs.readFile(cacheFile, 'utf8');
       const result = JSON.parse(cached);
-      
+
       // Check if cache is not too old (24 hours)
       const age = Date.now() - result.timestamp;
       if (age > 24 * 60 * 60 * 1000) {
         return null;
       }
-      
+
       return result.data;
     } catch (error) {
       return null;
@@ -496,7 +509,7 @@ Focus on creating sub-agents that can work independently and concurrently to min
       const cacheFile = path.join(this.cacheDir, `${cacheKey}.json`);
       const cacheData = {
         timestamp: Date.now(),
-        data: result
+        data: result,
       };
       await fs.writeFile(cacheFile, JSON.stringify(cacheData, null, 2));
     } catch (error) {
@@ -517,26 +530,28 @@ Focus on creating sub-agents that can work independently and concurrently to min
           taskId: `subagent_${Date.now()}_${subagent.agentId}`,
           agentRole: subagent.agentRole,
           focusArea: subagent.focusArea,
-          taskSource: taskSource
+          taskSource: taskSource,
         },
         execution: {
           canStartImmediately: subagent.canStartImmediately,
           dependencies: subagent.dependencies || [],
-          estimatedTime: subagent.estimatedTime
+          estimatedTime: subagent.estimatedTime,
         },
         deliverables: {
           tasks: subagent.tasks,
-          validationCriteria: subagent.tasks.map(task => `Complete: ${task}`),
-          successMetrics: [`All ${subagent.focusArea} tasks completed successfully`]
+          validationCriteria: subagent.tasks.map((task) => `Complete: ${task}`),
+          successMetrics: [`All ${subagent.focusArea} tasks completed successfully`],
         },
         orchestration: {
-          phase: decomposition.orchestrationPlan.phases.findIndex(p => 
-            p.concurrent.includes(subagent.agentId)
-          ) + 1,
-          concurrentWith: decomposition.orchestrationPlan.phases
-            .find(p => p.concurrent.includes(subagent.agentId))
-            ?.concurrent.filter(id => id !== subagent.agentId) || []
-        }
+          phase:
+            decomposition.orchestrationPlan.phases.findIndex((p) =>
+              p.concurrent.includes(subagent.agentId),
+            ) + 1,
+          concurrentWith:
+            decomposition.orchestrationPlan.phases
+              .find((p) => p.concurrent.includes(subagent.agentId))
+              ?.concurrent.filter((id) => id !== subagent.agentId) || [],
+        },
       };
 
       contexts.push(context);
@@ -545,7 +560,7 @@ Focus on creating sub-agents that can work independently and concurrently to min
     return {
       contexts,
       orchestrationPlan: decomposition.orchestrationPlan,
-      strategy: decomposition.strategy
+      strategy: decomposition.strategy,
     };
   }
 }

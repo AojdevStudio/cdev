@@ -2,7 +2,7 @@
 
 /**
  * Task Parser - Universal task format detection and parsing
- * 
+ *
  * Supports multiple input formats:
  * - Markdown checklists (- [ ] format)
  * - Numbered lists (1. task)
@@ -23,7 +23,7 @@ class TaskParser {
       'plain-text',
       'json-array',
       'linear-issue',
-      'direct-text'
+      'direct-text',
     ];
   }
 
@@ -32,17 +32,17 @@ class TaskParser {
    */
   async parse(input) {
     console.log('🔍 Detecting task format...');
-    
+
     // Check if input is a file path
     if (await this.isFilePath(input)) {
       return await this.parseFile(input);
     }
-    
+
     // Check if input is a Linear issue ID
     if (this.isLinearIssueId(input)) {
       return await this.parseLinearIssue(input);
     }
-    
+
     // Otherwise, treat as direct text input
     return this.parseText(input);
   }
@@ -53,7 +53,13 @@ class TaskParser {
   async isFilePath(input) {
     try {
       // Check if it looks like a file path and exists
-      if (input.includes('/') || input.includes('\\') || input.endsWith('.md') || input.endsWith('.txt') || input.endsWith('.json')) {
+      if (
+        input.includes('/') ||
+        input.includes('\\') ||
+        input.endsWith('.md') ||
+        input.endsWith('.txt') ||
+        input.endsWith('.json')
+      ) {
         const fullPath = path.isAbsolute(input) ? input : path.join(process.cwd(), input);
         await fs.access(fullPath);
         return true;
@@ -79,9 +85,9 @@ class TaskParser {
     const fullPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
     const content = await fs.readFile(fullPath, 'utf8');
     const extension = path.extname(fullPath).toLowerCase();
-    
+
     console.log(`📄 Parsing file: ${path.basename(fullPath)}`);
-    
+
     // Detect format based on extension and content
     if (extension === '.json') {
       return this.parseJsonContent(content, fullPath);
@@ -98,23 +104,23 @@ class TaskParser {
   parseJsonContent(content, source) {
     try {
       const data = JSON.parse(content);
-      
+
       // Handle different JSON structures
       if (Array.isArray(data)) {
         return {
           format: 'json-array',
           source: source,
-          tasks: data.map(item => this.normalizeTask(item)),
+          tasks: data.map((item) => this.normalizeTask(item)),
           metadata: {
-            totalTasks: data.length
-          }
+            totalTasks: data.length,
+          },
         };
       } else if (data.tasks && Array.isArray(data.tasks)) {
         return {
           format: 'json-object',
           source: source,
-          tasks: data.tasks.map(item => this.normalizeTask(item)),
-          metadata: data.metadata || { totalTasks: data.tasks.length }
+          tasks: data.tasks.map((item) => this.normalizeTask(item)),
+          metadata: data.metadata || { totalTasks: data.tasks.length },
         };
       } else {
         throw new Error('Unsupported JSON structure');
@@ -134,14 +140,14 @@ class TaskParser {
     const tasks = [];
     let currentSection = '';
     let taskIndex = 0;
-    
+
     for (const line of lines) {
       // Detect section headers
       if (line.match(/^#+\s+(.+)/)) {
         currentSection = line.replace(/^#+\s+/, '').trim();
         continue;
       }
-      
+
       // Parse checkbox items: - [ ] task or - [x] completed task
       const checkboxMatch = line.match(/^\s*-\s*\[([ x])\]\s*(.+)/i);
       if (checkboxMatch) {
@@ -152,11 +158,11 @@ class TaskParser {
           completed: checkboxMatch[1].toLowerCase() === 'x',
           section: currentSection,
           type: 'checklist',
-          raw: line
+          raw: line,
         });
         continue;
       }
-      
+
       // Parse numbered items: 1. task or 1) task
       const numberedMatch = line.match(/^\s*\d+[.)]\s*(.+)/);
       if (numberedMatch) {
@@ -167,11 +173,11 @@ class TaskParser {
           completed: false,
           section: currentSection,
           type: 'numbered',
-          raw: line
+          raw: line,
         });
         continue;
       }
-      
+
       // Parse bullet points: - task or * task
       const bulletMatch = line.match(/^\s*[-*]\s+(?!\[)(.+)/);
       if (bulletMatch) {
@@ -182,20 +188,20 @@ class TaskParser {
           completed: false,
           section: currentSection,
           type: 'bullet',
-          raw: line
+          raw: line,
         });
       }
     }
-    
+
     return {
       format: 'markdown-checklist',
       source: source,
       tasks: tasks,
       metadata: {
         totalTasks: tasks.length,
-        completedTasks: tasks.filter(t => t.completed).length,
-        sections: [...new Set(tasks.map(t => t.section).filter(s => s))]
-      }
+        completedTasks: tasks.filter((t) => t.completed).length,
+        sections: [...new Set(tasks.map((t) => t.section).filter((s) => s))],
+      },
     };
   }
 
@@ -203,16 +209,16 @@ class TaskParser {
    * Parse plain text content
    */
   parseTextContent(content, source) {
-    const lines = content.split('\n').filter(line => line.trim());
+    const lines = content.split('\n').filter((line) => line.trim());
     const tasks = [];
     let taskIndex = 0;
-    
+
     for (const line of lines) {
       // Skip comments or headers
       if (line.startsWith('#') || line.startsWith('//')) {
         continue;
       }
-      
+
       // Remove common prefixes and clean up
       const cleanedLine = line
         .replace(/^[-*]\s+/, '')
@@ -220,7 +226,7 @@ class TaskParser {
         .replace(/^\[\s*\]\s*/, '')
         .replace(/^\[x\]\s*/i, '')
         .trim();
-      
+
       if (cleanedLine) {
         taskIndex++;
         tasks.push({
@@ -228,18 +234,18 @@ class TaskParser {
           text: cleanedLine,
           completed: line.toLowerCase().includes('[x]'),
           type: 'text',
-          raw: line
+          raw: line,
         });
       }
     }
-    
+
     return {
       format: 'plain-text',
       source: source,
       tasks: tasks,
       metadata: {
-        totalTasks: tasks.length
-      }
+        totalTasks: tasks.length,
+      },
     };
   }
 
@@ -250,14 +256,17 @@ class TaskParser {
     // Split by common delimiters
     const delimiters = ['\n', ',', ';', '|'];
     let tasks = [text];
-    
+
     for (const delimiter of delimiters) {
       if (text.includes(delimiter)) {
-        tasks = text.split(delimiter).map(t => t.trim()).filter(t => t);
+        tasks = text
+          .split(delimiter)
+          .map((t) => t.trim())
+          .filter((t) => t);
         break;
       }
     }
-    
+
     return {
       format: 'direct-text',
       source: 'input',
@@ -265,11 +274,11 @@ class TaskParser {
         id: `task_${index + 1}`,
         text: task,
         completed: false,
-        type: 'direct'
+        type: 'direct',
       })),
       metadata: {
-        totalTasks: tasks.length
-      }
+        totalTasks: tasks.length,
+      },
     };
   }
 
@@ -278,16 +287,16 @@ class TaskParser {
    */
   async parseLinearIssue(issueId) {
     console.log(`🔗 Parsing Linear issue: ${issueId}`);
-    
+
     // Try to load from cache
     const cacheFile = path.join(process.cwd(), '.linear-cache', `${issueId}.json`);
     try {
       const cacheData = await fs.readFile(cacheFile, 'utf8');
       const issue = JSON.parse(cacheData);
-      
+
       // Extract tasks from description
       const tasks = this.extractTasksFromLinearDescription(issue.description || issue.title);
-      
+
       return {
         format: 'linear-issue',
         source: issueId,
@@ -295,26 +304,28 @@ class TaskParser {
         metadata: {
           issueId: issue.identifier || issueId,
           title: issue.title,
-          totalTasks: tasks.length
-        }
+          totalTasks: tasks.length,
+        },
       };
     } catch (error) {
       console.warn(`⚠️  Could not load Linear issue from cache: ${error.message}`);
-      
+
       // Fallback to treating the ID as a task itself
       return {
         format: 'linear-issue',
         source: issueId,
-        tasks: [{
-          id: 'task_1',
-          text: `Implement ${issueId}`,
-          completed: false,
-          type: 'linear'
-        }],
+        tasks: [
+          {
+            id: 'task_1',
+            text: `Implement ${issueId}`,
+            completed: false,
+            type: 'linear',
+          },
+        ],
         metadata: {
           issueId: issueId,
-          totalTasks: 1
-        }
+          totalTasks: 1,
+        },
       };
     }
   }
@@ -324,7 +335,7 @@ class TaskParser {
    */
   extractTasksFromLinearDescription(description) {
     if (!description) return [];
-    
+
     // Use markdown parser for Linear descriptions
     const result = this.parseMarkdownContent(description, 'linear-description');
     return result.tasks;
@@ -339,16 +350,16 @@ class TaskParser {
         id: `task_${Date.now()}_${Math.random().toString(36).substring(7)}`,
         text: item,
         completed: false,
-        type: 'normalized'
+        type: 'normalized',
       };
     }
-    
+
     return {
       id: item.id || `task_${Date.now()}_${Math.random().toString(36).substring(7)}`,
       text: item.text || item.content || item.description || item.name || JSON.stringify(item),
       completed: item.completed || item.done || false,
       type: item.type || 'normalized',
-      ...item
+      ...item,
     };
   }
 
@@ -357,7 +368,7 @@ class TaskParser {
    */
   groupTasks(parsedResult) {
     const groups = {};
-    
+
     for (const task of parsedResult.tasks) {
       const section = task.section || 'General';
       if (!groups[section]) {
@@ -365,7 +376,7 @@ class TaskParser {
       }
       groups[section].push(task);
     }
-    
+
     return groups;
   }
 
@@ -373,7 +384,7 @@ class TaskParser {
    * Convert parsed tasks to a simple array of strings
    */
   toSimpleArray(parsedResult) {
-    return parsedResult.tasks.map(task => task.text);
+    return parsedResult.tasks.map((task) => task.text);
   }
 
   /**
@@ -382,22 +393,22 @@ class TaskParser {
   getStatistics(parsedResult) {
     const stats = {
       total: parsedResult.tasks.length,
-      completed: parsedResult.tasks.filter(t => t.completed).length,
-      pending: parsedResult.tasks.filter(t => !t.completed).length,
+      completed: parsedResult.tasks.filter((t) => t.completed).length,
+      pending: parsedResult.tasks.filter((t) => !t.completed).length,
       byType: {},
-      bySection: {}
+      bySection: {},
     };
-    
+
     // Count by type
     for (const task of parsedResult.tasks) {
       const type = task.type || 'unknown';
       stats.byType[type] = (stats.byType[type] || 0) + 1;
-      
+
       if (task.section) {
         stats.bySection[task.section] = (stats.bySection[task.section] || 0) + 1;
       }
     }
-    
+
     return stats;
   }
 }

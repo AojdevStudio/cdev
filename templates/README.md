@@ -7,12 +7,14 @@ This directory contains template files and configurations that can be used to in
 ## 📋 Available Templates
 
 ### Project Templates
+
 - **Basic Project**: Standard project structure with hooks
 - **NPX Package**: Template for creating NPX-distributed packages
 - **Multi-Agent Project**: Complex project with parallel agent support
 - **Linear Integration**: Project with Linear issue processing
 
 ### Configuration Templates
+
 - **package.json**: NPX package configuration
 - **claude-hooks.json**: Hooks configuration
 - **agent-context.json**: Agent context structure
@@ -21,6 +23,7 @@ This directory contains template files and configurations that can be used to in
 ## 🚀 Using Templates
 
 ### Initialize New Project
+
 ```bash
 # Create project with basic template
 npx claude-code-hooks init --template=basic
@@ -33,6 +36,7 @@ npx claude-code-hooks init --template=multi-agent
 ```
 
 ### Apply Template to Existing Project
+
 ```bash
 # Add hooks to existing project
 npx claude-code-hooks apply-template hooks-only
@@ -47,6 +51,7 @@ npx claude-code-hooks apply-template parallel-agents
 ## 📂 Template Structure
 
 ### Basic Project Template
+
 ```
 project-name/
 ├── package.json              # NPX package configuration
@@ -63,6 +68,7 @@ project-name/
 ```
 
 ### NPX Package Template
+
 ```
 package-name/
 ├── package.json              # NPX package configuration
@@ -79,6 +85,7 @@ package-name/
 ```
 
 ### Multi-Agent Template
+
 ```
 project-name/
 ├── package.json
@@ -98,6 +105,7 @@ project-name/
 ## 🎯 Template Customization
 
 ### Custom Variables
+
 Templates support variable substitution:
 
 ```json
@@ -111,6 +119,7 @@ Templates support variable substitution:
 ```
 
 ### Environment-Specific Templates
+
 ```bash
 # Development environment
 npx claude-code-hooks init --template=basic --env=development
@@ -125,6 +134,7 @@ npx claude-code-hooks init --template=basic --env=testing
 ## 🔧 Template Configuration
 
 ### claude-hooks.json Template
+
 ```json
 {
   "version": "1.0.0",
@@ -151,6 +161,7 @@ npx claude-code-hooks init --template=basic --env=testing
 ```
 
 ### Agent Context Template
+
 ```json
 {
   "agentId": "{{AGENT_ID}}",
@@ -170,6 +181,7 @@ npx claude-code-hooks init --template=basic --env=testing
 ## 📊 Template Management
 
 ### Creating Custom Templates
+
 ```bash
 # Create template from existing project
 npx claude-code-hooks create-template --from=./my-project --name=my-custom-template
@@ -182,6 +194,7 @@ npx claude-code-hooks publish-template my-custom-template
 ```
 
 ### Template Validation
+
 ```bash
 # Validate template structure
 npx claude-code-hooks validate-template my-template
@@ -196,6 +209,7 @@ npx claude-code-hooks check-template my-template
 ## 🎨 Template Best Practices
 
 ### Structure Guidelines
+
 1. **Consistent Naming**: Use kebab-case for files and directories
 2. **Clear Documentation**: Include README.md in all templates
 3. **Flexible Configuration**: Support environment variables
@@ -203,12 +217,14 @@ npx claude-code-hooks check-template my-template
 5. **Testing**: Provide test templates and examples
 
 ### Variable Conventions
+
 - Use `{{UPPER_SNAKE_CASE}}` for template variables
 - Provide default values where appropriate
 - Document all available variables
 - Use semantic variable names
 
 ### File Organization
+
 - Group related files in subdirectories
 - Use consistent file naming patterns
 - Include hidden files (like .gitignore)
@@ -217,6 +233,7 @@ npx claude-code-hooks check-template my-template
 ## 🔍 Template Examples
 
 ### Basic CLI Tool
+
 ```javascript
 // bin/cli.js template
 #!/usr/bin/env node
@@ -244,6 +261,7 @@ program.parse(process.argv);
 ```
 
 ### Agent Deployment Plan
+
 ```json
 {
   "taskId": "{{TASK_ID}}",
@@ -269,6 +287,7 @@ program.parse(process.argv);
 ## 🤝 Contributing Templates
 
 ### Adding New Templates
+
 1. Create template directory structure
 2. Add template files with variable placeholders
 3. Create template.json configuration
@@ -276,6 +295,7 @@ program.parse(process.argv);
 5. Test template generation
 
 ### Template Testing
+
 ```bash
 # Test template generation
 npm run test-template -- --template=my-new-template
@@ -290,6 +310,7 @@ npm run test-integration -- --template=my-new-template
 ## 📞 Support
 
 For template-related questions:
+
 - Check existing templates for patterns
 - Review template documentation
 - Test templates before use
@@ -297,4 +318,4 @@ For template-related questions:
 
 ---
 
-*Templates are maintained by the docs_agent as part of the Claude Code Hooks project. For the latest templates and updates, refer to the main project repository.*
+_Templates are maintained by the docs_agent as part of the Claude Code Hooks project. For the latest templates and updates, refer to the main project repository._

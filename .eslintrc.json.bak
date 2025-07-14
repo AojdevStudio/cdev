@@ -1,0 +1,76 @@
+{
+  "root": true,
+  "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:prettier/recommended"],
+  "env": {
+    "node": true,
+    "jest": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "plugins": ["jest", "import", "prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "no-console": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "arrow-body-style": ["error", "as-needed"],
+    "prefer-arrow-callback": "error",
+    "import/order": "off",
+    "import/no-unresolved": "error",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    "class-methods-use-this": "off",
+    "no-param-reassign": "off",
+    "consistent-return": "off",
+    "no-underscore-dangle": "off",
+    "no-use-before-define": ["error", { "functions": false }],
+    "no-plusplus": "off",
+    "no-restricted-syntax": "off",
+    "no-await-in-loop": "off",
+    "global-require": "off",
+    "no-continue": "off",
+    "guard-for-in": "off",
+    "no-prototype-builtins": "off",
+    "no-bitwise": "off",
+    "radix": "off",
+    "no-restricted-globals": "off",
+    "no-cond-assign": "off",
+    "no-new": "off",
+    "no-template-curly-in-string": "off",
+    "no-lonely-if": "off",
+    "no-case-declarations": "off",
+    "no-promise-executor-return": "off",
+    "no-shadow": "off",
+    "max-classes-per-file": "off",
+    "no-useless-escape": "off",
+    "import/no-dynamic-require": "off",
+    "valid-typeof": "off",
+    "prefer-destructuring": "off",
+    "no-empty": "off"
+  },
+  "globals": {
+    "window": "readonly",
+    "localStorage": "readonly",
+    "sessionStorage": "readonly"
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js", "**/__tests__/**/*.js", "test/**/*.js"],
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "no-console": "off",
+        "max-len": "off",
+        "jest/no-standalone-expect": "off",
+        "jest/no-conditional-expect": "off"
+      }
+    }
+  ]
+}

@@ -6,10 +6,10 @@ const { execSync } = require('child_process');
 // Test suite for CLI entry point
 function runTests() {
   console.log('Running CLI tests...');
-  
+
   let passed = 0;
   let total = 0;
-  
+
   function test(name, fn) {
     total++;
     try {
@@ -20,19 +20,19 @@ function runTests() {
       console.log(`✗ ${name}: ${error.message}`);
     }
   }
-  
+
   // Test 1: CLI module exports main function
   test('CLI module exports main function', () => {
     if (typeof main !== 'function') {
       throw new Error('main is not a function');
     }
   });
-  
+
   // Test 2: CLI shows help when no arguments
   test('CLI shows help when no arguments', () => {
     const originalArgv = process.argv;
     process.argv = ['node', 'cli.js', 'help'];
-    
+
     try {
       // This would show help, which is expected behavior
       const result = execSync('node bin/cli.js help', { encoding: 'utf8' });
@@ -49,7 +49,7 @@ function runTests() {
       process.argv = originalArgv;
     }
   });
-  
+
   // Test 3: CLI handles version flag
   test('CLI handles version flag', () => {
     try {
@@ -65,9 +65,9 @@ function runTests() {
       throw error;
     }
   });
-  
+
   console.log(`\nCLI Tests: ${passed}/${total} passed`);
-  
+
   if (passed === total) {
     console.log('All CLI tests passed!');
     process.exit(0);
