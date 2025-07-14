@@ -10,7 +10,6 @@ const { PreInstallValidator, preInstallValidator } = require('./pre-install-vali
 const { pathResolver } = require('./path-resolver');
 const { pythonDetector } = require('./python-detector');
 const { platformUtils } = require('./platform-utils');
-const { ValidationErrorCollection } = require('./validation-errors');
 
 // Mock dependencies
 jest.mock('./path-resolver');

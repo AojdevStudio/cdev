@@ -182,14 +182,13 @@ describe('HookManager', () => {
 
     test('skips non-Python files', async () => {
       fs.readdir.mockResolvedValue(['hook.py', 'README.md', 'script.sh']);
-      fs.stat.mockImplementation((filePath) => {
-        const fileName = path.basename(filePath);
-        return Promise.resolve({
+      fs.stat.mockImplementation(() =>
+        Promise.resolve({
           isDirectory: () => false,
           size: 100,
           mtime: new Date(),
-        });
-      });
+        }),
+      );
       fs.readFile.mockResolvedValue('# Content');
 
       const hooks = await hookManager.loadExistingHooks();

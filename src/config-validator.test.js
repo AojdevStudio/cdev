@@ -163,7 +163,7 @@ describe('ConfigValidator', () => {
       const config = { version: '1.0.0' };
       const customRules = [
         (cfg) => (cfg.version === '2.0.0' ? {} : { error: 'Version must be 2.0.0' }),
-        (cfg) => ({ warning: 'Custom warning' }),
+        (_cfg) => ({ warning: 'Custom warning' }),
       ];
 
       const result = validateConfig(config, { customRules });

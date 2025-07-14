@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 
 const {
   generateConfig,
@@ -9,7 +8,6 @@ const {
   writeConfig,
   generateAndWriteConfig,
 } = require('../src/config-generator');
-
 // Mock dependencies
 jest.mock('fs');
 jest.mock('../src/install-utils', () => ({

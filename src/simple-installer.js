@@ -9,7 +9,7 @@ class SimpleInstaller {
     this.packageRoot = path.join(__dirname, '..');
   }
 
-  async install(targetDir = '.', options = {}) {
+  async install(targetDir = '.') {
     const spinner = ora('Installing cdev files to your project...').start();
 
     try {
@@ -72,7 +72,6 @@ class SimpleInstaller {
   }
 
   async createClaudeDirectory(targetDir) {
-    const claudeDir = path.join(targetDir, '.claude');
     const dirs = [
       '.claude',
       '.claude/hooks',
@@ -153,14 +152,6 @@ class SimpleInstaller {
     await fs.writeJson(path.join(claudeDir, 'settings.json'), settings, { spaces: 2 });
 
     // Copy hook scripts from templates or create basic ones
-    const hookScripts = [
-      'pre-bash-validator.py',
-      'typescript-validator.py',
-      'import-organizer.py',
-      'notification.py',
-      'task-completion-enforcer.py',
-    ];
-
     const hooksDir = path.join(claudeDir, 'hooks');
 
     // Create basic hook scripts

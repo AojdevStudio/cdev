@@ -105,8 +105,7 @@ function extractVariables(template) {
     const patterns = [/\{\{(\w+)\}\}/g, /\$\{(\w+)\}/g, /%(\w+)%/g];
 
     for (const pattern of patterns) {
-      let match;
-      while ((match = pattern.exec(template)) !== null) {
+      for (const match of template.matchAll(pattern)) {
         variables.add(match[1]);
       }
     }

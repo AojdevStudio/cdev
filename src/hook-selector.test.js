@@ -2,8 +2,6 @@
  * Tests for hook-selector.js
  */
 
-const path = require('path');
-
 const fs = require('fs-extra');
 
 const HookSelector = require('./hook-selector');

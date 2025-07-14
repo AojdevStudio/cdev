@@ -2,11 +2,16 @@
  * Tests for validator.js and related validation modules
  */
 
-const { validator, Validator } = require('../src/validator');
+const fs = require('fs');
+const { execSync } = require('child_process');
+
+const { validator } = require('../src/validator');
 const { preInstallValidator } = require('../src/pre-install-validator');
 const { postInstallValidator } = require('../src/post-install-validator');
 const { validationReporter } = require('../src/validation-reporter');
 const { ValidationErrorCollection } = require('../src/validation-errors');
+const { platformUtils } = require('../src/platform-utils');
+const { pythonDetector } = require('../src/python-detector');
 
 // Mock dependencies
 jest.mock('child_process');
@@ -32,12 +37,6 @@ jest.mock('../src/python-detector', () => ({
     getBestPython: jest.fn(),
   },
 }));
-
-const { platformUtils } = require('../src/platform-utils');
-const { pythonDetector } = require('../src/python-detector');
-
-const fs = require('fs');
-const { execSync } = require('child_process');
 
 describe('Validator', () => {
   beforeEach(() => {

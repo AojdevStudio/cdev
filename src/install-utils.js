@@ -324,6 +324,8 @@ class InstallUtils {
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
+    // This line should never be reached, but satisfies consistent-return
+    throw new Error('Retry loop completed without returning or throwing');
   }
 
   async findExecutable(command) {

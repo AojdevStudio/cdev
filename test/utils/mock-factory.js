@@ -17,7 +17,7 @@ function createMockFileSystem(structure = {}) {
       return Object.prototype.hasOwnProperty.call(structure, normalizedPath);
     }),
 
-    readFileSync: jest.fn((filePath, encoding) => {
+    readFileSync: jest.fn((filePath, _encoding) => {
       const normalizedPath = path.normalize(filePath);
       if (!structure[normalizedPath]) {
         throw new Error(`ENOENT: no such file or directory, open '${filePath}'`);
@@ -25,12 +25,12 @@ function createMockFileSystem(structure = {}) {
       return structure[normalizedPath];
     }),
 
-    writeFileSync: jest.fn((filePath, content, options) => {
+    writeFileSync: jest.fn((filePath, content, _options) => {
       const normalizedPath = path.normalize(filePath);
       structure[normalizedPath] = content;
     }),
 
-    mkdirSync: jest.fn((dirPath, options) => {
+    mkdirSync: jest.fn((dirPath, _options) => {
       const normalizedPath = path.normalize(dirPath);
       structure[normalizedPath] = '[directory]';
     }),
@@ -89,7 +89,7 @@ function createMockFileSystem(structure = {}) {
  */
 function createMockChildProcess(responses = {}) {
   return {
-    execSync: jest.fn((command, options) => {
+    execSync: jest.fn((command, _options) => {
       // Check for exact match first
       if (responses[command]) {
         return responses[command];
@@ -116,7 +116,7 @@ function createMockChildProcess(responses = {}) {
       }
     }),
 
-    spawn: jest.fn((command, args, options) => {
+    spawn: jest.fn((command, _args, _options) => {
       const mockProcess = {
         stdout: {
           on: jest.fn((event, callback) => {
@@ -278,7 +278,7 @@ function createMockHttpClient(responses = {}) {
       return Promise.reject(new Error(`404: Not Found - ${url}`));
     }),
 
-    post: jest.fn((url, data) => {
+    post: jest.fn((url, _data) => {
       if (responses[url]) {
         return Promise.resolve({
           data: responses[url],

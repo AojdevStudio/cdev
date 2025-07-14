@@ -5,7 +5,6 @@
 const path = require('path');
 
 const fs = require('fs-extra');
-const chalk = require('chalk');
 const ora = require('ora');
 
 const { SimpleInstaller } = require('./simple-installer');
@@ -98,16 +97,6 @@ describe('SimpleInstaller', () => {
 
     test('updates spinner text during installation steps', async () => {
       await simpleInstaller.install(testTargetDir);
-
-      const expectedTexts = [
-        'Creating .claude directory structure...',
-        'Setting up hooks...',
-        'Installing command templates...',
-        'Installing workflow scripts...',
-        'Installing AI documentation...',
-        'Creating example configuration...',
-        'Setting file permissions...',
-      ];
 
       // Verify spinner text was set (can't directly verify assignment)
       expect(mockSpinner.succeed).toHaveBeenCalled();

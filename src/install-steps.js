@@ -393,7 +393,7 @@ echo "Pre-commit validation passed"
     console.log(chalk.gray(`    Created: pre-commit hook`));
   }
 
-  async createExampleFiles(targetDir, config) {
+  async createExampleFiles(targetDir, _config) {
     console.log(chalk.gray('  • Creating example files...'));
 
     // Create example Linear issue cache
@@ -459,7 +459,7 @@ echo "Pre-commit validation passed"
     console.log(chalk.gray(`    Created: example deployment plan`));
   }
 
-  async finalValidation(targetDir, config) {
+  async finalValidation(targetDir, _config) {
     console.log(chalk.gray('  • Running final validation...'));
 
     const requiredFiles = [

@@ -3,13 +3,10 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
 const { PostInstallValidator, postInstallValidator } = require('./post-install-validator');
-const { pathResolver } = require('./path-resolver');
 const { pythonDetector } = require('./python-detector');
 const { platformUtils } = require('./platform-utils');
-const { ValidationErrorCollection } = require('./validation-errors');
 
 // Mock dependencies
 jest.mock('./path-resolver');

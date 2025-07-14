@@ -119,7 +119,9 @@ describe('PathResolver', () => {
       // Clean up test directory
       try {
         fs.rmSync(testDir, { recursive: true, force: true });
-      } catch {}
+      } catch {
+        // Ignore errors during cleanup
+      }
     });
 
     test('creates directory if it does not exist', () => {

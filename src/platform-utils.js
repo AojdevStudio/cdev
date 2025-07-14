@@ -5,8 +5,7 @@
 
 const os = require('os');
 const fs = require('fs');
-const path = require('path');
-const { execSync, spawn } = require('child_process');
+const { execSync } = require('child_process');
 
 const { pathResolver } = require('./path-resolver');
 

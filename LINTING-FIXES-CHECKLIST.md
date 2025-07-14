@@ -1,11 +1,13 @@
 # ESLint Fixes Checklist
 
 ## Current Status
+
 - **Total Issues**: 322 (2 errors, 320 warnings)
 - **Security**: All critical security rules are enabled ✅
 - **Python**: All Ruff checks pass ✅
 
 ## Priority 1: Fix Errors (2 issues)
+
 These must be fixed as they could cause runtime issues:
 
 - [ ] **valid-typeof errors** in `src/config-loader.js`
@@ -13,9 +15,11 @@ These must be fixed as they could cause runtime issues:
   - Quick fix: Change invalid typeof comparisons to proper strings
 
 ## Priority 2: Clean Up Unused Variables (≈250 warnings)
+
 These clutter the codebase and should be addressed:
 
 ### Approach Options:
+
 1. **Batch Fix by Type**:
    - [ ] Remove unused imports (fs, path, os) from test files
    - [ ] Prefix unused function parameters with `_` (e.g., `options` → `_options`)
@@ -28,6 +32,7 @@ These clutter the codebase and should be addressed:
    - [ ] Use `npm run lint:fix` after manual changes
 
 ### Quick Wins:
+
 ```bash
 # Find all unused 'path' imports
 npm run lint 2>&1 | grep "'path' is assigned a value but never used"
@@ -37,6 +42,7 @@ npm run lint 2>&1 | grep "is defined but never used. Allowed unused args"
 ```
 
 ## Priority 3: Import Organization (≈20 warnings)
+
 These improve code readability:
 
 - [ ] Fix import order warnings
@@ -44,6 +50,7 @@ These improve code readability:
 - [ ] Can be auto-fixed: `npm run lint:fix`
 
 ## Priority 4: Code Quality Warnings
+
 Lower priority but good for maintainability:
 
 - [ ] Fix empty block statements
@@ -53,17 +60,21 @@ Lower priority but good for maintainability:
 ## Automation Strategy
 
 ### Step 1: Auto-fix what's possible
+
 ```bash
 npm run lint:fix
 ```
 
 ### Step 2: Script to prefix unused parameters
+
 Create a script to automatically prefix unused parameters with `_`:
+
 ```javascript
 // Example: Convert (options) => {} to (_options) => {}
 ```
 
 ### Step 3: Batch remove unused imports
+
 ```bash
 # Remove unused imports from test files
 find test -name "*.js" -exec sed -i '' '/^import.*path.*from/d' {} \;
@@ -72,6 +83,7 @@ find test -name "*.js" -exec sed -i '' '/^import.*path.*from/d' {} \;
 ## Tracking Progress
 
 ### Current Baseline
+
 ```bash
 # Save current state
 npm run lint 2>&1 > lint-baseline.txt
@@ -82,6 +94,7 @@ npm run lint 2>&1 | grep -c "warning"  # Should be ~320
 ```
 
 ### Goal Metrics
+
 - [ ] 0 errors
 - [ ] <50 warnings (focus on real issues)
 - [ ] All security rules passing
@@ -89,20 +102,24 @@ npm run lint 2>&1 | grep -c "warning"  # Should be ~320
 ## Implementation Plan
 
 ### Phase 1: Critical Fixes (Today)
+
 1. Fix 2 valid-typeof errors
 2. Run tests to ensure nothing breaks
 
 ### Phase 2: Unused Variables (This Week)
+
 1. Batch fix test file imports
 2. Prefix unused parameters with `_`
 3. Remove truly unused variables
 
 ### Phase 3: Polish (Next Week)
+
 1. Fix import ordering
 2. Address remaining warnings
 3. Update ESLint config if needed
 
 ## Notes
+
 - The security-focused config maintains all critical security checks
 - Most warnings are style issues, not bugs
 - Focus on errors first, then high-value warnings

@@ -1,11 +1,7 @@
-const path = require('path');
-const { exec } = require('child_process');
-
 const { describe, it, expect, beforeEach, afterEach } = require('@jest/globals');
 const fs = require('fs-extra');
 
 const { InstallSteps } = require('./install-steps');
-const { InstallUtils } = require('./install-utils');
 
 // Mock dependencies
 jest.mock('fs-extra');

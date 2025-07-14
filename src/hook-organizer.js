@@ -109,7 +109,7 @@ class HookOrganizer {
     if (await fs.pathExists(this.hookRegistry)) {
       const registry = await fs.readJson(this.hookRegistry);
 
-      for (const [hookName, hookInfo] of Object.entries(registry.hooks)) {
+      for (const hookInfo of Object.values(registry.hooks)) {
         const { tier } = hookInfo;
         categorized[tier].push(hookInfo);
       }

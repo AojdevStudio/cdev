@@ -85,7 +85,7 @@ class Validator {
    * @param {Object} context - Full data context
    * @returns {ValidationErrorCollection} Field validation errors
    */
-  validateField(value, fieldPath, fieldSchema, context = {}) {
+  validateField(value, fieldPath, fieldSchema) {
     const errors = new ValidationErrorCollection();
 
     // Handle different schema formats

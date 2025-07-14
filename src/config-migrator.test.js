@@ -92,6 +92,7 @@ describe('ConfigMigrator', () => {
         if (path === targetConfigPath) {
           return JSON.stringify(mockTargetConfig);
         }
+        return '';
       });
       fs.copyFileSync.mockImplementation();
       fs.writeFileSync.mockImplementation();
@@ -111,6 +112,7 @@ describe('ConfigMigrator', () => {
         if (path === targetConfigPath) {
           return JSON.stringify(mockTargetConfig);
         }
+        return '';
       });
 
       const result = await migrateConfig(testProjectPath, { backup: false });
@@ -162,6 +164,7 @@ describe('ConfigMigrator', () => {
         if (path === targetConfigPath) {
           return 'invalid json';
         }
+        return '';
       });
 
       const result = await migrateConfig(testProjectPath);

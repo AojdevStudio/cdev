@@ -1,4 +1,4 @@
-const { execSync, spawn } = require('child_process');
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -62,7 +62,7 @@ async function installCommand(args, options) {
   await installer.install(targetDir, options);
 }
 
-async function cacheCommand(args, options) {
+async function cacheCommand(args, _options) {
   const issueId = args[0];
   if (!issueId) {
     console.error('Error: Issue ID is required');
@@ -84,7 +84,7 @@ async function cacheCommand(args, options) {
   }
 }
 
-async function decomposeCommand(args, options) {
+async function decomposeCommand(args, _options) {
   const issueId = args[0];
   if (!issueId) {
     console.error('Error: Issue ID is required');
@@ -106,7 +106,7 @@ async function decomposeCommand(args, options) {
   }
 }
 
-async function spawnCommand(args, options) {
+async function spawnCommand(args, _options) {
   const planFile = args[0];
   if (!planFile) {
     console.error('Error: Deployment plan file is required');
@@ -128,7 +128,7 @@ async function spawnCommand(args, options) {
   }
 }
 
-async function statusCommand(args, options) {
+async function statusCommand(args, _options) {
   const filter = args[0];
 
   console.log('Checking agent status...');
@@ -146,7 +146,7 @@ async function statusCommand(args, options) {
   }
 }
 
-async function commitCommand(args, options) {
+async function commitCommand(args, _options) {
   const workspace = args[0];
   const customMessage = args[1];
 

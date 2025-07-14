@@ -6,7 +6,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const { pathResolver } = require('./path-resolver');
 const { pythonDetector } = require('./python-detector');
 const { platformUtils } = require('./platform-utils');
 const { ValidationErrorCollection } = require('./validation-errors');

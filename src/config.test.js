@@ -1,15 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-
 const {
   ConfigManager,
   initialize,
   get,
   set,
-  save,
   reset,
   validate,
   getConfigPath,

@@ -97,7 +97,7 @@ describe('HookOrganizer', () => {
 
   describe('organize', () => {
     test('organizes hooks and creates registry', async () => {
-      const result = await organizer.organize(mockCategorizedHooks);
+      await organizer.organize(mockCategorizedHooks);
 
       // Verify tier directories were created
       expect(fs.ensureDir).toHaveBeenCalledTimes(4);
@@ -297,7 +297,7 @@ describe('HookOrganizer', () => {
 
     test('recursively scans subdirectories', async () => {
       let callCount = 0;
-      fs.readdir.mockImplementation((dirPath) => {
+      fs.readdir.mockImplementation((_dirPath) => {
         callCount++;
         if (callCount === 1) {
           return Promise.resolve(['subdir', 'hook1.py']);

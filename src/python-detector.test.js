@@ -4,7 +4,6 @@
 
 const { execSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
 
 const { pathResolver } = require('./path-resolver');
 const { PythonDetector, pythonDetector } = require('./python-detector');
@@ -108,7 +107,7 @@ describe('PythonDetector', () => {
 
     test('sorts installations by version (newest first)', () => {
       let callCount = 0;
-      pathResolver.findInPath.mockImplementation((cmd) => {
+      pathResolver.findInPath.mockImplementation((_cmd) => {
         callCount++;
         if (callCount === 1) {
           return '/usr/bin/python3.8';

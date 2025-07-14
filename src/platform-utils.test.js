@@ -4,10 +4,10 @@
 
 const os = require('os');
 const fs = require('fs');
-const { execSync, spawn } = require('child_process');
+const { execSync } = require('child_process');
 
-const { PlatformUtils, platformUtils } = require('./platform-utils');
 const { pathResolver } = require('./path-resolver');
+const { PlatformUtils, platformUtils } = require('./platform-utils');
 
 // Mock dependencies
 jest.mock('os');
@@ -641,6 +641,7 @@ user  9012  0.0  0.1  12345  6789 ?  S  10:01  0:00 node client.js
         if (path === '/proc/1/cgroup') {
           return '1:name=systemd:/docker/abc123';
         }
+        return '';
       });
 
       expect(utils.isInContainer()).toBe(true);
@@ -651,6 +652,7 @@ user  9012  0.0  0.1  12345  6789 ?  S  10:01  0:00 node client.js
         if (path === '/proc/1/cgroup') {
           return '1:name=systemd:/containerd/abc123';
         }
+        return '';
       });
 
       expect(utils.isInContainer()).toBe(true);
@@ -672,6 +674,7 @@ user  9012  0.0  0.1  12345  6789 ?  S  10:01  0:00 node client.js
         if (path === '/proc/version') {
           return 'Linux version 5.10.16.3-microsoft-standard-WSL2';
         }
+        return '';
       });
 
       expect(utils.isWSL()).toBe(true);
@@ -689,6 +692,7 @@ user  9012  0.0  0.1  12345  6789 ?  S  10:01  0:00 node client.js
         if (path === '/proc/version') {
           return 'Linux version 5.4.0-generic';
         }
+        return '';
       });
 
       expect(utils.isWSL()).toBe(false);

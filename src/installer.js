@@ -1,6 +1,5 @@
 const path = require('path');
 
-const fs = require('fs-extra');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 
@@ -128,7 +127,7 @@ class Installer {
     return config;
   }
 
-  async coreInstallation(targetDir, config, options) {
+  async coreInstallation(targetDir, config, _options) {
     console.log(chalk.blue('📦 Phase 3: Core installation'));
 
     // Create directory structure

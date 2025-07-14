@@ -2,24 +2,23 @@
  * Tests for config-generator.js
  */
 
-const fs = require('fs');
-const path = require('path');
+import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'fs';
+import { join } from 'path';
 
-const {
+import {
   generateConfig,
   mergeConfigurations,
   mergeHooks,
   deepMerge,
   writeConfig,
   generateAndWriteConfig,
-} = require('./config-generator');
+} from './config-generator';
+import { detectProjectType } from './install-utils';
+import { processTemplate } from './template-engine';
 // Mock dependencies first
 jest.mock('fs');
 jest.mock('./install-utils');
 jest.mock('./template-engine');
-
-const { detectProjectType } = require('./install-utils');
-const templateEngine = require('./template-engine');
 
 describe('ConfigGenerator', () => {
   const testProjectPath = '/test/project';
@@ -41,12 +40,12 @@ describe('ConfigGenerator', () => {
 
     // Default mocks
     detectProjectType.mockReturnValue('nodejs');
-    fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue(JSON.stringify(mockTemplate));
-    fs.mkdirSync.mockImplementation();
-    fs.writeFileSync.mockImplementation();
+    existsSync.mockReturnValue(true);
+    readFileSync.mockReturnValue(JSON.stringify(mockTemplate));
+    mkdirSync.mockImplementation();
+    writeFileSync.mockImplementation();
 
-    templateEngine.processTemplate.mockImplementation((template) => template);
+    processTemplate.mockImplementation((template) => template);
   });
 
   describe('generateConfig', () => {
@@ -54,8 +53,8 @@ describe('ConfigGenerator', () => {
       const config = generateConfig(testProjectPath);
 
       expect(detectProjectType).toHaveBeenCalledWith(testProjectPath);
-      expect(fs.existsSync).toHaveBeenCalledWith(expect.stringContaining('templates/nodejs.json'));
-      expect(fs.readFileSync).toHaveBeenCalledWith(
+      expect(existsSync).toHaveBeenCalledWith(expect.stringContaining('templates/nodejs.json'));
+      expect(readFileSync).toHaveBeenCalledWith(
         expect.stringContaining('templates/nodejs.json'),
         'utf8',
       );
@@ -63,11 +62,11 @@ describe('ConfigGenerator', () => {
     });
 
     test('falls back to default template when project-specific not found', () => {
-      fs.existsSync.mockReturnValue(false);
+      existsSync.mockReturnValue(false);
 
-      const config = generateConfig(testProjectPath);
+      generateConfig(testProjectPath);
 
-      expect(fs.readFileSync).toHaveBeenCalledWith(
+      expect(readFileSync).toHaveBeenCalledWith(
         expect.stringContaining('templates/default.json'),
         'utf8',
       );
@@ -80,7 +79,7 @@ describe('ConfigGenerator', () => {
 
       generateConfig(testProjectPath, options);
 
-      expect(templateEngine.processTemplate).toHaveBeenCalledWith(
+      expect(processTemplate).toHaveBeenCalledWith(
         expect.objectContaining({
           settings: expect.objectContaining({
             feature: false,
@@ -98,7 +97,7 @@ describe('ConfigGenerator', () => {
 
       generateConfig(testProjectPath, options);
 
-      expect(templateEngine.processTemplate).toHaveBeenCalledWith(
+      expect(processTemplate).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
           projectPath: testProjectPath,
@@ -110,7 +109,7 @@ describe('ConfigGenerator', () => {
     });
 
     test('throws error when template loading fails', () => {
-      fs.readFileSync.mockImplementation(() => {
+      readFileSync.mockImplementation(() => {
         throw new Error('File not found');
       });
 
@@ -120,7 +119,7 @@ describe('ConfigGenerator', () => {
     });
 
     test('throws error when template JSON is invalid', () => {
-      fs.readFileSync.mockReturnValue('invalid json');
+      readFileSync.mockReturnValue('invalid json');
 
       expect(() => generateConfig(testProjectPath)).toThrow(
         'Failed to load configuration template',
@@ -321,29 +320,25 @@ describe('ConfigGenerator', () => {
 
       await writeConfig(filePath, config);
 
-      expect(fs.writeFileSync).toHaveBeenCalledWith(
-        filePath,
-        JSON.stringify(config, null, 2),
-        'utf8',
-      );
+      expect(writeFileSync).toHaveBeenCalledWith(filePath, JSON.stringify(config, null, 2), 'utf8');
     });
 
     test('creates directory if it does not exist', async () => {
-      fs.existsSync.mockReturnValue(false);
+      existsSync.mockReturnValue(false);
       const filePath = '/test/dir/config.json';
 
       await writeConfig(filePath, {});
 
-      expect(fs.mkdirSync).toHaveBeenCalledWith('/test/dir', { recursive: true });
+      expect(mkdirSync).toHaveBeenCalledWith('/test/dir', { recursive: true });
     });
 
     test('does not create directory if it exists', async () => {
-      fs.existsSync.mockReturnValue(true);
+      existsSync.mockReturnValue(true);
       const filePath = '/test/config.json';
 
       await writeConfig(filePath, {});
 
-      expect(fs.mkdirSync).not.toHaveBeenCalled();
+      expect(mkdirSync).not.toHaveBeenCalled();
     });
 
     test('formats JSON with 2-space indentation', async () => {
@@ -352,7 +347,7 @@ describe('ConfigGenerator', () => {
       await writeConfig('/test/config.json', config);
 
       const expectedJson = JSON.stringify(config, null, 2);
-      expect(fs.writeFileSync).toHaveBeenCalledWith(expect.any(String), expectedJson, 'utf8');
+      expect(writeFileSync).toHaveBeenCalledWith(expect.any(String), expectedJson, 'utf8');
     });
   });
 
@@ -363,23 +358,23 @@ describe('ConfigGenerator', () => {
 
       expect(result).toEqual({
         config: mockTemplate,
-        path: path.join(testProjectPath, '.claude', 'settings.json'),
+        path: join(testProjectPath, '.claude', 'settings.json'),
         projectType: 'nodejs',
       });
 
-      expect(fs.writeFileSync).toHaveBeenCalledWith(
-        path.join(testProjectPath, '.claude', 'settings.json'),
+      expect(writeFileSync).toHaveBeenCalledWith(
+        join(testProjectPath, '.claude', 'settings.json'),
         expect.any(String),
         'utf8',
       );
     });
 
     test('creates .claude directory if needed', async () => {
-      fs.existsSync.mockImplementation((path) => !path.includes('.claude'));
+      existsSync.mockImplementation((path) => !path.includes('.claude'));
 
       await generateAndWriteConfig(testProjectPath);
 
-      expect(fs.mkdirSync).toHaveBeenCalledWith(expect.stringContaining('.claude'), {
+      expect(mkdirSync).toHaveBeenCalledWith(expect.stringContaining('.claude'), {
         recursive: true,
       });
     });
@@ -392,7 +387,7 @@ describe('ConfigGenerator', () => {
 
       await generateAndWriteConfig(testProjectPath, options);
 
-      expect(templateEngine.processTemplate).toHaveBeenCalledWith(
+      expect(processTemplate).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
           var1: 'value1',
@@ -403,7 +398,7 @@ describe('ConfigGenerator', () => {
     test('returns complete result object', async () => {
       detectProjectType.mockReturnValue('nextjs');
       const processedConfig = { processed: true };
-      templateEngine.processTemplate.mockReturnValue(processedConfig);
+      processTemplate.mockReturnValue(processedConfig);
 
       const result = await generateAndWriteConfig(testProjectPath);
 
@@ -417,7 +412,7 @@ describe('ConfigGenerator', () => {
 
   describe('edge cases', () => {
     test('handles empty configuration', () => {
-      fs.readFileSync.mockReturnValue('{}');
+      readFileSync.mockReturnValue('{}');
 
       const config = generateConfig(testProjectPath);
 
@@ -455,8 +450,8 @@ describe('ConfigGenerator', () => {
       const circular = { a: 1 };
       circular.self = circular;
 
-      fs.readFileSync.mockReturnValue(JSON.stringify(mockTemplate));
-      templateEngine.processTemplate.mockReturnValue(circular);
+      readFileSync.mockReturnValue(JSON.stringify(mockTemplate));
+      processTemplate.mockReturnValue(circular);
 
       // Should not throw when stringifying
       expect(() => generateConfig(testProjectPath)).not.toThrow();

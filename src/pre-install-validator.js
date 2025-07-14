@@ -6,10 +6,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const { pathResolver } = require('./path-resolver');
 const { pythonDetector } = require('./python-detector');
 const { platformUtils } = require('./platform-utils');
 const { ValidationErrorCollection } = require('./validation-errors');
+const { pathResolver } = require('./path-resolver');
 
 class PreInstallValidator {
   constructor() {
@@ -391,7 +391,7 @@ class PreInstallValidator {
    * @returns {boolean} True if can proceed
    */
   canProceedWithInstallation(results) {
-    for (const [category, result] of Object.entries(results)) {
+    for (const [, result] of Object.entries(results)) {
       if (!result.valid && result.required) {
         return false;
       }

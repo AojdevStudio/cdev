@@ -161,7 +161,7 @@ class HookSelector {
    * Find a hook by name across all tiers
    */
   findHookByName(categorizedHooks, hookName) {
-    for (const [tier, hooks] of Object.entries(categorizedHooks)) {
+    for (const hooks of Object.values(categorizedHooks)) {
       const hook = hooks.find((h) => h.name === hookName);
       if (hook) {
         return hook;

@@ -6,8 +6,6 @@ const path = require('path');
 
 const fs = require('fs-extra');
 
-const { createMockFileSystem } = require('../test/utils/mock-factory');
-
 const HooksRestructure = require('./hooks-restructure');
 const HookManager = require('./hook-manager');
 

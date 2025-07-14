@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const { execSync } = require('child_process');
 
 const fs = require('fs-extra');
 
@@ -229,7 +228,6 @@ class Hooks2Rule {
    * Extract purpose from hook file content
    */
   extractPurpose(hook) {
-    const content = hook.content.toLowerCase();
     const comments = this.extractComments(hook.content);
 
     // Look for explicit purpose statements
@@ -421,7 +419,7 @@ class Hooks2Rule {
    * Generate a human-readable rule from analysis
    */
   generateRuleFromAnalysis(analysis) {
-    const { name, purpose, eventType, behavior, tier } = analysis;
+    const { purpose, eventType, behavior, tier } = analysis;
 
     let rule = '';
 

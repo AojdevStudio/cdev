@@ -1,7 +1,4 @@
-const path = require('path');
-
 const { describe, it, expect, beforeEach, afterEach, jest } = require('@jest/globals');
-const fs = require('fs-extra');
 
 const { Installer } = require('./installer');
 const { InstallSteps } = require('./install-steps');

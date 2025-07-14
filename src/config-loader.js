@@ -176,8 +176,11 @@ class ConfigLoader {
         continue;
       }
 
-      if (value !== undefined && rule.type && typeof value !== rule.type) {
-        errors.push(`Invalid type for ${key}: expected ${rule.type}, got ${typeof value}`);
+      if (value !== undefined && rule.type) {
+        const actualType = typeof value;
+        if (actualType !== rule.type) {
+          errors.push(`Invalid type for ${key}: expected ${rule.type}, got ${actualType}`);
+        }
       }
 
       if (rule.validate && typeof rule.validate === 'function') {
