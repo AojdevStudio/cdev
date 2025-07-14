@@ -113,6 +113,10 @@ Transform cdev into the premier development workflow automation tool for teams u
 - [ ] Terminal vs Cursor choice for worktree opening
 - [ ] Fix duplication in documentation
 - [ ] Add error catalog with solutions
+- [ ] **Claude-Historian Integration** - MCP-based conversation search
+  - Integrate with existing post_tool_use.py hook logs
+  - Index conversation history for instant search
+  - Reduce repo bloat by moving logs to SQLite index
 
 ### High Priority (v1.1.0)
 
@@ -138,6 +142,11 @@ Transform cdev into the premier development workflow automation tool for teams u
 - [ ] Voice-controlled agent commands
 - [ ] AR visualization of parallel workflows
 - [ ] Predictive task decomposition
+- [ ] **Advanced Search & Analytics** (Building on Claude-Historian)
+  - Code pattern search across all conversations
+  - Error resolution knowledge base
+  - Team productivity analytics
+  - Learning from past problem-solving patterns
 
 ## Community Contributions
 
