@@ -30,13 +30,5 @@
     "**/*.spec.ts",
     "**/*.spec.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "coverage",
-    "logs",
-    "shared",
-    "workspaces",
-    "ai_docs",
-    "templates"
-  ]
+  "exclude": ["node_modules", "coverage", "logs", "shared", "workspaces", "ai_docs", "templates"]
 }

@@ -1,3 +1,21 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "coderabbit.agentType": "Claude Code",
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        }
+    },
+    "ruff.lint.enable": true,
+    "ruff.lint.run": "onType",
+    "ruff.format.enable": true,
+    "ruff.path": ["/Users/ossieirondi/.local/bin/ruff"],
+    "python.analysis.ignore": ["scripts/python/test_*.py"],
+    "python.linting.enabled": false,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    "python.linting.mypyEnabled": false
 }

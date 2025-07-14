@@ -24,156 +24,168 @@ jobs:
     name: Publish Package
     needs: test
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
-        registry-url: 'https://registry.npmjs.org'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Set package version
-      if: github.event_name == 'workflow_dispatch'
-      run: |
-        if [[ "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
-        else
-          npm version pre${{ github.event.inputs.version }} --preid=${{ github.event.inputs.version }} --no-git-tag-version
-        fi
-    
-    - name: Build package
-      run: |
-        # Ensure scripts are executable
-        chmod +x scripts/*.sh
-        chmod +x bin/cli.js
-        
-        # Run prepublish script
-        npm run prepare
-    
-    - name: Check package contents
-      run: |
-        npm pack --dry-run
-        echo "Package contents:"
-        tar -tzf $(npm pack 2>/dev/null | tail -1)
-    
-    - name: Verify package size
-      run: |
-        size=$(npm pack --dry-run 2>&1 | grep "npm notice" | grep -E "[0-9]+(\.[0-9]+)? [kMG]B" | awk '{print $(NF-1), $NF}')
-        echo "Package size: $size"
-        
-        # Convert to bytes
-        size_bytes=$(echo $size | awk '{
-          num = $1
-          unit = $2
-          if (unit == "kB") num *= 1024
-          else if (unit == "MB") num *= 1024 * 1024
-          else if (unit == "GB") num *= 1024 * 1024 * 1024
-          print int(num)
-        }')
-        
-        if [ $size_bytes -gt 10485760 ]; then
-          echo "ERROR: Package size exceeds 10MB limit!"
-          exit 1
-        fi
-    
-    - name: Publish to NPM (Release)
-      if: github.event_name == 'release'
-      run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    
-    - name: Publish to NPM (Manual)
-      if: github.event_name == 'workflow_dispatch'
-      run: npm publish --tag ${{ github.event.inputs.tag }}
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    
-    - name: Create GitHub Release Assets
-      if: github.event_name == 'release'
-      run: |
-        # Pack the tarball
-        npm pack
-        
-        # Upload to release
-        gh release upload ${{ github.event.release.tag_name }} \
-          claude-code-hooks-*.tgz \
-          --clobber
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install UV Package Manager
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set package version
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [[ "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          else
+            npm version pre${{ github.event.inputs.version }} --preid=${{ github.event.inputs.version }} --no-git-tag-version
+          fi
+
+      - name: Build package
+        run: |
+          # Ensure scripts are executable
+          chmod +x scripts/*.sh
+          chmod +x scripts/python/*.py
+          chmod +x bin/cli.js
+
+          # Run Python prepublish script
+          npm run prepare
+
+      - name: Check package contents
+        run: |
+          npm pack --dry-run
+          echo "Package contents:"
+          tar -tzf $(npm pack 2>/dev/null | tail -1)
+
+      - name: Verify package size
+        run: |
+          size=$(npm pack --dry-run 2>&1 | grep "npm notice" | grep -E "[0-9]+(\.[0-9]+)? [kMG]B" | awk '{print $(NF-1), $NF}')
+          echo "Package size: $size"
+
+          # Convert to bytes
+          size_bytes=$(echo $size | awk '{
+            num = $1
+            unit = $2
+            if (unit == "kB") num *= 1024
+            else if (unit == "MB") num *= 1024 * 1024
+            else if (unit == "GB") num *= 1024 * 1024 * 1024
+            print int(num)
+          }')
+
+          if [ $size_bytes -gt 10485760 ]; then
+            echo "ERROR: Package size exceeds 10MB limit!"
+            exit 1
+          fi
+
+      - name: Publish to NPM (Release)
+        if: github.event_name == 'release'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to NPM (Manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: npm publish --tag ${{ github.event.inputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release Assets
+        if: github.event_name == 'release'
+        run: |
+          # Pack the tarball
+          npm pack
+
+          # Upload to release
+          gh release upload ${{ github.event.release.tag_name }} \
+            claude-code-hooks-*.tgz \
+            --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   post-publish:
     name: Post-Publish Tasks
     needs: publish
     runs-on: ubuntu-latest
     if: success()
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
-        cache: 'npm'
-    
-    - name: Run post-publish script
-      run: |
-        npm ci
-        node scripts/postpublish.js
-      env:
-        NPM_PACKAGE_VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Update documentation site
-      run: |
-        echo "Documentation update would happen here"
-        # Could trigger a docs build/deploy workflow
-    
-    - name: Notify Discord
-      if: github.event_name == 'release'
-      uses: appleboy/discord-action@master
-      with:
-        webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
-        webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
-        message: |
-          🚀 **Claude Code Hooks ${{ github.event.release.tag_name }} Released!**
-          
-          Check out the release notes: ${{ github.event.release.html_url }}
-          
-          Install/Update: `npm install -g claude-code-hooks@latest`
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Run post-publish script
+        run: |
+          npm ci
+          chmod +x scripts/python/*.py
+          npm run postpublish
+        env:
+          NPM_PACKAGE_VERSION: ${{ github.event.release.tag_name || github.event.inputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update documentation site
+        run: |
+          echo "Documentation update would happen here"
+          # Could trigger a docs build/deploy workflow
+
+      - name: Notify Discord
+        if: github.event_name == 'release'
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          message: |
+            🚀 **Claude Code Hooks ${{ github.event.release.tag_name }} Released!**
+
+            Check out the release notes: ${{ github.event.release.html_url }}
+
+            Install/Update: `npm install -g claude-code-hooks@latest`
 
   verify-publish:
     name: Verify Publication
     needs: publish
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Wait for NPM propagation
-      run: sleep 60
-    
-    - name: Verify package availability
-      run: |
-        # Check if package is available
-        npm view claude-code-hooks@latest version
-        
-        # Try to install it
-        mkdir verify-install
-        cd verify-install
-        npm init -y
-        npm install claude-code-hooks@latest
-        
-        # Verify CLI works
-        npx claude-code-hooks --version
-    
-    - name: Test global installation
-      run: |
-        npm install -g claude-code-hooks@latest
-        claude-code-hooks --version
+      - name: Wait for NPM propagation
+        run: sleep 60
+
+      - name: Verify package availability
+        run: |
+          # Check if package is available
+          npm view claude-code-hooks@latest version
+
+          # Try to install it
+          mkdir verify-install
+          cd verify-install
+          npm init -y
+          npm install claude-code-hooks@latest
+
+          # Verify CLI works
+          npx claude-code-hooks --version
+
+      - name: Test global installation
+        run: |
+          npm install -g claude-code-hooks@latest
+          claude-code-hooks --version
