@@ -5,6 +5,7 @@ This guide explains the standalone Python script approach used in the parallel d
 ## Overview
 
 All Python scripts in the `scripts/python/` directory are standalone, meaning they:
+
 - Include all dependencies inline using PEP 723 format
 - Run without manual virtual environment setup
 - Execute directly without prior package installation
@@ -22,7 +23,7 @@ Every script follows this structure:
 # requires-python = ">=3.11"
 # dependencies = [
 #   "pyyaml>=6.0",
-#   "click>=8.1", 
+#   "click>=8.1",
 #   "rich>=13.0",
 #   "httpx>=0.25.0"
 # ]
@@ -45,14 +46,17 @@ from rich.panel import Panel
 ### Key Components
 
 #### 1. Shebang Line
+
 ```python
 #!/usr/bin/env -S uv run --script
 ```
+
 - Uses `env -S` to pass multiple arguments
 - Tells the system to run the script with UV
 - UV handles Python version and dependencies
 
 #### 2. PEP 723 Metadata Block
+
 ```python
 # /// script
 # requires-python = ">=3.11"
@@ -61,38 +65,47 @@ from rich.panel import Panel
 # ]
 # ///
 ```
+
 - Enclosed in `# /// script` markers
 - Specifies Python version requirements
 - Lists all required dependencies
 - UV reads this and sets up the environment
 
 #### 3. Imports and Implementation
+
 Standard Python code with full access to specified dependencies.
 
 ## Benefits of Standalone Scripts
 
 ### 1. Zero Setup Required
+
 ```bash
 # Just run the script - UV handles everything
 ./scripts/python/monitor-agents.py
 ```
 
 ### 2. Reproducible Execution
+
 Dependencies are locked to specific versions, ensuring consistent behavior across environments.
 
 ### 3. No Virtual Environment Management
+
 UV creates isolated environments automatically:
+
 - No `venv` creation needed
 - No activation/deactivation required
 - No `requirements.txt` files to maintain
 
 ### 4. Cross-Platform Compatibility
+
 Scripts work identically on:
+
 - macOS
 - Linux
 - Windows (with WSL or native Python)
 
 ### 5. Fast Execution
+
 UV caches dependencies, making subsequent runs nearly instant.
 
 ## Common Patterns
@@ -105,7 +118,7 @@ All scripts use Click for command-line interfaces:
 import click
 
 @click.command()
-@click.option('--output-format', type=click.Choice(['console', 'yaml']), 
+@click.option('--output-format', type=click.Choice(['console', 'yaml']),
               default='console', help='Output format')
 @click.argument('task_id', required=False)
 def main(output_format: str, task_id: Optional[str]):
@@ -175,26 +188,31 @@ except Exception as e:
 ## Script Categories
 
 ### 1. Linear Integration Scripts
+
 - `cache-linear-issue.py`: Fetch and cache Linear issues
 - Uses `httpx` for API calls
 - Caches data in YAML format
 
 ### 2. Agent Management Scripts
+
 - `spawn-agents.py`: Create parallel agent worktrees
 - `monitor-agents.py`: Track agent progress
 - `agent-commit.py`: Commit and integrate agent work
 
 ### 3. Workflow Scripts
+
 - `validate-parallel-work.py`: Validate agent deliverables
 - `integrate-parallel-work.py`: Merge agent branches
 - `resolve-conflicts.py`: Interactive conflict resolution
 
 ### 4. Publishing Scripts
+
 - `prepublish.py`: Pre-publication validation
 - `postpublish.py`: Post-publication verification
 - `security-check.py`: Security and secrets scanning
 
 ### 5. Development Tools
+
 - `test-locally.py`: Local testing automation
 - `deploy.py`: Deployment automation
 - `intelligent-agent-generator.py`: AI-powered agent creation
@@ -202,6 +220,7 @@ except Exception as e:
 ## Execution Methods
 
 ### Direct Execution
+
 ```bash
 # Make executable once
 chmod +x scripts/python/script-name.py
@@ -211,11 +230,13 @@ chmod +x scripts/python/script-name.py
 ```
 
 ### Via UV Explicitly
+
 ```bash
 uv run scripts/python/script-name.py --help
 ```
 
 ### Through CDEV CLI
+
 ```bash
 # Scripts integrated into cdev commands
 cdev status  # Uses monitor-agents.py
@@ -227,6 +248,7 @@ cdev commit  # Uses agent-commit.py
 ### Adding Dependencies
 
 1. Edit the script's metadata block:
+
 ```python
 # /// script
 # requires-python = ">=3.11"
@@ -240,6 +262,7 @@ cdev commit  # Uses agent-commit.py
 ```
 
 2. Import and use in the script:
+
 ```python
 import new_package
 ```
@@ -258,7 +281,9 @@ import new_package
 ## Best Practices
 
 ### 1. Consistent Structure
+
 Follow the established pattern for all scripts:
+
 - Shebang and metadata at the top
 - Docstring explaining purpose
 - Click CLI interface
@@ -266,7 +291,9 @@ Follow the established pattern for all scripts:
 - Rich console for user feedback
 
 ### 2. Error Messages
+
 Provide clear, actionable error messages:
+
 ```python
 if not workspace_path.exists():
     console.print(
@@ -277,14 +304,18 @@ if not workspace_path.exists():
 ```
 
 ### 3. Exit Codes
+
 Use consistent exit codes:
+
 - `0`: Success
 - `1`: General error
 - `2`: Command-line usage error
 - `3`: Validation failure
 
 ### 4. Testing
+
 Include a `--dry-run` option for testing:
+
 ```python
 @click.option('--dry-run', is_flag=True, help='Show what would be done')
 def main(dry_run: bool):
@@ -304,6 +335,7 @@ When converting shell or JavaScript to Python:
 5. **Document well**: Include docstrings and comments
 
 Example conversion checklist:
+
 - [ ] UV shebang and metadata block
 - [ ] Click CLI with same arguments
 - [ ] YAML output format option
@@ -316,6 +348,7 @@ Example conversion checklist:
 ## Troubleshooting
 
 ### Script Won't Run
+
 ```bash
 # Check if executable
 ls -la scripts/python/script-name.py
@@ -328,6 +361,7 @@ uv --version
 ```
 
 ### Dependency Errors
+
 ```bash
 # Clear UV cache and retry
 uv cache clean
@@ -335,6 +369,7 @@ uv cache clean
 ```
 
 ### Import Errors
+
 Ensure dependencies are listed in the metadata block and spelled correctly.
 
 ## Next Steps

@@ -7,11 +7,13 @@ This directory contains Python conversions of complex JavaScript scripts that ha
 ### intelligent-agent-generator.py
 
 Intelligent agent generation engine that:
+
 - Analyzes requirements using semantic parsing
-- Maps requirements to work domains using codebase analysis  
+- Maps requirements to work domains using codebase analysis
 - Generates agents dynamically based on the analysis
 
 **Usage:**
+
 ```bash
 # Generate agent for a requirement
 ./intelligent-agent-generator.py "Create authentication system with JWT tokens"
@@ -23,12 +25,14 @@ Intelligent agent generation engine that:
 ### decompose-parallel.py
 
 Exclusive ownership decomposition engine that ensures NO file conflicts by:
+
 - Analyzing all file operations first
 - Grouping files by dependency clusters
 - Creating exclusive agent domains
 - Validating no overlaps before generating agents
 
 **Usage:**
+
 ```bash
 # Decompose a Linear issue
 ./decompose-parallel.py LINEAR-123
@@ -57,6 +61,7 @@ Run the smoke test to verify everything works:
 ## Dependencies
 
 All dependencies are specified inline using PEP 723 format:
+
 - pyyaml>=6.0
 - click>=8.1
 - rich>=13.0
@@ -64,6 +69,7 @@ All dependencies are specified inline using PEP 723 format:
 ## Conversion Notes
 
 These scripts were converted from JavaScript/CommonJS to Python with the following improvements:
+
 - Class-based architecture preserved with Python dataclasses
 - Pattern matching converted to Python regex
 - Async patterns maintained with asyncio

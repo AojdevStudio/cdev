@@ -1,0 +1,24 @@
+identity:
+  agentId: 'typeof_fixer'
+  taskId: 'subagent_1752522834274_typeof_fixer'
+  agentRole: 'Fix typeof comparisons'
+  focusArea: 'code_fixes'
+  taskSource: 'LINTING-FIXES-CHECKLIST.md'
+execution:
+  canStartImmediately: true
+  dependencies: []
+  estimatedTime: 15
+deliverables:
+  tasks:
+    - 'Fix valid-typeof errors in src/config-loader.js'
+    - 'Change invalid typeof comparisons to proper strings'
+  validationCriteria:
+    - 'Complete: Fix valid-typeof errors in src/config-loader.js'
+    - 'Complete: Change invalid typeof comparisons to proper strings'
+  successMetrics:
+    - 'All code_fixes tasks completed successfully'
+orchestration:
+  phase: 1
+  concurrentWith:
+    - 'batch_fixer'
+    - 'file_fixer'

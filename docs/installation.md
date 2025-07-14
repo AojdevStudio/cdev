@@ -33,7 +33,7 @@ Before installing Claude Code Hooks, ensure you have:
 
    ```bash
    python3 --version  # Should output Python 3.7 or higher
-   
+
    # Install UV package manager
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
@@ -89,16 +89,18 @@ After installing CDEV globally, you need to set up the hooks and scripts in your
    ```
 
 3. **Make scripts executable**
+
    ```bash
    chmod +x scripts/*.sh
    chmod +x scripts/python/*.py
    ```
 
 4. **Verify Python scripts setup**
+
    ```bash
    # Test that Python scripts are working
    ./scripts/python/test-locally.py --help
-   
+
    # Run security check
    ./scripts/python/security-check.py
    ```
@@ -426,7 +428,7 @@ export CLAUDE_ENV=development
     # Install UV package manager
     curl -LsSf https://astral.sh/uv/install.sh | sh
     echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-    
+
     # Make Python scripts executable
     chmod +x scripts/python/*.py
 ```

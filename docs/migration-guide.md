@@ -5,6 +5,7 @@ This guide provides step-by-step instructions for migrating from the old Shell a
 ## Overview
 
 The parallel development system has migrated all scripts to Python for:
+
 - **Better cross-platform compatibility** (Windows, macOS, Linux)
 - **Improved dependency management** with UV
 - **Consistent YAML output format**
@@ -15,22 +16,22 @@ The parallel development system has migrated all scripts to Python for:
 
 All 14 scripts have been successfully converted:
 
-| Old Script | New Script | Type |
-|------------|------------|------|
-| `cache-linear-issue.sh` | `cache-linear-issue.py` | Shell → Python |
-| `test-locally.sh` | `test-locally.py` | Shell → Python |
-| `deploy.sh` | `deploy.py` | Shell → Python |
-| `spawn-agents.sh` | `spawn-agents.py` | Shell → Python |
-| `agent-commit-enhanced.sh` | `agent-commit.py` | Shell → Python |
-| `monitor-agents.sh` | `monitor-agents.py` | Shell → Python |
-| `validate-parallel-work.sh` | `validate-parallel-work.py` | Shell → Python |
-| `integrate-parallel-work.sh` | `integrate-parallel-work.py` | Shell → Python |
-| `resolve-conflicts.sh` | `resolve-conflicts.py` | Shell → Python |
-| `intelligent-agent-generator.js` | `intelligent-agent-generator.py` | JS → Python |
-| `decompose-parallel.cjs` | `decompose-parallel.py` | JS → Python |
-| `prepublish.js` | `prepublish.py` | JS → Python |
-| `postpublish.js` | `postpublish.py` | JS → Python |
-| `security-check.js` | `security-check.py` | JS → Python |
+| Old Script                       | New Script                       | Type           |
+| -------------------------------- | -------------------------------- | -------------- |
+| `cache-linear-issue.sh`          | `cache-linear-issue.py`          | Shell → Python |
+| `test-locally.sh`                | `test-locally.py`                | Shell → Python |
+| `deploy.sh`                      | `deploy.py`                      | Shell → Python |
+| `spawn-agents.sh`                | `spawn-agents.py`                | Shell → Python |
+| `agent-commit-enhanced.sh`       | `agent-commit.py`                | Shell → Python |
+| `monitor-agents.sh`              | `monitor-agents.py`              | Shell → Python |
+| `validate-parallel-work.sh`      | `validate-parallel-work.py`      | Shell → Python |
+| `integrate-parallel-work.sh`     | `integrate-parallel-work.py`     | Shell → Python |
+| `resolve-conflicts.sh`           | `resolve-conflicts.py`           | Shell → Python |
+| `intelligent-agent-generator.js` | `intelligent-agent-generator.py` | JS → Python    |
+| `decompose-parallel.cjs`         | `decompose-parallel.py`          | JS → Python    |
+| `prepublish.js`                  | `prepublish.py`                  | JS → Python    |
+| `postpublish.js`                 | `postpublish.py`                 | JS → Python    |
+| `security-check.js`              | `security-check.py`              | JS → Python    |
 
 ## Prerequisites
 
@@ -39,6 +40,7 @@ All 14 scripts have been successfully converted:
 Follow the [UV Installation Guide](uv-installation-guide.md) for your platform.
 
 Quick install:
+
 ```bash
 # macOS
 brew install uv
@@ -53,6 +55,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ### 2. Verify Python Version
 
 Ensure Python 3.11+ is installed:
+
 ```bash
 python --version  # Should show 3.11 or higher
 ```
@@ -81,7 +84,7 @@ The CDEV CLI has been updated to use Python scripts automatically:
 ```bash
 # These commands now use Python scripts internally
 cdev get LINEAR-123      # Uses cache-linear-issue.py
-cdev split task.yaml     # Uses decompose-parallel.py  
+cdev split task.yaml     # Uses decompose-parallel.py
 cdev run                 # Uses spawn-agents.py
 cdev status             # Uses monitor-agents.py
 cdev commit             # Uses agent-commit.py
@@ -109,15 +112,15 @@ jobs:
   build:
     steps:
       - uses: actions/checkout@v3
-      
+
       # Install UV
       - name: Install UV
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
-        
+
       # Make scripts executable
       - name: Setup Python scripts
         run: chmod +x scripts/python/*.py
-        
+
       # Run security check
       - name: Security Check
         run: ./scripts/python/security-check.py
@@ -158,7 +161,7 @@ Python scripts use Click for consistent CLI:
 # Old shell script
 ./scripts/agent-commit-enhanced.sh /path/to/workspace "commit message"
 
-# New Python script  
+# New Python script
 ./scripts/python/agent-commit.py /path/to/workspace --message "commit message"
 
 # All scripts support --help
@@ -183,6 +186,7 @@ Python scripts provide better error messages:
 ### 4. Rich Terminal Output
 
 Python scripts use Rich for better formatting:
+
 - Colored output
 - Progress bars
 - Formatted tables
@@ -219,7 +223,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # macOS
 brew install python@3.11
 
-# Ubuntu/Debian  
+# Ubuntu/Debian
 sudo apt install python3.11
 ```
 
@@ -240,12 +244,14 @@ If you can't migrate everything at once:
 ### 1. Start with Non-Critical Scripts
 
 Begin with scripts that aren't part of critical workflows:
+
 - `test-locally.py`
 - `security-check.py`
 
 ### 2. Test in Development
 
 Run both versions in parallel to verify behavior:
+
 ```bash
 # Compare outputs
 ./scripts/monitor-agents.sh > old-output.json
@@ -255,6 +261,7 @@ Run both versions in parallel to verify behavior:
 ### 3. Update One Workflow at a Time
 
 Migrate complete workflows together:
+
 - Publishing workflow: `prepublish.py`, `postpublish.py`, `security-check.py`
 - Agent workflow: `spawn-agents.py`, `monitor-agents.py`, `agent-commit.py`
 
@@ -267,6 +274,7 @@ Don't delete old scripts until fully migrated and tested.
 If issues arise, you can temporarily rollback:
 
 1. **CLI Level**: The old scripts are still present
+
    ```bash
    # Use old scripts directly
    ./scripts/monitor-agents.sh
@@ -284,19 +292,23 @@ If issues arise, you can temporarily rollback:
 ## Benefits After Migration
 
 ### 1. Cross-Platform Support
+
 - Scripts work on Windows (with WSL), macOS, and Linux
 - No more bash compatibility issues
 
 ### 2. Better Performance
+
 - UV caches dependencies for fast execution
 - Python scripts start faster than Node.js
 
 ### 3. Improved Maintainability
+
 - Type hints catch errors early
 - Consistent code structure
 - Better testing capabilities
 
 ### 4. Enhanced Features
+
 - Rich terminal UI
 - Interactive prompts
 - Better error messages

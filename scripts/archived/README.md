@@ -32,8 +32,8 @@ As part of our modernization effort, all scripts have been rewritten in Python t
 
 All Python replacements are located in `scripts/python/`. The naming convention remains the same:
 
-| Old Script | New Script |
-|------------|------------|
+| Old Script               | New Script                      |
+| ------------------------ | ------------------------------- |
 | `scripts/script-name.sh` | `scripts/python/script-name.py` |
 | `scripts/script-name.js` | `scripts/python/script-name.py` |
 
@@ -46,6 +46,7 @@ During the transition period, wrapper scripts in `scripts/wrappers/` maintain ba
 3. Return the same exit codes
 
 Example:
+
 ```bash
 # Old way (still works via wrapper)
 ./scripts/deploy.sh

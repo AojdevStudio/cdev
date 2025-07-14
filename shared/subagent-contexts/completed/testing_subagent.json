@@ -12,21 +12,14 @@
     "estimatedTime": 5
   },
   "deliverables": {
-    "tasks": [
-      "Agent 1: Convert cache-linear-issue.sh, test-locally.sh, deploy.sh to Python"
-    ],
+    "tasks": ["Agent 1: Convert cache-linear-issue.sh, test-locally.sh, deploy.sh to Python"],
     "validationCriteria": [
       "Complete: Agent 1: Convert cache-linear-issue.sh, test-locally.sh, deploy.sh to Python"
     ],
-    "successMetrics": [
-      "All testing tasks completed successfully"
-    ]
+    "successMetrics": ["All testing tasks completed successfully"]
   },
   "orchestration": {
     "phase": 1,
-    "concurrentWith": [
-      "validation_subagent",
-      "general_subagent"
-    ]
+    "concurrentWith": ["validation_subagent", "general_subagent"]
   }
 }

@@ -10,32 +10,32 @@ The CDEV project has migrated critical build and development scripts from JavaSc
 
 ### Core Scripts
 
-| Script | Purpose | Dependencies | Maintenance Priority |
-|--------|---------|--------------|---------------------|
-| `prepublish.py` | Pre-publication validation | uv, PyYAML | Critical |
-| `postpublish.py` | Post-publication tasks | uv, requests | Critical |
-| `security-check.py` | Security vulnerability scanning | uv, safety, bandit | Critical |
-| `test-locally.py` | Local testing orchestration | uv, pytest | High |
-| `intelligent-agent-generator.py` | Agent context generation | uv, PyYAML, OpenAI/Anthropic | High |
+| Script                           | Purpose                         | Dependencies                 | Maintenance Priority |
+| -------------------------------- | ------------------------------- | ---------------------------- | -------------------- |
+| `prepublish.py`                  | Pre-publication validation      | uv, PyYAML                   | Critical             |
+| `postpublish.py`                 | Post-publication tasks          | uv, requests                 | Critical             |
+| `security-check.py`              | Security vulnerability scanning | uv, safety, bandit           | Critical             |
+| `test-locally.py`                | Local testing orchestration     | uv, pytest                   | High                 |
+| `intelligent-agent-generator.py` | Agent context generation        | uv, PyYAML, OpenAI/Anthropic | High                 |
 
 ### Parallel Development Scripts
 
-| Script | Purpose | Dependencies | Maintenance Priority |
-|--------|---------|--------------|---------------------|
-| `cache-linear-issue.py` | Linear API caching | uv, requests, PyYAML | Medium |
-| `decompose-parallel.py` | Task decomposition | uv, PyYAML, LLM libraries | High |
-| `spawn-agents.py` | Agent workspace creation | uv, GitPython | High |
-| `monitor-agents.py` | Agent status monitoring | uv, PyYAML, rich | Medium |
-| `integrate-parallel-work.py` | Agent work integration | uv, GitPython | High |
-| `resolve-conflicts.py` | Merge conflict resolution | uv, GitPython | Medium |
-| `validate-parallel-work.py` | Integration validation | uv, pytest | High |
-| `agent-commit.py` | Agent commit workflow | uv, GitPython, PyYAML | High |
+| Script                       | Purpose                   | Dependencies              | Maintenance Priority |
+| ---------------------------- | ------------------------- | ------------------------- | -------------------- |
+| `cache-linear-issue.py`      | Linear API caching        | uv, requests, PyYAML      | Medium               |
+| `decompose-parallel.py`      | Task decomposition        | uv, PyYAML, LLM libraries | High                 |
+| `spawn-agents.py`            | Agent workspace creation  | uv, GitPython             | High                 |
+| `monitor-agents.py`          | Agent status monitoring   | uv, PyYAML, rich          | Medium               |
+| `integrate-parallel-work.py` | Agent work integration    | uv, GitPython             | High                 |
+| `resolve-conflicts.py`       | Merge conflict resolution | uv, GitPython             | Medium               |
+| `validate-parallel-work.py`  | Integration validation    | uv, pytest                | High                 |
+| `agent-commit.py`            | Agent commit workflow     | uv, GitPython, PyYAML     | High                 |
 
 ### Deployment Scripts
 
-| Script | Purpose | Dependencies | Maintenance Priority |
-|--------|---------|--------------|---------------------|
-| `deploy.py` | Deployment orchestration | uv, fabric, paramiko | Medium |
+| Script      | Purpose                  | Dependencies         | Maintenance Priority |
+| ----------- | ------------------------ | -------------------- | -------------------- |
+| `deploy.py` | Deployment orchestration | uv, fabric, paramiko | Medium               |
 
 ## Maintenance Schedule
 
@@ -268,6 +268,7 @@ Each script must have:
 ### Script Owners
 
 Each script has a designated owner responsible for:
+
 - Maintenance and updates
 - Documentation accuracy
 - Performance optimization
@@ -312,5 +313,5 @@ Each script has a designated owner responsible for:
 
 ---
 
-*Last Updated*: [Auto-generated date]
-*Version*: 1.0.0
+_Last Updated_: [Auto-generated date]
+_Version_: 1.0.0

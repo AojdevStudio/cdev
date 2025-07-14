@@ -1,0 +1,28 @@
+identity:
+  agentId: 'batch_fixer'
+  taskId: 'subagent_1752522834274_batch_fixer'
+  agentRole: 'Batch fix by type'
+  focusArea: 'code_fixes'
+  taskSource: 'LINTING-FIXES-CHECKLIST.md'
+execution:
+  canStartImmediately: true
+  dependencies: []
+  estimatedTime: 20
+deliverables:
+  tasks:
+    - 'Remove unused imports (fs, path, os) from test files'
+    - 'Prefix unused function parameters with _'
+    - 'Remove completely unused variables'
+    - 'Comment out or remove unused destructured variables'
+  validationCriteria:
+    - 'Complete: Remove unused imports (fs, path, os) from test files'
+    - 'Complete: Prefix unused function parameters with _'
+    - 'Complete: Remove completely unused variables'
+    - 'Complete: Comment out or remove unused destructured variables'
+  successMetrics:
+    - 'All code_fixes tasks completed successfully'
+orchestration:
+  phase: 1
+  concurrentWith:
+    - 'typeof_fixer'
+    - 'file_fixer'

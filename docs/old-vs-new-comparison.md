@@ -4,32 +4,33 @@ This document provides a detailed comparison between the old Shell/JavaScript sc
 
 ## Overview Comparison
 
-| Aspect | Old (Shell/JS) | New (Python) | Benefit |
-|--------|----------------|--------------|---------|
-| **Language** | Mixed (Bash, Node.js) | Python only | Consistency |
-| **Package Manager** | npm/yarn | UV | 10-100x faster |
-| **Dependencies** | package.json/manual | Inline (PEP 723) | Self-contained |
-| **Output Format** | JSON | YAML | Human-readable |
-| **Error Handling** | Basic | Comprehensive | Better debugging |
-| **Cross-Platform** | Limited | Full | Windows support |
-| **CLI Framework** | Various/None | Click | Consistent UX |
-| **Terminal Output** | Basic echo/console.log | Rich | Better formatting |
+| Aspect              | Old (Shell/JS)         | New (Python)     | Benefit           |
+| ------------------- | ---------------------- | ---------------- | ----------------- |
+| **Language**        | Mixed (Bash, Node.js)  | Python only      | Consistency       |
+| **Package Manager** | npm/yarn               | UV               | 10-100x faster    |
+| **Dependencies**    | package.json/manual    | Inline (PEP 723) | Self-contained    |
+| **Output Format**   | JSON                   | YAML             | Human-readable    |
+| **Error Handling**  | Basic                  | Comprehensive    | Better debugging  |
+| **Cross-Platform**  | Limited                | Full             | Windows support   |
+| **CLI Framework**   | Various/None           | Click            | Consistent UX     |
+| **Terminal Output** | Basic echo/console.log | Rich             | Better formatting |
 
 ## Detailed Script Comparisons
 
 ### cache-linear-issue
 
-| Feature | Old (Shell) | New (Python) |
-|---------|------------|--------------|
-| **Execution** | `./scripts/cache-linear-issue.sh LINEAR-123` | `./scripts/python/cache-linear-issue.py LINEAR-123` |
-| **Dependencies** | Requires `curl`, `jq` | Self-contained with UV |
-| **API Handling** | Raw curl commands | `httpx` with proper error handling |
-| **Output Format** | JSON only | YAML (default) or console |
-| **Error Messages** | `curl: (7) Failed to connect` | `Error: Linear API authentication failed. Please set LINEAR_API_KEY` |
-| **Caching** | Basic file write | Structured caching with metadata |
-| **Progress** | None | Progress indicators with Rich |
+| Feature            | Old (Shell)                                  | New (Python)                                                         |
+| ------------------ | -------------------------------------------- | -------------------------------------------------------------------- |
+| **Execution**      | `./scripts/cache-linear-issue.sh LINEAR-123` | `./scripts/python/cache-linear-issue.py LINEAR-123`                  |
+| **Dependencies**   | Requires `curl`, `jq`                        | Self-contained with UV                                               |
+| **API Handling**   | Raw curl commands                            | `httpx` with proper error handling                                   |
+| **Output Format**  | JSON only                                    | YAML (default) or console                                            |
+| **Error Messages** | `curl: (7) Failed to connect`                | `Error: Linear API authentication failed. Please set LINEAR_API_KEY` |
+| **Caching**        | Basic file write                             | Structured caching with metadata                                     |
+| **Progress**       | None                                         | Progress indicators with Rich                                        |
 
 **Old Script Example:**
+
 ```bash
 #!/bin/bash
 ISSUE_ID=$1
@@ -41,6 +42,7 @@ curl -s -H "Authorization: ${API_KEY}" \
 ```
 
 **New Script Features:**
+
 ```python
 # Structured error handling
 try:
@@ -65,16 +67,17 @@ output = {
 
 ### spawn-agents
 
-| Feature | Old (Shell) | New (Python) |
-|---------|------------|--------------|
-| **Worktree Creation** | Manual git commands | GitPython library |
-| **Context Generation** | String concatenation | Structured YAML generation |
-| **Validation** | None | Pre-flight checks |
-| **Dry Run** | Not available | `--dry-run` option |
-| **Force Mode** | Manual cleanup | `--force` flag |
-| **Error Recovery** | Script exits | Graceful handling with cleanup |
+| Feature                | Old (Shell)          | New (Python)                   |
+| ---------------------- | -------------------- | ------------------------------ |
+| **Worktree Creation**  | Manual git commands  | GitPython library              |
+| **Context Generation** | String concatenation | Structured YAML generation     |
+| **Validation**         | None                 | Pre-flight checks              |
+| **Dry Run**            | Not available        | `--dry-run` option             |
+| **Force Mode**         | Manual cleanup       | `--force` flag                 |
+| **Error Recovery**     | Script exits         | Graceful handling with cleanup |
 
 **Improvements:**
+
 - Atomic operations (all succeed or all fail)
 - Better dependency checking
 - Structured agent context files
@@ -82,28 +85,30 @@ output = {
 
 ### monitor-agents
 
-| Feature | Old (Shell) | New (Python) |
-|---------|------------|--------------|
-| **Display** | Basic text output | Rich tables with colors |
-| **Watch Mode** | `watch` command wrapper | Built-in `--watch` with intervals |
-| **Filtering** | Manual grep | `--filter` option |
-| **Progress Calculation** | Not available | Percentage-based progress |
-| **Recommendations** | None | AI-powered next actions |
+| Feature                  | Old (Shell)             | New (Python)                      |
+| ------------------------ | ----------------------- | --------------------------------- |
+| **Display**              | Basic text output       | Rich tables with colors           |
+| **Watch Mode**           | `watch` command wrapper | Built-in `--watch` with intervals |
+| **Filtering**            | Manual grep             | `--filter` option                 |
+| **Progress Calculation** | Not available           | Percentage-based progress         |
+| **Recommendations**      | None                    | AI-powered next actions           |
 
 **Visual Comparison:**
 
 Old output:
+
 ```
 Agent: auth_backend
 Status: in-progress
 Branch: feature/auth-backend
 
-Agent: auth_frontend  
+Agent: auth_frontend
 Status: completed
 Branch: feature/auth-frontend
 ```
 
 New output:
+
 ```
 ╭─────────────────── Agent Status Overview ───────────────────╮
 │ Total Agents: 2                                             │
@@ -120,57 +125,58 @@ New output:
 
 ### agent-commit
 
-| Feature | Old (Shell) | New (Python) |
-|---------|------------|--------------|
-| **Validation** | Basic file checks | Comprehensive checklist validation |
-| **Commit Message** | Positional argument | `--message` option with generation |
-| **Merge Process** | Sequential git commands | Atomic operations |
-| **Conflict Detection** | After merge attempt | Pre-merge detection |
-| **Cleanup** | Manual | Automatic worktree removal |
+| Feature                | Old (Shell)             | New (Python)                       |
+| ---------------------- | ----------------------- | ---------------------------------- |
+| **Validation**         | Basic file checks       | Comprehensive checklist validation |
+| **Commit Message**     | Positional argument     | `--message` option with generation |
+| **Merge Process**      | Sequential git commands | Atomic operations                  |
+| **Conflict Detection** | After merge attempt     | Pre-merge detection                |
+| **Cleanup**            | Manual                  | Automatic worktree removal         |
 
 ### Publishing Scripts
 
 #### prepublish
 
-| Feature | Old (JS) | New (Python) |
-|---------|----------|--------------|
-| **Checks** | Sequential promises | Parallel validation |
-| **Git Status** | `child_process.exec` | GitPython |
-| **Test Running** | `npm test` wrapper | Direct test execution |
-| **Error Reporting** | Console.error | Structured error objects |
-| **manifest Generation** | JSON.stringify | YAML with comments |
+| Feature                 | Old (JS)             | New (Python)             |
+| ----------------------- | -------------------- | ------------------------ |
+| **Checks**              | Sequential promises  | Parallel validation      |
+| **Git Status**          | `child_process.exec` | GitPython                |
+| **Test Running**        | `npm test` wrapper   | Direct test execution    |
+| **Error Reporting**     | Console.error        | Structured error objects |
+| **manifest Generation** | JSON.stringify       | YAML with comments       |
 
 #### postpublish
 
-| Feature | Old (JS) | New (Python) |
-|---------|----------|--------------|
-| **NPM Verification** | `npm view` | Direct API calls with httpx |
-| **Async Operations** | Promises/callbacks | Native async/await |
-| **Installation Test** | Complex subprocess | Clean subprocess management |
-| **Cleanup** | Manual file operations | Context managers |
+| Feature               | Old (JS)               | New (Python)                |
+| --------------------- | ---------------------- | --------------------------- |
+| **NPM Verification**  | `npm view`             | Direct API calls with httpx |
+| **Async Operations**  | Promises/callbacks     | Native async/await          |
+| **Installation Test** | Complex subprocess     | Clean subprocess management |
+| **Cleanup**           | Manual file operations | Context managers            |
 
 #### security-check
 
-| Feature | Old (JS) | New (Python) |
-|---------|----------|--------------|
-| **Pattern Matching** | Basic regex | Compiled patterns with re |
-| **File Scanning** | Sync file reads | Async parallel scanning |
-| **Report Format** | Console.log | Structured YAML report |
-| **Performance** | Single-threaded | Multi-threaded scanning |
+| Feature              | Old (JS)        | New (Python)              |
+| -------------------- | --------------- | ------------------------- |
+| **Pattern Matching** | Basic regex     | Compiled patterns with re |
+| **File Scanning**    | Sync file reads | Async parallel scanning   |
+| **Report Format**    | Console.log     | Structured YAML report    |
+| **Performance**      | Single-threaded | Multi-threaded scanning   |
 
 ### intelligent-agent-generator
 
-| Feature | Old (JS) | New (Python) |
-|---------|----------|--------------|
-| **Parsing** | Custom parser | NLP libraries available |
-| **Complexity Analysis** | Basic heuristics | Advanced analysis |
-| **Output Structure** | Nested objects | Clean YAML with schemas |
-| **Interactive Mode** | `readline` | Click prompts |
-| **AI Integration** | Direct API calls | Structured AI service layer |
+| Feature                 | Old (JS)         | New (Python)                |
+| ----------------------- | ---------------- | --------------------------- |
+| **Parsing**             | Custom parser    | NLP libraries available     |
+| **Complexity Analysis** | Basic heuristics | Advanced analysis           |
+| **Output Structure**    | Nested objects   | Clean YAML with schemas     |
+| **Interactive Mode**    | `readline`       | Click prompts               |
+| **AI Integration**      | Direct API calls | Structured AI service layer |
 
 ## Command-Line Interface Improvements
 
 ### Old Style Arguments
+
 ```bash
 # Positional arguments, no help
 ./scripts/agent-commit-enhanced.sh /workspace "message" true false
@@ -180,6 +186,7 @@ New output:
 ```
 
 ### New Style Arguments
+
 ```bash
 # Named options with help
 ./scripts/python/agent-commit.py /workspace \
@@ -196,6 +203,7 @@ New output:
 ## Error Handling Comparison
 
 ### Old Error Handling
+
 ```bash
 # Shell script
 if [ ! -f "$DEPLOYMENT_PLAN" ]; then
@@ -213,6 +221,7 @@ fs.readFile(file, (err, data) => {
 ```
 
 ### New Error Handling
+
 ```python
 # Structured exceptions
 try:
@@ -232,23 +241,25 @@ except yaml.YAMLError as e:
 
 ## Performance Comparison
 
-| Operation | Old (Shell/JS) | New (Python) | Improvement |
-|-----------|----------------|--------------|-------------|
-| **First Run** | 2-3s (npm install) | 0.5s (UV cache) | 4-6x faster |
-| **Subsequent Runs** | 0.8s | 0.2s | 4x faster |
-| **Dependency Install** | 30-60s (npm) | 2-5s (UV) | 10-12x faster |
-| **Large File Processing** | Sequential | Parallel | 3-5x faster |
-| **Memory Usage** | High (Node.js) | Lower | 40% less |
+| Operation                 | Old (Shell/JS)     | New (Python)    | Improvement   |
+| ------------------------- | ------------------ | --------------- | ------------- |
+| **First Run**             | 2-3s (npm install) | 0.5s (UV cache) | 4-6x faster   |
+| **Subsequent Runs**       | 0.8s               | 0.2s            | 4x faster     |
+| **Dependency Install**    | 30-60s (npm)       | 2-5s (UV)       | 10-12x faster |
+| **Large File Processing** | Sequential         | Parallel        | 3-5x faster   |
+| **Memory Usage**          | High (Node.js)     | Lower           | 40% less      |
 
 ## Cross-Platform Support
 
 ### Old Scripts
+
 - **Linux/macOS**: Full support
 - **Windows**: Requires WSL or Git Bash
 - **Path Issues**: Backslash problems on Windows
 - **Dependencies**: Platform-specific tools (curl, jq)
 
 ### New Scripts
+
 - **Linux/macOS**: Native support
 - **Windows**: Works with Python + UV
 - **Path Handling**: Automatic normalization
@@ -257,24 +268,28 @@ except yaml.YAMLError as e:
 ## Migration Benefits Summary
 
 ### Developer Experience
+
 1. **Consistent CLI**: All scripts use Click with `--help`
 2. **Better Errors**: Clear messages with suggestions
 3. **Rich Output**: Tables, progress bars, colors
 4. **YAML Format**: More readable than JSON
 
 ### Maintenance
+
 1. **Single Language**: Python only (no bash/JS mix)
 2. **Type Hints**: Better IDE support
 3. **Testing**: Easier to unit test Python
 4. **Dependencies**: Inline with scripts
 
 ### Performance
+
 1. **Faster Startup**: UV caching
 2. **Parallel Operations**: Better concurrency
 3. **Memory Efficient**: Lower footprint
 4. **Network Handling**: Async operations
 
 ### Reliability
+
 1. **Error Recovery**: Graceful degradation
 2. **Atomic Operations**: All-or-nothing
 3. **Validation**: Pre-flight checks
@@ -282,18 +297,18 @@ except yaml.YAMLError as e:
 
 ## Feature Matrix
 
-| Feature | Shell | JS | Python |
-|---------|-------|----|----|
-| Cross-platform | ❌ | ⚠️ | ✅ |
-| Self-contained | ❌ | ❌ | ✅ |
-| Fast startup | ✅ | ❌ | ✅ |
-| Rich CLI | ❌ | ⚠️ | ✅ |
-| Async support | ❌ | ✅ | ✅ |
-| Type safety | ❌ | ⚠️ | ✅ |
-| Testing | ❌ | ✅ | ✅ |
-| YAML output | ❌ | ⚠️ | ✅ |
-| Progress bars | ❌ | ⚠️ | ✅ |
-| Color output | ⚠️ | ✅ | ✅ |
+| Feature        | Shell | JS  | Python |
+| -------------- | ----- | --- | ------ |
+| Cross-platform | ❌    | ⚠️  | ✅     |
+| Self-contained | ❌    | ❌  | ✅     |
+| Fast startup   | ✅    | ❌  | ✅     |
+| Rich CLI       | ❌    | ⚠️  | ✅     |
+| Async support  | ❌    | ✅  | ✅     |
+| Type safety    | ❌    | ⚠️  | ✅     |
+| Testing        | ❌    | ✅  | ✅     |
+| YAML output    | ❌    | ⚠️  | ✅     |
+| Progress bars  | ❌    | ⚠️  | ✅     |
+| Color output   | ⚠️    | ✅  | ✅     |
 
 Legend: ✅ Full support | ⚠️ Partial support | ❌ No support
 

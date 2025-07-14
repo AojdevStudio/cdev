@@ -13,6 +13,7 @@ Ruff has been successfully installed and configured for the project. Initial ana
 ## Configuration
 
 ### pyproject.toml
+
 - Created comprehensive Ruff configuration
 - Enabled extensive rule sets (E, F, W, I, N, D, UP, B, C4, SIM, ARG, PTH, ERA, PD, PL, TRY, NPY, RUF)
 - Set line length to 120 characters (matching Black)
@@ -20,12 +21,14 @@ Ruff has been successfully installed and configured for the project. Initial ana
 - Excluded test files and common directories
 
 ### VS Code Integration
+
 - Configured Ruff as default Python formatter
 - Enabled format on save
 - Enabled real-time linting
 - Disabled legacy Python linters (pylint, flake8, mypy)
 
 ### npm Scripts Added
+
 - `lint:python` - Check Python code with Ruff
 - `lint:python:fix` - Auto-fix Python linting issues
 - `format:python` - Format Python code
@@ -34,6 +37,7 @@ Ruff has been successfully installed and configured for the project. Initial ana
 - `quality:python:fix` - Fix all Python quality issues
 
 ### GitHub Actions Integration
+
 - Added Ruff installation to test workflow
 - Added Python linting to main test job
 - Added Python quality checks to quality job
@@ -41,22 +45,23 @@ Ruff has been successfully installed and configured for the project. Initial ana
 
 ## Top Issues by Category
 
-| Issue Code | Count | Auto-fixable | Description |
-|------------|-------|--------------|-------------|
-| W293 | 650 | ✓ | Blank line with whitespace |
-| UP006 | 135 | ✗ | Non-PEP585 annotation (use built-in generics) |
-| D415 | 134 | ✗ | Missing terminal punctuation in docstring |
-| PTH123 | 47 | ✗ | Prefer pathlib over built-in open |
-| UP035 | 30 | ✗ | Deprecated import |
-| F401 | 25 | ✓ | Unused import |
-| W292 | 17 | ✓ | Missing newline at end of file |
-| I001 | 15 | ✓ | Unsorted imports |
-| UP015 | 15 | ✓ | Redundant open modes |
-| F541 | 12 | ✓ | F-string without placeholders |
+| Issue Code | Count | Auto-fixable | Description                                   |
+| ---------- | ----- | ------------ | --------------------------------------------- |
+| W293       | 650   | ✓            | Blank line with whitespace                    |
+| UP006      | 135   | ✗            | Non-PEP585 annotation (use built-in generics) |
+| D415       | 134   | ✗            | Missing terminal punctuation in docstring     |
+| PTH123     | 47    | ✗            | Prefer pathlib over built-in open             |
+| UP035      | 30    | ✗            | Deprecated import                             |
+| F401       | 25    | ✓            | Unused import                                 |
+| W292       | 17    | ✓            | Missing newline at end of file                |
+| I001       | 15    | ✓            | Unsorted imports                              |
+| UP015      | 15    | ✓            | Redundant open modes                          |
+| F541       | 12    | ✓            | F-string without placeholders                 |
 
 ## Most Affected Files
 
 Based on the issues found, the following files have the most linting issues:
+
 - `intelligent-agent-generator.py`
 - `decompose-parallel.py`
 - `agent-commit.py`

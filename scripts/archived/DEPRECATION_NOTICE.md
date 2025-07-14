@@ -5,6 +5,7 @@
 ## Affected Scripts
 
 ### Shell Scripts (`.sh`)
+
 - agent-commit-enhanced.sh
 - cache-linear-issue.sh
 - deploy.sh
@@ -16,6 +17,7 @@
 - validate-parallel-work.sh
 
 ### JavaScript Scripts (`.js`, `.cjs`)
+
 - decompose-parallel.cjs
 - intelligent-agent-generator.js
 - postpublish.js
@@ -24,11 +26,11 @@
 
 ## Deprecation Timeline
 
-| Phase | Date | Action |
-|-------|------|--------|
-| **Phase 1** | July 2025 | Scripts archived, wrappers provide compatibility |
-| **Phase 2** | October 2025 | Deprecation warnings added to wrapper execution |
-| **Phase 3** | January 2026 | Final removal of wrapper scripts |
+| Phase       | Date         | Action                                           |
+| ----------- | ------------ | ------------------------------------------------ |
+| **Phase 1** | July 2025    | Scripts archived, wrappers provide compatibility |
+| **Phase 2** | October 2025 | Deprecation warnings added to wrapper execution  |
+| **Phase 3** | January 2026 | Final removal of wrapper scripts                 |
 
 ## Migration Guide
 
@@ -110,4 +112,4 @@ If you need assistance with migration:
 
 ---
 
-*This notice was created on July 12, 2025, as part of the script modernization initiative.*
+_This notice was created on July 12, 2025, as part of the script modernization initiative._

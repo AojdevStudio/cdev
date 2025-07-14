@@ -52,7 +52,7 @@ console.error('');
 
 // Forward to Python script
 const python = spawn('python', [pythonScript, ...process.argv.slice(2)], {
-  stdio: 'inherit'
+  stdio: 'inherit',
 });
 
 python.on('exit', (code) => {
@@ -62,22 +62,22 @@ python.on('exit', (code) => {
 
 ## Available Wrappers
 
-| Wrapper | Forwards To | Type |
-|---------|-------------|------|
-| deploy.sh | scripts/python/deploy.py | Shell |
-| agent-commit-enhanced.sh | scripts/python/agent-commit.py | Shell |
-| cache-linear-issue.sh | scripts/python/cache-linear-issue.py | Shell |
-| integrate-parallel-work.sh | scripts/python/integrate-parallel-work.py | Shell |
-| monitor-agents.sh | scripts/python/monitor-agents.py | Shell |
-| resolve-conflicts.sh | scripts/python/resolve-conflicts.py | Shell |
-| spawn-agents.sh | scripts/python/spawn-agents.py | Shell |
-| test-locally.sh | scripts/python/test-locally.py | Shell |
-| validate-parallel-work.sh | scripts/python/validate-parallel-work.py | Shell |
-| decompose-parallel.cjs | scripts/python/decompose-parallel.py | Node.js |
+| Wrapper                        | Forwards To                                   | Type    |
+| ------------------------------ | --------------------------------------------- | ------- |
+| deploy.sh                      | scripts/python/deploy.py                      | Shell   |
+| agent-commit-enhanced.sh       | scripts/python/agent-commit.py                | Shell   |
+| cache-linear-issue.sh          | scripts/python/cache-linear-issue.py          | Shell   |
+| integrate-parallel-work.sh     | scripts/python/integrate-parallel-work.py     | Shell   |
+| monitor-agents.sh              | scripts/python/monitor-agents.py              | Shell   |
+| resolve-conflicts.sh           | scripts/python/resolve-conflicts.py           | Shell   |
+| spawn-agents.sh                | scripts/python/spawn-agents.py                | Shell   |
+| test-locally.sh                | scripts/python/test-locally.py                | Shell   |
+| validate-parallel-work.sh      | scripts/python/validate-parallel-work.py      | Shell   |
+| decompose-parallel.cjs         | scripts/python/decompose-parallel.py          | Node.js |
 | intelligent-agent-generator.js | scripts/python/intelligent-agent-generator.py | Node.js |
-| postpublish.js | scripts/python/postpublish.py | Node.js |
-| prepublish.js | scripts/python/prepublish.py | Node.js |
-| security-check.js | scripts/python/security-check.py | Node.js |
+| postpublish.js                 | scripts/python/postpublish.py                 | Node.js |
+| prepublish.js                  | scripts/python/prepublish.py                  | Node.js |
+| security-check.js              | scripts/python/security-check.py              | Node.js |
 
 ## Environment Variables
 

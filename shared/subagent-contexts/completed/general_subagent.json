@@ -20,15 +20,10 @@
       "Complete: Agent 2: Convert spawn-agents.sh, agent-commit-enhanced.sh, monitor-agents.sh to Python",
       "Complete: Agent 4: Convert intelligent-agent-generator.js, decompose-parallel.cjs to Python"
     ],
-    "successMetrics": [
-      "All general tasks completed successfully"
-    ]
+    "successMetrics": ["All general tasks completed successfully"]
   },
   "orchestration": {
     "phase": 1,
-    "concurrentWith": [
-      "validation_subagent",
-      "testing_subagent"
-    ]
+    "concurrentWith": ["validation_subagent", "testing_subagent"]
   }
 }

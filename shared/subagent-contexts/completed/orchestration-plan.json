@@ -13,9 +13,7 @@
         "description": "All script conversion tasks can run concurrently as they operate on different files and have no shared resources."
       }
     ],
-    "criticalPath": [
-      "script_conversion_3"
-    ],
+    "criticalPath": ["script_conversion_3"],
     "estimatedTotalTime": 50
   },
   "totalSubagents": 5,

@@ -30,6 +30,7 @@ gantt
 **Duration:** 3 months
 
 **Key Activities:**
+
 - ✅ All scripts converted to Python
 - ✅ Old scripts archived to `scripts/archived/`
 - ✅ Wrapper scripts created for backward compatibility
@@ -39,6 +40,7 @@ gantt
 **User Impact:** Minimal - all existing workflows continue to function
 
 **What Users Should Do:**
+
 - Start testing Python scripts in development environments
 - Update local scripts and aliases
 - Review the migration guide
@@ -51,6 +53,7 @@ gantt
 **Duration:** 3 months
 
 **Key Activities:**
+
 - Add prominent deprecation warnings to wrapper scripts
 - Include migration hints in warning messages
 - Track wrapper usage metrics (optional)
@@ -60,17 +63,19 @@ gantt
 **User Impact:** Warning messages on every script execution
 
 **Warning Message Example:**
+
 ```
 ⚠️  DEPRECATION WARNING: This script will be REMOVED on January 12, 2026
-   
+
    Old: ./scripts/deploy.sh
    New: python scripts/python/deploy.py
-   
+
    Please update your workflows NOW to avoid disruption.
    See: docs/migration-announcement.md for details.
 ```
 
 **What Users Should Do:**
+
 - Complete migration to Python scripts
 - Update all automated workflows
 - Update documentation and runbooks
@@ -83,6 +88,7 @@ gantt
 **Date:** January 12, 2026
 
 **Key Activities:**
+
 - Remove all wrapper scripts
 - Remove archived shell/JS scripts (optional)
 - Update all documentation
@@ -92,6 +98,7 @@ gantt
 **User Impact:** Old script paths will no longer work
 
 **What Happens:**
+
 ```bash
 # This will no longer work
 ./scripts/deploy.sh
@@ -107,33 +114,33 @@ python scripts/python/deploy.py
 
 These scripts are used frequently and should be migrated as soon as possible:
 
-| Script | Usage Frequency | Removal Date | Replacement |
-|--------|----------------|--------------|-------------|
-| deploy.sh | Daily | Jan 12, 2026 | deploy.py |
-| test-locally.sh | Daily | Jan 12, 2026 | test-locally.py |
-| agent-commit-enhanced.sh | Daily | Jan 12, 2026 | agent-commit.py |
-| security-check.js | CI/CD | Jan 12, 2026 | security-check.py |
+| Script                   | Usage Frequency | Removal Date | Replacement       |
+| ------------------------ | --------------- | ------------ | ----------------- |
+| deploy.sh                | Daily           | Jan 12, 2026 | deploy.py         |
+| test-locally.sh          | Daily           | Jan 12, 2026 | test-locally.py   |
+| agent-commit-enhanced.sh | Daily           | Jan 12, 2026 | agent-commit.py   |
+| security-check.js        | CI/CD           | Jan 12, 2026 | security-check.py |
 
 ### Medium-Priority Scripts
 
 These scripts are used regularly but less frequently:
 
-| Script | Usage Frequency | Removal Date | Replacement |
-|--------|----------------|--------------|-------------|
-| spawn-agents.sh | Weekly | Jan 12, 2026 | spawn-agents.py |
-| monitor-agents.sh | Weekly | Jan 12, 2026 | monitor-agents.py |
-| intelligent-agent-generator.js | Weekly | Jan 12, 2026 | intelligent-agent-generator.py |
+| Script                         | Usage Frequency | Removal Date | Replacement                    |
+| ------------------------------ | --------------- | ------------ | ------------------------------ |
+| spawn-agents.sh                | Weekly          | Jan 12, 2026 | spawn-agents.py                |
+| monitor-agents.sh              | Weekly          | Jan 12, 2026 | monitor-agents.py              |
+| intelligent-agent-generator.js | Weekly          | Jan 12, 2026 | intelligent-agent-generator.py |
 
 ### Low-Priority Scripts
 
 These scripts are used occasionally:
 
-| Script | Usage Frequency | Removal Date | Replacement |
-|--------|----------------|--------------|-------------|
-| cache-linear-issue.sh | Monthly | Jan 12, 2026 | cache-linear-issue.py |
-| resolve-conflicts.sh | As needed | Jan 12, 2026 | resolve-conflicts.py |
-| prepublish.js | Release | Jan 12, 2026 | prepublish.py |
-| postpublish.js | Release | Jan 12, 2026 | postpublish.py |
+| Script                | Usage Frequency | Removal Date | Replacement           |
+| --------------------- | --------------- | ------------ | --------------------- |
+| cache-linear-issue.sh | Monthly         | Jan 12, 2026 | cache-linear-issue.py |
+| resolve-conflicts.sh  | As needed       | Jan 12, 2026 | resolve-conflicts.py  |
+| prepublish.js         | Release         | Jan 12, 2026 | prepublish.py         |
+| postpublish.js        | Release         | Jan 12, 2026 | postpublish.py        |
 
 ## Migration Checklist
 

@@ -13,6 +13,7 @@ We are pleased to announce the completion of our script modernization initiative
 All scripts in the `scripts/` directory have been converted:
 
 **Shell Scripts:**
+
 - agent-commit-enhanced.sh → agent-commit.py
 - cache-linear-issue.sh → cache-linear-issue.py
 - deploy.sh → deploy.py
@@ -24,6 +25,7 @@ All scripts in the `scripts/` directory have been converted:
 - validate-parallel-work.sh → validate-parallel-work.py
 
 **JavaScript Scripts:**
+
 - decompose-parallel.cjs → decompose-parallel.py
 - intelligent-agent-generator.js → intelligent-agent-generator.py
 - postpublish.js → postpublish.py
@@ -33,22 +35,26 @@ All scripts in the `scripts/` directory have been converted:
 ## Benefits of Python Scripts
 
 ### 1. Cross-Platform Compatibility
+
 - Works seamlessly on Windows, macOS, and Linux
 - No more shell script compatibility issues
 - Consistent behavior across all environments
 
 ### 2. Enhanced Error Handling
+
 - Clear, actionable error messages
 - Proper exception handling with stack traces
 - Better debugging capabilities
 
 ### 3. Improved Features
+
 - Built-in help documentation (`--help` flag)
 - Better argument parsing and validation
 - Enhanced logging and progress indicators
 - Improved performance through optimizations
 
 ### 4. Better Maintainability
+
 - Single language reduces complexity
 - Type hints improve code quality
 - Comprehensive test coverage
@@ -76,7 +82,7 @@ Update your `package.json`:
     // Old
     "deploy": "./scripts/deploy.sh",
     "prepublishOnly": "node scripts/prepublish.js",
-    
+
     // New
     "deploy": "python scripts/python/deploy.py",
     "prepublishOnly": "python scripts/python/prepublish.py"
@@ -122,20 +128,22 @@ To ensure a smooth transition, we've implemented:
 
 ## Timeline
 
-| Date | Phase | Action |
-|------|-------|--------|
-| **July 2025** | Migration Complete | Python scripts available, wrappers active |
-| **October 2025** | Deprecation Warnings | Enhanced warnings in wrapper scripts |
-| **January 2026** | Wrapper Removal | Old script interfaces removed |
+| Date             | Phase                | Action                                    |
+| ---------------- | -------------------- | ----------------------------------------- |
+| **July 2025**    | Migration Complete   | Python scripts available, wrappers active |
+| **October 2025** | Deprecation Warnings | Enhanced warnings in wrapper scripts      |
+| **January 2026** | Wrapper Removal      | Old script interfaces removed             |
 
 ## Getting Help
 
 ### Documentation
+
 - Python script documentation: `scripts/python/README.md`
 - Individual script help: `python scripts/python/[script-name].py --help`
 - Migration FAQ: See below
 
 ### Support
+
 - Open an issue for migration problems
 - Check existing issues for common problems
 - Review the wrapper scripts for compatibility details
@@ -143,21 +151,27 @@ To ensure a smooth transition, we've implemented:
 ## FAQ
 
 ### Q: Do I need to install Python?
+
 **A:** Python 3.8 or higher is required. Most systems have Python pre-installed. Check with `python --version` or `python3 --version`.
 
 ### Q: Will my existing workflows break?
+
 **A:** No. Wrapper scripts ensure backward compatibility during the transition period.
 
 ### Q: Are all features preserved?
+
 **A:** Yes, all features are preserved and many scripts have enhanced functionality.
 
 ### Q: What about Windows users?
+
 **A:** Python scripts provide better Windows support than shell scripts ever could.
 
 ### Q: Can I still use the old scripts?
+
 **A:** Yes, through wrappers until January 2026. We strongly recommend migrating sooner.
 
 ### Q: Are the command-line arguments the same?
+
 **A:** Yes, all arguments are preserved. Python scripts often support additional options.
 
 ## Action Items
@@ -177,4 +191,4 @@ Thank you for your continued support!
 
 ---
 
-*For questions or concerns, please open an issue or contact the maintainers.*
+_For questions or concerns, please open an issue or contact the maintainers._

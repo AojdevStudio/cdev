@@ -3,11 +3,13 @@
 ## Auto-Fix Results
 
 ### Initial State
+
 - **Total issues found**: 1,162
 - **Auto-fixable issues**: 750 (64.6%)
 - **Manual fixes required**: 412 (35.4%)
 
 ### After Auto-Fix
+
 - **Issues fixed automatically**: 747
 - **Issues remaining**: 404
 - **Files reformatted**: 17
@@ -15,23 +17,27 @@
 ## Fixes Applied
 
 ### 1. Import Organization
+
 - Removed unused imports
 - Sorted imports alphabetically
 - Grouped imports by standard library, third-party, and local
 
 ### 2. Code Formatting
+
 - Applied consistent indentation (4 spaces)
 - Fixed line length issues (max 120 characters)
 - Standardized quote usage (double quotes)
 - Added/removed trailing commas appropriately
 
 ### 3. Whitespace & Style
+
 - Removed trailing whitespace (650 instances)
 - Fixed blank line issues
 - Standardized spacing around operators
 - Fixed indentation inconsistencies
 
 ### 4. Code Modernization
+
 - Updated string formatting to f-strings
 - Removed unnecessary parentheses
 - Simplified boolean comparisons
@@ -40,7 +46,9 @@
 ## Remaining Issues (404)
 
 ### Type Annotations (299 issues)
+
 Most remaining issues are related to deprecated type annotations:
+
 - `typing.Dict` → `dict`
 - `typing.List` → `list`
 - `typing.Tuple` → `tuple`
@@ -48,24 +56,29 @@ Most remaining issues are related to deprecated type annotations:
 These require the `--unsafe-fixes` flag or manual fixes since they change code semantics.
 
 ### File I/O Patterns (78 issues)
+
 - `open()` → `Path.open()` for better path handling
 
 ### Docstring Formatting (15 issues)
+
 - Missing blank lines between summary and description
 - Missing punctuation at end of first line
 
 ### Code Complexity (12 issues)
+
 - Functions with too many statements (>50)
 - Functions that need refactoring for clarity
 
 ## Commands to Address Remaining Issues
 
 ### 1. Apply Unsafe Fixes (for type annotations)
+
 ```bash
 ruff check scripts/python/ --fix --unsafe-fixes
 ```
 
 ### 2. Check Specific Rule Categories
+
 ```bash
 # Type annotations only
 ruff check scripts/python/ --select UP
@@ -78,6 +91,7 @@ ruff check scripts/python/ --select PTH
 ```
 
 ### 3. Generate Detailed Report
+
 ```bash
 ruff check scripts/python/ --output-format=json > ruff-detailed-report.json
 ```
@@ -101,6 +115,7 @@ ruff check scripts/python/ --output-format=json > ruff-detailed-report.json
 ## Configuration Applied
 
 The `pyproject.toml` configuration includes:
+
 - Python 3.9+ target
 - 120 character line length
 - All rules enabled except specific exclusions

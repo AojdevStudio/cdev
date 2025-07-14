@@ -37,23 +37,24 @@ export LINEAR_API_KEY="lin_api_xxxxxxxxxxxxx"
 ```
 
 **Example Output:**
+
 ```yaml
 issue:
   id: LINEAR-123
-  title: "Implement user authentication system"
-  description: "Add JWT-based authentication with refresh tokens"
-  state: "In Progress"
+  title: 'Implement user authentication system'
+  description: 'Add JWT-based authentication with refresh tokens'
+  state: 'In Progress'
   priority: 2
   labels:
     - backend
     - security
   assignee:
-    name: "John Doe"
-    email: "john@example.com"
-  created_at: "2024-01-10T10:00:00Z"
-  updated_at: "2024-01-12T15:30:00Z"
-cached_at: "2024-01-12T18:00:00Z"
-cache_path: ".cache/linear-issues/LINEAR-123.yaml"
+    name: 'John Doe'
+    email: 'john@example.com'
+  created_at: '2024-01-10T10:00:00Z'
+  updated_at: '2024-01-12T15:30:00Z'
+cached_at: '2024-01-12T18:00:00Z'
+cache_path: '.cache/linear-issues/LINEAR-123.yaml'
 ```
 
 ---
@@ -82,29 +83,31 @@ Creates parallel agent worktrees from a deployment plan.
 ```
 
 **Example Deployment Plan (deployment-plan.yaml):**
+
 ```yaml
 task:
-  id: "LINEAR-123"
-  title: "Implement authentication system"
+  id: 'LINEAR-123'
+  title: 'Implement authentication system'
 agents:
-  - agent_id: "auth_backend"
-    role: "Backend authentication implementation"
-    focus_area: "JWT tokens and user management"
-    branch_name: "feature/auth-backend"
+  - agent_id: 'auth_backend'
+    role: 'Backend authentication implementation'
+    focus_area: 'JWT tokens and user management'
+    branch_name: 'feature/auth-backend'
     files_to_create:
-      - "src/auth/jwt.service.ts"
-      - "src/auth/user.service.ts"
-    
-  - agent_id: "auth_frontend"
-    role: "Frontend authentication UI"
-    focus_area: "Login/register forms and token management"
-    branch_name: "feature/auth-frontend"
+      - 'src/auth/jwt.service.ts'
+      - 'src/auth/user.service.ts'
+
+  - agent_id: 'auth_frontend'
+    role: 'Frontend authentication UI'
+    focus_area: 'Login/register forms and token management'
+    branch_name: 'feature/auth-frontend'
     files_to_create:
-      - "src/components/LoginForm.tsx"
-      - "src/components/RegisterForm.tsx"
+      - 'src/components/LoginForm.tsx'
+      - 'src/components/RegisterForm.tsx'
 ```
 
 **Example Output:**
+
 ```
 ✓ Created worktree: workspaces/auth_backend (branch: feature/auth-backend)
 ✓ Created worktree: workspaces/auth_frontend (branch: feature/auth-frontend)
@@ -141,6 +144,7 @@ Monitors the status of all active agents.
 ```
 
 **Example Output (Console):**
+
 ```
 ╭─────────────────── Agent Status Overview ───────────────────╮
 │                                                             │
@@ -190,6 +194,7 @@ Commits and integrates completed agent work.
 ```
 
 **Example Validation Output:**
+
 ```
 Validating agent: auth_backend
 ✓ All validation checklist items completed (5/5)
@@ -233,6 +238,7 @@ Validates that all agent deliverables meet requirements.
 ```
 
 **Example Output:**
+
 ```
 Validation Report
 ═════════════════
@@ -279,10 +285,11 @@ Merges all completed agent work into the main branch.
 ```
 
 **Example Integration Flow:**
+
 ```
 Integration Plan:
 1. auth_backend → main
-2. auth_frontend → main  
+2. auth_frontend → main
 3. auth_tests → main
 
 Pre-flight Checks:
@@ -330,6 +337,7 @@ Interactive conflict resolution for parallel development.
 ```
 
 **Example Interactive Resolution:**
+
 ```
 Conflict detected in: src/auth/config.ts
 ═══════════════════════════════════════
@@ -378,6 +386,7 @@ FORCE_PUBLISH=1 ./scripts/python/prepublish.py
 ```
 
 **Example Output:**
+
 ```
 Pre-publish Validation
 ═════════════════════
@@ -422,6 +431,7 @@ Post-publication verification and cleanup.
 ```
 
 **Example Output:**
+
 ```
 Post-publish Verification
 ════════════════════════
@@ -464,6 +474,7 @@ Security validation for package publication.
 ```
 
 **Example Output:**
+
 ```
 Security Check Report
 ════════════════════
@@ -521,6 +532,7 @@ Automated local testing workflow.
 ```
 
 **Example Output:**
+
 ```
 Local Test Suite
 ═══════════════
@@ -599,28 +611,29 @@ AI-powered agent generation from requirements.
 ```
 
 **Example Generated Plan:**
+
 ```yaml
 deployment_plan:
   task:
-    requirement: "Add real-time notifications"
-    complexity: "moderate"
-    estimated_time: "2-3 days"
-  
+    requirement: 'Add real-time notifications'
+    complexity: 'moderate'
+    estimated_time: '2-3 days'
+
   agents:
-    - agent_id: "notification_backend"
-      role: "WebSocket server and notification service"
-      focus_area: "Real-time message delivery"
-      skills_required: ["Node.js", "WebSockets", "Redis"]
-      
-    - agent_id: "notification_frontend"  
-      role: "UI components for notifications"
-      focus_area: "Toast messages and notification center"
-      skills_required: ["React", "CSS", "WebSocket client"]
-      
-    - agent_id: "notification_tests"
-      role: "Test suite for notification system"
-      focus_area: "Unit and integration tests"
-      skills_required: ["Jest", "Testing Library"]
+    - agent_id: 'notification_backend'
+      role: 'WebSocket server and notification service'
+      focus_area: 'Real-time message delivery'
+      skills_required: ['Node.js', 'WebSockets', 'Redis']
+
+    - agent_id: 'notification_frontend'
+      role: 'UI components for notifications'
+      focus_area: 'Toast messages and notification center'
+      skills_required: ['React', 'CSS', 'WebSocket client']
+
+    - agent_id: 'notification_tests'
+      role: 'Test suite for notification system'
+      focus_area: 'Unit and integration tests'
+      skills_required: ['Jest', 'Testing Library']
 ```
 
 ### decompose-parallel.py

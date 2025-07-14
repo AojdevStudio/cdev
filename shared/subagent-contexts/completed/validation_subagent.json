@@ -20,15 +20,10 @@
       "Complete: Agent 3: Convert validate-parallel-work.sh, integrate-parallel-work.sh, resolve-conflicts.sh to Python",
       "Complete: Agent 5: Convert prepublish.js, postpublish.js, security-check.js to Python"
     ],
-    "successMetrics": [
-      "All validation tasks completed successfully"
-    ]
+    "successMetrics": ["All validation tasks completed successfully"]
   },
   "orchestration": {
     "phase": 1,
-    "concurrentWith": [
-      "testing_subagent",
-      "general_subagent"
-    ]
+    "concurrentWith": ["testing_subagent", "general_subagent"]
   }
 }

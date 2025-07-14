@@ -10,6 +10,7 @@
 #### 1. Script Archival ✅
 
 **Shell Scripts Archived:**
+
 - ✅ agent-commit-enhanced.sh → scripts/archived/shell/
 - ✅ cache-linear-issue.sh → scripts/archived/shell/
 - ✅ deploy.sh → scripts/archived/shell/
@@ -21,6 +22,7 @@
 - ✅ validate-parallel-work.sh → scripts/archived/shell/
 
 **JavaScript Scripts Archived:**
+
 - ✅ decompose-parallel.cjs → scripts/archived/js/
 - ✅ intelligent-agent-generator.js → scripts/archived/js/
 - ✅ postpublish.js → scripts/archived/js/
@@ -28,6 +30,7 @@
 - ✅ security-check.js → scripts/archived/js/
 
 **Test Files Archived:**
+
 - ✅ intelligent-agent-generator.test.js → scripts/archived/js/
 - ✅ postpublish.test.js → scripts/archived/js/
 - ✅ prepublish.test.js → scripts/archived/js/
@@ -45,6 +48,7 @@
 All wrapper scripts created in `scripts/` directory to maintain backward compatibility:
 
 **Shell Wrappers:**
+
 - ✅ agent-commit-enhanced.sh (→ agent-commit.py)
 - ✅ cache-linear-issue.sh
 - ✅ deploy.sh
@@ -56,6 +60,7 @@ All wrapper scripts created in `scripts/` directory to maintain backward compati
 - ✅ validate-parallel-work.sh
 
 **JavaScript Wrappers:**
+
 - ✅ decompose-parallel.cjs
 - ✅ intelligent-agent-generator.js
 - ✅ postpublish.js

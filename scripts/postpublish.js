@@ -19,20 +19,20 @@ console.error('');
 // Check if Python script exists
 const fs = require('fs');
 if (!fs.existsSync(pythonScript)) {
-    console.error(`Error: Python script not found at ${pythonScript}`);
-    process.exit(1);
+  console.error(`Error: Python script not found at ${pythonScript}`);
+  process.exit(1);
 }
 
 // Forward to Python script
 const python = spawn('python3', [pythonScript, ...process.argv.slice(2)], {
-    stdio: 'inherit'
+  stdio: 'inherit',
 });
 
 python.on('error', (err) => {
-    console.error(`Error executing Python script: ${err.message}`);
-    process.exit(1);
+  console.error(`Error executing Python script: ${err.message}`);
+  process.exit(1);
 });
 
 python.on('exit', (code) => {
-    process.exit(code || 0);
+  process.exit(code || 0);
 });

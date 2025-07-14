@@ -9,6 +9,7 @@ All scripts use UV's inline dependency specification (PEP 723) format, making th
 ## Scripts
 
 ### security-check.py
+
 Security validation script for package publication.
 
 ```bash
@@ -18,6 +19,7 @@ Security validation script for package publication.
 ```
 
 Features:
+
 - Verifies environment files are properly excluded in .gitignore (does NOT delete them)
 - Validates sensitive files won't be published
 - Scans for hardcoded secrets in source code
@@ -27,6 +29,7 @@ Features:
 **Important**: This script only performs checks and validations. It does NOT modify or delete any files.
 
 ### prepublish.py
+
 Pre-publication validation script.
 
 ```bash
@@ -36,6 +39,7 @@ ALLOW_DIRTY=1 ./scripts/python/prepublish.py
 ```
 
 Features:
+
 - Validates package.json structure
 - Verifies required files are present
 - Checks script executability
@@ -43,6 +47,7 @@ Features:
 - Generates distribution manifest
 
 ### postpublish.py
+
 Post-publication operations script.
 
 ```bash
@@ -52,6 +57,7 @@ Post-publication operations script.
 ```
 
 Features:
+
 - Verifies package on NPM registry
 - Tests global NPX installation
 - Updates distribution manifest
@@ -59,6 +65,7 @@ Features:
 - Cleans up temporary files
 
 ### intelligent-agent-generator.py
+
 Intelligent agent generation for parallel development.
 
 ```bash
@@ -76,6 +83,7 @@ Intelligent agent generation for parallel development.
 ```
 
 Features:
+
 - Semantic requirement parsing
 - Dynamic work domain discovery
 - Intelligent agent specification generation
@@ -95,6 +103,7 @@ All scripts follow the UV inline script format:
 ```
 
 This format allows:
+
 - Self-contained scripts with dependencies
 - No virtual environment setup required
 - Automatic dependency installation on first run
@@ -103,6 +112,7 @@ This format allows:
 ## Dependencies
 
 Common dependencies across scripts:
+
 - `pyyaml`: YAML parsing and generation
 - `click`: Command-line interface framework
 - `rich`: Terminal formatting and colors
@@ -111,6 +121,7 @@ Common dependencies across scripts:
 ## Output Formats
 
 All scripts support two output formats:
+
 1. **Console** (default): Human-readable output with colors
 2. **YAML**: Machine-readable output for automation
 
@@ -122,6 +133,7 @@ All scripts support two output formats:
 ## Migration from JavaScript
 
 These scripts have been migrated from their JavaScript counterparts to:
+
 - Improve cross-platform compatibility
 - Leverage UV's modern package management
 - Maintain consistent output format (YAML)

@@ -30,7 +30,8 @@
     "format:python": "export PATH=\"/Users/ossieirondi/.local/bin:$PATH\" && ruff format scripts/python/",
     "format:python:check": "export PATH=\"/Users/ossieirondi/.local/bin:$PATH\" && ruff format scripts/python/ --check",
     "quality:python": "npm run lint:python && npm run format:python:check",
-    "quality:python:fix": "npm run lint:python:fix && npm run format:python"
+    "quality:python:fix": "npm run lint:python:fix && npm run format:python",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "claude",

@@ -15,16 +15,19 @@ UV is a fast Python package manager developed by Astral, designed to be a drop-i
 ### macOS
 
 #### Using Homebrew (Recommended)
+
 ```bash
 brew install uv
 ```
 
 #### Using the Official Installer
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 #### Using pip
+
 ```bash
 pip install uv
 ```
@@ -32,11 +35,13 @@ pip install uv
 ### Linux
 
 #### Using the Official Installer (Recommended)
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 #### Using pip
+
 ```bash
 pip install uv
 ```
@@ -44,12 +49,14 @@ pip install uv
 #### Distribution-specific Methods
 
 **Ubuntu/Debian:**
+
 ```bash
 # Add to your .bashrc or .zshrc after installation
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
 **Arch Linux (AUR):**
+
 ```bash
 yay -S uv
 # or
@@ -59,21 +66,25 @@ paru -S uv
 ### Windows
 
 #### Using PowerShell (Recommended)
+
 ```powershell
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 #### Using Scoop
+
 ```powershell
 scoop install uv
 ```
 
 #### Using pip
+
 ```powershell
 pip install uv
 ```
 
 #### WSL (Windows Subsystem for Linux)
+
 Follow the Linux installation instructions within your WSL environment.
 
 ## Verifying Installation
@@ -85,6 +96,7 @@ uv --version
 ```
 
 You should see output like:
+
 ```
 uv 0.4.0 (stable)
 ```
@@ -102,22 +114,26 @@ UV installs to different locations depending on your installation method:
 Ensure UV is in your PATH by adding to your shell configuration:
 
 **Bash (~/.bashrc):**
+
 ```bash
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
 **Zsh (~/.zshrc):**
+
 ```bash
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
 **Fish (~/.config/fish/config.fish):**
+
 ```fish
 set -gx PATH $HOME/.cargo/bin $PATH
 ```
 
 **PowerShell (Windows):**
 Add to your PowerShell profile:
+
 ```powershell
 $env:Path += ";$env:USERPROFILE\.cargo\bin"
 ```
@@ -127,6 +143,7 @@ $env:Path += ";$env:USERPROFILE\.cargo\bin"
 The parallel development scripts require Python 3.11 or later. UV will automatically use the correct Python version based on script requirements.
 
 Check your Python version:
+
 ```bash
 python --version
 # or
@@ -134,6 +151,7 @@ python3 --version
 ```
 
 If you need to install Python 3.11+:
+
 - **macOS**: `brew install python@3.11`
 - **Ubuntu/Debian**: `sudo apt install python3.11`
 - **Windows**: Download from [python.org](https://www.python.org/downloads/)
@@ -157,6 +175,7 @@ This allows scripts to be run directly without manual dependency installation:
 ```
 
 UV automatically:
+
 1. Creates an isolated environment
 2. Installs required dependencies
 3. Runs the script with the correct Python version
@@ -172,6 +191,7 @@ UV automatically:
 ### Permission Denied
 
 Make scripts executable:
+
 ```bash
 chmod +x scripts/python/*.py
 ```
@@ -179,6 +199,7 @@ chmod +x scripts/python/*.py
 ### SSL Certificate Errors
 
 If you encounter SSL errors during installation:
+
 ```bash
 # Temporary workaround (not recommended for production)
 export UV_NO_VERIFY_SSL=1
@@ -187,6 +208,7 @@ export UV_NO_VERIFY_SSL=1
 ### Corporate Proxy Issues
 
 Configure UV to use your proxy:
+
 ```bash
 export HTTP_PROXY=http://proxy.company.com:8080
 export HTTPS_PROXY=http://proxy.company.com:8080
@@ -195,6 +217,7 @@ export HTTPS_PROXY=http://proxy.company.com:8080
 ### Windows-specific Issues
 
 1. **Execution Policy**: If scripts won't run, update PowerShell execution policy:
+
    ```powershell
    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
    ```
@@ -233,6 +256,7 @@ uv cache clean
 ### VS Code
 
 Add to `.vscode/settings.json`:
+
 ```json
 {
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
