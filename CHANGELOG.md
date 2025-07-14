@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **ESLint plugin for unused imports** - Added `eslint-plugin-unused-imports` for automated import management
+- **TypeScript type checking script** - Added `npm run typecheck` command for TypeScript validation
+- **Claude-Historian integration** - MCP-based conversation search and indexing system
+- **Comprehensive AI documentation** - Converted Anthropic documentation to structured YAML format
 - New `/orchestrate` command with universal task format support (markdown, text, JSON, Linear issues)
 - Intelligent sub-agent decomposition using LLM for concurrent execution
 - Task parser utility for automatic format detection
@@ -27,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Simplified `/orchestrate` command** - Refactored to use Claude's native parallel tool invocation instead of complex orchestration
+- **Enhanced linting configuration** - Updated ESLint rules and added comprehensive linting fixes checklist
+- **Project documentation overhaul** - Updated all documentation files with improved structure and clarity
 - Restored `/agent-start` command to original 7-phase TDD workflow for agent_context.json files
 - Separated flexible task orchestration into new `/orchestrate` command
 - Improved command documentation with Feynman Technique for clarity
@@ -38,12 +45,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Critical ESLint errors** - Fixed 2 valid-typeof errors in `src/config-loader.js` that could cause runtime failures
+- **Massive linting cleanup** - Reduced ESLint issues from 322 (2 errors, 320 warnings) to 0 issues
+- **Unused imports and variables** - Removed 29+ unused variables and imports across the codebase
+- **Import organization** - Fixed import order and spacing issues throughout test files
 - Python linting issues across hook scripts
 - Script execution permissions and shebang lines
 - Test file imports and module references
 
 ### Removed
 
+- **Node modules from git tracking** - Cleaned up repository by removing accidentally tracked node_modules
 - Obsolete `/update-claude` command
 - Legacy Python script implementations (moved to archived/)
 - Test files for migrated Python scripts
