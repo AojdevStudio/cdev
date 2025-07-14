@@ -19,22 +19,23 @@ jest.mock('../src/platform-utils', () => ({
     getSystemInfo: () => ({
       platform: 'linux',
       arch: 'x64',
-      npmVersion: '8.0.0'
+      npmVersion: '8.0.0',
     }),
     executeCommand: jest.fn(),
     getFilePermissions: jest.fn(),
-    getNpmVersion: () => '8.0.0'
-  }
+    getNpmVersion: () => '8.0.0',
+  },
 }));
 
 jest.mock('../src/python-detector', () => ({
   pythonDetector: {
-    getBestPython: jest.fn()
-  }
+    getBestPython: jest.fn(),
+  },
 }));
 
 const { platformUtils } = require('../src/platform-utils');
 const { pythonDetector } = require('../src/python-detector');
+
 const fs = require('fs');
 const { execSync } = require('child_process');
 
@@ -48,7 +49,7 @@ describe('Validator', () => {
       const schema = {
         name: ['required', 'string'],
         age: ['required', 'number', { rule: 'min', min: 0 }],
-        email: ['required', 'email']
+        email: ['required', 'email'],
       };
 
       validator.defineSchema('user', schema);
@@ -56,7 +57,7 @@ describe('Validator', () => {
       const validData = {
         name: 'John Doe',
         age: 30,
-        email: 'john@example.com'
+        email: 'john@example.com',
       };
 
       const result = validator.validate(validData, 'user');
@@ -68,7 +69,7 @@ describe('Validator', () => {
       const schema = {
         name: ['required', 'string'],
         age: ['required', 'number'],
-        email: ['required', 'email']
+        email: ['required', 'email'],
       };
 
       validator.defineSchema('user', schema);
@@ -76,7 +77,7 @@ describe('Validator', () => {
       const invalidData = {
         name: '',
         age: 'not a number',
-        email: 'invalid-email'
+        email: 'invalid-email',
       };
 
       const result = validator.validate(invalidData, 'user');
@@ -89,7 +90,7 @@ describe('Validator', () => {
       const schema = {
         'user.name': ['required', 'string'],
         'user.contact.email': ['required', 'email'],
-        'user.contact.phone': ['string', { rule: 'pattern', pattern: /^\d{3}-\d{3}-\d{4}$/ }]
+        'user.contact.phone': ['string', { rule: 'pattern', pattern: /^\d{3}-\d{3}-\d{4}$/ }],
       };
 
       validator.defineSchema('profile', schema);
@@ -99,9 +100,9 @@ describe('Validator', () => {
           name: 'John Doe',
           contact: {
             email: 'john@example.com',
-            phone: '123-456-7890'
-          }
-        }
+            phone: '123-456-7890',
+          },
+        },
       };
 
       const result = validator.validate(validData, 'profile');
@@ -121,7 +122,7 @@ describe('Validator', () => {
       const data = {
         name: 'John',
         age: 30,
-        email: ''
+        email: '',
       };
 
       const result = validator.validateRequired(data, ['name', 'age', 'email']);
@@ -147,7 +148,7 @@ describe('PreInstallValidator', () => {
       pythonDetector.getBestPython.mockReturnValue({
         version: '3.9.0',
         path: '/usr/bin/python3',
-        hasPip: true
+        hasPip: true,
       });
 
       platformUtils.executeCommand.mockImplementation((cmd) => {
@@ -176,7 +177,7 @@ describe('PreInstallValidator', () => {
     test('fails validation when requirements not met', async () => {
       // Mock Node version below requirement
       Object.defineProperty(process, 'version', { value: 'v14.0.0', configurable: true });
-      
+
       // Mock missing Python
       pythonDetector.getBestPython.mockReturnValue(null);
 
@@ -218,12 +219,12 @@ describe('PreInstallValidator', () => {
       pythonDetector.getBestPython.mockReturnValue({
         version: '3.9.0',
         path: '/usr/bin/python3',
-        hasPip: true
+        hasPip: true,
       });
 
       platformUtils.executeCommand.mockReturnValue({
         success: true,
-        output: 'git version 2.30.0'
+        output: 'git version 2.30.0',
       });
 
       const result = await preInstallValidator.validate();
@@ -263,12 +264,12 @@ describe('PostInstallValidator', () => {
       platformUtils.getFilePermissions.mockReturnValue({
         readable: true,
         writable: true,
-        executable: true
+        executable: true,
       });
 
       pythonDetector.getBestPython.mockReturnValue({
         version: '3.9.0',
-        path: '/usr/bin/python3'
+        path: '/usr/bin/python3',
       });
 
       const result = await postInstallValidator.validate();
@@ -290,7 +291,9 @@ describe('PostInstallValidator', () => {
 
       // Mock missing directories
       fs.existsSync.mockImplementation((path) => {
-        if (path.includes('.claude')) return false;
+        if (path.includes('.claude')) {
+          return false;
+        }
         return true;
       });
 
@@ -305,7 +308,7 @@ describe('PostInstallValidator', () => {
     test('validates hook functionality', async () => {
       pythonDetector.getBestPython.mockReturnValue({
         version: '3.9.0',
-        path: '/usr/bin/python3'
+        path: '/usr/bin/python3',
       });
 
       platformUtils.executeCommand.mockImplementation((cmd) => {
@@ -332,7 +335,7 @@ describe('PostInstallValidator', () => {
     test('performs quick validation check', async () => {
       platformUtils.executeCommand.mockReturnValue({
         success: true,
-        output: '1.0.0'
+        output: '1.0.0',
       });
 
       const result = await postInstallValidator.quickCheck();
@@ -370,7 +373,12 @@ describe('ValidationReporter', () => {
 
   describe('progress reporting', () => {
     test('generates progress report', () => {
-      const progress = validationReporter.progressReport('Installation', 50, 100, 'Installing hooks');
+      const progress = validationReporter.progressReport(
+        'Installation',
+        50,
+        100,
+        'Installing hooks',
+      );
       expect(progress).toContain('Installation');
       expect(progress).toContain('50%');
       expect(progress).toContain('Installing hooks');
@@ -381,7 +389,7 @@ describe('ValidationReporter', () => {
     test('formats data as table', () => {
       const data = [
         { component: 'Node.js', status: 'OK', version: '16.0.0' },
-        { component: 'Python', status: 'OK', version: '3.9.0' }
+        { component: 'Python', status: 'OK', version: '3.9.0' },
       ];
       const headers = ['component', 'status', 'version'];
 
@@ -400,10 +408,7 @@ describe('ValidationReporter', () => {
 
   describe('box formatting', () => {
     test('creates formatted box', () => {
-      const box = validationReporter.box('Summary', [
-        'All tests passed',
-        'Ready to use'
-      ]);
+      const box = validationReporter.box('Summary', ['All tests passed', 'Ready to use']);
 
       expect(box).toContain('Summary');
       expect(box).toContain('All tests passed');
@@ -424,10 +429,10 @@ describe('ValidationReporter', () => {
           git: { valid: true, version: '2.30.0', required: true },
           permissions: { valid: true, required: true },
           diskSpace: { valid: true, availableMB: 500, required: true },
-          network: { valid: true, required: false }
+          network: { valid: true, required: false },
         },
         warnings: [],
-        errors: new ValidationErrorCollection()
+        errors: new ValidationErrorCollection(),
       };
 
       const report = validationReporter.preInstallReport(validationResult);
@@ -446,10 +451,10 @@ describe('ValidationReporter', () => {
           hooks: { valid: true },
           permissions: { valid: true },
           configuration: { valid: true },
-          pythonHooks: { valid: true }
+          pythonHooks: { valid: true },
         },
         recommendations: [],
-        errors: new ValidationErrorCollection()
+        errors: new ValidationErrorCollection(),
       };
 
       const report = validationReporter.postInstallReport(validationResult);

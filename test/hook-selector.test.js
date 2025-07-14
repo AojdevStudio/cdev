@@ -1,6 +1,8 @@
-const HookSelector = require('../src/hook-selector');
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
+
+const HookSelector = require('../src/hook-selector');
 
 describe('HookSelector', () => {
   let selector;
@@ -11,26 +13,46 @@ describe('HookSelector', () => {
 
   const mockCategorizedHooks = {
     tier1: [
-      { name: 'commit-message-validator.py', tier: 'tier1', importance: 'critical', category: 'validation' },
-      { name: 'typescript-validator.py', tier: 'tier1', importance: 'critical', category: 'validation' },
-      { name: 'pnpm-enforcer.py', tier: 'tier1', importance: 'critical', category: 'enforcement' }
+      {
+        name: 'commit-message-validator.py',
+        tier: 'tier1',
+        importance: 'critical',
+        category: 'validation',
+      },
+      {
+        name: 'typescript-validator.py',
+        tier: 'tier1',
+        importance: 'critical',
+        category: 'validation',
+      },
+      { name: 'pnpm-enforcer.py', tier: 'tier1', importance: 'critical', category: 'enforcement' },
     ],
     tier2: [
-      { name: 'api-standards-checker.py', tier: 'tier2', importance: 'important', category: 'checking' },
-      { name: 'code-quality-reporter.py', tier: 'tier2', importance: 'important', category: 'reporting' },
-      { name: 'universal-linter.py', tier: 'tier2', importance: 'important', category: 'linting' }
+      {
+        name: 'api-standards-checker.py',
+        tier: 'tier2',
+        importance: 'important',
+        category: 'checking',
+      },
+      {
+        name: 'code-quality-reporter.py',
+        tier: 'tier2',
+        importance: 'important',
+        category: 'reporting',
+      },
+      { name: 'universal-linter.py', tier: 'tier2', importance: 'important', category: 'linting' },
     ],
     tier3: [
       { name: 'notification.py', tier: 'tier3', importance: 'optional', category: 'notification' },
-      { name: 'stop.py', tier: 'tier3', importance: 'optional', category: 'lifecycle' }
+      { name: 'stop.py', tier: 'tier3', importance: 'optional', category: 'lifecycle' },
     ],
-    utils: []
+    utils: [],
   };
 
   describe('selectHooks', () => {
     it('should select hooks for typescript project', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript');
-      const names = selected.map(h => h.name);
+      const names = selected.map((h) => h.name);
 
       expect(names).toContain('commit-message-validator.py');
       expect(names).toContain('typescript-validator.py');
@@ -39,7 +61,7 @@ describe('HookSelector', () => {
 
     it('should select hooks for node project', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'node');
-      const names = selected.map(h => h.name);
+      const names = selected.map((h) => h.name);
 
       expect(names).toContain('commit-message-validator.py');
       expect(names).not.toContain('typescript-validator.py');
@@ -47,7 +69,7 @@ describe('HookSelector', () => {
 
     it('should select hooks for python project', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'python');
-      const names = selected.map(h => h.name);
+      const names = selected.map((h) => h.name);
 
       expect(names).toContain('commit-message-validator.py');
       expect(names).not.toContain('typescript-validator.py');
@@ -56,7 +78,7 @@ describe('HookSelector', () => {
 
     it('should select more hooks for monorepo', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'monorepo');
-      const names = selected.map(h => h.name);
+      const names = selected.map((h) => h.name);
 
       expect(names).toContain('pnpm-enforcer.py');
       expect(names.length).toBeGreaterThan(4);
@@ -64,7 +86,7 @@ describe('HookSelector', () => {
 
     it('should respect minimal setup preference', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript', {
-        minimalSetup: true
+        minimalSetup: true,
       });
 
       expect(selected.length).toBeLessThan(5);
@@ -72,9 +94,9 @@ describe('HookSelector', () => {
 
     it('should exclude hooks based on preferences', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript', {
-        excludeHooks: ['commit-message-validator.py', 'typescript-validator.py']
+        excludeHooks: ['commit-message-validator.py', 'typescript-validator.py'],
       });
-      const names = selected.map(h => h.name);
+      const names = selected.map((h) => h.name);
 
       expect(names).not.toContain('commit-message-validator.py');
       expect(names).not.toContain('typescript-validator.py');
@@ -82,50 +104,50 @@ describe('HookSelector', () => {
 
     it('should include user-requested hooks', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript', {
-        includeHooks: ['notification.py']
+        includeHooks: ['notification.py'],
       });
-      const names = selected.map(h => h.name);
+      const names = selected.map((h) => h.name);
 
       expect(names).toContain('notification.py');
     });
 
     it('should filter by category', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript', {
-        includeCategories: ['validation', 'enforcement']
+        includeCategories: ['validation', 'enforcement'],
       });
 
-      selected.forEach(hook => {
+      selected.forEach((hook) => {
         expect(['validation', 'enforcement']).toContain(hook.category);
       });
     });
 
     it('should exclude categories', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript', {
-        excludeCategories: ['notification', 'lifecycle']
+        excludeCategories: ['notification', 'lifecycle'],
       });
 
-      selected.forEach(hook => {
+      selected.forEach((hook) => {
         expect(['notification', 'lifecycle']).not.toContain(hook.category);
       });
     });
 
     it('should filter by minimum importance', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'typescript', {
-        minImportance: 'important'
+        minImportance: 'important',
       });
 
-      selected.forEach(hook => {
+      selected.forEach((hook) => {
         expect(['critical', 'important']).toContain(hook.importance);
       });
     });
 
     it('should sort by importance', () => {
       const selected = selector.selectHooks(mockCategorizedHooks, 'default');
-      
+
       // Check that critical hooks come before important hooks
-      const criticalIndex = selected.findIndex(h => h.importance === 'critical');
-      const importantIndex = selected.findIndex(h => h.importance === 'important');
-      
+      const criticalIndex = selected.findIndex((h) => h.importance === 'critical');
+      const importantIndex = selected.findIndex((h) => h.importance === 'important');
+
       if (criticalIndex !== -1 && importantIndex !== -1) {
         expect(criticalIndex).toBeLessThan(importantIndex);
       }
@@ -187,7 +209,7 @@ describe('HookSelector', () => {
 
     it('should detect typescript project', async () => {
       await fs.writeJson(path.join(tempDir, 'package.json'), {
-        devDependencies: { typescript: '^4.0.0' }
+        devDependencies: { typescript: '^4.0.0' },
       });
 
       const type = await selector.detectProjectType(tempDir);
@@ -196,7 +218,7 @@ describe('HookSelector', () => {
 
     it('should detect react project', async () => {
       await fs.writeJson(path.join(tempDir, 'package.json'), {
-        dependencies: { react: '^17.0.0', typescript: '^4.0.0' }
+        dependencies: { react: '^17.0.0', typescript: '^4.0.0' },
       });
 
       const type = await selector.detectProjectType(tempDir);
@@ -205,7 +227,7 @@ describe('HookSelector', () => {
 
     it('should detect monorepo project', async () => {
       await fs.writeJson(path.join(tempDir, 'package.json'), {
-        workspaces: ['packages/*']
+        workspaces: ['packages/*'],
       });
 
       const type = await selector.detectProjectType(tempDir);
@@ -214,7 +236,7 @@ describe('HookSelector', () => {
 
     it('should detect API project', async () => {
       await fs.writeJson(path.join(tempDir, 'package.json'), {
-        dependencies: { express: '^4.17.0' }
+        dependencies: { express: '^4.17.0' },
       });
 
       const type = await selector.detectProjectType(tempDir);
@@ -223,7 +245,7 @@ describe('HookSelector', () => {
 
     it('should detect node project', async () => {
       await fs.writeJson(path.join(tempDir, 'package.json'), {
-        name: 'my-node-app'
+        name: 'my-node-app',
       });
 
       const type = await selector.detectProjectType(tempDir);

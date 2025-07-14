@@ -13,18 +13,18 @@ const fs = require('fs');
  */
 function createTempDir(prefix = 'test-') {
   const tempDir = path.join(__dirname, '../../temp', `${prefix}${Date.now()}`);
-  
+
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
   }
-  
+
   return {
     path: tempDir,
     cleanup: () => {
       if (fs.existsSync(tempDir)) {
         fs.rmSync(tempDir, { recursive: true, force: true });
       }
-    }
+    },
   };
 }
 
@@ -37,14 +37,14 @@ function createTempDir(prefix = 'test-') {
  */
 async function waitFor(condition, timeout = 5000, interval = 100) {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < timeout) {
     if (await condition()) {
       return;
     }
-    await new Promise(resolve => setTimeout(resolve, interval));
+    await new Promise((resolve) => setTimeout(resolve, interval));
   }
-  
+
   throw new Error('Timeout waiting for condition');
 }
 
@@ -64,15 +64,15 @@ const testData = {
     main: 'index.js',
     scripts: {
       test: 'jest',
-      start: 'node index.js'
+      start: 'node index.js',
     },
     dependencies: {},
     devDependencies: {
-      jest: '^29.0.0'
+      jest: '^29.0.0',
     },
-    ...overrides
+    ...overrides,
   }),
-  
+
   /**
    * Generates a valid tsconfig.json structure
    * @param {Object} overrides - Custom values to override defaults
@@ -87,13 +87,13 @@ const testData = {
       skipLibCheck: true,
       forceConsistentCasingInFileNames: true,
       outDir: './dist',
-      rootDir: './src'
+      rootDir: './src',
     },
     include: ['src/**/*'],
     exclude: ['node_modules', 'dist'],
-    ...overrides
+    ...overrides,
   }),
-  
+
   /**
    * Generates a valid .env structure
    * @param {Object} vars - Environment variables
@@ -103,16 +103,16 @@ const testData = {
     const defaults = {
       NODE_ENV: 'test',
       PORT: '3000',
-      DATABASE_URL: 'postgresql://localhost:5432/test'
+      DATABASE_URL: 'postgresql://localhost:5432/test',
     };
-    
+
     const merged = { ...defaults, ...vars };
-    
+
     return Object.entries(merged)
       .map(([key, value]) => `${key}=${value}`)
       .join('\n');
   },
-  
+
   /**
    * Generates a valid Linear issue
    * @param {Object} overrides - Custom values
@@ -128,9 +128,9 @@ const testData = {
     labels: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    ...overrides
+    ...overrides,
   }),
-  
+
   /**
    * Generates hook configuration
    * @param {string} type - Hook type
@@ -142,8 +142,8 @@ const testData = {
     enabled: true,
     priority: 100,
     script: path.join('.claude', 'hooks', type, 'hook.py'),
-    ...config
-  })
+    ...config,
+  }),
 };
 
 /**
@@ -155,58 +155,62 @@ const customMatchers = {
    */
   toExistAsFile(received) {
     const pass = fs.existsSync(received) && fs.statSync(received).isFile();
-    
+
     return {
       pass,
-      message: () => pass
-        ? `expected ${received} not to exist as a file`
-        : `expected ${received} to exist as a file`
+      message: () =>
+        pass
+          ? `expected ${received} not to exist as a file`
+          : `expected ${received} to exist as a file`,
     };
   },
-  
+
   /**
    * Checks if a directory exists at the given path
    */
   toExistAsDirectory(received) {
     const pass = fs.existsSync(received) && fs.statSync(received).isDirectory();
-    
+
     return {
       pass,
-      message: () => pass
-        ? `expected ${received} not to exist as a directory`
-        : `expected ${received} to exist as a directory`
+      message: () =>
+        pass
+          ? `expected ${received} not to exist as a directory`
+          : `expected ${received} to exist as a directory`,
     };
   },
-  
+
   /**
    * Checks if a value is within a range
    */
   toBeWithinRange(received, floor, ceiling) {
     const pass = received >= floor && received <= ceiling;
-    
+
     return {
       pass,
-      message: () => pass
-        ? `expected ${received} not to be within range ${floor} - ${ceiling}`
-        : `expected ${received} to be within range ${floor} - ${ceiling}`
+      message: () =>
+        pass
+          ? `expected ${received} not to be within range ${floor} - ${ceiling}`
+          : `expected ${received} to be within range ${floor} - ${ceiling}`,
     };
   },
-  
+
   /**
    * Checks if an array contains an object matching partial properties
    */
   toContainObjectMatching(received, expected) {
-    const pass = received.some(item => {
-      return Object.keys(expected).every(key => item[key] === expected[key]);
-    });
-    
+    const pass = received.some((item) =>
+      Object.keys(expected).every((key) => item[key] === expected[key]),
+    );
+
     return {
       pass,
-      message: () => pass
-        ? `expected array not to contain object matching ${JSON.stringify(expected)}`
-        : `expected array to contain object matching ${JSON.stringify(expected)}`
+      message: () =>
+        pass
+          ? `expected array not to contain object matching ${JSON.stringify(expected)}`
+          : `expected array to contain object matching ${JSON.stringify(expected)}`,
     };
-  }
+  },
 };
 
 /**
@@ -230,7 +234,7 @@ const assert = {
       }
     }
   },
-  
+
   /**
    * Asserts that a function throws with a specific error
    * @param {Function} fn - Function to test
@@ -239,7 +243,7 @@ const assert = {
   throws(fn, error) {
     expect(() => fn()).toThrow(error);
   },
-  
+
   /**
    * Asserts file content matches
    * @param {string} filePath - File path
@@ -247,14 +251,14 @@ const assert = {
    */
   fileContent(filePath, expected) {
     const content = fs.readFileSync(filePath, 'utf8');
-    
+
     if (expected instanceof RegExp) {
       expect(content).toMatch(expected);
     } else {
       expect(content).toBe(expected);
     }
   },
-  
+
   /**
    * Asserts JSON file content matches
    * @param {string} filePath - File path
@@ -263,7 +267,7 @@ const assert = {
   jsonFileContent(filePath, expected) {
     const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     expect(content).toEqual(expected);
-  }
+  },
 };
 
 /**
@@ -277,21 +281,21 @@ const lifecycle = {
   async setup(options = {}) {
     // Clear all mocks
     jest.clearAllMocks();
-    
+
     // Reset modules if needed
     if (options.resetModules) {
       jest.resetModules();
     }
-    
+
     // Clear module cache for specific modules
     if (options.clearCache) {
       const modules = Array.isArray(options.clearCache) ? options.clearCache : [options.clearCache];
-      modules.forEach(mod => {
+      modules.forEach((mod) => {
         delete require.cache[require.resolve(mod)];
       });
     }
   },
-  
+
   /**
    * Cleanup test environment
    * @param {Object} options - Cleanup options
@@ -299,17 +303,17 @@ const lifecycle = {
   async cleanup(options = {}) {
     // Restore all mocks
     jest.restoreAllMocks();
-    
+
     // Clear timers
     if (options.clearTimers) {
       jest.clearAllTimers();
     }
-    
+
     // Use real timers
     if (options.useRealTimers) {
       jest.useRealTimers();
     }
-  }
+  },
 };
 
 /**
@@ -324,20 +328,19 @@ const spyHelpers = {
    */
   trackCalls(obj, method) {
     const spy = jest.spyOn(obj, method);
-    
+
     return {
       spy,
       calls: () => spy.mock.calls,
       callCount: () => spy.mock.calls.length,
       lastCall: () => spy.mock.calls[spy.mock.calls.length - 1],
       nthCall: (n) => spy.mock.calls[n - 1],
-      calledWith: (...args) => spy.mock.calls.some(call => 
-        JSON.stringify(call) === JSON.stringify(args)
-      ),
+      calledWith: (...args) =>
+        spy.mock.calls.some((call) => JSON.stringify(call) === JSON.stringify(args)),
       clear: () => spy.mockClear(),
-      restore: () => spy.mockRestore()
+      restore: () => spy.mockRestore(),
     };
-  }
+  },
 };
 
 // Setup custom matchers
@@ -352,5 +355,5 @@ module.exports = {
   customMatchers,
   assert,
   lifecycle,
-  spyHelpers
+  spyHelpers,
 };

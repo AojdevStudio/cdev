@@ -29,7 +29,7 @@ global.fetch = jest.fn(() =>
     status: 200,
     json: () => Promise.resolve({}),
     text: () => Promise.resolve(''),
-  })
+  }),
 );
 
 // Mock localStorage
@@ -57,7 +57,7 @@ global.sessionStorage = sessionStorageMock;
 // Mock window.matchMedia for responsive tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -115,7 +115,7 @@ global.URL.createObjectURL = jest.fn(() => 'mocked-url');
 global.URL.revokeObjectURL = jest.fn();
 
 // Custom test utilities
-global.waitForNextTick = () => new Promise(resolve => process.nextTick(resolve));
+global.waitForNextTick = () => new Promise((resolve) => process.nextTick(resolve));
 
 // Global test configuration
 beforeEach(() => {
@@ -130,9 +130,15 @@ beforeEach(() => {
   sessionStorage.clear();
 
   // Reset console mocks
-  if (console.log.mockClear) console.log.mockClear();
-  if (console.error.mockClear) console.error.mockClear();
-  if (console.warn.mockClear) console.warn.mockClear();
+  if (console.log.mockClear) {
+    console.log.mockClear();
+  }
+  if (console.error.mockClear) {
+    console.error.mockClear();
+  }
+  if (console.warn.mockClear) {
+    console.warn.mockClear();
+  }
 });
 
 afterEach(() => {
@@ -144,10 +150,7 @@ afterEach(() => {
 const originalError = originalConsole.error;
 beforeAll(() => {
   console.error = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render is deprecated')
-    ) {
+    if (typeof args[0] === 'string' && args[0].includes('Warning: ReactDOM.render is deprecated')) {
       return;
     }
     originalError.call(console, ...args);

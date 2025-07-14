@@ -10,10 +10,18 @@ describe('HookCategorizer', () => {
   describe('categorize', () => {
     it('should categorize hooks into tiers', async () => {
       const hooks = [
-        { name: 'commit-message-validator.py', path: '/hooks/commit-message-validator.py', content: '# Validator' },
-        { name: 'api-standards-checker.py', path: '/hooks/api-standards-checker.py', content: '# Checker' },
+        {
+          name: 'commit-message-validator.py',
+          path: '/hooks/commit-message-validator.py',
+          content: '# Validator',
+        },
+        {
+          name: 'api-standards-checker.py',
+          path: '/hooks/api-standards-checker.py',
+          content: '# Checker',
+        },
         { name: 'notification.py', path: '/hooks/notification.py', content: '# Notify' },
-        { name: 'utils/anth.py', path: '/hooks/utils/anth.py', content: '# Utility' }
+        { name: 'utils/anth.py', path: '/hooks/utils/anth.py', content: '# Utility' },
       ];
 
       const result = await categorizer.categorize(hooks);
@@ -24,10 +32,10 @@ describe('HookCategorizer', () => {
       expect(result.utils).toBeDefined();
 
       // Check specific categorizations
-      const tier1Names = result.tier1.map(h => h.name);
-      const tier2Names = result.tier2.map(h => h.name);
-      const tier3Names = result.tier3.map(h => h.name);
-      const utilNames = result.utils.map(h => h.name);
+      const tier1Names = result.tier1.map((h) => h.name);
+      const tier2Names = result.tier2.map((h) => h.name);
+      const tier3Names = result.tier3.map((h) => h.name);
+      const utilNames = result.utils.map((h) => h.name);
 
       expect(tier1Names).toContain('commit-message-validator.py');
       expect(tier2Names).toContain('api-standards-checker.py');
@@ -37,7 +45,11 @@ describe('HookCategorizer', () => {
 
     it('should add metadata to categorized hooks', async () => {
       const hooks = [
-        { name: 'typescript-validator.py', path: '/hooks/typescript-validator.py', content: '# Validate TS' }
+        {
+          name: 'typescript-validator.py',
+          path: '/hooks/typescript-validator.py',
+          content: '# Validate TS',
+        },
       ];
 
       const result = await categorizer.categorize(hooks);
@@ -127,14 +139,14 @@ describe('HookCategorizer', () => {
   describe('getHookDescription', () => {
     it('should return predefined descriptions', () => {
       const hook = { name: 'commit-message-validator.py' };
-      expect(categorizer.getHookDescription(hook))
-        .toBe('Validates commit message format and content');
+      expect(categorizer.getHookDescription(hook)).toBe(
+        'Validates commit message format and content',
+      );
     });
 
     it('should generate descriptions for unknown hooks', () => {
       const hook = { name: 'custom-helper.py' };
-      expect(categorizer.getHookDescription(hook))
-        .toBe('Custom Helper hook');
+      expect(categorizer.getHookDescription(hook)).toBe('Custom Helper hook');
     });
   });
 

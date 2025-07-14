@@ -2,11 +2,12 @@
  * Tests for platform-utils.js
  */
 
-const { platformUtils, PlatformUtils } = require('../src/platform-utils');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+
+const { platformUtils, PlatformUtils } = require('../src/platform-utils');
 
 // Mock modules
 jest.mock('child_process');
@@ -28,7 +29,7 @@ describe('PlatformUtils', () => {
     test('detects Windows correctly', () => {
       os.platform = jest.fn(() => 'win32');
       const utils = new PlatformUtils();
-      
+
       expect(utils.isWindows).toBe(true);
       expect(utils.isMacOS).toBe(false);
       expect(utils.isLinux).toBe(false);
@@ -38,7 +39,7 @@ describe('PlatformUtils', () => {
     test('detects macOS correctly', () => {
       os.platform = jest.fn(() => 'darwin');
       const utils = new PlatformUtils();
-      
+
       expect(utils.isWindows).toBe(false);
       expect(utils.isMacOS).toBe(true);
       expect(utils.isLinux).toBe(false);
@@ -48,7 +49,7 @@ describe('PlatformUtils', () => {
     test('detects Linux correctly', () => {
       os.platform = jest.fn(() => 'linux');
       const utils = new PlatformUtils();
-      
+
       expect(utils.isWindows).toBe(false);
       expect(utils.isMacOS).toBe(false);
       expect(utils.isLinux).toBe(true);
@@ -60,13 +61,13 @@ describe('PlatformUtils', () => {
     test('returns user information', () => {
       const mockUserInfo = {
         username: 'testuser',
-        homedir: '/home/testuser'
+        homedir: '/home/testuser',
       };
       jest.spyOn(os, 'userInfo').mockReturnValue(mockUserInfo);
       jest.spyOn(os, 'homedir').mockReturnValue('/home/testuser');
 
       const info = platformUtils.getUserInfo();
-      
+
       expect(info.username).toBe('testuser');
       expect(info.homedir).toBe('/home/testuser');
       expect(info).toHaveProperty('shell');
@@ -79,7 +80,7 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const info = utils.getUserInfo();
-      
+
       expect(info.isAdmin).toBe(true);
     });
 
@@ -91,7 +92,7 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const info = utils.getUserInfo();
-      
+
       expect(info.isAdmin).toBe(false);
     });
 
@@ -102,9 +103,9 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const info = utils.getUserInfo();
-      
+
       expect(info.isAdmin).toBe(true);
-      
+
       process.getuid = originalGetuid;
     });
   });
@@ -117,12 +118,14 @@ describe('PlatformUtils', () => {
       jest.spyOn(os, 'totalmem').mockReturnValue(16 * 1024 * 1024 * 1024);
       jest.spyOn(os, 'freemem').mockReturnValue(8 * 1024 * 1024 * 1024);
       execSync.mockImplementation((cmd) => {
-        if (cmd === 'npm --version') return '8.0.0';
+        if (cmd === 'npm --version') {
+          return '8.0.0';
+        }
         return '';
       });
 
       const info = platformUtils.getSystemInfo();
-      
+
       expect(info.arch).toBe('x64');
       expect(info.cpus).toBe(8);
       expect(info.totalMemory).toBe(16 * 1024 * 1024 * 1024);
@@ -135,7 +138,7 @@ describe('PlatformUtils', () => {
       execSync.mockReturnValue('command output');
 
       const result = platformUtils.executeCommand('echo test');
-      
+
       expect(result.success).toBe(true);
       expect(result.output).toBe('command output');
       expect(result.error).toBeNull();
@@ -149,7 +152,7 @@ describe('PlatformUtils', () => {
       });
 
       const result = platformUtils.executeCommand('failing-command');
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBe('error output');
     });
@@ -160,10 +163,13 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       utils.executeCommand('test');
-      
-      expect(execSync).toHaveBeenCalledWith('test', expect.objectContaining({
-        shell: expect.stringContaining('cmd')
-      }));
+
+      expect(execSync).toHaveBeenCalledWith(
+        'test',
+        expect.objectContaining({
+          shell: expect.stringContaining('cmd'),
+        }),
+      );
     });
 
     test('uses correct shell on Unix', () => {
@@ -172,10 +178,13 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       utils.executeCommand('test');
-      
-      expect(execSync).toHaveBeenCalledWith('test', expect.objectContaining({
-        shell: expect.stringMatching(/sh$/)
-      }));
+
+      expect(execSync).toHaveBeenCalledWith(
+        'test',
+        expect.objectContaining({
+          shell: expect.stringMatching(/sh$/),
+        }),
+      );
     });
   });
 
@@ -186,7 +195,7 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const result = utils.openBrowser('https://example.com');
-      
+
       expect(result).toBe(true);
       expect(execSync).toHaveBeenCalledWith(expect.stringContaining('start'), expect.any(Object));
     });
@@ -197,7 +206,7 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const result = utils.openBrowser('https://example.com');
-      
+
       expect(result).toBe(true);
       expect(execSync).toHaveBeenCalledWith(expect.stringContaining('open'), expect.any(Object));
     });
@@ -208,9 +217,12 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const result = utils.openBrowser('https://example.com');
-      
+
       expect(result).toBe(true);
-      expect(execSync).toHaveBeenCalledWith(expect.stringContaining('xdg-open'), expect.any(Object));
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringContaining('xdg-open'),
+        expect.any(Object),
+      );
     });
   });
 
@@ -218,12 +230,12 @@ describe('PlatformUtils', () => {
     test('gets file permissions on Unix', () => {
       os.platform = jest.fn(() => 'linux');
       fs.statSync.mockReturnValue({
-        mode: 0o755
+        mode: 0o755,
       });
 
       const utils = new PlatformUtils();
       const perms = utils.getFilePermissions('/test/file');
-      
+
       expect(perms.readable).toBe(true);
       expect(perms.writable).toBe(true);
       expect(perms.executable).toBe(true);
@@ -233,12 +245,12 @@ describe('PlatformUtils', () => {
     test('gets file permissions on Windows', () => {
       os.platform = jest.fn(() => 'win32');
       fs.statSync.mockReturnValue({
-        mode: 0o666
+        mode: 0o666,
       });
 
       const utils = new PlatformUtils();
       const perms = utils.getFilePermissions('/test/file.txt');
-      
+
       expect(perms.readable).toBe(true);
       expect(perms.writable).toBe(true);
       expect(perms.executable).toBe(false);
@@ -263,9 +275,9 @@ describe('PlatformUtils', () => {
       const result = utils.setFilePermissions('/test/file', {
         readable: true,
         writable: false,
-        executable: true
+        executable: true,
       });
-      
+
       expect(result).toBe(true);
       expect(fs.chmodSync).toHaveBeenCalled();
     });
@@ -276,9 +288,9 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const result = utils.setFilePermissions('/test/file', {
-        writable: false
+        writable: false,
       });
-      
+
       expect(result).toBe(true);
       expect(fs.chmodSync).toHaveBeenCalledWith('/test/file', 0o444);
     });
@@ -300,12 +312,12 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const scriptPath = utils.createScript('/test/script', 'echo hello\necho world');
-      
+
       expect(scriptPath).toBe('/test/script.cmd');
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         '/test/script.cmd',
         'echo hello\r\necho world',
-        { mode: 0o755 }
+        { mode: 0o755 },
       );
     });
 
@@ -315,12 +327,12 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const scriptPath = utils.createScript('/test/script', 'echo hello');
-      
+
       expect(scriptPath).toBe('/test/script.sh');
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         '/test/script.sh',
         expect.stringContaining('#!/bin/sh'),
-        expect.objectContaining({ mode: 0o755 })
+        expect.objectContaining({ mode: 0o755 }),
       );
     });
   });
@@ -332,9 +344,12 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const result = utils.killProcess(1234);
-      
+
       expect(result).toBe(true);
-      expect(execSync).toHaveBeenCalledWith(expect.stringContaining('taskkill'), expect.any(Object));
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringContaining('taskkill'),
+        expect.any(Object),
+      );
     });
 
     test('kills process on Unix', () => {
@@ -344,10 +359,10 @@ describe('PlatformUtils', () => {
 
       const utils = new PlatformUtils();
       const result = utils.killProcess(1234, 'SIGTERM');
-      
+
       expect(result).toBe(true);
       expect(process.kill).toHaveBeenCalledWith(1234, 'SIGTERM');
-      
+
       process.kill = originalKill;
     });
 
@@ -358,7 +373,7 @@ user     5678  0.0  0.1  12345  6789 ?        S    10:01   0:00 /usr/bin/node se
 
       const utils = new PlatformUtils();
       const processes = utils.findProcess('node');
-      
+
       expect(processes).toHaveLength(2);
       expect(processes[0].pid).toBe(1234);
       expect(processes[0].name).toBe('node');
@@ -414,7 +429,7 @@ user     5678  0.0  0.1  12345  6789 ?        S    10:01   0:00 /usr/bin/node se
 
     test('returns false on non-Linux platforms', () => {
       os.platform = jest.fn(() => 'win32');
-      
+
       const utils = new PlatformUtils();
       const result = utils.isWSL();
       expect(result).toBe(false);
@@ -425,24 +440,24 @@ user     5678  0.0  0.1  12345  6789 ?        S    10:01   0:00 /usr/bin/node se
     test('returns correct line ending for Windows', () => {
       os.platform = jest.fn(() => 'win32');
       const utils = new PlatformUtils();
-      
+
       expect(utils.getLineEnding()).toBe('\r\n');
     });
 
     test('returns correct line ending for Unix', () => {
       os.platform = jest.fn(() => 'darwin');
       const utils = new PlatformUtils();
-      
+
       expect(utils.getLineEnding()).toBe('\n');
     });
 
     test('normalizes line endings correctly', () => {
       os.platform = jest.fn(() => 'win32');
       const utils = new PlatformUtils();
-      
+
       const text = 'line1\nline2\r\nline3\rline4';
       const normalized = utils.normalizeLineEndings(text);
-      
+
       expect(normalized).toBe('line1\r\nline2\r\nline3\r\nline4');
     });
   });
@@ -450,22 +465,26 @@ user     5678  0.0  0.1  12345  6789 ?        S    10:01   0:00 /usr/bin/node se
   describe('getNetworkInfo', () => {
     test('returns network interface information', () => {
       const mockInterfaces = {
-        eth0: [{
-          address: '192.168.1.100',
-          family: 'IPv4',
-          internal: false
-        }],
-        lo: [{
-          address: '127.0.0.1',
-          family: 'IPv4',
-          internal: true
-        }]
+        eth0: [
+          {
+            address: '192.168.1.100',
+            family: 'IPv4',
+            internal: false,
+          },
+        ],
+        lo: [
+          {
+            address: '127.0.0.1',
+            family: 'IPv4',
+            internal: true,
+          },
+        ],
       };
-      
+
       jest.spyOn(os, 'networkInterfaces').mockReturnValue(mockInterfaces);
 
       const info = platformUtils.getNetworkInfo();
-      
+
       expect(info).toHaveProperty('eth0');
       expect(info).toHaveProperty('lo');
       expect(info.eth0[0].address).toBe('192.168.1.100');

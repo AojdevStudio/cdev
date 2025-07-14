@@ -1,6 +1,8 @@
-const HookOrganizer = require('../src/hook-organizer');
-const fs = require('fs-extra');
 const path = require('path');
+
+const fs = require('fs-extra');
+
+const HookOrganizer = require('../src/hook-organizer');
 
 describe('HookOrganizer', () => {
   let organizer;
@@ -25,8 +27,8 @@ describe('HookOrganizer', () => {
         description: 'Test validator',
         importance: 'critical',
         size: 1000,
-        modified: new Date()
-      }
+        modified: new Date(),
+      },
     ],
     tier2: [
       {
@@ -36,8 +38,8 @@ describe('HookOrganizer', () => {
         description: 'Test checker',
         importance: 'important',
         size: 800,
-        modified: new Date()
-      }
+        modified: new Date(),
+      },
     ],
     tier3: [
       {
@@ -47,10 +49,10 @@ describe('HookOrganizer', () => {
         description: 'Test helper',
         importance: 'optional',
         size: 600,
-        modified: new Date()
-      }
+        modified: new Date(),
+      },
     ],
-    utils: []
+    utils: [],
   };
 
   describe('organize', () => {
@@ -83,7 +85,7 @@ describe('HookOrganizer', () => {
         tier: 'tier1',
         category: 'validation',
         description: 'Test validator',
-        importance: 'critical'
+        importance: 'critical',
       });
     });
 
@@ -98,8 +100,9 @@ describe('HookOrganizer', () => {
     it('should update hook objects with current path', async () => {
       await organizer.organize(mockCategorizedHooks);
 
-      expect(mockCategorizedHooks.tier1[0].currentPath)
-        .toBe(path.join(testHooksPath, 'tier1', 'validator.py'));
+      expect(mockCategorizedHooks.tier1[0].currentPath).toBe(
+        path.join(testHooksPath, 'tier1', 'validator.py'),
+      );
     });
   });
 
@@ -113,10 +116,10 @@ describe('HookOrganizer', () => {
 
     it('should preserve utils subdirectory structure', async () => {
       await fs.ensureDir(path.join(testHooksPath, 'utils', 'llm'));
-      
-      const hook = { 
-        name: 'anth.py', 
-        path: path.join(testHooksPath, 'utils', 'llm', 'anth.py') 
+
+      const hook = {
+        name: 'anth.py',
+        path: path.join(testHooksPath, 'utils', 'llm', 'anth.py'),
       };
       const targetPath = await organizer.getTargetPath(hook, 'utils');
 
@@ -139,10 +142,7 @@ describe('HookOrganizer', () => {
     it('should scan directories if no registry', async () => {
       // Create hook files without registry
       await fs.ensureDir(path.join(testHooksPath, 'tier1'));
-      await fs.writeFile(
-        path.join(testHooksPath, 'tier1', 'test.py'),
-        '# Test hook'
-      );
+      await fs.writeFile(path.join(testHooksPath, 'tier1', 'test.py'), '# Test hook');
 
       const categorized = await organizer.getCategorizedHooks();
 
@@ -156,21 +156,21 @@ describe('HookOrganizer', () => {
       const utilsPath = path.join(testHooksPath, 'utils');
       await fs.ensureDir(path.join(utilsPath, 'llm'));
       await fs.ensureDir(path.join(utilsPath, 'tts'));
-      
+
       await fs.writeFile(path.join(utilsPath, 'llm', 'anth.py'), '# LLM util');
       await fs.writeFile(path.join(utilsPath, 'tts', 'openai.py'), '# TTS util');
 
       const hooks = await organizer.scanDirectory(utilsPath, 'utils');
 
       expect(hooks).toHaveLength(2);
-      expect(hooks.find(h => h.name === 'anth.py')).toBeDefined();
-      expect(hooks.find(h => h.name === 'openai.py')).toBeDefined();
+      expect(hooks.find((h) => h.name === 'anth.py')).toBeDefined();
+      expect(hooks.find((h) => h.name === 'openai.py')).toBeDefined();
     });
 
     it('should ignore non-Python files', async () => {
       const tierPath = path.join(testHooksPath, 'tier1');
       await fs.ensureDir(tierPath);
-      
+
       await fs.writeFile(path.join(tierPath, 'hook.py'), '# Python hook');
       await fs.writeFile(path.join(tierPath, 'readme.txt'), 'Not a hook');
 
@@ -185,7 +185,7 @@ describe('HookOrganizer', () => {
     it('should move hook between tiers', async () => {
       // Create initial structure
       await organizer.organize(mockCategorizedHooks);
-      
+
       // Create actual hook file
       const tier3Path = path.join(testHooksPath, 'tier3');
       const hookPath = path.join(tier3Path, 'helper.py');
@@ -201,12 +201,9 @@ describe('HookOrganizer', () => {
 
     it('should update registry when moving hooks', async () => {
       await organizer.organize(mockCategorizedHooks);
-      
+
       // Create actual hook file
-      await fs.writeFile(
-        path.join(testHooksPath, 'tier3', 'helper.py'),
-        '# Helper hook'
-      );
+      await fs.writeFile(path.join(testHooksPath, 'tier3', 'helper.py'), '# Helper hook');
 
       await organizer.moveHookToTier('helper.py', 'tier3', 'tier2');
 
@@ -225,7 +222,7 @@ describe('HookOrganizer', () => {
       for (const tier of ['tier1', 'tier2', 'tier3', 'utils']) {
         const readmePath = path.join(testHooksPath, tier, 'README.md');
         expect(await fs.pathExists(readmePath)).toBe(true);
-        
+
         const content = await fs.readFile(readmePath, 'utf-8');
         expect(content).toContain(`# ${tier === 'utils' ? 'Utils' : 'Tier'}`);
       }
@@ -245,23 +242,20 @@ describe('HookOrganizer', () => {
 
       expect(manifest.tiers.tier1).toMatchObject({
         description: 'Critical security and validation hooks',
-        hookCount: 1
+        hookCount: 1,
       });
     });
   });
 
   describe('getTierDescription', () => {
     it('should return correct tier descriptions', () => {
-      expect(organizer.getTierDescription('tier1'))
-        .toBe('Critical security and validation hooks');
-      expect(organizer.getTierDescription('tier2'))
-        .toBe('Important quality and standards hooks');
-      expect(organizer.getTierDescription('tier3'))
-        .toBe('Optional convenience and notification hooks');
-      expect(organizer.getTierDescription('utils'))
-        .toBe('Shared utilities and helper functions');
-      expect(organizer.getTierDescription('unknown'))
-        .toBe('Unknown tier');
+      expect(organizer.getTierDescription('tier1')).toBe('Critical security and validation hooks');
+      expect(organizer.getTierDescription('tier2')).toBe('Important quality and standards hooks');
+      expect(organizer.getTierDescription('tier3')).toBe(
+        'Optional convenience and notification hooks',
+      );
+      expect(organizer.getTierDescription('utils')).toBe('Shared utilities and helper functions');
+      expect(organizer.getTierDescription('unknown')).toBe('Unknown tier');
     });
   });
 });

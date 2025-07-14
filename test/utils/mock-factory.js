@@ -16,7 +16,7 @@ function createMockFileSystem(structure = {}) {
       const normalizedPath = path.normalize(filePath);
       return Object.prototype.hasOwnProperty.call(structure, normalizedPath);
     }),
-    
+
     readFileSync: jest.fn((filePath, encoding) => {
       const normalizedPath = path.normalize(filePath);
       if (!structure[normalizedPath]) {
@@ -24,22 +24,22 @@ function createMockFileSystem(structure = {}) {
       }
       return structure[normalizedPath];
     }),
-    
+
     writeFileSync: jest.fn((filePath, content, options) => {
       const normalizedPath = path.normalize(filePath);
       structure[normalizedPath] = content;
     }),
-    
+
     mkdirSync: jest.fn((dirPath, options) => {
       const normalizedPath = path.normalize(dirPath);
       structure[normalizedPath] = '[directory]';
     }),
-    
+
     readdirSync: jest.fn((dirPath) => {
       const normalizedPath = path.normalize(dirPath);
       const entries = [];
       const prefix = normalizedPath.endsWith(path.sep) ? normalizedPath : normalizedPath + path.sep;
-      
+
       for (const key of Object.keys(structure)) {
         if (key.startsWith(prefix)) {
           const relativePath = key.slice(prefix.length);
@@ -49,24 +49,24 @@ function createMockFileSystem(structure = {}) {
           }
         }
       }
-      
+
       return entries;
     }),
-    
+
     statSync: jest.fn((filePath) => {
       const normalizedPath = path.normalize(filePath);
       if (!structure[normalizedPath]) {
         throw new Error(`ENOENT: no such file or directory, stat '${filePath}'`);
       }
-      
+
       return {
         isFile: () => structure[normalizedPath] !== '[directory]',
         isDirectory: () => structure[normalizedPath] === '[directory]',
         mode: 0o755,
-        size: structure[normalizedPath] === '[directory]' ? 0 : structure[normalizedPath].length
+        size: structure[normalizedPath] === '[directory]' ? 0 : structure[normalizedPath].length,
       };
     }),
-    
+
     chmodSync: jest.fn(),
     unlinkSync: jest.fn((filePath) => {
       const normalizedPath = path.normalize(filePath);
@@ -76,9 +76,9 @@ function createMockFileSystem(structure = {}) {
       const normalizedSrc = path.normalize(src);
       const normalizedDest = path.normalize(dest);
       structure[normalizedDest] = structure[normalizedSrc];
-    })
+    }),
   };
-  
+
   return mockFs;
 }
 
@@ -94,28 +94,28 @@ function createMockChildProcess(responses = {}) {
       if (responses[command]) {
         return responses[command];
       }
-      
+
       // Check for partial matches
       for (const [key, value] of Object.entries(responses)) {
         if (command.includes(key)) {
           return value;
         }
       }
-      
+
       // Default response
       return '';
     }),
-    
+
     exec: jest.fn((command, options, callback) => {
       const cb = callback || options;
-      
+
       if (responses[command]) {
         process.nextTick(() => cb(null, responses[command], ''));
       } else {
         process.nextTick(() => cb(new Error(`Command failed: ${command}`), '', 'Error'));
       }
     }),
-    
+
     spawn: jest.fn((command, args, options) => {
       const mockProcess = {
         stdout: {
@@ -123,21 +123,21 @@ function createMockChildProcess(responses = {}) {
             if (event === 'data' && responses[command]) {
               process.nextTick(() => callback(Buffer.from(responses[command])));
             }
-          })
+          }),
         },
         stderr: {
-          on: jest.fn()
+          on: jest.fn(),
         },
         on: jest.fn((event, callback) => {
           if (event === 'close') {
             process.nextTick(() => callback(0));
           }
         }),
-        kill: jest.fn()
+        kill: jest.fn(),
       };
-      
+
       return mockProcess;
-    })
+    }),
   };
 }
 
@@ -150,9 +150,9 @@ function createMockInquirer(answers = {}) {
   return {
     prompt: jest.fn(async (questions) => {
       const result = {};
-      
+
       const questionArray = Array.isArray(questions) ? questions : [questions];
-      
+
       for (const question of questionArray) {
         if (answers[question.name] !== undefined) {
           result[question.name] = answers[question.name];
@@ -162,9 +162,9 @@ function createMockInquirer(answers = {}) {
           result[question.name] = null;
         }
       }
-      
+
       return result;
-    })
+    }),
   };
 }
 
@@ -175,44 +175,47 @@ function createMockInquirer(answers = {}) {
  */
 function createMockPlatform(platform = 'linux') {
   const originalPlatform = process.platform;
-  
+
   return {
     setup: () => {
       Object.defineProperty(process, 'platform', {
         value: platform,
         writable: true,
-        configurable: true
+        configurable: true,
       });
     },
-    
+
     restore: () => {
       Object.defineProperty(process, 'platform', {
         value: originalPlatform,
         writable: true,
-        configurable: true
+        configurable: true,
       });
     },
-    
+
     mockOs: {
       platform: jest.fn(() => platform),
-      homedir: jest.fn(() => platform === 'win32' ? 'C:\\Users\\test' : '/home/test'),
+      homedir: jest.fn(() => (platform === 'win32' ? 'C:\\Users\\test' : '/home/test')),
       userInfo: jest.fn(() => ({
         username: 'testuser',
-        homedir: platform === 'win32' ? 'C:\\Users\\test' : '/home/test'
+        homedir: platform === 'win32' ? 'C:\\Users\\test' : '/home/test',
       })),
       type: jest.fn(() => {
         switch (platform) {
-          case 'win32': return 'Windows_NT';
-          case 'darwin': return 'Darwin';
-          default: return 'Linux';
+          case 'win32':
+            return 'Windows_NT';
+          case 'darwin':
+            return 'Darwin';
+          default:
+            return 'Linux';
         }
       }),
       release: jest.fn(() => '10.0.0'),
       arch: jest.fn(() => 'x64'),
       cpus: jest.fn(() => [{ model: 'Test CPU' }]),
       totalmem: jest.fn(() => 8 * 1024 * 1024 * 1024),
-      freemem: jest.fn(() => 4 * 1024 * 1024 * 1024)
-    }
+      freemem: jest.fn(() => 4 * 1024 * 1024 * 1024),
+    },
   };
 }
 
@@ -227,7 +230,7 @@ function createMockLogger() {
     warn: jest.fn(),
     error: jest.fn(),
     success: jest.fn(),
-    debug: jest.fn()
+    debug: jest.fn(),
   };
 }
 
@@ -238,21 +241,21 @@ function createMockLogger() {
  */
 function createMockEnv(vars = {}) {
   const originalEnv = { ...process.env };
-  
+
   return {
     setup: () => {
       process.env = { ...originalEnv, ...vars };
     },
-    
+
     restore: () => {
       process.env = originalEnv;
     },
-    
+
     get: (key) => process.env[key],
-    
+
     set: (key, value) => {
       process.env[key] = value;
-    }
+    },
   };
 }
 
@@ -268,24 +271,24 @@ function createMockHttpClient(responses = {}) {
         return Promise.resolve({
           data: responses[url],
           status: 200,
-          statusText: 'OK'
+          statusText: 'OK',
         });
       }
-      
+
       return Promise.reject(new Error(`404: Not Found - ${url}`));
     }),
-    
+
     post: jest.fn((url, data) => {
       if (responses[url]) {
         return Promise.resolve({
           data: responses[url],
           status: 201,
-          statusText: 'Created'
+          statusText: 'Created',
         });
       }
-      
+
       return Promise.reject(new Error(`404: Not Found - ${url}`));
-    })
+    }),
   };
 }
 
@@ -295,13 +298,13 @@ function createMockHttpClient(responses = {}) {
  */
 function createMockTimers() {
   jest.useFakeTimers();
-  
+
   return {
     advance: (ms) => jest.advanceTimersByTime(ms),
     runAll: () => jest.runAllTimers(),
     runPending: () => jest.runOnlyPendingTimers(),
     clear: () => jest.clearAllTimers(),
-    restore: () => jest.useRealTimers()
+    restore: () => jest.useRealTimers(),
   };
 }
 
@@ -313,5 +316,5 @@ module.exports = {
   createMockLogger,
   createMockEnv,
   createMockHttpClient,
-  createMockTimers
+  createMockTimers,
 };

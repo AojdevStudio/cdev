@@ -2,10 +2,11 @@
  * Tests for path-resolver.js
  */
 
-const { pathResolver, PathResolver } = require('../src/path-resolver');
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
+
+const { pathResolver, PathResolver } = require('../src/path-resolver');
 
 describe('PathResolver', () => {
   let originalPlatform;
@@ -22,7 +23,7 @@ describe('PathResolver', () => {
     test('normalizes paths on Windows', () => {
       Object.defineProperty(process, 'platform', { value: 'win32' });
       const resolver = new PathResolver();
-      
+
       expect(resolver.normalizePath('C:/Users/test/file.txt')).toBe('C:\\Users\\test\\file.txt');
       expect(resolver.normalizePath('C:\\Users\\test\\file.txt')).toBe('C:\\Users\\test\\file.txt');
       expect(resolver.normalizePath('relative/path/file.txt')).toBe('relative\\path\\file.txt');
@@ -31,7 +32,7 @@ describe('PathResolver', () => {
     test('normalizes paths on Unix-like systems', () => {
       Object.defineProperty(process, 'platform', { value: 'darwin' });
       const resolver = new PathResolver();
-      
+
       expect(resolver.normalizePath('/Users/test/file.txt')).toBe('/Users/test/file.txt');
       expect(resolver.normalizePath('\\Windows\\Style\\Path')).toBe('/Windows/Style/Path');
       expect(resolver.normalizePath('relative/path/file.txt')).toBe('relative/path/file.txt');
@@ -47,7 +48,7 @@ describe('PathResolver', () => {
   describe('resolveHome', () => {
     test('resolves home directory paths', () => {
       const homeDir = os.homedir();
-      
+
       expect(pathResolver.resolveHome('~')).toBe(homeDir);
       expect(pathResolver.resolveHome('~/Documents')).toBe(path.join(homeDir, 'Documents'));
       expect(pathResolver.resolveHome('~/.config')).toBe(path.join(homeDir, '.config'));
@@ -55,7 +56,7 @@ describe('PathResolver', () => {
 
     test('handles paths without tilde', () => {
       const homeDir = os.homedir();
-      
+
       expect(pathResolver.resolveHome('Documents')).toBe(path.join(homeDir, 'Documents'));
       expect(pathResolver.resolveHome('')).toBe(homeDir);
     });
@@ -66,16 +67,16 @@ describe('PathResolver', () => {
       Object.defineProperty(process, 'platform', { value: 'win32' });
       const resolver = new PathResolver();
       const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
-      
+
       expect(resolver.getConfigDir('testapp')).toBe(path.join(appData, 'testapp'));
     });
 
     test('returns correct config directory on macOS', () => {
       Object.defineProperty(process, 'platform', { value: 'darwin' });
       const resolver = new PathResolver();
-      
+
       expect(resolver.getConfigDir('testapp')).toBe(
-        path.join(os.homedir(), 'Library', 'Application Support', 'testapp')
+        path.join(os.homedir(), 'Library', 'Application Support', 'testapp'),
       );
     });
 
@@ -83,7 +84,7 @@ describe('PathResolver', () => {
       Object.defineProperty(process, 'platform', { value: 'linux' });
       const resolver = new PathResolver();
       const xdgConfig = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
-      
+
       expect(resolver.getConfigDir('testapp')).toBe(path.join(xdgConfig, 'testapp'));
     });
   });
@@ -100,7 +101,7 @@ describe('PathResolver', () => {
       Object.defineProperty(process, 'platform', { value: 'darwin' });
       resolver = new PathResolver();
       expect(resolver.getDataDir('testapp')).toBe(
-        path.join(os.homedir(), 'Library', 'Application Support', 'testapp')
+        path.join(os.homedir(), 'Library', 'Application Support', 'testapp'),
       );
 
       // Linux
@@ -112,7 +113,7 @@ describe('PathResolver', () => {
   });
 
   describe('ensureDir', () => {
-    const testDir = path.join(os.tmpdir(), 'path-resolver-test-' + Date.now());
+    const testDir = path.join(os.tmpdir(), `path-resolver-test-${Date.now()}`);
 
     afterAll(() => {
       // Clean up test directory
@@ -123,7 +124,7 @@ describe('PathResolver', () => {
 
     test('creates directory if it does not exist', () => {
       const dirPath = path.join(testDir, 'new-dir');
-      
+
       expect(fs.existsSync(dirPath)).toBe(false);
       expect(pathResolver.ensureDir(dirPath)).toBe(true);
       expect(fs.existsSync(dirPath)).toBe(true);
@@ -132,7 +133,7 @@ describe('PathResolver', () => {
     test('returns true if directory already exists', () => {
       const dirPath = path.join(testDir, 'existing-dir');
       fs.mkdirSync(dirPath, { recursive: true });
-      
+
       expect(pathResolver.ensureDir(dirPath)).toBe(true);
     });
   });
@@ -147,7 +148,7 @@ describe('PathResolver', () => {
 
     test('join works correctly', () => {
       expect(pathResolver.join('dir', 'subdir', 'file.txt')).toBe(
-        path.join('dir', 'subdir', 'file.txt')
+        path.join('dir', 'subdir', 'file.txt'),
       );
     });
 
@@ -197,7 +198,7 @@ describe('PathResolver', () => {
     test('finds executables in PATH', () => {
       // This test is platform-dependent, so we'll test with common commands
       const commonCommands = ['node', 'npm'];
-      
+
       for (const cmd of commonCommands) {
         const result = pathResolver.findInPath(cmd);
         if (result) {
@@ -216,7 +217,7 @@ describe('PathResolver', () => {
   describe('getPlatformInfo', () => {
     test('returns platform information', () => {
       const info = pathResolver.getPlatformInfo();
-      
+
       expect(info).toHaveProperty('platform');
       expect(info).toHaveProperty('isWindows');
       expect(info).toHaveProperty('isMacOS');
@@ -226,7 +227,7 @@ describe('PathResolver', () => {
       expect(info).toHaveProperty('tempDir');
       expect(info).toHaveProperty('pathSeparator');
       expect(info).toHaveProperty('delimiter');
-      
+
       // Check boolean consistency
       const platformCount = [info.isWindows, info.isMacOS, info.isLinux].filter(Boolean).length;
       expect(platformCount).toBe(1);

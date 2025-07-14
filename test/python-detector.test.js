@@ -2,11 +2,12 @@
  * Tests for python-detector.js
  */
 
-const { pythonDetector, PythonDetector } = require('../src/python-detector');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+
+const { pythonDetector, PythonDetector } = require('../src/python-detector');
 
 // Mock child_process
 jest.mock('child_process');
@@ -83,7 +84,9 @@ describe('PythonDetector', () => {
       const installations = detector.detectPythonInstallations();
 
       if (installations.length >= 2) {
-        expect(detector.compareVersions(installations[0].version, installations[1].version)).toBeGreaterThanOrEqual(0);
+        expect(
+          detector.compareVersions(installations[0].version, installations[1].version),
+        ).toBeGreaterThanOrEqual(0);
       }
     });
   });
@@ -94,9 +97,9 @@ describe('PythonDetector', () => {
         command: 'python3',
         path: '/usr/bin/python3',
         version: '3.9.7',
-        hasPip: true
+        hasPip: true,
       };
-      
+
       const detector = new PythonDetector();
       detector.detectedPython = cachedPython;
 
@@ -171,7 +174,7 @@ describe('PythonDetector', () => {
         version: '3.9.7',
         prefix: '/usr/local/python3.9',
         hasPip: true,
-        meetsMinimumVersion: true
+        meetsMinimumVersion: true,
       });
     });
 
@@ -274,7 +277,7 @@ describe('PythonDetector', () => {
     test('returns pip command for Python with pip', () => {
       const pythonInfo = {
         path: '/usr/bin/python3',
-        hasPip: true
+        hasPip: true,
       };
 
       const detector = new PythonDetector();
@@ -286,7 +289,7 @@ describe('PythonDetector', () => {
     test('throws error for Python without pip', () => {
       const pythonInfo = {
         path: '/usr/bin/python3',
-        hasPip: false
+        hasPip: false,
       };
 
       const detector = new PythonDetector();
@@ -300,7 +303,7 @@ describe('PythonDetector', () => {
     test('returns true if pip already available', () => {
       const pythonInfo = {
         path: '/usr/bin/python3',
-        hasPip: true
+        hasPip: true,
       };
 
       const detector = new PythonDetector();
@@ -320,7 +323,7 @@ describe('PythonDetector', () => {
 
       const pythonInfo = {
         path: '/usr/bin/python3',
-        hasPip: false
+        hasPip: false,
       };
 
       const detector = new PythonDetector();
@@ -328,7 +331,10 @@ describe('PythonDetector', () => {
 
       expect(result).toBe(true);
       expect(pythonInfo.hasPip).toBe(true);
-      expect(execSync).toHaveBeenCalledWith(expect.stringContaining('ensurepip'), expect.any(Object));
+      expect(execSync).toHaveBeenCalledWith(
+        expect.stringContaining('ensurepip'),
+        expect.any(Object),
+      );
     });
   });
 
@@ -343,10 +349,10 @@ describe('PythonDetector', () => {
         executable: '/usr/bin/python3',
         paths: {
           stdlib: '/usr/local/lib/python3.9',
-          include: '/usr/local/include/python3.9'
+          include: '/usr/local/include/python3.9',
         },
         pip_available: true,
-        pip_version: '21.2.4'
+        pip_version: '21.2.4',
       };
 
       execSync.mockImplementation((command) => {
@@ -392,8 +398,8 @@ describe('PythonDetector', () => {
       const detector = new PythonDetector();
       const paths = detector.getPlatformSpecificPaths();
 
-      expect(paths.some(p => p.includes('Python.exe'))).toBe(true);
-      expect(paths.some(p => p.includes('WindowsApps'))).toBe(true);
+      expect(paths.some((p) => p.includes('Python.exe'))).toBe(true);
+      expect(paths.some((p) => p.includes('WindowsApps'))).toBe(true);
     });
 
     test('returns macOS-specific paths on macOS', () => {
@@ -403,8 +409,8 @@ describe('PythonDetector', () => {
       const detector = new PythonDetector();
       const paths = detector.getPlatformSpecificPaths();
 
-      expect(paths.some(p => p.includes('/usr/local/bin'))).toBe(true);
-      expect(paths.some(p => p.includes('/opt/homebrew'))).toBe(true);
+      expect(paths.some((p) => p.includes('/usr/local/bin'))).toBe(true);
+      expect(paths.some((p) => p.includes('/opt/homebrew'))).toBe(true);
     });
 
     test('returns Linux-specific paths on Linux', () => {
@@ -414,8 +420,8 @@ describe('PythonDetector', () => {
       const detector = new PythonDetector();
       const paths = detector.getPlatformSpecificPaths();
 
-      expect(paths.some(p => p.includes('/usr/bin'))).toBe(true);
-      expect(paths.some(p => p.includes('/snap/bin'))).toBe(true);
+      expect(paths.some((p) => p.includes('/usr/bin'))).toBe(true);
+      expect(paths.some((p) => p.includes('/snap/bin'))).toBe(true);
     });
   });
 });
