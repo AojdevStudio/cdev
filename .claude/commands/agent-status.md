@@ -11,35 +11,62 @@ This command discovers and analyzes all agent workspaces to provide comprehensiv
 FilterOption: $ARGUMENTS
 
 **Usage Examples:**
+
 - `/agent-status` - Show status of all agents
 - `/agent-status complete` - Show only finished agents
 - `/agent-status ready` - Show agents ready to start or commit
 - `/agent-status blocked` - Show dependency-blocked agents
 - `/agent-status TASK-123` - Filter by specific task ID
 
-## Instructions
-- Parse $ARGUMENTS to extract filter option (complete, ready, blocked, or task ID)
-- Discover all agent workspaces using git worktree list and file system scan 
-    - run `git worktree list` to get all agent worktrees
-    - run `find .. -name "*-agent" -type d 2>/dev/null | grep -E "work-trees|workspaces" | head -20` to get all agent workspaces
-    - run `cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo "{}"` to get the coordination status
-    - run `pwd` to get the current directory
-    - run `cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo "{}"` to get the coordination status
-- For each agent found, read agent_context.json for metadata
-- Analyze validation_checklist.txt to calculate completion percentage
-- Check git status to determine if changes exist
-- Map agent dependencies from context files
-- Apply requested filter to agent list
-- Generate comprehensive status report with progress indicators
-- Provide actionable recommendations for next steps
+```yaml
+# A protocol for an agent status reporter command.
+# This command discovers and analyzes multiple parallel agent workspaces
+# to generate a comprehensive status report.
+agent_status_reporter_protocol:
+  # The sequence of actions the command should perform.
+  instructions:
+    - "Parse the command's `$ARGUMENTS` to extract the filter option, which can be 'complete', 'ready', 'blocked', or a specific task ID."
+    - "Discover all active agent workspaces by using both `git worktree list` and a file system scan."
+    - "For each discovered agent, read the `agent_context.yaml` file to retrieve its metadata."
+    - "Analyze the `validation_checklist.txt` file for each agent to calculate its completion percentage."
+    - "Check the `git status` within each agent's worktree to determine if uncommitted changes exist."
+    - "Map the dependencies between agents using the information found in their context files."
+    - "Apply the user-requested filter to the list of agents."
+    - "Generate a comprehensive status report that includes progress indicators for each agent."
+    - "Provide actionable recommendations for the next steps based on the current status of all agents."
 
-## Context
-- Git worktrees: !`git worktree list`
-- Agent workspaces: !`find .. -name "*-agent" -type d 2>/dev/null | grep -E "work-trees|workspaces" | head -20`
-- Coordination status: !`cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo "{}"`
-- Current directory: !`pwd`
-- Agent patterns: *-work-trees/*-agent, workspaces/*-agent
-- Context files: agent_context.json (metadata), validation_checklist.txt (progress)
-- Progress calculation: Count [x] vs [ ] in validation checklist
-- Status categories: Complete (100%), In Progress (1-99%), Blocked (0% with deps)
-- Filter keywords: complete, ready, blocked, or task ID pattern
+  # Defines the context, data sources, and key definitions for the command's operation.
+  context_and_definitions:
+    # Commands used to gather necessary data from the environment.
+    data_sources:
+      - name: "Git Worktrees"
+        command: "!`git worktree list`"
+      - name: "Agent Workspaces"
+        command: "!`find .. -name \"*-agent\" -type d 2>/dev/null | grep -E \"work-trees|workspaces\" | head -20`"
+      - name: "Coordination Status"
+        command: "!`cat ../paralell-development-claude-work-trees/coordination/parallel-agent-status.json 2>/dev/null || echo \"{}\"`"
+      - name: "Current Directory"
+        command: "!`pwd`"
+
+    # Key patterns and logic used for analysis.
+    definitions:
+      agent_patterns:
+        - "_-work-trees/_-agent"
+        - "workspaces/*-agent"
+      context_files:
+        - name: "metadata"
+          file: "agent_context.yaml"
+        - name: "progress"
+          file: "validation_checklist.txt"
+      progress_calculation:
+        description: "Count the number of checked boxes `[x]` versus unchecked boxes `[ ]` in the validation checklist file."
+      status_categories:
+        - "Complete: 100% progress"
+        - "In Progress: 1-99% progress"
+        - "Blocked: 0% progress with unmet dependencies"
+      filter_keywords:
+        - "complete"
+        - "ready"
+        - "blocked"
+        - "task ID pattern (regex)"
+```

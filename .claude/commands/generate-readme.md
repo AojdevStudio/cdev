@@ -8,90 +8,122 @@ description: Generate comprehensive README using structured template with projec
 This command analyzes your project structure and generates a comprehensive README file following the established template pattern with proper variable substitution and contextual content.
 
 **variables:**
-OutputPath: $ARGUMENTS
+DirectoryContents: $ARGUMENTS
 
 **Usage Examples:**
-- `/generate-readme` - Generate README for current project using template (@ai-docs/readme-template.md)
-- `/generate-readme --output docs/README.md` - Generate to specific location
 
-## Instructions
+- `/generate-readme` - Generate README for current project using template (@ai-docs/readme-template.yaml)
+- `/generate-readme` $ARGUMENTS - Generate about a specific directory using the template (@ai-docs/readme-template.yaml) and save it to the current directory.
 
-**Apply the Feynman Technique throughout README generation:**
-- Explain complex concepts in simple, clear language that anyone can understand
-- Use analogies and real-world examples to illustrate technical concepts
-- Break down complicated processes into basic, logical steps
-- Assume the reader is intelligent but unfamiliar with the specific domain
-- Test understanding by explaining "why" not just "what" and "how"
+```yaml
+# A protocol for generating a high-quality, easy-to-understand project README
+# by applying the Feynman Technique throughout the process.
+feynman_readme_generator_protocol:
+  # The central philosophy guiding the entire README generation process.
+  core_principle:
+    name: "The Feynman Technique"
+    description: "The primary instruction is to explain all concepts as simply as possible, as if teaching them to someone intelligent but unfamiliar with the domain."
+    tenets:
+      - "Explain complex concepts in simple, clear language."
+      - "Use analogies and real-world examples to illustrate technical ideas."
+      - "Break down complicated processes into basic, logical steps."
+      - "Focus on explaining 'why' a feature exists, not just 'what' it does."
 
-### Technical Analysis
-- Analyze current or specified project structure for file system exploration
-- Use EZA CLI to explore project structure with common patterns:
-  ```bash
-  # Basic file listing
-  eza
-  
-  # Detailed listing with metadata
-  eza -l
-  
-  # Tree view of project structure
-  eza -T
-  
-  # Show Git status in listing
-  eza --git
-  
-  # List all files including hidden
-  eza -a
-  
-  # List only directories
-  eza -D
-  
-  # List only files
-  eza -f
-  
-  # Recursive listing limited to 2 levels
-  eza -R --level=2
-  
-  # Show icons for file types
-  eza --icons
-  ```
+  # The step-by-step process for generating the README file.
+  process_flow:
+    - phase: 1
+      name: "Technical Analysis"
+      description: "Explore the project structure and gather information about its composition and Git history."
+      actions:
+        - "Analyze the current project structure to understand its layout."
+        - "Use the EZA CLI with various flags to explore file systems, git status, and directory trees."
+        - "Analyze git history and changelogs to understand the project's evolution and key updates."
+      tools:
+        eza_cli_commands:
+          - command: "eza"
+            purpose: "Basic file listing."
+          - command: "eza -l --git"
+            purpose: "Detailed listing with metadata and Git status."
+          - command: "eza -T --level=2"
+            purpose: "Tree view of the project structure, limited to 2 levels."
+          - command: "eza -a --icons"
+            purpose: "List all files, including hidden ones, with file-type icons."
 
-### Content Generation with Feynman Technique
-- Extract project metadata from package.json, setup.py, or similar configuration files
-- Identify key features, installation methods, and usage patterns from codebase
-- **Explain each feature's purpose in simple terms**: What problem does it solve? Why would someone need this?
-- **Use analogies**: Compare technical concepts to familiar, everyday experiences
-- **Break down complex workflows**: Transform multi-step technical processes into logical, sequential explanations
-- **Avoid jargon**: When technical terms are necessary, immediately explain them in plain language
-- Load the README template and systematically replace all {{VARIABLE}} placeholders with actual project data
-- Generate contextual content based on actual project analysis (not generic placeholders)
-- Use git analysis understand the commits and changes in the git repository
-- Review changelog to understand the changes and updates to the project
+    - phase: 2
+      name: "Content Generation"
+      description: "Extract project data and generate explanatory content using the Feynman Technique."
+      actions:
+        - "Extract project metadata (name, version, license) from configuration files (e.g., package.json, setup.py)."
+        - "Identify key features, installation methods, and usage patterns from the codebase."
+        - "For each feature, explain its purpose simply: What problem does it solve? Why is it needed?"
+        - "Use analogies to compare technical concepts to familiar, everyday experiences."
+        - "Break down complex workflows into logical, sequential steps."
+        - "When a technical term is unavoidable, explain it immediately in plain language."
+        - "Load the README template and systematically replace all `{{VARIABLE}}` placeholders with the generated content."
 
-### Feynman-Style Writing Guidelines
-- **Start with the "why"**: Begin each section by explaining the problem or need
-- **Use concrete examples**: Instead of "supports multiple frameworks," say "works with React, Vue, and Angular projects"
-- **Simplify installation**: Explain each setup step and why it's necessary
-- **Make benefits clear**: Don't just list features—explain the real-world impact
-- **Use progressive disclosure**: Start simple, then provide deeper details for those who need them
-- **Test comprehension**: Each explanation should be understandable to someone new to the field
+    - phase: 3
+      name: "Feynman-Style Writing"
+      description: "Apply specific writing guidelines to ensure the content is clear, simple, and benefit-oriented."
+      guidelines:
+        - "Start each section with the 'why'—the problem or need being addressed."
+        - "Use concrete examples (e.g., 'works with React, Vue, and Angular' instead of 'multi-framework support')."
+        - "Explain each setup step and why it's necessary for the user."
+        - "Clearly articulate the real-world impact and benefits of each feature."
+        - "Use progressive disclosure: start with a simple overview, then offer deeper details for interested readers."
+        - "Ensure each explanation is understandable to someone new to the specific technology or domain."
 
-### Final Assembly
-- Create navigation links that correspond to actual README sections
-- Include proper setup instructions based on detected package manager and dependencies (if applicable)
-- Add relevant badges, license information, and community links if available
-- Write the completed README to the project root or specified output location
-- Provide summary of generated sections and suggest manual review areas for final adjustments
+    - phase: 4
+      name: "Final Assembly"
+      description: "Assemble the final README file, including navigation, setup instructions, and community information."
+      actions:
+        - "Create navigation links that correspond to the actual sections in the generated README."
+        - "Include accurate setup instructions based on the detected package manager and dependencies."
+        - "Add relevant badges (build status, version), license information, and community links if available."
+        - "Write the completed content to the final README.md file at the specified location."
+        - "Provide a summary of the generated sections and suggest areas for final manual review."
 
-## Context
-- README template: @ai-docs/readme-template.md
-- Project root: !`pwd`
-- Package configuration: !`ls package.json setup.py Cargo.toml composer.json 2>/dev/null || echo "none"`
-- Project structure: !`find . -maxdepth 2 -type f -name "*.md" -o -name "*.json" -o -name "*.py" -o -name "*.js" -o -name "*.ts" | grep -v node_modules | head -20`
-- Git info: !`git remote get-url origin 2>/dev/null || echo "no-remote"`
-- Git Org: !`git config user.name`
-- Git Email: !`git config user.email`
-- License: !`ls LICENSE* 2>/dev/null || echo "none"`
-- Documentation: !`ls docs/ README* CONTRIBUTING* 2>/dev/null || echo "none"`
-- Template variables: PROJECT_NAME, TAGLINE_OR_SHORT_DESCRIPTION, VERSION, LICENSE_TYPE, REQUIREMENTS, PRIMARY_PURPOSE, DISTINGUISHING_FEATURE_OR_METHOD, TARGET_AUDIENCE_OR_DOMAIN, INSTALL_COMMAND_PRIMARY, REPOSITORY_PATH
-- Common sections: Setup & Updates, Key Highlights, Quick Navigation, Modular Features, Documentation & Resources, Support & Community, Contributing, License
-- Output location: README.md (default), or use --output argument for custom path
+  # Defines the context, data sources, and key definitions for the command's operation.
+  operational_context:
+    reference_documents:
+      - "@ai-docs/readme-template.yaml"
+    data_sources:
+      - name: "Project Root"
+        command: "!`pwd`"
+      - name: "Package Configuration"
+        command: "!`ls package.json setup.py Cargo.toml composer.json 2>/dev/null || echo \"none\"`"
+      - name: "Project Structure"
+        command: "!`find . -maxdepth 2 -type f -name \"*.md\" -o -name \"*.json\" -o -name \"*.py\" -o -name \"*.js\" -o -name \"*.ts\" | grep -v node_modules | head -20`"
+      - name: "Git Remote URL"
+        command: "!`git remote get-url origin 2>/dev/null || echo \"no-remote\"`"
+      - name: "Git User Name"
+        command: "!`git config user.name`"
+      - name: "Git User Email"
+        command: "!`git config user.email`"
+      - name: "License File"
+        command: "!`ls LICENSE* 2>/dev/null || echo \"none\"`"
+      - name: "Documentation Files"
+        command: "!`ls docs/ README* CONTRIBUTING* 2>/dev/null || echo \"none\"`"
+    definitions:
+      template_variables:
+        - "PROJECT_NAME"
+        - "TAGLINE_OR_SHORT_DESCRIPTION"
+        - "VERSION"
+        - "LICENSE_TYPE"
+        - "REQUIREMENTS"
+        - "PRIMARY_PURPOSE"
+        - "DISTINGUISHING_FEATURE_OR_METHOD"
+        - "TARGET_AUDIENCE_OR_DOMAIN"
+        - "INSTALL_COMMAND_PRIMARY"
+        - "REPOSITORY_PATH"
+      common_sections:
+        - "Setup & Updates"
+        - "Key Highlights"
+        - "Quick Navigation"
+        - "Modular Features"
+        - "Documentation & Resources"
+        - "Support & Community"
+        - "Contributing"
+        - "License"
+      output_location:
+        description: "Defaults to `README.md` in the project root, but can be overridden with the `$ARGUMENTS` variable." 
+```

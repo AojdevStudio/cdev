@@ -11,26 +11,51 @@ This command analyzes completed parallel agent workflows and generates a cleanup
 TaskIdFilter: $ARGUMENTS
 
 **Usage Examples:**
+
 - `/agent-cleanup` - Analyze all parallel agent work and generate cleanup script
 - `/agent-cleanup AOJ-100` - Focus cleanup analysis on specific task ID
 - `/agent-cleanup --dry-run` - Show what would be cleaned without generating script
 
-## Instructions
-- Analyze git worktrees to identify completed parallel agent work
-- Check merge status of all agent branches against main branch
-- Identify coordination files and deployment plans that are obsolete
-- Generate comprehensive cleanup script with safety checks
-- Provide clear explanations for each recommended cleanup action
+```yaml
+# Plan for cleaning up Git repository after parallel agent work
+git_cleanup_plan:
+  # The high-level objectives for the cleanup process.
+  analysis_steps:
+    - "Analyze git worktrees to identify completed parallel agent work."
+    - "Check the merge status of all agent branches against the main branch."
+    - "Identify obsolete coordination files and deployment plans."
+    - "Generate a comprehensive cleanup script with built-in safety checks."
+    - "Provide clear explanations for each recommended cleanup action within the script."
 
-## Context
-- Current git status: !`git status`
-- Current branch: !`git branch --show-current`
-- All git worktrees: !`git worktree list`
-- All branches: !`git branch -a`
-- Recent commits: !`git log --oneline -10`
-- Parallel agent coordination: !`ls -la ../*/coordination/ 2>/dev/null || echo "No coordination directories found"`
-- Agent worktree patterns: *-work-trees/*-agent
-- Agent branch patterns: TASK-ID-*_agent
-- Task ID formats: AOJ-100, AOJ-99, PROJ-123, etc.
-- Safety requirement: Read-only analysis, generate script only
-- Cleanup targets: worktrees, branches, coordination files, deployment plans
+  # The environment and conventions used in the development workflow.
+  environment_context:
+    # Commands used to gather information about the repository state.
+    data_gathering_commands:
+      git_status: "git status"
+      current_branch: "git branch --show-current"
+      list_worktrees: "git worktree list"
+      list_all_branches: "git branch -a"
+      recent_commits: "git log --oneline -10"
+      find_coordination_files: "ls -la ../*/coordination/ 2>/dev/null || echo 'No coordination directories found'"
+    
+    # Naming conventions to identify agent-related work.
+    naming_conventions:
+      agent_worktree_pattern: "_-work-trees/_-agent"
+      agent_branch_pattern: "TASK-ID-*_agent"
+      task_id_formats:
+        - "AOJ-100"
+        - "AOJ-99"
+        - "PROJ-123"
+
+    # Critical safety rules to prevent accidental data loss.
+    safety_requirements:
+      - "The analysis must be read-only."
+      - "The final output should be a cleanup script, not direct execution of commands."
+
+    # Specific items to be targeted for cleanup.
+    cleanup_targets:
+      - "Git worktrees"
+      - "Git branches"
+      - "Coordination files"
+      - "Deployment plans"
+```
