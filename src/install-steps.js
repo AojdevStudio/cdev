@@ -237,52 +237,9 @@ EDITOR=cursor
       console.log(chalk.gray(`    Created: .env`));
     }
 
-    // Create CLAUDE.md in .claude directory
+    // Ensure .claude directory exists for other configurations
     const claudeDir = path.join(targetDir, '.claude');
     await fs.ensureDir(claudeDir);
-
-    const claudeMdPath = path.join(claudeDir, 'CLAUDE.md');
-    const claudeMdContent = `# ${config.projectName} - Parallel Claude Development
-
-This project uses the Parallel Claude Development Workflow.
-
-## Custom Slash Commands
-
-### /agent-start [workspace-path]
-Load agent workspace context and begin working on assigned tasks.
-
-### /agent-commit [workspace-path] [custom-message]
-Commit completed agent work and merge back to main branch.
-
-### /agent-status [filter]
-Check status of all agent worktrees and their progress.
-
-## Workflow Commands
-
-Start with caching a Linear issue:
-\`\`\`bash
-./workflows/paralell-development-claude/scripts/cache-linear-issue.sh TASK-123
-\`\`\`
-
-Decompose into parallel agents:
-\`\`\`bash
-node workflows/paralell-development-claude/scripts/decompose-parallel.cjs TASK-123
-\`\`\`
-
-Spawn all agents:
-\`\`\`bash
-./workflows/paralell-development-claude/scripts/spawn-agents.sh shared/deployment-plans/task-123-deployment-plan.json
-\`\`\`
-
-## Import Workflow Documentation
-
-- @workflows/paralell-development-claude/README.md - Complete workflow guide
-- @workflows/paralell-development-claude/CLAUDE.md - Claude Code instructions
-- @workflows/paralell-development-claude/ai_docs/ - AI-specific documentation
-`;
-
-    await fs.writeFile(claudeMdPath, claudeMdContent);
-    console.log(chalk.gray(`    Created: .claude/CLAUDE.md`));
 
     // Create package.json if it doesn't exist
     const packageJsonPath = path.join(targetDir, 'package.json');
@@ -468,7 +425,6 @@ echo "Pre-commit validation passed"
       'workflows/paralell-development-claude/scripts/cache-linear-issue.sh',
       'workflows/paralell-development-claude/scripts/decompose-parallel.cjs',
       'workflows/paralell-development-claude/scripts/spawn-agents.sh',
-      '.claude/CLAUDE.md',
       '.env.example',
     ];
 
@@ -558,7 +514,7 @@ echo "Pre-commit validation passed"
   async removeConfigurationFiles(targetDir) {
     console.log(chalk.gray('  • Removing configuration files...'));
 
-    const filesToRemove = ['.claude/CLAUDE.md', '.env.example'];
+    const filesToRemove = ['.env.example'];
 
     for (const file of filesToRemove) {
       const fullPath = path.join(targetDir, file);

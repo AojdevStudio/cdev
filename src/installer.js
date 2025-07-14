@@ -198,7 +198,6 @@ class Installer {
     console.log(chalk.blue('📚 Documentation and examples:'));
     console.log('   • README.md - Complete workflow guide');
     console.log('   • ai_docs/ - AI-specific documentation');
-    console.log('   • CLAUDE.md - Claude Code instructions');
     console.log('');
 
     console.log(chalk.magenta('🚀 Happy parallel development!'));

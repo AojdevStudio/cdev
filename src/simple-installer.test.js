@@ -319,15 +319,12 @@ describe('SimpleInstaller', () => {
       expect(envCall[1]).toContain('ENGINEER_NAME=YourName');
     });
 
-    test('creates CLAUDE.md file', async () => {
+    test('does not create CLAUDE.md file', async () => {
       await simpleInstaller.createExampleConfig('/test/project');
 
       const claudeMdCall = fs.writeFile.mock.calls.find((call) => call[0].includes('CLAUDE.md'));
 
-      expect(claudeMdCall).toBeDefined();
-      expect(claudeMdCall[1]).toContain('Claude Code Instructions');
-      expect(claudeMdCall[1]).toContain('/agent-start');
-      expect(claudeMdCall[1]).toContain('Hooks');
+      expect(claudeMdCall).toBeUndefined();
     });
   });
 

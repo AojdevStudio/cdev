@@ -285,10 +285,6 @@ class PostInstallValidator {
           return pkg.name && pkg.version;
         },
       },
-      '.claude/CLAUDE.md': {
-        required: false,
-        validate: (content) => content.length > 0,
-      },
       'scripts/decompose-parallel.cjs': {
         required: true,
         validate: (content) => content.includes('parallelAgents'),

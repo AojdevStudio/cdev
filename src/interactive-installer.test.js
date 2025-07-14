@@ -551,48 +551,6 @@ DEFAULT_EDITOR=cursor
     });
   });
 
-  describe('createClaudeMD', () => {
-    test('creates CLAUDE.md with configuration details', async () => {
-      const config = {
-        hooks: ['pre-bash-validator', 'typescript-validator'],
-        installWorkflowScripts: true,
-        setupLinear: true,
-        linearApiKey: 'lin_api_test',
-        engineerName: 'Developer',
-        defaultEditor: 'cursor',
-      };
-
-      await interactiveInstaller.createClaudeMD('/test/project', config);
-
-      const writeCall = fs.writeFile.mock.calls[0];
-      expect(writeCall[0]).toBe(path.join('/test/project', 'CLAUDE.md'));
-
-      const content = writeCall[1];
-      expect(content).toContain('pre bash validator');
-      expect(content).toContain('typescript validator');
-      expect(content).toContain('Engineer: Developer');
-      expect(content).toContain('Default Editor: cursor');
-      expect(content).toContain('Linear Integration: Enabled');
-      expect(content).toContain('/agent-start');
-    });
-
-    test('shows message to add Linear key when not provided', async () => {
-      const config = {
-        hooks: [],
-        installWorkflowScripts: false,
-        setupLinear: true,
-        linearApiKey: undefined,
-        engineerName: 'Developer',
-        defaultEditor: 'cursor',
-      };
-
-      await interactiveInstaller.createClaudeMD('/test/project', config);
-
-      const content = fs.writeFile.mock.calls[0][1];
-      expect(content).toContain('Add your Linear API key to .env');
-    });
-  });
-
   describe('setPermissions', () => {
     test('sets executable permissions on scripts', async () => {
       fs.pathExists.mockResolvedValue(true);

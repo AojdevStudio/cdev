@@ -119,7 +119,7 @@ class ImportOrganizer:
 
     def is_import_line(self, line: str) -> bool:
         """Check if a line is an import statement"""
-        return (
+        return bool(
             re.match(r'^import\s+', line) or
             re.match(r'^import\s*{', line) or
             re.match(r'^import\s*type', line)

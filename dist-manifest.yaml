@@ -1,0 +1,31 @@
+distribution:
+  entryPoint: src/installer.js
+  keywords:
+  - claude
+  - parallel
+  - development
+  - git
+  - worktree
+  - linear
+  - automation
+  - cli
+  - npx
+  - workflow
+  scripts:
+  - executable: true
+    name: cache-linear-issue.sh
+    path: scripts/cache-linear-issue.sh
+  - executable: false
+    name: decompose-parallel.cjs
+    path: scripts/decompose-parallel.cjs
+  - executable: true
+    name: spawn-agents.sh
+    path: scripts/spawn-agents.sh
+  type: global-npx-package
+package: '@aojdevstudio/cdev'
+publishedAt: '2025-07-14T16:42:26.015852'
+validation:
+  buildClean: true
+  filesValidated: 5
+  scriptsValidated: 3
+version: 1.0.0

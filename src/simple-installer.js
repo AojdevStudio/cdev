@@ -57,7 +57,6 @@ class SimpleInstaller {
       console.log('  • .claude/commands/     - Custom Claude commands');
       console.log('  • scripts/              - Workflow automation scripts');
       console.log('  • ai-docs/              - AI documentation templates');
-      console.log('  • CLAUDE.md             - Project-specific Claude instructions');
       console.log('  • .env.example          - Example environment configuration');
       console.log('');
       console.log(chalk.cyan('Next steps:'));
@@ -459,31 +458,6 @@ ENGINEER_NAME=YourName
 `;
 
     await fs.writeFile(path.join(targetDir, '.env.example'), envExample);
-
-    // Create CLAUDE.md
-    const claudeMd = `# Claude Code Instructions
-
-This project uses cdev (Claude Development) for parallel development workflows.
-
-## Custom Commands
-
-- \`/agent-start [workspace]\` - Start working on an agent task
-- \`/agent-commit [workspace] [message]\` - Commit agent work  
-- \`/agent-status [filter]\` - Check agent status
-
-## Hooks
-
-This project has intelligent hooks configured to:
-- Validate bash commands before execution
-- Check TypeScript code quality
-- Organize imports automatically
-- Send notifications for important events
-- Track TODO/FIXME markers
-
-See \`.claude/settings.json\` for hook configuration.
-`;
-
-    await fs.writeFile(path.join(targetDir, 'CLAUDE.md'), claudeMd);
   }
 
   async setPermissions(targetDir) {

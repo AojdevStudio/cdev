@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Installer no longer creates CLAUDE.md files** - Removed automatic CLAUDE.md creation to prevent overwriting existing project instructions and avoid imposing parallel development context on all projects
 - **Simplified `/orchestrate` command** - Refactored to use Claude's native parallel tool invocation instead of complex orchestration
 - **Enhanced linting configuration** - Updated ESLint rules and added comprehensive linting fixes checklist
 - **Project documentation overhaul** - Updated all documentation files with improved structure and clarity
