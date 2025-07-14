@@ -13,40 +13,48 @@
   "plugins": ["jest", "import", "prettier"],
   "rules": {
     "prettier/prettier": "error",
-    
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-new-func": "error",
     "no-script-url": "error",
     "no-proto": "error",
     "no-new-wrappers": "error",
-    
-    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "no-console": "warn",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": "off",
     "consistent-return": "warn",
     "valid-typeof": "error",
     "no-cond-assign": "error",
     "eqeqeq": ["error", "always"],
     "curly": ["error", "all"],
-    
     "prefer-const": "error",
     "no-var": "error",
     "arrow-body-style": ["error", "as-needed"],
     "prefer-arrow-callback": "error",
-    
-    "import/order": ["warn", {
-      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-      "newlines-between": "always"
-    }],
+    "import/order": [
+      "warn",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ],
     "import/no-unresolved": "error",
     "import/extensions": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-dynamic-require": "warn",
-    
     "class-methods-use-this": "off",
     "no-param-reassign": "off",
     "no-underscore-dangle": "off",
-    "no-use-before-define": ["error", { "functions": false }],
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ],
     "no-plusplus": "off",
     "no-restricted-syntax": "off",
     "no-await-in-loop": "off",

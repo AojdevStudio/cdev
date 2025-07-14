@@ -64,6 +64,7 @@ npm update -g @aojdevstudio/cdev
 CDEV now uses Python scripts with UV package manager for improved performance and cross-platform compatibility:
 
 **Prerequisites:**
+
 - Python 3.11 or higher
 - UV package manager ([Installation Guide](docs/uv-installation-guide.md))
 

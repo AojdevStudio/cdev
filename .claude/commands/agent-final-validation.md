@@ -21,28 +21,28 @@ TaskIdOrOptions: $ARGUMENTS
 agent_work_validation_protocol:
   # The sequence of steps required to perform a comprehensive validation.
   validation_steps:
-    - title: "Discover Deployment Plans"
-      description: "Find all deployment plans in shared/deployment-plans/ to identify completed tasks and the responsible agents."
-    - title: "Extract Task Requirements"
-      description: "For each agent, extract their original task requirements including files to create/modify, validation criteria, and test contracts."
-    - title: "Verify File Commits"
+    - title: 'Discover Deployment Plans'
+      description: 'Find all deployment plans in shared/deployment-plans/ to identify completed tasks and the responsible agents.'
+    - title: 'Extract Task Requirements'
+      description: 'For each agent, extract their original task requirements including files to create/modify, validation criteria, and test contracts.'
+    - title: 'Verify File Commits'
       description: "Use 'git log' and 'git diff' to verify that every required file modification or creation was actually committed to the main branch."
-    - title: "Confirm Merges"
+    - title: 'Confirm Merges'
       description: "Cross-reference git commit messages to confirm that each agent's work was properly merged."
-    - title: "Validate File Contents"
-      description: "Perform a targeted analysis of file contents to ensure they align with the original requirements."
-    - title: "Check Validation Criteria"
+    - title: 'Validate File Contents'
+      description: 'Perform a targeted analysis of file contents to ensure they align with the original requirements.'
+    - title: 'Check Validation Criteria'
       description: "Confirm that all validation criteria specified in the agent's context were met."
-    - title: "Verify Test Contracts"
-      description: "Check that all specified test contracts exist in the codebase and are implemented correctly."
-    - title: "Calculate Completion"
-      description: "Calculate a completion percentage for each agent and identify any missing deliverables."
-    - title: "Generate Validation Report"
-      description: "Create a comprehensive validation report in JSON format with a clear pass/fail status for each agent."
-    - title: "Enforce Pass/Fail"
-      description: "Fail the entire validation if any single agent has less than 100% completion."
-    - title: "Provide Remediation"
-      description: "For any failures, include actionable remediation steps in the final report."
+    - title: 'Verify Test Contracts'
+      description: 'Check that all specified test contracts exist in the codebase and are implemented correctly.'
+    - title: 'Calculate Completion'
+      description: 'Calculate a completion percentage for each agent and identify any missing deliverables.'
+    - title: 'Generate Validation Report'
+      description: 'Create a comprehensive validation report in JSON format with a clear pass/fail status for each agent.'
+    - title: 'Enforce Pass/Fail'
+      description: 'Fail the entire validation if any single agent has less than 100% completion.'
+    - title: 'Provide Remediation'
+      description: 'For any failures, include actionable remediation steps in the final report.'
 
   # The context, commands, and rules governing the validation process.
   protocol_context:
@@ -64,13 +64,12 @@ agent_work_validation_protocol:
         - testContracts[]
 
     validation_rules:
-      - "All required files must exist in the final commit."
-      - "All specified commits from agent branches must be merged into the main branch."
-      - "All validation criteria must be verifiably met."
-      - "The pass threshold is 100% completion; no partial credit is given."
+      - 'All required files must exist in the final commit.'
+      - 'All specified commits from agent branches must be merged into the main branch.'
+      - 'All validation criteria must be verifiably met.'
+      - 'The pass threshold is 100% completion; no partial credit is given.'
 
     reporting:
-      report_format: "YAML"
-      report_content: "Detailed results with failure analysis and remediation steps."
-
+      report_format: 'YAML'
+      report_content: 'Detailed results with failure analysis and remediation steps.'
 ```
