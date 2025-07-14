@@ -6,9 +6,10 @@
 # ///
 
 import json
-import sys
 import re
-from typing import Dict, List, Optional, Any
+import sys
+from typing import Any, Dict, List, Optional
+
 
 class CommitMessageValidator:
     def __init__(self, input_data: Dict[str, Any]):

@@ -13,15 +13,14 @@ Usage:
     uv run api-standards-checker.py --hook-mode  # For Claude Code hook compatibility
 """
 
-import json
-import sys
-import re
-import os
-from pathlib import Path
-from typing import List, Dict, Optional
-from dataclasses import dataclass, asdict
 import argparse
+import json
+import os
+import re
+import sys
 import urllib.parse
+from dataclasses import asdict, dataclass
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -377,7 +376,7 @@ def is_safe_path(file_path: str, base_dir: Optional[str] = None) -> bool:
         
         return True
         
-    except (ValueError, OSError) as e:
+    except (ValueError, OSError):
         # If path operations fail, consider it unsafe
         return False
 

@@ -9,9 +9,9 @@
 import argparse
 import json
 import os
-import sys
-import subprocess
 import random
+import subprocess
+import sys
 from pathlib import Path
 
 try:

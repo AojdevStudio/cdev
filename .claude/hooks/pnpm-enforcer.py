@@ -6,9 +6,10 @@
 # ///
 
 import json
-import sys
 import re
-from typing import Dict, Any, Optional, List, Tuple
+import sys
+from typing import Any, Dict, Optional
+
 
 class PnpmEnforcer:
     def __init__(self, input_data: Dict[str, Any]):

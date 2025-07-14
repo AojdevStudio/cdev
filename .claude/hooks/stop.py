@@ -9,11 +9,10 @@
 import argparse
 import json
 import os
-import sys
 import random
 import subprocess
+import sys
 from pathlib import Path
-from datetime import datetime
 
 try:
     from dotenv import load_dotenv

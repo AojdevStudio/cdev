@@ -9,8 +9,9 @@
 
 import os
 import sys
-from pathlib import Path
+
 from dotenv import load_dotenv
+
 
 def main():
     """
@@ -42,8 +43,8 @@ def main():
         sys.exit(1)
     
     try:
-        from elevenlabs.client import ElevenLabs
         from elevenlabs import play
+        from elevenlabs.client import ElevenLabs
         
         # Initialize client
         elevenlabs = ElevenLabs(api_key=api_key)

@@ -6,11 +6,11 @@
 # ///
 
 import json
-import sys
-import os
 import re
+import sys
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List
+
 
 class ImportOrganizer:
     def __init__(self, input_data: Dict[str, Any]):

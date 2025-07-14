@@ -6,8 +6,9 @@
 # ]
 # ///
 
-import sys
 import random
+import sys
+
 
 def main():
     """

@@ -4,12 +4,13 @@ Claude Code Hook: Command Template Guard
 Prevents creation/editing of .claude/commands/ files without reading template first
 """
 
-import sys
-import os
-import json
-from pathlib import Path
 import hashlib
+import json
+import os
+import sys
 import time
+from pathlib import Path
+
 
 def main():
     # Get the tool being used and the file path
@@ -44,7 +45,7 @@ def main():
     template_file = find_template_file()
     if not template_file:
         print("❌ Error: Custom command template not found!")
-        print("📝 Expected: ai-docs/custom-command-template.md")
+        print("📝 Expected: ai-docs/custom-command-template.yaml")
         sys.exit(2)
     
     # Check if template has been read and understood
@@ -68,11 +69,11 @@ def main():
 def find_template_file():
     """Find the custom command template file"""
     possible_paths = [
-        "ai-docs/custom-command-template.md",
-        "./ai-docs/custom-command-template.md",
-        "../ai-docs/custom-command-template.md",
-        "ai_docs/custom-command-template.md",
-        "./ai_docs/custom-command-template.md"
+        "ai-docs/custom-command-template.yaml",
+        "./ai-docs/custom-command-template.yaml",
+        "../ai-docs/custom-command-template.yaml",
+        "ai_docs/custom-command-template.yaml",
+        "./ai_docs/custom-command-template.yaml"
     ]
     
     for path in possible_paths:

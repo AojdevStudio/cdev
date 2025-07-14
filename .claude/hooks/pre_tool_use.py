@@ -3,13 +3,14 @@
 # requires-python = ">=3.8"
 # ///
 
-import json
-import sys
-import re
-import os
 import hashlib
+import json
+import os
+import re
+import sys
 import time
 from pathlib import Path
+
 
 def is_dangerous_rm_command(command):
     """

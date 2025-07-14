@@ -7,10 +7,10 @@
 
 import json
 import sys
-import os
-from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Set, Any, Optional
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 
 class CodeQualityReporter:
     def __init__(self):

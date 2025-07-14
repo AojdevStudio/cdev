@@ -5,14 +5,15 @@
 # dependencies = []
 # ///
 
-import json
-import sys
-import os
-import subprocess
-import re
 import asyncio
+import json
+import os
+import re
+import subprocess
+import sys
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List
+
 
 async def enforce_task_completion(hook_input: Dict[str, Any]):
     """Main enforcement function"""
