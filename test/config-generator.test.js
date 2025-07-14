@@ -8,6 +8,9 @@ const {
   writeConfig,
   generateAndWriteConfig,
 } = require('../src/config-generator');
+const { detectProjectType } = require('../src/install-utils');
+const templateEngine = require('../src/template-engine');
+
 // Mock dependencies
 jest.mock('fs');
 jest.mock('../src/install-utils', () => ({
@@ -16,9 +19,6 @@ jest.mock('../src/install-utils', () => ({
 jest.mock('../src/template-engine', () => ({
   processTemplate: jest.fn((template) => template),
 }));
-
-const { detectProjectType } = require('../src/install-utils');
-const templateEngine = require('../src/template-engine');
 
 describe('Config Generator', () => {
   beforeEach(() => {

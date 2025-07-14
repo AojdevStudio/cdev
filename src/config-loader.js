@@ -61,6 +61,7 @@ class ConfigLoader {
         delete require.cache[absolutePath];
       }
 
+      // eslint-disable-next-line import/no-dynamic-require
       const config = require(absolutePath);
 
       if (typeof config === 'function') {
