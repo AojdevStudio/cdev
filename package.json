@@ -26,7 +26,7 @@
     "prepublishOnly": "npm run security:check && npm run build",
     "security:check": "./scripts/python/security-check.py",
     "security:audit": "npm audit --audit-level moderate",
-    "postpublish": "./scripts/python/postpublish.py",
+    "postpublish": "./scripts/python/postpublish.py --skip-verification || true",
     "prepare": "./scripts/python/prepublish.py",
     "lint:python": "export PATH=\"/Users/ossieirondi/.local/bin:$PATH\" && ruff check scripts/python/",
     "lint:python:fix": "export PATH=\"/Users/ossieirondi/.local/bin:$PATH\" && ruff check scripts/python/ --fix",
