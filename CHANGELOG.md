@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated project configuration with ESLint ignore patterns
 - Enhanced GitHub Actions workflows for testing and publishing
 - Improved Prettier configuration for better code formatting
+- **Package optimization** - Reduced npm package size from 2.3MB to 330K by excluding test files and development documentation
+- **Documentation reorganization** - Moved internal development docs to `dev-docs/` directory, keeping only user-facing docs in `docs/`
+- **Package.json files field update** - Added explicit exclusion patterns for test files (`!src/**/*.test.js`, `!src/**/*.spec.js`)
+
+### Removed
+
+- **Development files from npm package** - Excluded 29 test files from `src/` directory in distributed package
+- **Docs directory from npm package** - Removed `docs/` from npm distribution while keeping it in GitHub repository
 
 ### Fixed
 
