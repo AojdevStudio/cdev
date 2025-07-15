@@ -267,8 +267,23 @@ class InteractiveInstaller {
 
     // Build settings.json based on selected hooks
     const settings = {
-      version: '1.0',
-      description: 'cdev hooks configuration',
+      permissions: {
+        allow: [
+          'Bash(mkdir:*)',
+          'Bash(uv:*)',
+          'Bash(find:*)',
+          'Bash(mv:*)',
+          'Bash(grep:*)',
+          'Bash(npm:*)',
+          'Bash(ls:*)',
+          'Bash(cp:*)',
+          'Write',
+          'Edit',
+          'Bash(chmod:*)',
+          'Bash(touch:*)',
+        ],
+        deny: [],
+      },
       hooks: {},
     };
 
@@ -294,7 +309,7 @@ class InteractiveInstaller {
 
       matcherGroup.hooks.push({
         type: 'command',
-        command: `python3 .claude/hooks/${script}`,
+        command: `uv run .claude/hooks/${script}`,
       });
     }
 

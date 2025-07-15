@@ -89,8 +89,23 @@ class SimpleInstaller {
 
     // Create settings.json with hook configurations
     const settings = {
-      version: '1.0',
-      description: 'Claude Code Hooks configuration',
+      permissions: {
+        allow: [
+          'Bash(mkdir:*)',
+          'Bash(uv:*)',
+          'Bash(find:*)',
+          'Bash(mv:*)',
+          'Bash(grep:*)',
+          'Bash(npm:*)',
+          'Bash(ls:*)',
+          'Bash(cp:*)',
+          'Write',
+          'Edit',
+          'Bash(chmod:*)',
+          'Bash(touch:*)',
+        ],
+        deny: [],
+      },
       hooks: {
         PreToolUse: [
           {
@@ -98,7 +113,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/pre-bash-validator.py',
+                command: 'uv run ~/.claude/hooks/pre-bash-validator.py',
               },
             ],
           },
@@ -107,7 +122,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/typescript-validator.py',
+                command: 'uv run ~/.claude/hooks/typescript-validator.py',
               },
             ],
           },
@@ -118,7 +133,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/import-organizer.py',
+                command: 'uv run ~/.claude/hooks/import-organizer.py',
               },
             ],
           },
@@ -129,7 +144,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/notification.py',
+                command: 'uv run ~/.claude/hooks/notification.py',
               },
             ],
           },
@@ -140,7 +155,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'python3 ~/.claude/hooks/task-completion-enforcer.py',
+                command: 'uv run ~/.claude/hooks/task-completion-enforcer.py',
               },
             ],
           },
