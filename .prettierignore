@@ -31,6 +31,10 @@ operations/test-temp/
 docs/**/*.html
 ai-docs/**/*.html
 
+# Ignore problematic YAML files
+ai-docs/*.yaml
+ai-docs/*.yml
+
 # Logs
 logs/
 

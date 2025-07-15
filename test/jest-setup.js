@@ -88,6 +88,20 @@ expect.extend({
   },
 });
 
+// Mock inquirer globally to prevent interactive prompts during tests
+jest.mock('inquirer', () => ({
+  prompt: jest.fn().mockResolvedValue({
+    projectName: 'test-project',
+    setupLinear: false,
+    linearApiKey: '',
+    setupGitHooks: true,
+    worktreeLocation: 'tmp',
+    confirmDelete: true,
+    confirmContinue: true,
+  }),
+  registerPrompt: jest.fn(),
+}));
+
 // Global test utilities
 global.testUtils = {
   // Helper to wait for async operations

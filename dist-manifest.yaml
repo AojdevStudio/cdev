@@ -23,9 +23,9 @@ distribution:
     path: scripts/python/spawn-agents.py
   type: global-npx-package
 package: '@aojdevstudio/cdev'
-publishedAt: '2025-07-15T12:55:57.108606'
+publishedAt: '2025-07-15T13:20:17.006142'
 validation:
   buildClean: true
   filesValidated: 5
   scriptsValidated: 3
-version: 1.0.0
+version: 0.0.1

@@ -14,7 +14,7 @@ module.exports = {
   // Transform files using babel-jest for JS/JSX and ts-jest for TS/TSX
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', { isolatedModules: true }],
   },
 
   // Module name mapping for CSS modules and static assets
@@ -71,6 +71,9 @@ module.exports = {
 
   // Performance optimizations
   maxWorkers: '50%',
+
+  // Memory optimization - limit worker memory to prevent crashes
+  workerIdleMemoryLimit: '512MB',
 
   // Clear mocks between tests
   clearMocks: true,

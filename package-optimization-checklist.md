@@ -5,6 +5,7 @@
 ### 📦 Update package.json Configuration
 
 #### High Priority - Files Field Configuration
+
 - [ ] Update `files` field in package.json to include directories:
   ```json
   "files": [
@@ -21,25 +22,27 @@
   ```
 
 #### Create/Update .npmignore Configuration
+
 - [ ] Create or update `.npmignore` file with exclusion patterns:
+
   ```
   # Test files
   **/*.test.js
   **/*.spec.js
   scripts/python/test-*.py
   scripts/python/test_*.py
-  
+
   # Deprecated/duplicate scripts
   scripts/*.js
   scripts/*.sh
   scripts/*.cjs
   scripts/archived/
-  
+
   # Development docs
   docs/
   scripts/python/*.md
   scripts/python/*.yaml
-  
+
   # Development files
   .eslintrc*
   .prettierrc*
@@ -52,13 +55,13 @@
   ```
 
 #### Scripts Directory Cleanup
+
 - [x] Remove deprecated JavaScript files from scripts root:
   - [x ] `decompose-parallel.cjs`
   - [x ] `intelligent-agent-generator.js`
   - [x ] `postpublish.js`
   - [x ] `prepublish.js`
   - [x ] `security-check.js`
-  
 - [x] Remove duplicate shell scripts from scripts root:
   - [x ] `agent-commit-enhanced.sh`
   - [x ] `cache-linear-issue.sh`
@@ -75,7 +78,7 @@
 - [x] Clean up Python test files in `scripts/python/`:
   - [x ] `test-locally.py`
   - [x ] `test-ruamel-yaml.py`
-  - [x ] `test-yaml-formatting-v2.py`  
+  - [x ] `test-yaml-formatting-v2.py`
   - [ ] `test-yaml-formatting.py`
   - [ ] `test_complex_scripts.py`
 
@@ -87,10 +90,12 @@
 ### 📄 Documentation Restructuring
 
 #### Exclude docs/ Directory
+
 - [x] Add `docs/` to `.npmignore` or exclude from `files` field
 - [x] Ensure GitHub repository has complete documentation for reference
 
 #### Move Development-Only Docs
+
 - [x] Create `dev-docs/` directory (add to .gitignore if needed)
 - [x] Move from docs/:
   - [x] Implementation plans
@@ -101,6 +106,7 @@
 ### 🧹 Source Code Cleanup
 
 #### Exclude Test Files from src/
+
 - [x ] Ensure all `*.test.js` files are excluded
 - [x ] Ensure all `*.spec.js` files are excluded
 - [x ] Verify no test utilities are included in distribution
@@ -108,6 +114,7 @@
 ### ✅ Validation Steps
 
 #### Pre-publish Checks
+
 - [x] Run `npm pack --dry-run` to preview package contents
 - [x ] Verify package size is around 500K (not 2.3MB)
 - [x ] Check that essential directories are included:
@@ -119,6 +126,7 @@
   - [x ] ✅ ai-docs/
 
 #### Test Installation
+
 - [x] Run `npm pack` to create tarball
 - [x] Test install in a clean directory: `npm install path/to/tarball`
 - [x] Verify CLI works: `npx cdev --help`
@@ -133,11 +141,11 @@
 
 ### 📊 Expected Results
 
-| Directory | Before | After | Savings |
-|-----------|--------|-------|---------|
-| scripts/ | 860K | ~200K | 660K |
-| docs/ | 360K | 0 | 360K |
-| src/ | 740K | ~300K | 440K |
+| Directory | Before    | After     | Savings    |
+| --------- | --------- | --------- | ---------- |
+| scripts/  | 860K      | ~200K     | 660K       |
+| docs/     | 360K      | 0         | 360K       |
+| src/      | 740K      | ~300K     | 440K       |
 | **Total** | **2.3MB** | **~500K** | **~1.8MB** |
 
 ### 🔍 Quick Verification Commands
