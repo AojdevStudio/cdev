@@ -5,7 +5,7 @@ description: Add new entries to project CHANGELOG.md following Keep a Changelog 
 
 # Update Changelog
 
-This command adds a new entry to the project's CHANGELOG.md file following Keep a Changelog conventions and Semantic Versioning standards.
+This command adds a new entry to the project's CHANGELOG.md file following Keep a Changelog conventions and Semantic Versioning standards. For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 
 **variables:**
 VersionEntry: $ARGUMENTS

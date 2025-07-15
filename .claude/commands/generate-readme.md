@@ -5,7 +5,7 @@ description: Generate comprehensive README using structured template with projec
 
 # Generate README
 
-This command analyzes your project structure and generates a comprehensive README file following the established template pattern with proper variable substitution and contextual content.
+This command analyzes your project structure and generates a comprehensive README file following the established template pattern with proper variable substitution and contextual content. For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 
 **variables:**
 DirectoryContents: $ARGUMENTS
