@@ -23,12 +23,7 @@ distribution:
       path: scripts/python/spawn-agents.py
   type: global-npx-package
 package: '@aojdevstudio/cdev'
-publishStatus:
-  globalInstallTested: true
-  npmVerified: true
-  published: true
-  publishedAt: '2025-07-15T18:38:26.731408'
-publishedAt: '2025-07-15T18:37:56.506428'
+publishedAt: '2025-07-15T18:54:19.809146'
 validation:
   buildClean: true
   filesValidated: 5
