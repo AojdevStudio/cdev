@@ -250,8 +250,23 @@ def main():
     """Main execution"""
     try:
         input_data = json.load(sys.stdin)
+        
+        # Extract file path for user-friendly message
+        tool_input = input_data.get('tool_input', {})
+        file_path = tool_input.get('file_path', '')
+        file_name = Path(file_path).name if file_path else "file"
+        
+        # Show friendly message
+        print(f"📦 Organizing imports in {file_name}...", file=sys.stderr)
+        
         organizer = ImportOrganizer(input_data)
         result = organizer.organize()
+        
+        # Show result to user
+        if result.get('modified', False):
+            print(f"✅ Imports organized in {file_name}", file=sys.stderr)
+        else:
+            print(f"👍 Imports already organized in {file_name}", file=sys.stderr)
         
         # For PostToolUse hooks, we don't need to return approve/block
         print(json.dumps({
