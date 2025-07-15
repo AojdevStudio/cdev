@@ -315,6 +315,50 @@ cdev commit  # Intelligently merges all branches without conflicts
 - **Custom Hooks** vs no protection
 - **Team Standards** vs individual preferences
 
+**The Difference in Action:**
+
+<details>
+<summary>📊 Click to see the dramatic difference between /init-protocol vs /init</summary>
+
+| Aspect                | `/init` (Basic)  | `/init-protocol` (CDEV)            |
+| --------------------- | ---------------- | ---------------------------------- |
+| **Token Usage**       | ~500-1k tokens   | 50k+ tokens                        |
+| **Analysis Time**     | 2-5 seconds      | 1-2 minutes                        |
+| **Output**            | Simple file list | Complete development protocols     |
+| **Context Depth**     | Surface level    | Deep codebase understanding        |
+| **Framework Support** | Generic          | Framework-specific best practices  |
+| **Customization**     | None             | Hooks, standards, team conventions |
+
+![init-protocol in action](docs/images/image.png)
+_Real example: /init-protocol analyzing a Microsoft Graph API integration project - 13 tool uses, 52.6k tokens, comprehensive protocol generation_
+
+**Example Output Comparison:**
+
+```bash
+# Standard /init output:
+"I found 12 files in your project. Here's what I see:
+- src/index.js
+- package.json
+- README.md
+..."
+
+# /init-protocol output:
+"Analyzing project structure...
+✓ Detected: Microsoft Graph API Integration Server
+✓ Framework: Node.js with Express
+✓ Architecture: RESTful API with OAuth2
+✓ Creating comprehensive development protocols...
+
+Generated:
+- Core Meta-Cognitive Protocols for AI assistants
+- Framework-specific validation hooks
+- Team collaboration standards
+- Automated quality gates
+..."
+```
+
+</details>
+
 **What it creates for you:**
 
 1. **CLAUDE.md** - Comprehensive project instructions
