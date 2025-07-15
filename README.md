@@ -32,6 +32,7 @@ CDEV orchestrates AI development assistants (like Claude) to work this way, help
 ### The Problem It Solves
 
 Developers waste hours on repetitive tasks, context switching, and managing complex workflows. AI assistants can help, but they often:
+
 - Get confused with large codebases
 - Make conflicting changes
 - Lose context between tasks
@@ -51,7 +52,7 @@ Whether you paste a to-do list, reference a Linear ticket, or describe what you 
 ### Real Impact
 
 - **2-4x faster development** through parallel execution
-- **Zero merge conflicts** with isolated Git worktrees 
+- **Zero merge conflicts** with isolated Git worktrees
 - **Consistent code quality** via automated validation
 - **Less mental overhead** with managed context switching
 
@@ -89,16 +90,19 @@ graph TD
 ```
 
 **Step 1:** Install CDEV globally
+
 ```bash
 npm install -g @aojdevstudio/cdev
 ```
 
-**Step 2:** Initialize in your project *(CRITICAL!)*
+**Step 2:** Initialize in your project _(CRITICAL!)_
+
 ```bash
 /init-protocol  # Must run BEFORE any other commands!
 ```
 
 **Step 3:** Choose your workflow:
+
 - **Big Feature?** → Use parallel agents (multiple Claude windows)
 - **Quick Tasks?** → Use /orchestrate (single Claude window)
 
@@ -130,7 +134,7 @@ For the best performance, CDEV uses Python scripts. Don't worry - setup is simpl
 # macOS
 brew install uv
 
-# Linux/WSL  
+# Linux/WSL
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Windows
@@ -215,13 +219,14 @@ After running `/init-protocol`, choose your workflow:
 **When to use:** Building a complete authentication system, major refactoring, or any feature touching multiple parts of your codebase.
 
 **Complete Step-by-Step Process:**
+
 ```bash
 # 1. Decompose your task into parallel agents
 cdev decompose LINEAR-123
 # Creates: deployment-plan.json with frontend, backend, test agents
 
 # 2. Spawn agents in separate Git worktrees
-cdev spawn deployment-plan.json  
+cdev spawn deployment-plan.json
 # Creates directories: auth_frontend/, auth_backend/, auth_tests/
 
 # 3. Open EACH directory in a SEPARATE Claude window
@@ -249,13 +254,14 @@ cdev commit  # Intelligently merges all branches without conflicts
 **When to use:** Multiple related tasks in one area, quick fixes across files, or when you want to stay in one Claude conversation.
 
 **How it works:**
+
 ```bash
 # Just tell Claude what you need done
 /orchestrate "Fix all linting errors, add missing tests, update docs"
 
 # CDEV creates sub-agents that work concurrently:
 # - Linting Agent: Fixes style issues across all files
-# - Testing Agent: Adds tests for uncovered code  
+# - Testing Agent: Adds tests for uncovered code
 # - Docs Agent: Updates documentation
 
 # All happen in your current Claude session - no switching needed!
@@ -272,6 +278,7 @@ cdev commit  # Intelligently merges all branches without conflicts
 ```
 
 **What happens:** CDEV guides Claude through 7 phases:
+
 1. **Explore** - Understand the codebase
 2. **Plan** - Design the solution
 3. **Test** - Write tests first (TDD)
@@ -285,7 +292,7 @@ cdev commit  # Intelligently merges all branches without conflicts
 ```bash
 # Works with ANY task format:
 /orchestrate tasks.md          # ✓ Markdown checklists
-/orchestrate TODO.txt          # ✓ Plain text lists  
+/orchestrate TODO.txt          # ✓ Plain text lists
 /orchestrate LINEAR-456        # ✓ Linear/Jira tickets
 /orchestrate "fix bug, add feature, write tests"  # ✓ Simple descriptions
 
@@ -302,18 +309,21 @@ cdev commit  # Intelligently merges all branches without conflicts
 ```
 
 **Why it's better than /init:**
+
 - **Deep Analysis** vs basic file listing
-- **Framework-Specific Rules** vs generic suggestions  
+- **Framework-Specific Rules** vs generic suggestions
 - **Custom Hooks** vs no protection
 - **Team Standards** vs individual preferences
 
 **What it creates for you:**
+
 1. **CLAUDE.md** - Comprehensive project instructions
 2. **Custom Hooks** - Prevent framework-specific mistakes
 3. **Quality Gates** - Enforce your team's standards
 4. **Smart Context** - Claude understands YOUR patterns
 
 **Framework-specific enhancements:**
+
 - **React**: Component patterns, hook rules, testing practices
 - **Vue**: Composition API, reactivity patterns, Pinia state
 - **Python**: Type hints, docstrings, async/await patterns
@@ -327,6 +337,7 @@ cdev commit  # Intelligently merges all branches without conflicts
 ```
 
 **Example output:**
+
 ```
 feat(auth): implement JWT token refresh with Redis caching
 
@@ -349,18 +360,21 @@ AI assistants sometimes make predictable mistakes. CDEV's hooks catch these auto
 ### Common Saves:
 
 **🚫 Prevents API Key Exposure**
+
 ```python
 # AI tries to add: api_key = "sk-proj-abc123"
 # Hook blocks: "SECURITY: Never commit API keys!"
 ```
 
 **📅 Fixes Wrong Dates**
+
 ```python
-# AI writes: "Updated: December 2023"  
+# AI writes: "Updated: December 2023"
 # Hook corrects: "Updated: July 2024"
 ```
 
 **🔒 Protects Templates**
+
 ```python
 # AI modifies: user_{{TEMPLATE_VAR}}_config
 # Hook prevents: "Don't edit template files!"
@@ -369,6 +383,7 @@ AI assistants sometimes make predictable mistakes. CDEV's hooks catch these auto
 ### Custom Hooks
 
 Add your own rules:
+
 ```python
 # Enforce your team's standards
 if "console.log" in code:
@@ -384,18 +399,21 @@ if "console.log" in code:
 CDEV adapts to your project:
 
 **Frontend Frameworks**
+
 - ⚛️ **React/Next.js** - Component testing, hook validation
 - 🖖 **Vue/Nuxt** - Composition API best practices
 - 🅰️ **Angular** - Service injection patterns
 - 🎯 **Svelte** - Store management
 
 **Backend Technologies**
+
 - 🟢 **Node.js** - Express/Fastify middleware
 - 🐍 **Python** - Type hints, async patterns
 - 🦀 **Rust** - Memory safety checks
 - ☕ **Java** - Spring Boot conventions
 
 **Special Environments**
+
 - 🐳 **Docker/K8s** - Container best practices
 - 📱 **React Native** - Platform-specific code
 - 🤖 **ML Projects** - Notebook integration
@@ -472,11 +490,9 @@ auth_test_agent:
 1. **Performance Logger**
    - Adds timing to all routes
    - Creates performance dashboard
-   
 2. **Query Optimizer**
    - Finds N+1 queries
    - Adds proper indexes
-   
 3. **Cache Layer**
    - Implements Redis caching
    - Adds cache invalidation
@@ -491,6 +507,7 @@ auth_test_agent:
 ```
 
 **CDEV coordinates:**
+
 - TypeScript migration (preserves all functionality)
 - Test creation (achieves 90% coverage)
 - Documentation updates (inline + README)
@@ -502,11 +519,13 @@ auth_test_agent:
 ## 🤝 Join Our Community
 
 ### Get Help
+
 - 💬 [GitHub Discussions](https://github.com/AOJDevStudio/cdev/discussions) - Ask questions, share tips
 - 🐞 [Report Issues](https://github.com/AOJDevStudio/cdev/issues) - Found a bug? Let us know
 - 📺 [Video Tutorials](https://youtube.com/@AOJDevStudio) - See CDEV in action
 
 ### Stay Updated
+
 - ⭐ **Star the repo** for release notifications
 - 🗨️ [Request Features](https://github.com/AOJDevStudio/cdev/issues/new?labels=enhancement)
 - 🐦 Follow [@AOJDevStudio](https://twitter.com/AOJDevStudio) for tips
@@ -534,7 +553,7 @@ CDEV builds upon brilliant work from the open-source community:
 - Early adopters who battle-tested CDEV in production environments
 - Contributors who helped refine the parallel workflow system
 
-*Standing on the shoulders of giants to make AI-assisted development accessible to all.*
+_Standing on the shoulders of giants to make AI-assisted development accessible to all._
 
 ⸻
 

@@ -7,6 +7,7 @@ Transform CDEV into the premier development workflow automation tool for teams u
 ## Current Version: 0.0.2
 
 ### Recently Completed ✅
+
 - Package name migration to `@aojdevstudio/cdev`
 - Enhanced README with Feynman Technique
 - Dynamic npm badges (downloads, CI status)
