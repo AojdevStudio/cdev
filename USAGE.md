@@ -41,7 +41,7 @@ Creates isolated Git worktrees for each agent to work independently.
 
 - Package: @aojdevstudio/cdev
 - Version: 0.0.4
-- Published: 2025-07-15T15:12:25.202709
+- Published: 2025-07-15T17:47:54.505495
 
 ## Global NPX Distribution
 
