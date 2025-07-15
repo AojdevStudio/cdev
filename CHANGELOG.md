@@ -48,6 +48,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive custom commands reference documentation
 - `/init-protocol` command with dynamic project analysis and intelligent protocol selection
 - Dry-run mode for previewing sub-agent execution plans
+- **Init-protocol improvement guide** - Documentation for preventing CLAUDE.md placement errors
+- **README comparison showcase** - Visual comparison table showing dramatic difference between `/init` vs `/init-protocol` (50k+ tokens, deep analysis)
+
+### Changed
+
+- **Hook command execution** - All hooks now use `uv run` instead of `python3` for consistency
+- **Settings.json structure** - Removed unnecessary `version` and `description` fields from hook configuration
+- **Installer configuration** - Both simple and interactive installers now generate proper settings.json structure with permissions section
+
+### Fixed
+
+- **Hook installation format** - Settings.json now follows Claude's intended structure without extraneous fields
+- **Python execution consistency** - All Python hooks now use UV for reliable environment management
 - Progress tracking for concurrent sub-agent execution
 - Error recovery and retry mechanisms for failed sub-agents
 - Python to JavaScript/CJS script migration infrastructure
