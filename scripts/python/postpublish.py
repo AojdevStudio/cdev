@@ -255,12 +255,7 @@ def to_yaml(results: Dict[str, Any]) -> str:
     return yaml.dump(results, default_flow_style=False)
 
 
-@click.command()
-@click.option(
-    "--output-format", type=click.Choice(["console", "yaml"]), default="console", help="Output format for results"
-)
-@click.option("--skip-verification", is_flag=True, default=False, help="Skip NPM verification (useful for testing)")
-async def main(output_format: str, skip_verification: bool):
+async def async_main(output_format: str, skip_verification: bool):
     """Run postpublish operations for CDEV package"""
     results = {
         "postpublish_operations": {"timestamp": datetime.now().isoformat(), "status": "started", "operations": {}}
@@ -321,6 +316,15 @@ async def main(output_format: str, skip_verification: bool):
         sys.exit(1)
 
 
+@click.command()
+@click.option(
+    "--output-format", type=click.Choice(["console", "yaml"]), default="console", help="Output format for results"
+)
+@click.option("--skip-verification", is_flag=True, default=False, help="Skip NPM verification (useful for testing)")
+def main(output_format: str, skip_verification: bool):
+    """Run postpublish operations for CDEV package (wrapper for async)"""
+    asyncio.run(async_main(output_format, skip_verification))
+
+
 if __name__ == "__main__":
-    # Run the async main function
-    asyncio.run(main())
+    main()

@@ -35,9 +35,9 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 REQUIRED_FILES = ["package.json", "README.md", "CHANGELOG.md", "LICENSE", "CLAUDE.md"]
 
 REQUIRED_SCRIPTS = [
-    "scripts/cache-linear-issue.sh",
-    "scripts/decompose-parallel.cjs",
-    "scripts/spawn-agents.sh",
+    "scripts/python/cache-linear-issue.py",
+    "scripts/python/decompose-parallel.py",
+    "scripts/python/spawn-agents.py",
 ]
 
 
@@ -107,8 +107,8 @@ def validate_scripts() -> None:
         script_path = PROJECT_ROOT / script
         if not script_path.exists():
             missing.append(script)
-        # Check if shell scripts are executable
-        elif script.endswith(".sh"):
+        # Check if Python scripts are executable
+        elif script.endswith(".py"):
             if not os.access(script_path, os.X_OK):
                 log(f"Making {script} executable...", "warn")
                 script_path.chmod(script_path.stat().st_mode | 0o111)
@@ -159,7 +159,7 @@ def generate_distribution_manifest() -> Dict[str, Any]:
             "entryPoint": pkg["main"],
             "keywords": pkg["keywords"],
             "scripts": [
-                {"name": Path(script).name, "path": script, "executable": script.endswith(".sh")}
+                {"name": Path(script).name, "path": script, "executable": script.endswith(".py")}
                 for script in REQUIRED_SCRIPTS
             ],
         },
