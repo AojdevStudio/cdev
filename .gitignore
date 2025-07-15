@@ -44,6 +44,9 @@ pnpm-lock.yaml
 .cache/
 .linear-cache/
 
+# Shared development artifacts
+/shared/
+
 # Temporary files
 *.tmp
 *.temp

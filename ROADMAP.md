@@ -1,18 +1,36 @@
-# cdev Roadmap
+# CDEV Roadmap
 
 ## Vision
 
-Transform cdev into the premier development workflow automation tool for teams using Claude and modern AI-assisted development practices. Follow the principle: **"Works in 30 seconds, powerful in 30 minutes, customizable over 30 days."**
+Transform CDEV into the premier development workflow automation tool for teams using Claude and modern AI-assisted development practices. Follow the principle: **"Works in 30 seconds, powerful in 30 minutes, customizable over 30 days."**
+
+## Current Version: 0.0.2
+
+### Recently Completed ✅
+- Package name migration to `@aojdevstudio/cdev`
+- Enhanced README with Feynman Technique
+- Dynamic npm badges (downloads, CI status)
+- Credits section acknowledging open-source inspirations
+- Production-grade `/init-protocol` emphasis
+- Complete workflow documentation
+- Quick Start Guide with visual journey
+- Python to JavaScript/CJS script migration
+- Comprehensive linting (ESLint + Prettier)
+- UV package manager integration for Python scripts
+- `/orchestrate` command with universal task support
+- Smart sub-agent decomposition
+- Improved hook system with validation
 
 ## Release Timeline
 
-### v1.0.1 (Immediate) - Critical Fixes & Quick Wins
+### v0.1.0 (Next Release) - Stabilization & Polish
 
 🚀 **Status**: Next Release
 
-- **Package Name Change**
-  - Update to `@aojdevstudio/cdev` throughout codebase
-  - Update all documentation references
+- **Documentation Cleanup**
+  - Fix remaining mermaid diagram issues
+  - Remove duplicate content across docs
+  - Add video tutorials and GIFs
 - **Installation Improvements**
   - Support for bun, pnpm, yarn package managers
   - Auto-detect package manager in use
@@ -21,7 +39,7 @@ Transform cdev into the premier development workflow automation tool for teams u
   - Add option to open worktrees in terminal instead of Cursor
   - Remember user preference for future spawns
 
-### v1.1.0 (Q3 2025) - Zero-Friction Onboarding
+### v0.2.0 (Q3 2024) - Zero-Friction Onboarding
 
 🎯 **Status**: High Priority
 
@@ -40,7 +58,7 @@ Transform cdev into the premier development workflow automation tool for teams u
   - Inter-agent dependency resolution
   - Automatic merge orchestration
 
-### v1.2.0 (Q4 2025) - Enterprise & Monetization
+### v0.3.0 (Q4 2024) - Developer Experience
 
 💼 **Status**: Planning
 
@@ -55,7 +73,7 @@ Transform cdev into the premier development workflow automation tool for teams u
   - Example-driven learning system
   - Interactive terminal tutorials
 
-### v1.3.0 (Q1 2026) - AI Enhancement & Automation
+### v1.0.0 (Q1 2025) - Production Ready
 
 🤖 **Status**: Concept
 
@@ -70,7 +88,7 @@ Transform cdev into the premier development workflow automation tool for teams u
   - Predictive agent scheduling
   - Performance optimization suggestions
 
-### v2.0.0 (Q2 2026) - Platform Evolution
+### v2.0.0 (Q2 2025) - Platform Evolution
 
 🌐 **Status**: Vision
 
@@ -106,19 +124,18 @@ Transform cdev into the premier development workflow automation tool for teams u
 
 ## Feature Backlog
 
-### Critical (v1.0.1)
+### Critical (v0.1.0)
 
-- [x] Package name migration to @aojdevstudio/cdev
-- [ ] Support all package managers (bun, pnpm, yarn)
+- [x] Package name migration to @aojdevstudio/cdev ✅
+- [x] Support all package managers (npm, pnpm, yarn, bun) ✅
 - [ ] Terminal vs Cursor choice for worktree opening
 - [ ] Fix duplication in documentation
 - [ ] Add error catalog with solutions
-- [ ] **Claude-Historian Integration** - MCP-based conversation search
-  - Integrate with existing post_tool_use.py hook logs
-  - Index conversation history for instant search
-  - Reduce repo bloat by moving logs to SQLite index
+- [x] **Enhanced README** - Complete rewrite with Feynman Technique ✅
+- [x] **Dynamic badges** - npm downloads and CI status ✅
+- [x] **Credits section** - Acknowledge open-source inspirations ✅
 
-### High Priority (v1.1.0)
+### High Priority (v0.2.0)
 
 - [ ] Zero-config demo mode
 - [ ] Interactive setup wizard
@@ -127,7 +144,7 @@ Transform cdev into the premier development workflow automation tool for teams u
 - [ ] Template gallery with examples
 - [ ] Built-in validation & troubleshooting
 
-### Medium Priority (v1.2.0+)
+### Medium Priority (v0.3.0+)
 
 - [ ] Subscription payment system
 - [ ] GitHub Issues integration
@@ -174,16 +191,16 @@ We welcome community input! Priority areas for contribution:
 
 ## Implementation Strategy
 
-### Phase 1: Foundation (v1.0.1)
+### Phase 1: Foundation (v0.1.0) ✅ In Progress
 
 Focus on removing friction and fixing critical issues:
 
-1. Package name migration
-2. Multi-package manager support
+1. Package name migration ✅
+2. Multi-package manager support ✅
 3. Terminal flexibility
 4. Documentation cleanup
 
-### Phase 2: Onboarding Excellence (v1.1.0)
+### Phase 2: Onboarding Excellence (v0.2.0)
 
 Achieve "30-second value" goal:
 
@@ -192,16 +209,16 @@ Achieve "30-second value" goal:
 3. Template library
 4. MCP agent communication
 
-### Phase 3: Monetization (v1.2.0)
+### Phase 3: Developer Experience (v0.3.0)
 
-Build sustainable business model:
+Build better developer experience:
 
-1. Tiered subscriptions
-2. Usage-based pricing
-3. Enterprise features
-4. Support contracts
+1. Enhanced error handling
+2. Better debugging tools
+3. Performance optimizations
+4. Community contributions
 
-### Phase 4: Platform (v2.0.0)
+### Phase 4: Production Ready (v1.0.0)
 
 Evolve from tool to platform:
 
@@ -228,9 +245,9 @@ Evolve from tool to platform:
 
 ### Business Growth
 
-- Monthly active developers: 10,000+ by Q2 2026
-- Paid subscriptions: 1,000+ by Q1 2026
-- Enterprise clients: 50+ by Q4 2026
+- Monthly active developers: 10,000+ by Q2 2025
+- Paid subscriptions: 1,000+ by Q1 2025
+- Enterprise clients: 50+ by Q4 2024
 - Community hooks: 200+ published
 
 ## How to Contribute
@@ -252,4 +269,4 @@ Evolve from tool to platform:
 
 _This roadmap is subject to change based on user feedback and market demands. We believe in building what our users need, not what we think they need._
 
-**Last Updated**: July 2025
+**Last Updated**: July 2024

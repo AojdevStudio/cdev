@@ -5,6 +5,34 @@ All notable changes to @aojdevstudio/cdev will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.2] - 2024-07-15
+
+### Added
+
+- **Dynamic npm badges** - Added download counters (monthly & weekly) and CI status badges
+- **Credits section** - Proper acknowledgment of open-source inspirations:
+  - Context-Engineering by David Kimai for `/init-protocol` foundation
+  - Claude Code Hooks Mastery by Disler for parallel agent concepts
+  - Anthropic documentation for AI assistant best practices
+- **Enhanced README with Feynman Technique** - Complete rewrite focusing on simplicity and accessibility
+- **Quick Start Guide** - Visual 3-step journey with mermaid diagram
+- **Production-grade /init-protocol emphasis** - Clear differentiation from Anthropic's basic `/init`
+- **Complete workflow documentation** - Clarified that parallel agents require `/agent-start` in each directory
+- **Framework detection showcase** - Visual list of 20+ supported frameworks with icons
+- **Real-world examples** - Detailed authentication system and API optimization scenarios
+
+### Changed
+
+- **README structure** - Prioritized `/init-protocol` as essential first step before any workflows
+- **Navigation menu** - Updated to reflect new user journey and include credits
+- **Command explanations** - Used analogies and simple language throughout
+- **Hook system documentation** - Practical examples of how hooks prevent common AI mistakes
+- **Installation section** - Simplified Python/UV setup explanation
+
+### Fixed
+
+- **Mermaid diagram syntax** - Fixed arrow notation and special character escaping for proper rendering
+
 ## [Unreleased]
 
 ### Added

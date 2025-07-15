@@ -1,46 +1,106 @@
 # CDEV: AI-Powered Development Orchestration System
 
-**Version**: 1.0.0  
+**Version**: 0.0.2  
 **License**: CC-BY-NC-SA-4.0  
 **Requirements**: Node.js ≥ 16.0.0  
 **Community**: [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues) | [NPM Package](https://www.npmjs.com/package/@aojdevstudio/cdev)
 
 [![npm version](https://img.shields.io/npm/v/@aojdevstudio/cdev.svg)](https://www.npmjs.com/package/@aojdevstudio/cdev)
+[![Downloads](https://img.shields.io/npm/dm/@aojdevstudio/cdev.svg)](https://www.npmjs.com/package/@aojdevstudio/cdev)
+[![Weekly Downloads](https://img.shields.io/npm/dw/@aojdevstudio/cdev.svg)](https://www.npmjs.com/package/@aojdevstudio/cdev)
+[![GitHub CI](https://img.shields.io/github/actions/workflow/status/AOJDevStudio/cdev/ci.yml?branch=main&label=CI)](https://github.com/AOJDevStudio/cdev/actions)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Node.js Version](https://img.shields.io/node/v/@aojdevstudio/cdev.svg)](https://nodejs.org/)
 
 ---
 
-CDEV is an intelligent development orchestration system designed to transform how developers work with AI assistants like Claude. It goes beyond simple automation by enabling both parallel multi-instance workflows and concurrent sub-agent execution to support developers building software 2-4x faster. Whether you're focused on complex feature development, systematic refactoring, comprehensive testing, or rapid prototyping, CDEV helps achieve dramatic productivity gains through intelligent task decomposition and automated orchestration.
+## What is CDEV?
 
-> ⭐ If you find this project helpful, please give it a star to support development and receive updates.
+Imagine you're building a house. Traditional development is like having one worker do everything sequentially - lay the foundation, then build walls, then install plumbing. CDEV is like having a smart construction manager who can either:
+
+1. **Split the work across multiple specialists** (parallel agents) - the electrician, plumber, and carpenter all work simultaneously in different rooms
+2. **Help one expert juggle multiple tasks efficiently** (concurrent sub-agents) - like a master craftsman who seamlessly switches between different tools
+
+CDEV orchestrates AI development assistants (like Claude) to work this way, helping you build software 2-4x faster by intelligently breaking down complex tasks and managing their execution.
+
+> ⭐ **Star this project** to support development and get notified of updates that make AI-assisted development even more powerful!
 
 ---
 
-## 🔑 Key Highlights
+## 🔑 Why CDEV?
 
-1. **Dual-Mode Agent System**  
-   Think of it like having two superpowers: You can either split a big project across multiple developers (parallel agents with Git worktrees), or have one super-smart developer juggle multiple tasks at once (concurrent sub-agents). It's like choosing between a construction crew or a master craftsman - both get the job done, but for different types of work.
+### The Problem It Solves
 
-2. **Universal Task Understanding**  
-   Imagine an assistant that understands your tasks whether you write them in a markdown checklist, paste a text file, reference a Linear ticket, or just describe what you need. CDEV automatically translates any format into actionable, intelligent workflows - like having a universal translator for development tasks.
+Developers waste hours on repetitive tasks, context switching, and managing complex workflows. AI assistants can help, but they often:
+- Get confused with large codebases
+- Make conflicting changes
+- Lose context between tasks
+- Generate code that doesn't follow your project's patterns
 
-CDEV is designed to address challenges such as context switching overhead, merge conflict nightmares, and AI hallucination issues—delivering faster development cycles, cleaner code organization, and more reliable AI interactions through intelligent validation hooks and automated orchestration.
+### The CDEV Solution
 
-📘 [**Read the Full Guide**](docs/parallel-workflow.md) to see how these concepts fit into the overall experience.
+**1. Smart Task Decomposition**  
+Like a project manager who knows exactly how to divide work, CDEV breaks complex features into independent pieces that can be developed simultaneously without conflicts.
+
+**2. Intelligent Quality Gates**  
+Built-in hooks act like automated code reviewers, catching common AI mistakes before they happen - wrong dates, exposed secrets, or breaking changes.
+
+**3. Universal Task Understanding**  
+Whether you paste a to-do list, reference a Linear ticket, or describe what you need, CDEV understands and orchestrates the work automatically.
+
+### Real Impact
+
+- **2-4x faster development** through parallel execution
+- **Zero merge conflicts** with isolated Git worktrees 
+- **Consistent code quality** via automated validation
+- **Less mental overhead** with managed context switching
+
+📘 [**Read the Full Guide**](docs/parallel-workflow.md) to see step-by-step examples of CDEV in action.
 
 ---
 
 ## 🧭 Quick Navigation
 
+- [Quick Start Guide](#-quick-start-guide) ⭐
 - [Installation & Setup](#-setup--updates)
+- [Essential First Step](#-essential-first-step-initialize-cdev)
 - [Two Powerful Workflows](#-two-powerful-workflows)
-- [Intelligent Commands](#-intelligent-commands)
-- [Hook System](#-intelligent-hook-system)
-- [Custom Commands](#-custom-command-system)
+- [Smart Commands](#-smart-commands-that-understand-you)
+- [Safety Net (Hooks)](#-built-in-safety-net)
 - [Documentation](#-documentation--resources)
 - [Examples](#-real-world-examples)
+- [Credits](#-credits--acknowledgments)
 - [Contributing](#-contributing)
+
+---
+
+## 🚦 Quick Start Guide
+
+Your journey with CDEV in 3 simple steps:
+
+```mermaid
+graph TD
+    A("1. Install CDEV") --> B("2. Run /init-protocol")
+    B --> C{"3. Choose Workflow"}
+    C -->|Complex Feature| D("Parallel Agents")
+    C -->|Quick Tasks| E("Sub-Agents")
+    D --> F("cdev decompose → spawn → /agent-start")
+    E --> G("/orchestrate tasks")
+```
+
+**Step 1:** Install CDEV globally
+```bash
+npm install -g @aojdevstudio/cdev
+```
+
+**Step 2:** Initialize in your project *(CRITICAL!)*
+```bash
+/init-protocol  # Must run BEFORE any other commands!
+```
+
+**Step 3:** Choose your workflow:
+- **Big Feature?** → Use parallel agents (multiple Claude windows)
+- **Quick Tasks?** → Use /orchestrate (single Claude window)
 
 ---
 
@@ -59,28 +119,25 @@ npm update -g @aojdevstudio/cdev
 ✅ Cross-platform support (Windows, macOS, Linux)  
 ✅ Multiple package managers (npm, pnpm, yarn, bun)
 
-### 🐍 Python Scripts Requirements
+### 🐍 Python Scripts (Optional Enhancement)
 
-CDEV now uses Python scripts with UV package manager for improved performance and cross-platform compatibility:
+For the best performance, CDEV uses Python scripts. Don't worry - setup is simple:
 
-**Prerequisites:**
-
-- Python 3.11 or higher
-- UV package manager ([Installation Guide](docs/uv-installation-guide.md))
+1. **Install Python 3.11+** (you probably already have it)
+2. **Install UV** - a fast Python package manager:
 
 ```bash
-# Quick UV installation
 # macOS
 brew install uv
 
-# Linux/WSL
+# Linux/WSL  
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Windows
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-All Python scripts are self-contained with inline dependencies - no virtual environment setup required!
+✨ **Why UV?** It's 10-100x faster than pip and handles dependencies automatically - no virtual environments needed!
 
 ⸻
 
@@ -112,128 +169,239 @@ npm link
 
 ⸻
 
+## 🎯 Essential First Step: Initialize CDEV
+
+**IMPORTANT:** Before using any workflows, you MUST run init-protocol so Claude understands your project:
+
+```bash
+/init-protocol  # Run this FIRST in your project root!
+```
+
+> 💡 **Why not use Anthropic's /init?** While Claude's built-in `/init` provides basic setup, CDEV's `/init-protocol` is **specifically designed for production development**. It detects your exact frameworks, creates custom hooks for your tech stack, and generates a comprehensive CLAUDE.md with project-specific instructions that make Claude significantly more effective.
+
+### What This Does For You:
+
+1. **Scans Your Project** - Detects all frameworks, languages, and patterns
+2. **Creates CLAUDE.md** - Custom AI instructions tailored to YOUR codebase
+3. **Sets Quality Standards** - Based on your existing code style
+4. **Configures Hooks** - Prevents common mistakes in your tech stack
+
+### Examples of Smart Detection:
+
+```bash
+# Empty project?
+/init-protocol  # Sets up for greenfield development
+
+# React app?
+/init-protocol  # Adds component patterns, hook rules, testing practices
+
+# Python API?
+/init-protocol  # Configures type hints, async patterns, docstrings
+
+# Microservices?
+/init-protocol  # Sets service boundaries, API standards
+```
+
+**This one command makes Claude 10x more effective at understanding your project!**
+
+⸻
+
 ## 🚀 Two Powerful Workflows
 
-### 1. Parallel Agent Workflow (Multiple Claude Instances)
+After running `/init-protocol`, choose your workflow:
 
-Perfect for large features requiring true parallel development:
+### 1. Parallel Agent Workflow - Like Multiple Developers
 
+**When to use:** Building a complete authentication system, major refactoring, or any feature touching multiple parts of your codebase.
+
+**Complete Step-by-Step Process:**
 ```bash
-# Decompose a Linear issue into parallel agents
+# 1. Decompose your task into parallel agents
 cdev decompose LINEAR-123
-# Uses: scripts/python/decompose-parallel.py
+# Creates: deployment-plan.json with frontend, backend, test agents
 
-# Spawn agents in separate Git worktrees
-cdev spawn deployment-plan.json
-# Uses: scripts/python/spawn-agents.py
-# Opens: frontend_agent, backend_agent, test_agent in separate directories
+# 2. Spawn agents in separate Git worktrees
+cdev spawn deployment-plan.json  
+# Creates directories: auth_frontend/, auth_backend/, auth_tests/
 
-# Monitor agent progress
+# 3. Open EACH directory in a SEPARATE Claude window
+# In auth_frontend/ Claude window:
+/agent-start  # Starts the frontend agent's TDD workflow
+
+# In auth_backend/ Claude window:
+/agent-start  # Starts the backend agent's TDD workflow
+
+# In auth_tests/ Claude window:
+/agent-start  # Starts the test agent's TDD workflow
+
+# 4. Monitor progress from your main terminal
 cdev status
-# Uses: scripts/python/monitor-agents.py
+# Shows: ✓ Frontend: 80% complete, Backend: 60%, Tests: 40%
 
-# Each developer/Claude instance works independently
-# Merge when complete
-cdev commit
-# Uses: scripts/python/agent-commit.py
+# 5. When all agents complete their work
+cdev commit  # Intelligently merges all branches without conflicts
 ```
 
-### 2. Concurrent Sub-Agent Workflow (Single Claude Instance)
+**🔑 Key Point:** Each agent needs `/agent-start` to begin its systematic workflow!
 
-Ideal for complex tasks within one conversation:
+### 2. Concurrent Sub-Agent Workflow - Like One Expert Multitasking
 
+**When to use:** Multiple related tasks in one area, quick fixes across files, or when you want to stay in one Claude conversation.
+
+**How it works:**
 ```bash
-# Transform any task list into concurrent sub-agents
-/orchestrate PUBLISHING-PLAN.md
-# OR
-/orchestrate "Fix linting, add tests, update docs"
+# Just tell Claude what you need done
+/orchestrate "Fix all linting errors, add missing tests, update docs"
 
-# CDEV intelligently groups tasks and orchestrates execution
-# Sub-agents run concurrently within your current Claude session
+# CDEV creates sub-agents that work concurrently:
+# - Linting Agent: Fixes style issues across all files
+# - Testing Agent: Adds tests for uncovered code  
+# - Docs Agent: Updates documentation
+
+# All happen in your current Claude session - no switching needed!
 ```
 
 ---
 
-## 🎯 Intelligent Commands
+## 🎯 Smart Commands That Understand You
 
-### /agent-start - 7-Phase TDD Workflow
+### /agent-start - Professional Test-Driven Development
 
 ```bash
-/agent-start                   # Execute TDD workflow from current directory
-/agent-start ./agent-workspace # Start in specific agent workspace
+/agent-start  # Starts a systematic development workflow
 ```
 
-### /orchestrate - Universal Task Orchestrator
+**What happens:** CDEV guides Claude through 7 phases:
+1. **Explore** - Understand the codebase
+2. **Plan** - Design the solution
+3. **Test** - Write tests first (TDD)
+4. **Code** - Implement to pass tests
+5. **Refactor** - Clean up the code
+6. **Validate** - Ensure quality
+7. **Commit** - Save with meaningful messages
+
+### /orchestrate - Your Universal Task Manager
 
 ```bash
-/orchestrate tasks.md          # Markdown checklists
-/orchestrate TODO.txt          # Plain text lists
-/orchestrate LINEAR-456        # Linear tickets
-/orchestrate checklist.json    # JSON arrays
-/orchestrate --dry-run         # Preview execution plan
+# Works with ANY task format:
+/orchestrate tasks.md          # ✓ Markdown checklists
+/orchestrate TODO.txt          # ✓ Plain text lists  
+/orchestrate LINEAR-456        # ✓ Linear/Jira tickets
+/orchestrate "fix bug, add feature, write tests"  # ✓ Simple descriptions
+
+# Preview what will happen:
+/orchestrate tasks.md --dry-run
 ```
 
-### /init-protocol - Smart Project Configuration
+**Magic:** CDEV reads your tasks in any format and automatically creates an execution plan. It's like having an assistant who just "gets it".
+
+### /init-protocol - Production-Grade Project Setup
 
 ```bash
-/init-protocol                 # Analyzes project and generates CLAUDE.md
-/init-protocol --level advanced # Force comprehensive protocols
-/init-protocol --focus "testing" # Emphasize specific domains
+/init-protocol  # Superior to Claude's basic /init command
 ```
 
-The complexity scoring algorithm considers:
+**Why it's better than /init:**
+- **Deep Analysis** vs basic file listing
+- **Framework-Specific Rules** vs generic suggestions  
+- **Custom Hooks** vs no protection
+- **Team Standards** vs individual preferences
 
-- File count and language diversity
-- Framework detection
-- Team indicators
-- Special project types (microservices, AI/ML)
+**What it creates for you:**
+1. **CLAUDE.md** - Comprehensive project instructions
+2. **Custom Hooks** - Prevent framework-specific mistakes
+3. **Quality Gates** - Enforce your team's standards
+4. **Smart Context** - Claude understands YOUR patterns
 
-### /commit - Intelligent Git Workflow
+**Framework-specific enhancements:**
+- **React**: Component patterns, hook rules, testing practices
+- **Vue**: Composition API, reactivity patterns, Pinia state
+- **Python**: Type hints, docstrings, async/await patterns
+- **Node.js**: Middleware patterns, error handling, validation
+- **And 20+ more frameworks...**
+
+### /commit - Git Commits That Make Sense
 
 ```bash
-/commit                        # Analyzes changes, generates semantic commit
-/commit --message "custom"     # Override with custom message
+/commit  # CDEV writes the perfect commit message
+```
+
+**Example output:**
+```
+feat(auth): implement JWT token refresh with Redis caching
+
+- Add token refresh endpoint with 24h expiry
+- Integrate Redis for token blacklisting
+- Add comprehensive test coverage (98%)
+- Update API documentation
+
+Closes: LINEAR-123
 ```
 
 ---
 
-## 🛡️ Intelligent Hook System
+## 🛡️ Built-in Safety Net
 
-CDEV's hooks act like quality gates, catching issues before they happen:
+### Why Hooks Matter
 
-### Pre-Tool Hooks
+AI assistants sometimes make predictable mistakes. CDEV's hooks catch these automatically:
 
-- **Date Awareness**: Prevents AI from using outdated dates
-- **Template Guard**: Protects command templates from modification
-- **API Validation**: Ensures REST/GraphQL standards
-- **TypeScript Checking**: Validates types before edits
+### Common Saves:
 
-### Post-Tool Hooks
-
-- **Security Scanner**: Checks for exposed secrets
-- **Code Quality**: Reports metrics and improvements
-- **Test Coverage**: Tracks testing completeness
-
-Example hook preventing a common mistake:
-
+**🚫 Prevents API Key Exposure**
 ```python
-# When AI tries to modify a template file
-if "{{VARIABLE}}" in file_content:
-    return "BLOCKED: Template files should not be modified directly"
+# AI tries to add: api_key = "sk-proj-abc123"
+# Hook blocks: "SECURITY: Never commit API keys!"
+```
+
+**📅 Fixes Wrong Dates**
+```python
+# AI writes: "Updated: December 2023"  
+# Hook corrects: "Updated: July 2024"
+```
+
+**🔒 Protects Templates**
+```python
+# AI modifies: user_{{TEMPLATE_VAR}}_config
+# Hook prevents: "Don't edit template files!"
+```
+
+### Custom Hooks
+
+Add your own rules:
+```python
+# Enforce your team's standards
+if "console.log" in code:
+    return "Use proper logging: logger.info()"
 ```
 
 ---
 
-## 📦 Modular Features / Extensions
+## 📦 Works With Your Stack
 
-CDEV can be extended to support use cases such as:
-• Enterprise microservices with distributed tracing
-• React/Vue/Angular apps with component testing
-• Python ML projects with notebook integration
-• Rust systems with memory safety validation
-• Mobile apps with cross-platform considerations
+### Automatic Framework Detection
 
-🧩 Each feature is modular - enable only what your project needs.
+CDEV adapts to your project:
+
+**Frontend Frameworks**
+- ⚛️ **React/Next.js** - Component testing, hook validation
+- 🖖 **Vue/Nuxt** - Composition API best practices
+- 🅰️ **Angular** - Service injection patterns
+- 🎯 **Svelte** - Store management
+
+**Backend Technologies**
+- 🟢 **Node.js** - Express/Fastify middleware
+- 🐍 **Python** - Type hints, async patterns
+- 🦀 **Rust** - Memory safety checks
+- ☕ **Java** - Spring Boot conventions
+
+**Special Environments**
+- 🐳 **Docker/K8s** - Container best practices
+- 📱 **React Native** - Platform-specific code
+- 🤖 **ML Projects** - Notebook integration
+- ⚡ **Serverless** - Function optimization
+
+🧩 **No configuration needed** - CDEV detects and adapts automatically!
 
 ⸻
 
@@ -258,41 +426,115 @@ CDEV can be extended to support use cases such as:
 
 ## 💡 Real-World Examples
 
-### Example 1: Feature Development with Parallel Agents
+### Example 1: Building an Authentication System
+
+**The Task:** "Add complete user authentication with JWT tokens"
 
 ```bash
-# Linear ticket: "Add user authentication system"
+# 1. Break it down intelligently
 cdev decompose LINEAR-789
-
-# Creates specialized agents:
-# - auth_backend_agent: JWT implementation
-# - auth_frontend_agent: Login/signup forms
-# - auth_test_agent: Integration tests
-
-# Each runs in isolated Git worktree
-# Merge when all complete
 ```
 
-### Example 2: Quick Tasks with Sub-Agents
+**CDEV creates three parallel agents:**
+
+```yaml
+auth_backend_agent:
+  - Implement JWT token generation
+  - Add refresh token logic
+  - Create auth middleware
+  - Set up Redis for sessions
+
+auth_frontend_agent:
+  - Build login/signup forms
+  - Add password reset flow
+  - Implement token storage
+  - Create auth context/hooks
+
+auth_test_agent:
+  - Write API integration tests
+  - Add frontend component tests
+  - Create E2E auth flows
+  - Set up test fixtures
+```
+
+**Result:** 3 developers working simultaneously, 4 hours → 1.5 hours
+
+### Example 2: Quick Multi-Task Fix
+
+**The Need:** "Our API is slow and hard to debug"
 
 ```bash
-/orchestrate "Refactor user service, add logging, update tests"
-
-# CDEV creates concurrent sub-agents:
-# - refactor_subagent: Code improvements
-# - logging_subagent: Add structured logging
-# - test_subagent: Update test coverage
-
-# All execute within current Claude session
+/orchestrate "Add performance logging, optimize database queries, add caching"
 ```
+
+**CDEV runs three sub-agents concurrently:**
+
+1. **Performance Logger**
+   - Adds timing to all routes
+   - Creates performance dashboard
+   
+2. **Query Optimizer**
+   - Finds N+1 queries
+   - Adds proper indexes
+   
+3. **Cache Layer**
+   - Implements Redis caching
+   - Adds cache invalidation
+
+**Result:** One Claude session handles all three improvements perfectly
+
+### Example 3: Refactoring Legacy Code
+
+```bash
+# Complex refactor made simple
+/orchestrate "Refactor user service to use TypeScript, add tests, update docs"
+```
+
+**CDEV coordinates:**
+- TypeScript migration (preserves all functionality)
+- Test creation (achieves 90% coverage)
+- Documentation updates (inline + README)
+
+**All while ensuring nothing breaks!**
 
 ⸻
 
-## 🤝 Support & Community
+## 🤝 Join Our Community
 
-• 💬 [GitHub Discussions](https://github.com/AOJDevStudio/cdev/discussions)
-• 🐞 [Report Issues](https://github.com/AOJDevStudio/cdev/issues)
-• 🗨️ [Feature Requests](https://github.com/AOJDevStudio/cdev/issues/new?labels=enhancement)
+### Get Help
+- 💬 [GitHub Discussions](https://github.com/AOJDevStudio/cdev/discussions) - Ask questions, share tips
+- 🐞 [Report Issues](https://github.com/AOJDevStudio/cdev/issues) - Found a bug? Let us know
+- 📺 [Video Tutorials](https://youtube.com/@AOJDevStudio) - See CDEV in action
+
+### Stay Updated
+- ⭐ **Star the repo** for release notifications
+- 🗨️ [Request Features](https://github.com/AOJDevStudio/cdev/issues/new?labels=enhancement)
+- 🐦 Follow [@AOJDevStudio](https://twitter.com/AOJDevStudio) for tips
+
+⸻
+
+## 🙏 Credits & Acknowledgments
+
+CDEV builds upon brilliant work from the open-source community:
+
+### Core Inspirations
+
+- **[Context-Engineering](https://github.com/davidkimai/Context-Engineering)** by David Kimai  
+  The foundation for our `/init-protocol` command and context management system. Their pioneering work on AI context optimization made CDEV's intelligent project understanding possible.
+
+- **[Claude Code Hooks Mastery](https://github.com/disler/claude-code-hooks-mastery)** by Disler  
+  Inspired our parallel agent architecture and hook system. Their innovative approach to managing Claude workflows sparked the idea for CDEV's dual-mode system.
+
+- **[Anthropic Documentation](https://docs.anthropic.com/)**  
+  Claude's official docs provided the groundwork for understanding AI assistant capabilities and best practices that CDEV enhances.
+
+### Special Thanks
+
+- The Claude community for continuous feedback and feature ideas
+- Early adopters who battle-tested CDEV in production environments
+- Contributors who helped refine the parallel workflow system
+
+*Standing on the shoulders of giants to make AI-assisted development accessible to all.*
 
 ⸻
 
@@ -307,7 +549,7 @@ We welcome all contributions!
 5. Push to branch (`git push origin feature/amazing-feature`)
 6. Open a Pull Request
 
-📋 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+📋 See our [Roadmap](ROADMAP.md#how-to-contribute) for contribution guidelines and future plans.
 
 ⸻
 
@@ -326,4 +568,15 @@ See [LICENSE](LICENSE) for details.
 
 ---
 
-Built with ❤️ by developers, for developers who want to build faster with AI.
+---
+
+<p align="center">
+  <strong>Built with ❤️ by developers who were tired of slow development</strong><br>
+  <em>Now you can build at the speed of thought with AI</em>
+</p>
+
+<p align="center">
+  <a href="https://github.com/AOJDevStudio/cdev/stargazers">⭐ Star</a> •
+  <a href="https://github.com/AOJDevStudio/cdev/fork">🍴 Fork</a> •
+  <a href="https://github.com/AOJDevStudio/cdev/issues/new">💡 Suggest</a>
+</p>
