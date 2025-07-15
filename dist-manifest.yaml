@@ -13,22 +13,17 @@ distribution:
   - workflow
   scripts:
   - executable: true
-    name: cache-linear-issue.sh
-    path: scripts/cache-linear-issue.sh
-  - executable: false
-    name: decompose-parallel.cjs
-    path: scripts/decompose-parallel.cjs
+    name: cache-linear-issue.py
+    path: scripts/python/cache-linear-issue.py
   - executable: true
-    name: spawn-agents.sh
-    path: scripts/spawn-agents.sh
+    name: decompose-parallel.py
+    path: scripts/python/decompose-parallel.py
+  - executable: true
+    name: spawn-agents.py
+    path: scripts/python/spawn-agents.py
   type: global-npx-package
 package: '@aojdevstudio/cdev'
-publishStatus:
-  globalInstallTested: true
-  npmVerified: true
-  published: true
-  publishedAt: '2025-07-15T12:49:06.306825'
-publishedAt: '2025-07-14T16:52:55.870974'
+publishedAt: '2025-07-15T12:55:57.108606'
 validation:
   buildClean: true
   filesValidated: 5
