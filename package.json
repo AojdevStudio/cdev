@@ -60,10 +60,13 @@
   "homepage": "https://github.com/AOJDevStudio/cdev#readme",
   "files": [
     "bin/",
-    "src/",
-    "scripts/",
+    "src/**/*.js",
+    "!src/**/*.test.js",
+    "!src/**/*.spec.js",
+    "scripts/python/",
+    "scripts/wrappers/",
     ".claude/",
-    "docs/",
+    "ai-docs/",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"

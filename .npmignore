@@ -5,12 +5,18 @@ tests/
 *.test.ts
 *.spec.js
 *.spec.ts
+**/*.test.js
+**/*.spec.js
 coverage/
 .nyc_output/
 
 # Source files (if shipping compiled)
 src/**/*.test.js
 src/**/*.spec.js
+
+# Python test files
+scripts/python/test-*.py
+scripts/python/test_*.py
 
 # CI/CD
 .github/

@@ -23,7 +23,7 @@ distribution:
     path: scripts/spawn-agents.sh
   type: global-npx-package
 package: '@aojdevstudio/cdev'
-publishedAt: '2025-07-14T16:42:26.015852'
+publishedAt: '2025-07-14T16:52:55.870974'
 validation:
   buildClean: true
   filesValidated: 5
