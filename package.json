@@ -72,7 +72,8 @@
     "ai-docs/",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    ".env.example"
   ],
   "dependencies": {
     "chalk": "^4.1.2",

@@ -4,10 +4,12 @@ This directory contains critical security and validation hooks that are essentia
 
 ## Hooks in this tier:
 
-- **commit-message-validator.py**: Validates commit message format and content
-- **typescript-validator.py**: Validates TypeScript code and type safety
-- **task-completion-enforcer.py**: Ensures tasks are completed before proceeding
-- **pnpm-enforcer.py**: Enforces use of pnpm package manager
+- **notification.py**: Sends notifications for various events
+- **stop.py**: Handles stop events
+- **subagent_stop.py**: Handles subagent stop events
+- **pre_tool_use.py**: Runs before tool usage
+- **post_tool_use.py**: Runs after tool usage
+
 
 ## Characteristics:
 

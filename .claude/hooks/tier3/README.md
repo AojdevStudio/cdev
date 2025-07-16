@@ -4,11 +4,10 @@ This directory contains optional convenience and notification hooks that provide
 
 ## Hooks in this tier:
 
-- **notification.py**: Sends notifications for various events
-- **stop.py**: Handles stop events
-- **subagent_stop.py**: Handles subagent stop events
-- **pre_tool_use.py**: Runs before tool usage
-- **post_tool_use.py**: Runs after tool usage
+- **commit-message-validator.py**: Validates commit message format and content
+- **typescript-validator.py**: Validates TypeScript code and type safety
+- **task-completion-enforcer.py**: Ensures tasks are completed before proceeding
+- **pnpm-enforcer.py**: Enforces use of pnpm package manager
 
 ## Characteristics:
 
