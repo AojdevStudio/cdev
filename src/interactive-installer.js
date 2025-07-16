@@ -284,7 +284,64 @@ class InteractiveInstaller {
         ],
         deny: [],
       },
-      hooks: {},
+      hooks: {
+        // Always include the 5 standard hooks
+        PreToolUse: [
+          {
+            matcher: 'Bash',
+            hooks: [
+              {
+                type: 'command',
+                command: 'uv run .claude/hooks/pre_tool_use.py',
+              },
+            ],
+          },
+        ],
+        PostToolUse: [
+          {
+            matcher: 'Bash|Write|Edit|MultiEdit|TodoWrite',
+            hooks: [
+              {
+                type: 'command',
+                command: 'uv run .claude/hooks/post_tool_use.py',
+              },
+            ],
+          },
+        ],
+        Notification: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'uv run .claude/hooks/notification.py',
+              },
+            ],
+          },
+        ],
+        Stop: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'uv run .claude/hooks/stop.py',
+              },
+            ],
+          },
+        ],
+        SubagentStop: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'uv run .claude/hooks/subagent_stop.py',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     // Group hooks by event
@@ -320,26 +377,15 @@ class InteractiveInstaller {
     const hooksDir = path.join(claudeDir, 'hooks');
     const hooksSourceDir = path.join(this.packageRoot, '.claude', 'hooks');
 
-    // If hook scripts exist in the package, copy them
+    // Always copy ALL hooks from the package first (preserving original names)
     if (await fs.pathExists(hooksSourceDir)) {
-      for (const hookName of config.hooks) {
-        const hookConfig = hookConfigs[hookName];
-        if (!hookConfig) {
-          continue;
-        }
-
-        const sourcePath = path.join(hooksSourceDir, hookConfig.script);
-        const targetPath = path.join(hooksDir, hookConfig.script);
-
-        if (await fs.pathExists(sourcePath)) {
-          await fs.copy(sourcePath, targetPath);
-        } else {
-          // Create basic hook script if not found
-          await this.createHookScript(targetPath, hookName);
-        }
-      }
+      // Copy entire hooks directory to preserve structure and naming
+      await fs.copy(hooksSourceDir, hooksDir, {
+        overwrite: true,
+        errorOnExist: false,
+      });
     } else {
-      // Create all selected hook scripts
+      // Fallback: only create user-selected hooks if source doesn't exist
       for (const hookName of config.hooks) {
         const hookConfig = hookConfigs[hookName];
         if (!hookConfig) {

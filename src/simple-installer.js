@@ -113,27 +113,18 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/pre-bash-validator.py',
-              },
-            ],
-          },
-          {
-            matcher: 'Write|Edit|MultiEdit',
-            hooks: [
-              {
-                type: 'command',
-                command: 'uv run ~/.claude/hooks/typescript-validator.py',
+                command: 'uv run ~/.claude/hooks/pre_tool_use.py',
               },
             ],
           },
         ],
         PostToolUse: [
           {
-            matcher: 'Write|Edit|MultiEdit',
+            matcher: 'Bash|Write|Edit|MultiEdit|TodoWrite',
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/import-organizer.py',
+                command: 'uv run ~/.claude/hooks/post_tool_use.py',
               },
             ],
           },
@@ -155,7 +146,18 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/task-completion-enforcer.py',
+                command: 'uv run ~/.claude/hooks/stop.py',
+              },
+            ],
+          },
+        ],
+        SubagentStop: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'uv run ~/.claude/hooks/subagent_stop.py',
               },
             ],
           },
@@ -165,11 +167,20 @@ class SimpleInstaller {
 
     await fs.writeJson(path.join(claudeDir, 'settings.json'), settings, { spaces: 2 });
 
-    // Copy hook scripts from templates or create basic ones
+    // Copy hook scripts from templates
     const hooksDir = path.join(claudeDir, 'hooks');
+    const hooksSourceDir = path.join(this.packageRoot, '.claude', 'hooks');
 
-    // Create basic hook scripts
-    await this.createBasicHookScripts(hooksDir);
+    // Copy all hooks from package if they exist
+    if (await fs.pathExists(hooksSourceDir)) {
+      await fs.copy(hooksSourceDir, hooksDir, {
+        overwrite: true,
+        errorOnExist: false,
+      });
+    } else {
+      // Fallback: create basic hook scripts
+      await this.createBasicHookScripts(hooksDir);
+    }
   }
 
   async createBasicHookScripts(hooksDir) {

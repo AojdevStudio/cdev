@@ -10,7 +10,6 @@ This directory contains critical security and validation hooks that are essentia
 - **pre_tool_use.py**: Runs before tool usage
 - **post_tool_use.py**: Runs after tool usage
 
-
 ## Characteristics:
 
 - Security-focused
