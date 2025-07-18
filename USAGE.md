@@ -26,27 +26,23 @@ npx @aojdevstudio/cdev spawn-agents shared/deployment-plans/proj-123-deployment-
 ## Commands
 
 ### cache-linear-issue
-
 Downloads and caches a Linear issue for offline work.
 
 ### decompose-parallel
-
 Analyzes the cached issue and breaks it into parallel workstreams.
 
 ### spawn-agents
-
 Creates isolated Git worktrees for each agent to work independently.
 
 ## Version Information
 
 - Package: @aojdevstudio/cdev
-- Version: 0.0.6
-- Published: 2025-07-15T18:55:33.222403
+- Version: 0.0.7
+- Published: 2025-07-15T19:33:52.175968
 
 ## Global NPX Distribution
 
 This package is designed to be used globally via NPX, providing:
-
 - ✅ Offline workflow capabilities
 - ✅ Parallel agent development
 - ✅ Git worktree isolation
