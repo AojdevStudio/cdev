@@ -5,6 +5,20 @@ All notable changes to @aojdevstudio/cdev will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **PR creation command** - New `/create-pr` command for automated pull request creation with context gathering
+- **PR review and merge command** - New `/review-merge` command for comprehensive PR review and merge workflow
+
+### Changed
+- **Hook management** - Enhanced hook management in installers for better reliability
+
+## [0.0.7] - 2025-07-18
+
+### Changed
+- Enhanced hook management in installers
+
 ## [0.0.2] - 2024-07-15
 
 ### Added
@@ -33,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Mermaid diagram syntax** - Fixed arrow notation and special character escaping for proper rendering
 
-## [Unreleased]
+## [0.0.6] - 2025-07-15
 
 ### Added
 
