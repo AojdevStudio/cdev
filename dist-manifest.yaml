@@ -1,34 +1,29 @@
 distribution:
   entryPoint: src/installer.js
   keywords:
-    - claude
-    - parallel
-    - development
-    - git
-    - worktree
-    - linear
-    - automation
-    - cli
-    - npx
-    - workflow
+  - claude
+  - parallel
+  - development
+  - git
+  - worktree
+  - linear
+  - automation
+  - cli
+  - npx
+  - workflow
   scripts:
-    - executable: true
-      name: cache-linear-issue.py
-      path: scripts/python/cache-linear-issue.py
-    - executable: true
-      name: decompose-parallel.py
-      path: scripts/python/decompose-parallel.py
-    - executable: true
-      name: spawn-agents.py
-      path: scripts/python/spawn-agents.py
+  - executable: true
+    name: cache-linear-issue.py
+    path: scripts/python/cache-linear-issue.py
+  - executable: true
+    name: decompose-parallel.py
+    path: scripts/python/decompose-parallel.py
+  - executable: true
+    name: spawn-agents.py
+    path: scripts/python/spawn-agents.py
   type: global-npx-package
 package: '@aojdevstudio/cdev'
-publishStatus:
-  globalInstallTested: true
-  npmVerified: true
-  published: true
-  publishedAt: '2025-07-15T19:33:52.174917'
-publishedAt: '2025-07-15T19:33:27.548011'
+publishedAt: '2025-07-19T12:55:49.582704'
 validation:
   buildClean: true
   filesValidated: 5
