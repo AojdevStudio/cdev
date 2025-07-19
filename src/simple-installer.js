@@ -178,14 +178,15 @@ class SimpleInstaller {
         errorOnExist: false,
       });
     } else {
-      // Fallback: create basic hook scripts
-      await this.createBasicHookScripts(hooksDir);
+      // Create minimal hook scripts if source doesn't exist
+      console.warn('Warning: Hook source directory not found. Creating minimal hooks.');
+      await this.createMinimalHooks(hooksDir);
     }
   }
 
-  async createBasicHookScripts(hooksDir) {
-    // Pre-bash validator
-    const preBashValidator = `#!/usr/bin/env python3
+  async createMinimalHooks(hooksDir) {
+    // Pre-tool use hook
+    const preToolUse = `#!/usr/bin/env python3
 import json
 import sys
 import re
@@ -200,20 +201,23 @@ DANGEROUS_PATTERNS = [
 
 try:
     input_data = json.load(sys.stdin)
+    tool_name = input_data.get('tool_name', '')
     tool_input = input_data.get('tool_input', {})
-    command = tool_input.get('command', '')
     
-    for pattern, message in DANGEROUS_PATTERNS:
-        if re.search(pattern, command, re.IGNORECASE):
-            print(message, file=sys.stderr)
-            sys.exit(2)  # Block the command
+    if tool_name == 'Bash':
+        command = tool_input.get('command', '')
+        
+        for pattern, message in DANGEROUS_PATTERNS:
+            if re.search(pattern, command, re.IGNORECASE):
+                print(message, file=sys.stderr)
+                sys.exit(2)  # Block the command
             
 except Exception as e:
     print(f"Hook error: {e}", file=sys.stderr)
     sys.exit(1)
 `;
 
-    await fs.writeFile(path.join(hooksDir, 'pre-bash-validator.py'), preBashValidator);
+    await fs.writeFile(path.join(hooksDir, 'pre_tool_use.py'), preToolUse);
 
     // TypeScript validator
     const tsValidator = `#!/usr/bin/env python3
@@ -283,6 +287,51 @@ except Exception as e:
 `;
 
     await fs.writeFile(path.join(hooksDir, 'notification.py'), notification);
+
+    // Post tool use hook
+    const postToolUse = `#!/usr/bin/env python3
+import json
+import sys
+
+try:
+    input_data = json.load(sys.stdin)
+    print("✓ Tool execution completed", file=sys.stdout)
+except Exception as e:
+    print(f"Hook error: {e}", file=sys.stderr)
+    sys.exit(1)
+`;
+
+    await fs.writeFile(path.join(hooksDir, 'post_tool_use.py'), postToolUse);
+
+    // Stop hook
+    const stopHook = `#!/usr/bin/env python3
+import json
+import sys
+
+try:
+    input_data = json.load(sys.stdin)
+    print("Session ended", file=sys.stdout)
+except Exception as e:
+    print(f"Hook error: {e}", file=sys.stderr)
+    sys.exit(1)
+`;
+
+    await fs.writeFile(path.join(hooksDir, 'stop.py'), stopHook);
+
+    // Subagent stop hook
+    const subagentStopHook = `#!/usr/bin/env python3
+import json
+import sys
+
+try:
+    input_data = json.load(sys.stdin)
+    print("Subagent session ended", file=sys.stdout)
+except Exception as e:
+    print(f"Hook error: {e}", file=sys.stderr)
+    sys.exit(1)
+`;
+
+    await fs.writeFile(path.join(hooksDir, 'subagent_stop.py'), subagentStopHook);
 
     // Task completion enforcer
     const taskEnforcer = `#!/usr/bin/env python3
