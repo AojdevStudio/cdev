@@ -24,7 +24,7 @@ pull_request_creation_protocol:
     - step: parse_arguments
       action: 'Extract options from $ARGUMENTS (title, branches, task ID)'
       validation: 'Ensure valid branch names and proper formatting'
-    
+
     - step: gather_context
       action: 'Collect comprehensive information about changes'
       details:
@@ -33,7 +33,7 @@ pull_request_creation_protocol:
         - 'Get commit history since branch diverged'
         - 'Analyze changed files and modifications'
         - 'Extract Linear task details if task ID provided'
-    
+
     - step: validate_readiness
       action: 'Ensure changes are ready for PR'
       checks:
@@ -42,7 +42,7 @@ pull_request_creation_protocol:
         - 'No merge conflicts'
         - 'Tests passing (if configured)'
         - 'Linting/formatting clean'
-    
+
     - step: generate_pr_content
       action: 'Create structured PR title and description'
       format:
@@ -53,7 +53,7 @@ pull_request_creation_protocol:
           - testing: 'How to test the changes'
           - checklist: 'PR readiness checklist'
           - related: 'Related issues/PRs'
-    
+
     - step: create_pull_request
       action: 'Use gh CLI to create the PR'
       command: 'gh pr create with generated content'
@@ -61,7 +61,7 @@ pull_request_creation_protocol:
         - 'Add appropriate labels'
         - 'Request reviewers if specified'
         - 'Set as draft if work in progress'
-    
+
     - step: post_creation
       action: 'Provide next steps and PR link'
       output:
@@ -80,14 +80,14 @@ pull_request_creation_protocol:
         - 'refactor: Code restructuring'
         - 'test: Test additions'
         - 'chore: Maintenance'
-      
+
       pr_requirements:
         - 'Descriptive title with type and scope'
         - 'Linear task ID in brackets'
         - 'Comprehensive description'
         - 'Testing instructions'
         - 'Breaking changes noted'
-    
+
     validation_criteria:
       code_quality:
         - 'npm run lint passes'
@@ -95,14 +95,14 @@ pull_request_creation_protocol:
         - 'npm run test passes'
         - 'No console.log statements'
         - 'No commented code'
-      
+
       pr_checklist:
         - 'Self-reviewed code'
         - 'Added/updated tests'
         - 'Updated documentation'
         - 'Considered edge cases'
         - 'Checked performance impact'
-    
+
     data_sources:
       - command: 'git log --oneline --graph --decorate'
         purpose: 'Understand commit history'
@@ -122,6 +122,7 @@ pull_request_creation_protocol:
 6. **Provide Feedback**: Share PR link and next steps
 
 **Key Features:**
+
 - Automatic context gathering from git history
 - Linear task integration
 - Comprehensive PR templates

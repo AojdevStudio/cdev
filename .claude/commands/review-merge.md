@@ -29,7 +29,7 @@ pull_request_review_merge_protocol:
         - 'Merge strategy: merge, squash, rebase'
         - 'Auto-approve flag'
         - 'Dry-run mode'
-    
+
     - step: fetch_pr_details
       action: 'Gather comprehensive PR information'
       commands:
@@ -39,7 +39,7 @@ pull_request_review_merge_protocol:
       validation:
         - 'PR exists and is open'
         - 'User has appropriate permissions'
-    
+
     - step: automated_review
       action: 'Perform automated code quality checks'
       checks:
@@ -49,7 +49,7 @@ pull_request_review_merge_protocol:
         - 'Ensure required reviews approved'
         - 'Check for sensitive data (secrets scan)'
         - 'Verify test coverage maintained'
-    
+
     - step: interactive_review
       action: 'Guide through manual review if needed'
       process:
@@ -58,7 +58,7 @@ pull_request_review_merge_protocol:
         - 'Show test results and coverage'
         - 'Review commit history'
         - 'Check Linear task completion'
-    
+
     - step: pre_merge_validation
       action: 'Final safety checks before merge'
       validations:
@@ -67,7 +67,7 @@ pull_request_review_merge_protocol:
         - 'Dependencies updated if needed'
         - 'Documentation updated'
         - 'CHANGELOG updated if required'
-    
+
     - step: execute_merge
       action: 'Perform the actual merge operation'
       strategies:
@@ -78,7 +78,7 @@ pull_request_review_merge_protocol:
         - 'Delete branch after merge'
         - 'Auto-merge when ready'
         - 'Admin override if needed'
-    
+
     - step: post_merge_actions
       action: 'Cleanup and notifications'
       tasks:
@@ -94,41 +94,41 @@ pull_request_review_merge_protocol:
         when: 'Feature branches with many commits'
         benefits: 'Clean linear history'
         commit_format: '<type>(<scope>): <description> (#<pr-number>)'
-      
+
       merge_commit:
         when: 'Preserving commit history important'
         benefits: 'Full context preserved'
         flag: '--merge'
-      
+
       rebase_merge:
         when: 'Linear history without merge commits'
         benefits: 'Clean timeline'
         caution: 'Only for simple changes'
-    
+
     validation_rules:
       required_checks:
         - 'All CI workflows pass'
         - 'Code review approved'
         - 'No merge conflicts'
         - 'Branch up to date'
-      
+
       quality_gates:
         - 'Test coverage >= 80%'
         - 'No critical security issues'
         - 'Performance benchmarks pass'
         - 'Type checking passes'
-    
+
     safety_features:
       conflict_detection:
         - 'Automatic merge conflict check'
         - 'Suggest resolution strategies'
         - 'Option to abort on conflicts'
-      
+
       rollback_plan:
         - 'Note commit SHA before merge'
         - 'Document revert procedure'
         - 'Test rollback feasibility'
-    
+
     data_sources:
       - command: 'gh pr status'
         purpose: 'Current PR state overview'
@@ -148,6 +148,7 @@ pull_request_review_merge_protocol:
 6. **Cleanup**: Handle post-merge tasks and notifications
 
 **Key Features:**
+
 - Multi-strategy merge support (squash, merge, rebase)
 - Comprehensive pre-merge validation
 - Automated quality checks
