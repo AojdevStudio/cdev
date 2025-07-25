@@ -113,7 +113,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/pre_tool_use.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/pre_tool_use.py',
               },
             ],
           },
@@ -124,7 +124,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/post_tool_use.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/post_tool_use.py',
               },
             ],
           },
@@ -135,7 +135,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/notification.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/notification.py',
               },
             ],
           },
@@ -146,7 +146,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/stop.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/stop.py',
               },
             ],
           },
@@ -157,7 +157,7 @@ class SimpleInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run ~/.claude/hooks/subagent_stop.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/subagent_stop.py',
               },
             ],
           },

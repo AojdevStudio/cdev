@@ -226,7 +226,9 @@ class InstallUtils {
       return { valid: false, reason: 'API key appears to be too short' };
     }
 
-    // TODO: Add actual API validation by making a test request
+    // For Linear API keys, we could validate by making a test request
+    // However, this would require network access during installation
+    // which might not be desirable. For now, we just check the format.
     return { valid: true };
   }
 
