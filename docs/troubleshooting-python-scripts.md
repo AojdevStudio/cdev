@@ -654,6 +654,87 @@ UnicodeDecodeError: 'utf-8' codec can't decode
 
 ---
 
+## Hook Execution Issues
+
+### Failed to Spawn Hook Error
+
+**Error:**
+
+```
+failed to spawn: '.claude/hooks/pre_tool_use.py'
+```
+
+**Cause:** Claude Code executes hooks from an internal working directory, not your project root.
+
+**Solutions:**
+
+1. **Update `.claude/settings.json` to use working directory fix:**
+
+   ```json
+   {
+     "hooks": {
+       "PreToolUse": [
+         {
+           "matcher": "",
+           "hooks": [
+             {
+               "type": "command",
+               "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/pre_tool_use.py"
+             }
+           ]
+         }
+       ]
+     }
+   }
+   ```
+
+2. **Make hooks executable:**
+
+   ```bash
+   chmod +x .claude/hooks/*.py
+   ```
+
+3. **Verify hook has proper shebang:**
+
+   ```python
+   #!/usr/bin/env python3
+   ```
+
+4. **Test hook manually:**
+   ```bash
+   cd /your/project/path
+   uv run .claude/hooks/pre_tool_use.py
+   ```
+
+**Note:** The cdev installer automatically applies this fix for new installations.
+
+### Hook Not Triggering
+
+**Solutions:**
+
+1. **Restart Claude Code** after modifying settings.json
+2. **Check matcher patterns** - empty string "" matches all tools
+3. **Verify hook file exists** at the specified path
+4. **Check Claude Code logs** for hook errors
+
+### Hook Python Environment Issues
+
+**Solutions:**
+
+1. **Initialize UV in project:**
+
+   ```bash
+   cd "$CLAUDE_PROJECT_DIR"
+   uv init
+   ```
+
+2. **Install hook dependencies:**
+   ```bash
+   uv pip install -r .claude/hooks/requirements.txt
+   ```
+
+---
+
 ## Debug Mode
 
 Enable verbose output for troubleshooting:
