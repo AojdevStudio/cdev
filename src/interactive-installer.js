@@ -404,7 +404,12 @@ class InteractiveInstaller {
         const targetPath = path.join(hooksDir, hookScript);
 
         if (await fs.pathExists(sourcePath)) {
-          await fs.copy(sourcePath, targetPath);
+          try {
+            await fs.copy(sourcePath, targetPath);
+          } catch (error) {
+            console.error(`Failed to copy hook file ${hookScript}:`, error.message);
+            // Continue with other files instead of stopping the entire loop
+          }
         }
       }
 
