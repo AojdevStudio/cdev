@@ -2,11 +2,11 @@
 reviews:
   # Files and patterns to ignore during code review
   ignore:
-    - "dist-manifest.yaml"
-    - "dist/**"
-    - "build/**"
-    - "node_modules/**"
-    - "coverage/**"
-    - "*.log"
-    - "*.tmp"
-    - "*.temp"
+    - 'dist-manifest.yaml'
+    - 'dist/**'
+    - 'build/**'
+    - 'node_modules/**'
+    - 'coverage/**'
+    - '*.log'
+    - '*.tmp'
+    - '*.temp'
