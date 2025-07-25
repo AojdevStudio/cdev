@@ -424,6 +424,10 @@ AI assistants sometimes make predictable mistakes. CDEV's hooks catch these auto
 # Hook prevents: "Don't edit template files!"
 ```
 
+### Hook Configuration Note
+
+> **Important:** CDEV automatically configures hooks to work with Claude Code's working directory requirements. If you're having issues with hooks not executing, see our [troubleshooting guide](docs/troubleshooting-python-scripts.md#hook-execution-issues).
+
 ### Custom Hooks
 
 Add your own rules:
