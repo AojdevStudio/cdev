@@ -1,3 +1,0 @@
-CREATE: .github/workflows/publish.yml
-CREATE: scripts/prepublish.js
-CREATE: scripts/postpublish.js

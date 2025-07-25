@@ -1,3 +1,0 @@
-CREATE: jest.config.js
-CREATE: test-setup.js
-MODIFY: package.json

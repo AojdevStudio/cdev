@@ -1,4 +1,0 @@
-test/config-generator.test.js
-test/config-migrator.test.js
-test/config-validator.test.js
-test/template-engine.test.js

@@ -1,3 +1,0 @@
-src/validator.test.js
-src/validation-rules.test.js
-src/validation-errors.test.js

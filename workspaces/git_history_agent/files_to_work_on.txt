@@ -1,2 +1,0 @@
-CREATE: git-history-analysis.md
-CREATE: package-agent-commit-reconstruction.md

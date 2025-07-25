@@ -1,3 +1,0 @@
-CREATE: src/installer.js
-CREATE: src/install-steps.js
-CREATE: src/install-utils.js

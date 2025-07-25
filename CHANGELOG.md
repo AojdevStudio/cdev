@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Hook management** - Enhanced hook management in installers for better reliability
+- **CodeRabbit configuration** - Standardized quotes in .coderabbit.yaml to single quotes for consistency and improved readability
 
 ## [0.0.7] - 2025-07-18
 

@@ -1,4 +1,0 @@
-1. [x] All distribution files are created successfully
-2. [x] distribution functionality works as expected
-3. [x] No errors in distribution implementation
-4. [x] distribution tests pass successfully

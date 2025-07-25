@@ -1,1 +1,0 @@
-git-history-validation.test.js
