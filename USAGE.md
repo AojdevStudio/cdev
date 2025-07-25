@@ -40,8 +40,8 @@ Creates isolated Git worktrees for each agent to work independently.
 ## Version Information
 
 - Package: @aojdevstudio/cdev
-- Version: 0.0.8
-- Published: 2025-07-19T12:58:59.904799
+- Version: 0.0.9
+- Published: 2025-07-19T13:26:00.022461
 
 ## Global NPX Distribution
 

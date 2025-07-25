@@ -22,6 +22,7 @@ CommandRequest: $ARGUMENTS
 create_command_protocol:
   # The sequence of actions the command should perform upon execution.
   execution_flow:
+    - Read: '@ai-docs/custom-command-template.yaml'
     - 'Parse `$ARGUMENTS` to extract the command name, type (project/user), and category.'
     - "If no arguments are provided, initiate an interactive mode that prompts the user for the command's details (name, type, category, description, etc.)."
     - 'Study existing commands in the target directory (`.claude/commands/` or `~/.claude/commands/`) to understand local patterns and conventions.'
@@ -36,9 +37,9 @@ create_command_protocol:
       - '@ai-docs/command-creation-guide.yaml'
     data_sources:
       - name: 'Project Commands'
-        command: '!`ls -la .claude/commands/ 2>/dev/null || echo "No project commands yet"`'
+        command: 'ls -la .claude/commands/ 2>/dev/null || echo "No project commands yet"'
       - name: 'User Commands'
-        command: '!`ls -la ~/.claude/commands/ 2>/dev/null || echo "No user commands yet"`'
+        command: 'ls -la ~/.claude/commands/ 2>/dev/null || echo "No user commands yet"'
     definitions:
       command_categories:
         - 'planning (for multi-stage workflows)'
@@ -51,7 +52,5 @@ create_command_protocol:
         - 'Use descriptive verbs (e.g., `generate`, `validate`).'
         - 'Use an optional numeric prefix for commands in an ordered workflow (e.g., `01-plan`).'
       key_patterns:
-        - 'Use `@` for static file references (e.g., `@README.md`).'
-        - 'Use `!` for dynamic data gathering at runtime (e.g., `!git status`).'
         - 'Use `$ARGUMENTS` to capture user input from the command line.'
 ```
