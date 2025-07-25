@@ -6,7 +6,7 @@ module.exports = {
   rootDir: '.',
 
   // Test file patterns - only DOM-related tests
-  testMatch: ['<rootDir>/src/hook-selector.test.js'],
+  testMatch: ['<rootDir>/test/hook-selector.test.js'],
 
   // Transform files using babel-jest
   transform: {

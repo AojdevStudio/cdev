@@ -7,7 +7,7 @@ module.exports = {
 
   // Test file patterns - only unit tests
   testMatch: [
-    '<rootDir>/src/**/*.test.js',
+    '<rootDir>/test/**/*.test.js',
     '<rootDir>/bin/**/*.test.js',
     '<rootDir>/scripts/**/*.test.js',
   ],

@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/pre_tool_use.py"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/pre_tool_use.py"
           }
         ]
       }
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/post_tool_use.py"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/post_tool_use.py"
           }
         ]
       },
@@ -43,7 +43,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/import-organizer.py"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/import-organizer.py"
           }
         ]
       },
@@ -52,7 +52,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/universal-linter.py"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/universal-linter.py"
           }
         ]
       }
@@ -63,7 +63,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/notification.py --notify"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/notification.py --notify"
           }
         ]
       }
@@ -74,7 +74,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/stop.py --chat"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/stop.py --chat"
           }
         ]
       }
@@ -85,7 +85,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run .claude/hooks/subagent_stop.py"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/subagent_stop.py"
           }
         ]
       }
