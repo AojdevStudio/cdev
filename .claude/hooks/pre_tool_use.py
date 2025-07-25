@@ -165,6 +165,88 @@ def contains_date_patterns(content):
     
     return False
 
+def check_root_structure_violations(tool_name, tool_input):
+    """
+    Check for operations that might create files violating root directory structure rules.
+    Prevents creation of unauthorized .md files, config files, or scripts in root.
+    """
+    if tool_name not in ['Write', 'Edit', 'MultiEdit']:
+        return False
+    
+    # Define structure rules
+    allowed_md_files = {
+        'README.md', 'CHANGELOG.md', 'CLAUDE.md', 
+        'ROADMAP.md', 'SECURITY.md', 'LICENSE.md'
+    }
+    
+    forbidden_patterns = [
+        r'^jest\.config.*\.js$',  # Jest configs
+        r'^babel\.config\.js$',   # Babel config
+        r'^webpack\.config.*\.js$',  # Webpack configs
+        r'^tsconfig.*\.json$',    # TypeScript configs
+        r'^docker-compose\.ya?ml$',  # Docker Compose
+        r'^Dockerfile',           # Docker files
+        r'^.*\.sh$',              # Shell scripts
+        r'^debug-.*\.js$',        # Debug scripts
+        r'^test-.*\.js$',         # Test scripts
+        r'.*-report\.md$',        # Report docs
+        r'.*-plan\.md$',          # Planning docs
+        r'^USAGE\.md$',           # Usage docs
+        r'^CONTRIBUTING\.md$',    # Contributing docs
+        r'^ARCHITECTURE\.md$',    # Architecture docs
+        r'^API\.md$'              # API docs
+    ]
+    
+    file_path = tool_input.get('file_path', '')
+    if not file_path:
+        return False
+    
+    # Extract filename from path
+    filename = os.path.basename(file_path)
+    
+    # Check if it's trying to create/edit a file in root directory
+    # Normalize the path
+    normalized_path = os.path.normpath(file_path)
+    
+    # Essential framework directories that should stay in root
+    essential_root_dirs = {
+        'ai-docs',     # Framework AI documentation
+        'src', 'test', 'bin', 'lib', 'node_modules', 
+        '.git', '.claude', 'config', 'scripts', 'docs'
+    }
+    
+    # Check if file is in root directory
+    if '/' in normalized_path:
+        dir_part = os.path.dirname(normalized_path)
+        # If directory part exists and is not current directory, it's not in root
+        if dir_part and dir_part not in ['.', '']:
+            # Check if it's in an essential directory - these are allowed
+            first_dir = dir_part.split('/')[0] if '/' in dir_part else dir_part
+            if first_dir in essential_root_dirs:
+                return False
+            return False
+    
+    # Special case: absolute paths to current project root
+    if file_path.startswith('/Users/') and 'paralell-development-claude' in file_path:
+        # Extract relative path from project root
+        parts = file_path.split('paralell-development-claude/')
+        if len(parts) > 1:
+            relative_path = parts[1]
+            if '/' in relative_path:
+                return False
+    
+    # Check .md files
+    if filename.endswith('.md'):
+        if filename not in allowed_md_files:
+            return True
+    
+    # Check forbidden patterns
+    for pattern in forbidden_patterns:
+        if re.match(pattern, filename):
+            return True
+    
+    return False
+
 def check_date_awareness(tool_name, tool_input):
     """
     Check if the tool is writing date-sensitive content without verifying current date.
@@ -239,6 +321,23 @@ def main():
             if is_dangerous_rm_command(command):
                 print("BLOCKED: Dangerous rm command detected and prevented", file=sys.stderr)
                 sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
+        
+        # Check for root directory structure violations
+        if check_root_structure_violations(tool_name, tool_input):
+            file_path = tool_input.get('file_path', '')
+            filename = os.path.basename(file_path)
+            print("🚫 ROOT STRUCTURE VIOLATION BLOCKED", file=sys.stderr)
+            print(f"   File: {filename}", file=sys.stderr)
+            print("   Reason: Unauthorized file in root directory", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("📋 Root directory rules:", file=sys.stderr)
+            print("   • Only these .md files allowed: README.md, CHANGELOG.md, CLAUDE.md, ROADMAP.md, SECURITY.md", file=sys.stderr)
+            print("   • Config files belong in config/ directory", file=sys.stderr)
+            print("   • Scripts belong in scripts/ directory", file=sys.stderr)
+            print("   • Documentation belongs in docs/ directory", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("💡 Suggestion: Use /enforce-structure --fix to auto-organize files", file=sys.stderr)
+            sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
         
         # Check for .claude/commands/ file access - NOW JUST A WARNING
         if is_command_file_access(tool_name, tool_input):
