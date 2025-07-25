@@ -292,7 +292,7 @@ class InteractiveInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run .claude/hooks/pre_tool_use.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/pre_tool_use.py',
               },
             ],
           },
@@ -303,7 +303,7 @@ class InteractiveInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run .claude/hooks/post_tool_use.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/post_tool_use.py',
               },
             ],
           },
@@ -314,7 +314,7 @@ class InteractiveInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run .claude/hooks/notification.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/notification.py',
               },
             ],
           },
@@ -325,7 +325,7 @@ class InteractiveInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run .claude/hooks/stop.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/stop.py',
               },
             ],
           },
@@ -336,7 +336,7 @@ class InteractiveInstaller {
             hooks: [
               {
                 type: 'command',
-                command: 'uv run .claude/hooks/subagent_stop.py',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/subagent_stop.py',
               },
             ],
           },
@@ -366,7 +366,7 @@ class InteractiveInstaller {
 
       matcherGroup.hooks.push({
         type: 'command',
-        command: `uv run .claude/hooks/${script}`,
+        command: `cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/${script}`,
       });
     }
 
@@ -377,15 +377,49 @@ class InteractiveInstaller {
     const hooksDir = path.join(claudeDir, 'hooks');
     const hooksSourceDir = path.join(this.packageRoot, '.claude', 'hooks');
 
-    // Always copy ALL hooks from the package first (preserving original names)
+    // Core hooks that are always required
+    const coreHooks = [
+      'pre_tool_use.py',
+      'post_tool_use.py',
+      'notification.py',
+      'stop.py',
+      'subagent_stop.py',
+    ];
+
+    // Get user-selected hook scripts
+    const selectedHookScripts = config.hooks
+      .map((hookName) => {
+        const hookConfig = hookConfigs[hookName];
+        return hookConfig ? hookConfig.script : null;
+      })
+      .filter(Boolean);
+
+    // Combine core hooks with user-selected hooks
+    const hooksToInstall = [...new Set([...coreHooks, ...selectedHookScripts])];
+
     if (await fs.pathExists(hooksSourceDir)) {
-      // Copy entire hooks directory to preserve structure and naming
-      await fs.copy(hooksSourceDir, hooksDir, {
-        overwrite: true,
-        errorOnExist: false,
-      });
+      // Copy only selected hooks from the package
+      for (const hookScript of hooksToInstall) {
+        const sourcePath = path.join(hooksSourceDir, hookScript);
+        const targetPath = path.join(hooksDir, hookScript);
+
+        if (await fs.pathExists(sourcePath)) {
+          await fs.copy(sourcePath, targetPath);
+        }
+      }
+
+      // Also copy utility directories if they exist (like utils, tier1, etc.)
+      const utilDirs = ['utils', 'tier1', 'tier2', 'tier3', '__pycache__'];
+      for (const dir of utilDirs) {
+        const sourceDirPath = path.join(hooksSourceDir, dir);
+        const targetDirPath = path.join(hooksDir, dir);
+
+        if (await fs.pathExists(sourceDirPath)) {
+          await fs.copy(sourceDirPath, targetDirPath);
+        }
+      }
     } else {
-      // Fallback: only create user-selected hooks if source doesn't exist
+      // Fallback: create hooks if source doesn't exist
       for (const hookName of config.hooks) {
         const hookConfig = hookConfigs[hookName];
         if (!hookConfig) {

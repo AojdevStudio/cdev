@@ -27,10 +27,10 @@ publishStatus:
   globalInstallTested: true
   npmVerified: true
   published: true
-  publishedAt: '2025-07-24T20:21:21.411483'
-publishedAt: '2025-07-24T20:20:45.315208'
+  publishedAt: '2025-07-25T15:28:36.537484'
+publishedAt: '2025-07-25T15:28:12.315075'
 validation:
   buildClean: true
   filesValidated: 5
   scriptsValidated: 3
-version: 0.0.10
+version: 0.0.11
