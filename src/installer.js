@@ -13,6 +13,114 @@ class Installer {
     this.utils = new InstallUtils();
   }
 
+  /**
+   * Detects the project type based on package.json and configuration files
+   * @param {string} projectPath - Path to the project directory
+   * @returns {object} Project type object with type, confidence, and metadata
+   */
+  detectProjectType(projectPath) {
+    const packageJsonPath = path.join(projectPath, 'package.json');
+    const fs = require('fs');
+
+    try {
+      // Check for Python first
+      if (
+        fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
+        fs.existsSync(path.join(projectPath, 'pyproject.toml')) ||
+        fs.existsSync(path.join(projectPath, 'setup.py'))
+      ) {
+        return {
+          type: 'python',
+          confidence: 0.9,
+          runtime: 'python',
+          framework: 'flask',
+        };
+      }
+
+      if (!fs.existsSync(packageJsonPath)) {
+        return {
+          type: 'minimal',
+          confidence: 0.8,
+        };
+      }
+
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+
+      // Check for Next.js with high confidence
+      if (dependencies.next || fs.existsSync(path.join(projectPath, 'next.config.js'))) {
+        return {
+          type: 'nextjs',
+          confidence: 0.95,
+          framework: 'next',
+          buildTool: 'next',
+        };
+      }
+
+      // Check for Vite React
+      if (dependencies.vite && dependencies.react) {
+        return {
+          type: 'react',
+          confidence: 0.9,
+          framework: 'react',
+          buildTool: 'vite',
+        };
+      }
+
+      // Check for monorepo
+      if (packageJson.workspaces || fs.existsSync(path.join(projectPath, 'turbo.json'))) {
+        return {
+          type: 'monorepo',
+          confidence: 0.9,
+          workspaces: true,
+        };
+      }
+
+      // Check for Express/Node.js
+      if (dependencies.express || dependencies.fastify || dependencies.koa) {
+        return {
+          type: 'nodejs',
+          confidence: 0.85,
+          runtime: 'node',
+          framework: 'express',
+        };
+      }
+
+      return {
+        type: 'minimal',
+        confidence: 0.7,
+      };
+    } catch (error) {
+      return {
+        type: 'minimal',
+        confidence: 0.5,
+      };
+    }
+  }
+
+  /**
+   * Detects the package manager used in the project
+   * @param {string} projectPath - Path to the project directory
+   * @returns {string} Package manager (npm, yarn, pnpm)
+   */
+  detectPackageManager(projectPath) {
+    const fs = require('fs');
+
+    // Check for lock files
+    if (fs.existsSync(path.join(projectPath, 'pnpm-lock.yaml'))) {
+      return 'pnpm';
+    }
+    if (fs.existsSync(path.join(projectPath, 'yarn.lock'))) {
+      return 'yarn';
+    }
+    if (fs.existsSync(path.join(projectPath, 'package-lock.json'))) {
+      return 'npm';
+    }
+
+    // Default to npm
+    return 'npm';
+  }
+
   async install(targetDir = '.', options = {}) {
     try {
       console.log(chalk.cyan('🚀 Installing Parallel Claude Development Workflow'));
@@ -23,8 +131,10 @@ class Installer {
       // Phase 1: Pre-installation validation
       await this.preInstallValidation(resolvedTargetDir, options);
 
-      // Phase 2: Interactive configuration
-      const config = await this.interactiveConfiguration(resolvedTargetDir);
+      // Phase 2: Interactive configuration (skip if requested)
+      const config = options.skipPrompts
+        ? this.getDefaultConfiguration(resolvedTargetDir, options)
+        : await this.interactiveConfiguration(resolvedTargetDir);
 
       // Phase 3: Core installation
       await this.coreInstallation(resolvedTargetDir, config, options);
@@ -33,11 +143,39 @@ class Installer {
       await this.postInstallationSetup(resolvedTargetDir, config);
 
       // Phase 5: Success message
-      this.displaySuccessMessage(resolvedTargetDir, config);
+      if (!options.skipPrompts) {
+        this.displaySuccessMessage(resolvedTargetDir, config);
+      }
     } catch (error) {
       console.error(chalk.red('❌ Installation failed:'), error.message);
-      process.exit(1);
+      if (!options.skipPrompts) {
+        process.exit(1);
+      } else {
+        throw error; // Re-throw for tests
+      }
     }
+  }
+
+  /**
+   * Gets default configuration when prompts are skipped
+   * @param {string} targetDir - Target directory path
+   * @param {object} options - Installation options
+   * @returns {object} Default configuration
+   */
+  getDefaultConfiguration(targetDir, options = {}) {
+    return {
+      projectName: path.basename(targetDir) || 'parallel-claude-project',
+      setupLinear: true,
+      linearApiKey: null,
+      setupGitHooks: true,
+      workTreeLocation: 'alongside',
+      customWorkTreePath: null,
+      workTreePath: this.utils.resolveWorkTreePath(targetDir, {
+        workTreeLocation: 'alongside',
+      }),
+      packageManager: options.packageManager || this.detectPackageManager(targetDir),
+      projectType: this.detectProjectType(targetDir).type,
+    };
   }
 
   async preInstallValidation(targetDir, options) {

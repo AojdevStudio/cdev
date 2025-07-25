@@ -240,7 +240,20 @@ describe('PostInstallValidator', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockReturnValue('mock content');
+    fs.readFileSync.mockImplementation((filePath) => {
+      if (filePath.includes('package.json')) {
+        return JSON.stringify({ name: 'test-project', version: '1.0.0' });
+      }
+      if (filePath.endsWith('.py')) {
+        return '#!/usr/bin/env python\n# Mock Python hook content\nprint("test")';
+      }
+      if (filePath.includes('decompose-parallel.cjs')) {
+        return 'const parallelAgents = {}; module.exports = { parallelAgents };';
+      }
+      return 'mock content';
+    });
+    fs.writeFileSync.mockImplementation(() => {}); // Mock successful write for permissions test
+    fs.unlinkSync.mockImplementation(() => {}); // Mock successful unlink for permissions test
   });
 
   describe('validate', () => {

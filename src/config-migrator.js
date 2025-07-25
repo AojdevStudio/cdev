@@ -124,7 +124,11 @@ function applyMigrationTransformations(config, result) {
   const transformed = JSON.parse(JSON.stringify(config)); // Deep clone
 
   // Transform old hook formats to new format
-  if (transformed.hooks) {
+  if (
+    transformed.hooks &&
+    typeof transformed.hooks === 'object' &&
+    !Array.isArray(transformed.hooks)
+  ) {
     let hooksTransformed = false;
 
     for (const [event, hooks] of Object.entries(transformed.hooks)) {

@@ -196,7 +196,8 @@ class PathResolver {
     if (!inputPath) {
       return '';
     }
-    return inputPath.split(path.sep).join('/');
+    // Always convert backslashes to forward slashes regardless of platform
+    return inputPath.replace(/\\/g, '/');
   }
 
   /**

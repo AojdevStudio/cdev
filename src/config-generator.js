@@ -21,8 +21,10 @@ function generateConfig(projectPath, options = {}) {
   try {
     if (fs.existsSync(templatePath)) {
       template = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
-    } else {
+    } else if (fs.existsSync(defaultTemplatePath)) {
       template = JSON.parse(fs.readFileSync(defaultTemplatePath, 'utf8'));
+    } else {
+      throw new Error('No configuration templates found');
     }
   } catch (error) {
     throw new Error(`Failed to load configuration template: ${error.message}`);

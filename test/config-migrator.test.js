@@ -97,7 +97,9 @@ describe('Config Migrator', () => {
     });
 
     it('should throw error if migration results in invalid config', async () => {
-      const sourceConfig = {}; // Invalid - missing version
+      const sourceConfig = {
+        hooks: 'invalid_structure', // Invalid - hooks should be an object, not a string
+      };
 
       fs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(false);
       fs.readFileSync.mockReturnValue(JSON.stringify(sourceConfig));
@@ -198,9 +200,14 @@ describe('Config Migrator', () => {
     it('should check if migration is needed', () => {
       const projectPath = '/test/project';
 
+      // Clear all previous mock calls
+      fs.existsSync.mockClear();
+
       fs.existsSync
-        .mockReturnValueOnce(true) // settings.local.json exists
-        .mockReturnValueOnce(false); // settings.json doesn't exist
+        .mockReturnValueOnce(true) // settings.local.json exists (hasLocalConfig)
+        .mockReturnValueOnce(false) // settings.json doesn't exist (hasTargetConfig)
+        .mockReturnValueOnce(true) // settings.local.json exists (needsMigration first check)
+        .mockReturnValueOnce(false); // settings.json doesn't exist (needsMigration second check)
 
       const status = checkMigrationStatus(projectPath);
 

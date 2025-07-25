@@ -40,6 +40,12 @@ class HookOrganizer {
         // Determine target path
         const targetPath = await this.getTargetPath(hook, tier);
 
+        // Move the hook file to the tier directory if it's not already there
+        if (hook.path !== targetPath && (await fs.pathExists(hook.path))) {
+          await fs.ensureDir(path.dirname(targetPath));
+          await fs.move(hook.path, targetPath, { overwrite: true });
+        }
+
         // Store hook information in registry
         registry.hooks[hook.name] = {
           name: hook.name,
@@ -57,6 +63,7 @@ class HookOrganizer {
 
         // Update hook object with new path
         hook.currentPath = targetPath;
+        hook.path = targetPath; // Update the main path reference too
       }
     }
 

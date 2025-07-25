@@ -176,6 +176,11 @@ class HookSelector {
   applyPreferences(hooks, preferences) {
     let filtered = [...hooks];
 
+    // Apply user exclude hooks filter
+    if (preferences.excludeHooks) {
+      filtered = filtered.filter((hook) => !preferences.excludeHooks.includes(hook.name));
+    }
+
     // Apply category filters
     if (preferences.includeCategories) {
       filtered = filtered.filter((hook) => preferences.includeCategories.includes(hook.category));
@@ -199,7 +204,9 @@ class HookSelector {
     // Sort by importance (critical first)
     filtered.sort((a, b) => {
       const order = { critical: 0, important: 1, optional: 2, utility: 3 };
-      return (order[a.importance] || 3) - (order[b.importance] || 3);
+      const aValue = order[a.importance] !== undefined ? order[a.importance] : 3;
+      const bValue = order[b.importance] !== undefined ? order[b.importance] : 3;
+      return aValue - bValue;
     });
 
     return filtered;

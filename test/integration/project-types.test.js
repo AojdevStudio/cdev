@@ -41,6 +41,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -64,6 +65,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -84,6 +86,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -105,6 +108,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'pip',
+        force: true,
       });
 
       // Assert
@@ -115,7 +119,7 @@ describe('Project Types Integration Test', () => {
       expect(claudeSettings.packageManager).toBe('pip');
 
       // Check for Python-specific configurations
-      expect(claudeSettings.hooks.pre_tool_use).toContain('python3');
+      expect(claudeSettings.hooks.pre_tool_use[0]).toContain('python3');
     });
 
     test('should correctly handle monorepo projects', async () => {
@@ -126,6 +130,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'pnpm',
+        force: true,
       });
 
       // Assert
@@ -148,6 +153,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -215,6 +221,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -234,6 +241,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -250,6 +258,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -266,6 +275,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -345,6 +355,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -365,6 +376,7 @@ describe('Project Types Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert

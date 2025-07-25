@@ -6,10 +6,24 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 const { pythonDetector, PythonDetector } = require('../src/python-detector');
+const { pathResolver } = require('../src/path-resolver');
 
 // Mock child_process
 jest.mock('child_process');
 jest.mock('fs');
+
+// Mock path-resolver
+jest.mock('../src/path-resolver', () => ({
+  pathResolver: {
+    findInPath: jest.fn(),
+    getPlatformInfo: jest.fn(() => ({
+      platform: 'darwin',
+      isWindows: false,
+      isMacOS: true,
+      isLinux: false,
+    })),
+  },
+}));
 
 describe('PythonDetector', () => {
   beforeEach(() => {
@@ -178,13 +192,13 @@ describe('PythonDetector', () => {
 
     test('handles Python without pip', () => {
       execSync.mockImplementation((command) => {
-        if (command.includes('--version')) {
+        if (command.includes('--version') && !command.includes('pip')) {
           return 'Python 3.9.7';
         }
         if (command.includes('sys.prefix')) {
           return '/usr/local/python3.9';
         }
-        if (command.includes('pip')) {
+        if (command.includes('-m pip --version')) {
           throw new Error('No module named pip');
         }
         return '';
@@ -242,6 +256,9 @@ describe('PythonDetector', () => {
         if (command.includes('sys.prefix')) {
           return '/usr/local';
         }
+        if (command.includes('-m pip')) {
+          return 'pip 21.0.0';
+        }
         if (command.includes('-m venv')) {
           return '';
         }
@@ -255,7 +272,7 @@ describe('PythonDetector', () => {
       const result = detector.createVirtualEnvironment('/tmp/test-venv');
 
       expect(result).toBe(true);
-      expect(execSync).toHaveBeenCalledWith(expect.stringContaining('-m venv'));
+      expect(execSync).toHaveBeenCalledWith(expect.stringContaining('-m venv'), expect.any(Object));
     });
 
     test('throws error if no Python available', () => {
@@ -390,19 +407,57 @@ describe('PythonDetector', () => {
     });
 
     test('returns Windows-specific paths on Windows', () => {
-      Object.defineProperty(process, 'platform', { value: 'win32' });
-      fs.existsSync.mockReturnValue(true);
+      // Mock environment variables for Windows
+      const originalEnv = process.env;
+      process.env = {
+        ...originalEnv,
+        ProgramFiles: 'C:\\Program Files',
+        'ProgramFiles(x86)': 'C:\\Program Files (x86)',
+        LOCALAPPDATA: 'C:\\Users\\test\\AppData\\Local',
+        USERPROFILE: 'C:\\Users\\test',
+      };
+
+      // Mock pathResolver to return Windows platform info
+      pathResolver.getPlatformInfo.mockReturnValue({
+        platform: 'win32',
+        isWindows: true,
+        isMacOS: false,
+        isLinux: false,
+      });
+
+      // Mock fs.existsSync to return true for specific Windows paths
+      fs.existsSync.mockImplementation(
+        (path) =>
+          path.includes('Python.exe') ||
+          path.includes('WindowsApps') ||
+          path.includes('python.exe'),
+      );
 
       const detector = new PythonDetector();
       const paths = detector.getPlatformSpecificPaths();
 
-      expect(paths.some((p) => p.includes('Python.exe'))).toBe(true);
+      // Restore environment
+      process.env = originalEnv;
+
+      // Check that we get Windows-specific paths
+      expect(paths.length).toBeGreaterThan(0);
+      expect(paths.some((p) => p.includes('python.exe') || p.includes('Python.exe'))).toBe(true);
       expect(paths.some((p) => p.includes('WindowsApps'))).toBe(true);
     });
 
     test('returns macOS-specific paths on macOS', () => {
-      Object.defineProperty(process, 'platform', { value: 'darwin' });
-      fs.existsSync.mockReturnValue(true);
+      // Mock pathResolver to return macOS platform info
+      pathResolver.getPlatformInfo.mockReturnValue({
+        platform: 'darwin',
+        isWindows: false,
+        isMacOS: true,
+        isLinux: false,
+      });
+
+      // Mock fs.existsSync to return true for specific macOS paths
+      fs.existsSync.mockImplementation(
+        (path) => path.includes('/usr/local/bin') || path.includes('/opt/homebrew'),
+      );
 
       const detector = new PythonDetector();
       const paths = detector.getPlatformSpecificPaths();
@@ -412,8 +467,18 @@ describe('PythonDetector', () => {
     });
 
     test('returns Linux-specific paths on Linux', () => {
-      Object.defineProperty(process, 'platform', { value: 'linux' });
-      fs.existsSync.mockReturnValue(true);
+      // Mock pathResolver to return Linux platform info
+      pathResolver.getPlatformInfo.mockReturnValue({
+        platform: 'linux',
+        isWindows: false,
+        isMacOS: false,
+        isLinux: true,
+      });
+
+      // Mock fs.existsSync to return true for specific Linux paths
+      fs.existsSync.mockImplementation(
+        (path) => path.includes('/usr/bin') || path.includes('/snap/bin'),
+      );
 
       const detector = new PythonDetector();
       const paths = detector.getPlatformSpecificPaths();

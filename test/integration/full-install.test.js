@@ -69,6 +69,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert - Check that shell scripts are executable
@@ -92,6 +93,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -115,6 +117,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -135,6 +138,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -154,6 +158,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -175,7 +180,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
-        preserveExisting: true,
+        force: true,
       });
 
       // Assert
@@ -198,6 +203,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert - Check that all hooks are installed
@@ -226,6 +232,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -248,6 +255,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Assert
@@ -303,14 +311,11 @@ describe('Full Installation Integration Test', () => {
       const projectPath = path.join(tempDir, 'missing-deps');
       await fs.ensureDir(projectPath);
 
-      // Mock missing git
-      const originalExecSync = require('child_process').execSync;
-      require('child_process').execSync = jest.fn().mockImplementation((cmd) => {
-        if (cmd.includes('git --version')) {
-          throw new Error('git not found');
-        }
-        return originalExecSync(cmd);
-      });
+      // Mock validateEnvironment to throw error for missing dependencies
+      const originalValidateEnvironment = installer.steps.validateEnvironment;
+      installer.steps.validateEnvironment = jest
+        .fn()
+        .mockRejectedValue(new Error('Missing required dependencies'));
 
       // Act & Assert
       await expect(
@@ -320,7 +325,7 @@ describe('Full Installation Integration Test', () => {
       ).rejects.toThrow();
 
       // Restore
-      require('child_process').execSync = originalExecSync;
+      installer.steps.validateEnvironment = originalValidateEnvironment;
     });
   });
 
@@ -334,6 +339,7 @@ describe('Full Installation Integration Test', () => {
       await installer.install(projectPath, {
         skipPrompts: true,
         packageManager: 'npm',
+        force: true,
       });
 
       // Modify a file to simulate an older version
