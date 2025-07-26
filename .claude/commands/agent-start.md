@@ -8,8 +8,12 @@ description: Load workspace and run parallel-sub-agent Explore–Plan–Test–C
 This command parses an **agent_context.yaml** task file and orchestrates a **parallel-sub-agent** workflow —  
 **Explore → Plan → Write Tests → Code → Refactor → Validate → Write-Up** — to ship fast, high-quality implementations.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `agent-coordinator` sub-agent for expert parallel development workflow management. The sub-agent will be automatically invoked to handle multi-agent coordination, git worktrees, complex feature development, and parallel workflow orchestration with deep understanding of agent coordination patterns.
+
 **variables:**  
 AgentContextPath: $ARGUMENTS <!-- default: ./agent_context.yaml -->
+
+**Primary Action:** Use the agent-coordinator sub-agent to handle parallel development workflow management including multi-agent coordination, git worktrees, and complex feature development orchestration.
 
 **Usage Examples:**
 

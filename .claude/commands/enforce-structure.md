@@ -7,6 +7,8 @@ description: Validates and enforcts clean root directory structure with automati
 
 This command validates and enforces clean root directory structure by scanning for misplaced files and automatically moving them to appropriate locations according to project conventions.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `structure-enforcer` sub-agent for expert project organization management. The sub-agent will be automatically invoked to handle structural analysis, pattern enforcement, and architectural consistency validation with deep understanding of project organization best practices.
+
 **variables:**
 Options: $ARGUMENTS
 
@@ -21,20 +23,22 @@ Options: $ARGUMENTS
 enforce_structure_protocol:
   # The sequence of actions the command should perform upon execution
   execution_flow:
+    - step: 0
+      action: 'Use the structure-enforcer sub-agent to handle comprehensive project organization including structure validation, enforcement, and file reorganization'
     - step: 1
-      action: 'Parse command arguments and determine operation mode'
+      action: 'Parse command arguments and determine operation mode (via structure-enforcer)'
       details: 'Default is FIX mode - only --dry-run and --report flags available'
     - step: 2
-      action: 'Deploy root_scanner and deep_scanner agents IN PARALLEL using Task tool'
-      details: 'Both agents scan simultaneously - root for misplaced files, deep for nested violations'
+      action: 'Deploy coordinated scanning via structure-enforcer with parallel sub-agents'
+      details: 'The structure-enforcer will coordinate root_scanner and deep_scanner agents IN PARALLEL using Task tool - both agents scan simultaneously for misplaced files and nested violations'
     - step: 3
-      action: 'Execute file movements immediately upon violation discovery'
+      action: 'Execute file movements immediately upon violation discovery (via structure-enforcer)'
       details: 'Move files to correct locations: config/, scripts/, docs/, archive/ as violations are found'
     - step: 4
-      action: 'Clean up temporary files and gitignored cache'
+      action: 'Clean up temporary files and gitignored cache (via structure-enforcer)'
       details: 'Remove __pycache__, temp files, and other cleanup items'
     - step: 5
-      action: 'Validate all moves completed successfully and report final state'
+      action: 'Validate all moves completed successfully and report final state (via structure-enforcer)'
       details: 'Confirm root directory now complies with structure rules'
 
   # Defines the context, references, and validation rules

@@ -7,8 +7,12 @@ description: Generate comprehensive README using structured template with projec
 
 This command analyzes your project structure and generates a comprehensive README file following the established template pattern with proper variable substitution and contextual content. For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `doc-curator` sub-agent for expert documentation creation and maintenance. The sub-agent will be automatically invoked to handle comprehensive documentation generation, template processing, and content optimization with deep understanding of documentation best practices and project communication standards.
+
 **variables:**
 DirectoryContents: $ARGUMENTS
+
+**Primary Action:** Use the doc-curator sub-agent to handle comprehensive documentation generation including template processing, content optimization, and project analysis.
 
 **Usage Examples:**
 

@@ -7,6 +7,8 @@ description: Transform tasks into parallel sub-agents using native tool invocati
 
 Transform any task format into parallel sub-agents using Claude's native parallel tool invocation for maximum efficiency.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `task-orchestrator` sub-agent for intelligent task decomposition and parallel execution management. The sub-agent will be automatically invoked to handle complex workflow coordination, dependency analysis, and multi-agent orchestration.
+
 **variables:**
 Input: $ARGUMENTS
 
@@ -20,8 +22,15 @@ Input: $ARGUMENTS
 ```yaml
 orchestrate_configuration:
   instructions:
+    - step: 0
+      action: 'Use the task-orchestrator sub-agent to handle comprehensive task decomposition and parallel execution management'
+      details: |
+        # Primary delegation to specialized task management sub-agent
+        - The task-orchestrator sub-agent will handle all subsequent steps with domain expertise
+        - Coordinate with the task-orchestrator for optimal workflow execution
+
     - step: 1
-      action: 'Parse input to identify tasks'
+      action: 'Parse input to identify tasks (via task-orchestrator)'
       details: |
         # Detect input format and extract tasks
         - Check if input is a file path, Linear ID, or direct text
@@ -29,7 +38,7 @@ orchestrate_configuration:
         - Extract individual tasks with their requirements
 
     - step: 2
-      action: 'Analyze tasks for parallelization opportunities'
+      action: 'Analyze tasks for parallelization opportunities (via task-orchestrator)'
       details: |
         # Identify which tasks can run concurrently
         - Group independent tasks that can execute in parallel
@@ -37,9 +46,10 @@ orchestrate_configuration:
         - Create execution phases based on dependencies
 
     - step: 3
-      action: 'Invoke multiple Task tools simultaneously'
+      action: 'Invoke multiple Task tools simultaneously (coordinated by task-orchestrator)'
       details: |
         # KEY: Use Claude's native parallel tool invocation
+        # The task-orchestrator will coordinate parallel sub-agent execution
         # Instead of sequential calls, invoke all independent Task tools in ONE response
         # This provides automatic parallelism and is more efficient
         # All tasks execute concurrently!
@@ -50,7 +60,7 @@ orchestrate_configuration:
         # - All parallel tools return results together in one response
 
     - step: 4
-      action: 'Process results from parallel execution'
+      action: 'Process results from parallel execution (via task-orchestrator)'
       details: |
         # Aggregate results from all sub-agents
         - Collect outputs from each Task tool

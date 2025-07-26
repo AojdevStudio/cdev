@@ -23,6 +23,10 @@ description: Brief one-line description of what the command does
 
 Single sentence explaining the command's purpose and benefit.
 
+**🤖 Sub-Agent Integration (Optional):** If using a specialized sub-agent, describe which one and its role.
+
+**Primary Action (If Using Sub-Agent):** Use the [sub-agent-name] sub-agent to handle [specific functionality and domain expertise].
+
 ### 4. Arguments Section (if needed)
 
 ```markdown
@@ -41,6 +45,12 @@ Single sentence explaining the command's purpose and benefit.
 ```yaml
 command_configuration:
   instructions:
+    # For Sub-Agent Commands: Use explicit spawning language
+    - step: 1
+      action: "Use the [sub-agent-name] sub-agent to handle [specific functionality]"
+      details: "The sub-agent will manage [domain-specific tasks]"
+    
+    # For Regular Commands: Standard action flow
     - step: 1
       action: "What to do first"
       details: "Specific implementation details"
@@ -66,6 +76,8 @@ command_configuration:
 - Use `@filename` for file references
 - Include validation and error handling
 - Structure data hierarchically in YAML
+- **For sub-agent commands**: Use explicit "Use the [agent-name] sub-agent to [action]" language
+- **Sub-agent spawning**: Must be explicit and direct for Claude to recognize
 
 ## Best Practices
 

@@ -7,8 +7,12 @@ description: Build comprehensive project roadmaps with strategic planning and ti
 
 This command creates comprehensive project roadmaps by analyzing current state, defining objectives, and organizing deliverables into strategic phases with timelines and dependencies.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `roadmap-architect` sub-agent for expert strategic planning and roadmap development. The sub-agent will be automatically invoked to handle feature prioritization, timeline estimation, strategic planning, and comprehensive roadmap creation with deep understanding of project management and strategic thinking principles.
+
 **variables:**
 RoadmapScope: $ARGUMENTS
+
+**Primary Action:** Use the roadmap-architect sub-agent to handle strategic planning and roadmap development including feature prioritization, timeline estimation, and comprehensive roadmap creation.
 
 **Usage Examples:**
 

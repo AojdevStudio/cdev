@@ -7,8 +7,12 @@ description: Deep analysis of logs with context preservation and smart filtering
 
 This command performs comprehensive searches through structured logs with advanced filtering, context preservation, and intelligent result grouping.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `deep-searcher` sub-agent for advanced codebase search and analysis. The sub-agent will be automatically invoked to handle complex query patterns, systematic analysis, and comprehensive search operations across large codebases with domain expertise in search optimization.
+
 **variables:**
 Query: $ARGUMENTS
+
+**Primary Action:** Use the deep-searcher sub-agent to handle advanced codebase search and analysis including complex query patterns, systematic analysis, and comprehensive search operations.
 
 **Usage Examples:**
 

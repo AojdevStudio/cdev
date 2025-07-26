@@ -1,3 +1,31 @@
+# CDEV Project Context
+
+## What is CDEV?
+
+**CDEV (Claude Development)** is an AI-powered development orchestration system designed to enhance Claude Code with sophisticated parallel development workflows, intelligent automation, and universal task understanding.
+
+### Project Purpose
+- **Transform Claude Code workflows** with parallel agent coordination and advanced automation
+- **Universal task processing** from Linear tickets, markdown tasks, or plain descriptions 
+- **Zero-friction setup** with one-command installation for any project type
+- **Production-ready distribution** as a global NPM package (`@aojdevstudio/cdev`)
+
+### Target Users
+Developers using Claude Code who want to:
+- Work on multiple parts of features simultaneously through parallel agents
+- Automate quality gates and validation with intelligent hooks
+- Process any task format (Linear, markdown, plain text) seamlessly
+- Enhance their development workflows with AI-powered orchestration
+
+### Architecture
+- **CLI Tool** with modular command system and interactive installation
+- **Multi-language Hybrid** (JavaScript core + Python automation scripts)
+- **Git Worktree Management** for isolated parallel development environments
+- **Hook System** with quality gates and automated validation
+- **NPM Distribution** with cross-platform compatibility
+
+---
+
 ## 1. Core Meta-Cognitive Framework
 
 ### Parallel Development Schema
@@ -600,4 +628,153 @@ development_operating_system:
       - 'Scalability: Reusable protocols that adapt to different project types'
       - 'Self-Improvement: Learning mechanisms that optimize workflow over time'
       - 'Integration Safety: Comprehensive conflict resolution and merge protocols'
+
+# Sub-Agent Integration Framework
+
+## Available CDEV Sub-Agents
+
+CDEV integrates with Claude Code's specialized sub-agent system for enhanced functionality:
+
+### Core Sub-Agents
+- **`git-flow-manager`**: Git operations, branch management, commit workflows
+- **`task-orchestrator`**: Complex task decomposition and workflow coordination  
+- **`pr-specialist`**: Pull request creation and review preparation
+- **`structure-enforcer`**: Code organization and architectural consistency
+- **`quality-guardian`**: Code validation, testing, and quality assurance
+- **`doc-curator`**: Documentation creation and maintenance
+- **`deep-searcher`**: Advanced codebase analysis and pattern recognition
+- **`project-organizer`**: File organization and structural improvements
+- **`roadmap-architect`**: Strategic planning and feature roadmaps
+
+### Sub-Agent Activation Requirements
+
+**CRITICAL**: Sub-agents require explicit invocation language to spawn properly:
+
+✅ **Correct Usage:**
+- "Use the git-flow-manager sub-agent to handle commit operations"
+- "Use the deep-searcher sub-agent to analyze the codebase comprehensively"
+- "Use the task-orchestrator sub-agent to break down this complex feature"
+
+❌ **Incorrect (Won't Spawn):**
+- "The git-flow-manager will handle commits"
+- "Let's use deep searching for analysis"
+- "We need task orchestration here"
+
+### Integration Patterns
+
+```yaml
+sub_agent_coordination:
+  parallel_development:
+    - 'Use the task-orchestrator sub-agent to decompose Linear issues'
+    - 'Use the git-flow-manager sub-agent to manage agent worktrees'
+    - 'Use the quality-guardian sub-agent to validate agent deliverables'
+  
+  codebase_enhancement:
+    - 'Use the structure-enforcer sub-agent to maintain code organization'
+    - 'Use the deep-searcher sub-agent for comprehensive pattern analysis'
+    - 'Use the project-organizer sub-agent to optimize file structure'
+  
+  release_management:
+    - 'Use the pr-specialist sub-agent to prepare comprehensive pull requests'
+    - 'Use the doc-curator sub-agent to update documentation'
+    - 'Use the roadmap-architect sub-agent for release planning'
+```
+
+# CDEV Quick Start Guide
+
+## Installation & Setup
+
+1. **Install CDEV globally:**
+   ```bash
+   npm install -g @aojdevstudio/cdev
+   ```
+
+2. **Initialize in any project:**
+   ```bash
+   cdev init
+   # Detects project type and installs appropriate Claude Code enhancements
+   ```
+
+3. **Verify installation:**
+   ```bash
+   cdev status
+   # Shows installed hooks, commands, and parallel workflow readiness
+   ```
+
+## Core Workflows
+
+### Parallel Development
+```bash
+# Process any task format (Linear, markdown, or plain description)
+cdev task "Implement user authentication with JWT and password reset"
+# Creates parallel agent deployment plan with isolated worktrees
+
+# Start agent work
+cdev agent start backend-auth
+# Begins systematic TDD workflow in isolated environment
+
+# Monitor progress
+cdev agent status
+# Shows completion percentages and next actions
+
+# Integrate completed work
+cdev agent commit backend-auth
+# Validates, merges, and cleans up automatically
+```
+
+### Quality Automation
+```bash
+# Pre-commit validation (automatic)
+git commit -m "feat: add authentication"
+# Triggers: lint → typecheck → test → security scan
+
+# Manual quality check
+cdev validate
+# Runs comprehensive quality gates
+```
+
+### Task Processing
+```bash
+# From Linear ticket
+cdev task PROJ-123
+
+# From markdown file  
+cdev task @tasks.md
+
+# From plain description
+cdev task "Build a REST API for user management"
+```
+
+## Development Commands Integration
+
+### Mandatory Quality Checks
+- `npm run lint` - ESLint validation
+- `npm run typecheck` - TypeScript checking  
+- `npm run test` - Jest unit tests
+- `npm run test:e2e` - End-to-end tests
+- `npm run prettier:check` - Code formatting
+
+### Security Validation
+- `npm run security:check` - Vulnerability scanning
+- `git secrets --scan` - Secret detection
+
+### Database Operations
+- `npm run db:migrate` - Run migrations
+- `npm run db:seed` - Seed development data
+- `npm run db:reset` - Reset to clean state
+
+## Best Practices
+
+1. **Use explicit sub-agent language** for specialized tasks
+2. **Let CDEV detect project type** during initialization
+3. **Trust the parallel workflow** for complex features
+4. **Leverage quality automation** instead of manual checks
+5. **Process tasks in any format** - CDEV handles the conversion
+
+## Troubleshooting
+
+- **Agent won't spawn**: Check for explicit "Use the [agent-name] sub-agent to..." language
+- **Hooks not firing**: Verify installation with `cdev status`
+- **Quality gates failing**: Run `cdev validate` for detailed feedback
+- **Worktree conflicts**: Use `cdev agent status` to identify blockers
 ```

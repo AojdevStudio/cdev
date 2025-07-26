@@ -7,6 +7,8 @@ description: Create pull requests for completed work with automatic context gath
 
 This command creates comprehensive pull requests for completed work, automatically gathering context from git history, validating changes, and generating structured PR descriptions following project conventions.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `pr-specialist` sub-agent for expert pull request lifecycle management. The sub-agent will be automatically invoked to handle context gathering, validation, PR creation, and review coordination with deep knowledge of git workflows and collaboration patterns.
+
 **variables:**
 Arguments: $ARGUMENTS
 
@@ -21,12 +23,15 @@ Arguments: $ARGUMENTS
 # Protocol for creating well-structured pull requests with comprehensive context
 pull_request_creation_protocol:
   execution_flow:
+    - step: delegate_to_specialist
+      action: 'Use the pr-specialist sub-agent to handle comprehensive PR creation workflow including context gathering, validation, and PR management'
+
     - step: parse_arguments
-      action: 'Extract options from $ARGUMENTS (title, branches, task ID)'
+      action: 'Extract options from $ARGUMENTS (title, branches, task ID) via pr-specialist'
       validation: 'Ensure valid branch names and proper formatting'
 
     - step: gather_context
-      action: 'Collect comprehensive information about changes'
+      action: 'Collect comprehensive information about changes via pr-specialist'
       details:
         - 'Run git status to check current state'
         - 'Identify current branch and target branch'
@@ -35,7 +40,7 @@ pull_request_creation_protocol:
         - 'Extract Linear task details if task ID provided'
 
     - step: validate_readiness
-      action: 'Ensure changes are ready for PR'
+      action: 'Ensure changes are ready for PR via pr-specialist'
       checks:
         - 'All changes committed'
         - 'Branch up to date with target'
@@ -44,7 +49,7 @@ pull_request_creation_protocol:
         - 'Linting/formatting clean'
 
     - step: generate_pr_content
-      action: 'Create structured PR title and description'
+      action: 'Create structured PR title and description via pr-specialist'
       format:
         title: '<type>(<scope>): <description> [<task-id>]'
         body:
@@ -55,7 +60,7 @@ pull_request_creation_protocol:
           - related: 'Related issues/PRs'
 
     - step: create_pull_request
-      action: 'Use gh CLI to create the PR'
+      action: 'Use gh CLI to create the PR via pr-specialist'
       command: 'gh pr create with generated content'
       options:
         - 'Add appropriate labels'
@@ -63,7 +68,7 @@ pull_request_creation_protocol:
         - 'Set as draft if work in progress'
 
     - step: post_creation
-      action: 'Provide next steps and PR link'
+      action: 'Provide next steps and PR link via pr-specialist'
       output:
         - 'PR URL for review'
         - 'CI/CD status link'

@@ -7,6 +7,8 @@ description: Create well-formatted commits with conventional messages and emoji
 
 This command creates well-formatted Git commits using conventional commit messages with emoji, automated quality checks, and intelligent change analysis.
 
+**🤖 Sub-Agent Integration:** This command leverages the specialized `git-flow-manager` sub-agent for optimal git workflow management. The sub-agent will be automatically invoked to handle complex git operations, commit message generation, and repository state management.
+
 **variables:**
 CommitOptions: $ARGUMENTS
 
@@ -22,15 +24,16 @@ CommitOptions: $ARGUMENTS
 intelligent_commit_protocol:
   # The primary sequence of actions the command should execute.
   process_flow:
-    - 'Check if the `--no-verify` flag is present in `$ARGUMENTS`.'
-    - 'If `--no-verify` is not present, run all pre-commit checks (e.g., `pnpm lint`, `pnpm build`, `pnpm generate:docs`).'
-    - 'Validate the `.gitignore` configuration by checking for tracked files that should be ignored and ensuring common patterns are present.'
+    - 'Use the git-flow-manager sub-agent to handle comprehensive git workflow management including argument parsing, pre-commit validation, staging analysis, commit generation, and execution.'
+    - 'The git-flow-manager will check if the `--no-verify` flag is present in `$ARGUMENTS`.'
+    - 'If `--no-verify` is not present, the sub-agent will run all pre-commit checks (e.g., `pnpm lint`, `pnpm build`, `pnpm generate:docs`).'
+    - 'The sub-agent will validate the `.gitignore` configuration by checking for tracked files that should be ignored and ensuring common patterns are present.'
     - 'Alert the user if any large files (>1MB) are being tracked that should potentially be ignored.'
     - 'Check the `git status`. If no files are staged, automatically stage all modified and new files using `git add .`, excluding common ignore patterns.'
     - 'Perform a `git diff --staged` to analyze the changes being committed.'
     - 'Analyze the diff to determine if multiple distinct logical changes are present. Use the commit splitting guidelines.'
     - 'If multiple logical changes are detected, suggest splitting them into separate atomic commits.'
-    - 'For multiple commits, use sub-agents in parallel to handle the generation and execution of each commit simultaneously.'
+    - 'For multiple commits, coordinate with additional git-flow-manager instances in parallel to handle the generation and execution of each commit simultaneously.'
     - 'For each commit, determine the appropriate conventional commit type and emoji based on the changes.'
     - 'Create a conventional commit message using the format: `<emoji> <type>: <description>`.'
     - 'Execute the `git commit` with the generated message.'

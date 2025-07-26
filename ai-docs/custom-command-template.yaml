@@ -1,6 +1,5 @@
 # Structure: A comprehensive template for creating custom Claude Code slash commands, including structure, examples, key patterns, and best practices.
 
-```yaml
 # Defines the standard structure for creating custom Claude Code slash commands.
 claude_code_slash_command_template:
   # The overall structure that all custom slash commands must follow.
@@ -29,6 +28,16 @@ claude_code_slash_command_template:
       guidelines:
         - "Focus on the 'what' and the 'why'."
         - "Mention key technologies or patterns if they are central to the command."
+    sub_agent_integration:
+      description: "Optional section for commands that use specialized sub-agents."
+      template: |
+        **🤖 Sub-Agent Integration:** This command leverages the specialized `[agent-name]` sub-agent for [domain expertise description].
+        
+        **Primary Action:** Use the [agent-name] sub-agent to handle [specific functionality and domain expertise].
+      guidelines:
+        - "Only include if the command uses a sub-agent."
+        - "Be specific about which sub-agent and its domain expertise."
+        - "Use explicit 'Use the [agent-name] sub-agent to...' language for spawning."
     arguments_section:
       description: "Defines how the command processes user-provided arguments."
       template: |
@@ -56,10 +65,15 @@ claude_code_slash_command_template:
       structure:
         instructions:
           description: "A sequence of steps detailing the command's execution logic."
-          example:
-            - step: 1
-              action: "What to do first"
-              details: "Specific implementation details"
+          examples:
+            sub_agent_command:
+              - step: 1
+                action: "Use the [agent-name] sub-agent to handle [specific functionality]"
+                details: "The sub-agent will manage [domain-specific tasks] with specialized expertise"
+            regular_command:
+              - step: 1
+                action: "What to do first"
+                details: "Specific implementation details"
         context:
           description: "Provides necessary context like files, commands, and reference data."
           sub_sections:
@@ -172,6 +186,12 @@ claude_code_slash_command_template:
 
   # Important patterns and conventions to use when creating commands.
   key_patterns:
+    sub_agent_spawning:
+      - "CRITICAL: Use explicit 'Use the [agent-name] sub-agent to [action]' language."
+      - "Sub-agents only spawn with direct invocation commands, not descriptive text."
+      - "Place sub-agent invocation as the first step in execution flow."
+      - "Be specific about what functionality the sub-agent will handle."
+      - "Example: 'Use the git-flow-manager sub-agent to handle commit operations'"
     dynamic_data_gathering_in_yaml:
       - "Use `command:` field with backtick syntax for shell commands."
       - "Handle missing files gracefully with `2>/dev/null || echo \"default\"`."
@@ -199,6 +219,8 @@ claude_code_slash_command_template:
     - "Actionable: Include clear steps with `action` and `details` fields."
     - "Contextual: Include all necessary reference information."
     - "Maintainable: The YAML format makes updates easier."
+    - "Sub-Agent Ready: Use explicit spawning language when leveraging specialized agents."
+    - "Domain Focused: Match sub-agents to their areas of expertise for optimal results."
 
   # Step-by-step instructions for creating a new custom command.
   usage_instructions:
@@ -209,4 +231,3 @@ claude_code_slash_command_template:
     - "Verify that all '@' file references exist."
     - "Validate the YAML syntax, ensuring proper indentation and quotes."
     - "Save the new command to `.claude/commands/[name].md`."
-```
