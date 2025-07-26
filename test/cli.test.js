@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const { main } = require('./cli.js');
 const { execSync } = require('child_process');
+
+const { main } = require('./cli.js');
 
 // Test suite for CLI entry point
 function runTests() {
