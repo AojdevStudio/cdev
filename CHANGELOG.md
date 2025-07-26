@@ -9,13 +9,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Comprehensive Claude Code sub-agent system** - Enhanced integration with specialized sub-agents including git-flow-manager, task-orchestrator, pr-specialist, structure-enforcer, quality-guardian, doc-curator, deep-searcher, project-organizer, and roadmap-architect
 - **PR creation command** - New `/create-pr` command for automated pull request creation with context gathering
 - **PR review and merge command** - New `/review-merge` command for comprehensive PR review and merge workflow
+- **Advanced documentation protocols** - Enhanced generate-readme, update-changelog, and build-roadmap command protocols with Feynman Technique integration
+- **Deep search capabilities** - New `/deep-search` command for comprehensive codebase analysis and pattern recognition
+- **Structure enforcement** - New `/enforce-structure` command for maintaining code organization and architectural consistency
+- **Agent start protocols** - Enhanced `/agent-start` command with systematic TDD workflow integration
 
 ### Changed
 
+- **Documentation structure** - Reorganized project documentation with improved clarity and comprehensive protocol documentation
 - **Hook management** - Enhanced hook management in installers for better reliability
 - **CodeRabbit configuration** - Standardized quotes in .coderabbit.yaml to single quotes for consistency and improved readability
+- **Command protocol system** - Updated all custom commands to follow enhanced YAML protocol standards with sub-agent integration
+- **Project version management** - Updated version references throughout documentation to reflect current 0.0.15 release
+
+### Enhanced
+
+- **README.md** - Updated version references and improved documentation structure
+- **ROADMAP.md** - Enhanced with current progress tracking and updated completion status
+- **Command documentation** - Comprehensive updates to all Claude Code command protocols with sub-agent integration patterns
+
+## [0.0.15] - 2025-07-26
+
+### Added
+
+- **Comprehensive Claude Code sub-agent system** - Complete integration with 9 specialized sub-agents for enhanced development workflows
+- **Advanced documentation protocols** - Enhanced generate-readme, update-changelog, and build-roadmap command protocols with Feynman Technique integration
+- **Deep search capabilities** - New `/deep-search` command for comprehensive codebase analysis and pattern recognition
+- **Structure enforcement** - New `/enforce-structure` command for maintaining code organization and architectural consistency
+- **Enhanced agent start protocols** - Improved `/agent-start` command with systematic TDD workflow integration
+- **PR management commands** - New `/create-pr` and `/review-merge` commands for automated pull request workflows
+
+### Changed
+
+- **Documentation structure** - Reorganized project documentation with improved clarity and comprehensive protocol documentation
+- **Version consistency** - Updated all version references throughout documentation to reflect current 0.0.15 release
+- **Command protocol system** - Enhanced all custom commands to follow YAML protocol standards with sub-agent integration
+- **License references** - Consistent CC-BY-NC-SA-4.0 license references across all documentation
+
+### Enhanced
+
+- **README.md** - Updated version references and improved documentation structure
+- **ROADMAP.md** - Enhanced with current progress tracking and updated completion status for v0.1.0 critical features
+- **docs/parallel-workflow.md** - Updated version, license, and installation command consistency
 
 ## [0.0.7] - 2025-07-18
 

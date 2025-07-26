@@ -1,6 +1,6 @@
 # CDEV: AI-Powered Development Orchestration System
 
-**Version**: 0.0.2  
+**Version**: 0.0.15  
 **License**: CC-BY-NC-SA-4.0  
 **Requirements**: Node.js ≥ 16.0.0  
 **Community**: [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues) | [NPM Package](https://www.npmjs.com/package/@aojdevstudio/cdev)

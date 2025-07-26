@@ -4,23 +4,28 @@
 
 Transform CDEV into the premier development workflow automation tool for teams using Claude and modern AI-assisted development practices. Follow the principle: **"Works in 30 seconds, powerful in 30 minutes, customizable over 30 days."**
 
-## Current Version: 0.0.2
+## Current Version: 0.0.15
 
 ### Recently Completed ✅
 
-- Package name migration to `@aojdevstudio/cdev`
-- Enhanced README with Feynman Technique
-- Dynamic npm badges (downloads, CI status)
-- Credits section acknowledging open-source inspirations
-- Production-grade `/init-protocol` emphasis
-- Complete workflow documentation
-- Quick Start Guide with visual journey
-- Python to JavaScript/CJS script migration
-- Comprehensive linting (ESLint + Prettier)
-- UV package manager integration for Python scripts
-- `/orchestrate` command with universal task support
-- Smart sub-agent decomposition
-- Improved hook system with validation
+- **Comprehensive Claude Code Sub-Agent System** - Complete integration with 9 specialized sub-agents
+- **Enhanced Documentation Protocols** - Advanced README generation, changelog automation, and roadmap building
+- **Advanced Command System** - New `/deep-search`, `/enforce-structure`, `/agent-start`, `/create-pr`, `/review-merge` commands
+- **Documentation Structure Reorganization** - Improved clarity and comprehensive protocol documentation
+- **Version Management Updates** - Consistent version references across all documentation
+- Package name migration to `@aojdevstudio/cdev` ✅
+- Enhanced README with Feynman Technique ✅
+- Dynamic npm badges (downloads, CI status) ✅
+- Credits section acknowledging open-source inspirations ✅
+- Production-grade `/init-protocol` emphasis ✅
+- Complete workflow documentation ✅
+- Quick Start Guide with visual journey ✅
+- Python to JavaScript/CJS script migration ✅
+- Comprehensive linting (ESLint + Prettier) ✅
+- UV package manager integration for Python scripts ✅
+- `/orchestrate` command with universal task support ✅
+- Smart sub-agent decomposition ✅
+- Improved hook system with validation ✅
 
 ## Release Timeline
 
@@ -129,12 +134,15 @@ Transform CDEV into the premier development workflow automation tool for teams u
 
 - [x] Package name migration to @aojdevstudio/cdev ✅
 - [x] Support all package managers (npm, pnpm, yarn, bun) ✅
-- [ ] Terminal vs Cursor choice for worktree opening
-- [ ] Fix duplication in documentation
-- [ ] Add error catalog with solutions
 - [x] **Enhanced README** - Complete rewrite with Feynman Technique ✅
 - [x] **Dynamic badges** - npm downloads and CI status ✅
 - [x] **Credits section** - Acknowledge open-source inspirations ✅
+- [x] **Sub-agent system integration** - Complete 9 specialized sub-agents ✅
+- [x] **Advanced command protocols** - Enhanced documentation generation ✅
+- [x] **Documentation reorganization** - Improved structure and clarity ✅
+- [ ] Terminal vs Cursor choice for worktree opening
+- [ ] Fix duplication in documentation
+- [ ] Add error catalog with solutions
 
 ### High Priority (v0.2.0)
 
@@ -271,4 +279,4 @@ Evolve from tool to platform:
 
 _This roadmap is subject to change based on user feedback and market demands. We believe in building what our users need, not what we think they need._
 
-**Last Updated**: July 2024
+**Last Updated**: July 2025

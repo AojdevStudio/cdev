@@ -1,7 +1,7 @@
 # CDEV Parallel Workflow: From Linear Issue to Synchronized Teams
 
-**Version**: 1.0.0  
-**License**: MIT  
+**Version**: 0.0.15  
+**License**: CC-BY-NC-SA-4.0  
 **Requirements**: Node.js >=16.0.0, Git >=2.0.0, Claude Code, Linear Account (optional)  
 **Community**: [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues) | [Discord Community](https://discord.gg/cdev) (Coming Soon)
 
@@ -47,7 +47,7 @@ CDEV Parallel Workflow is designed to address challenges such as merge conflicts
 ```bash
 npm install -g @aojdevstudio/cdev
 # OR for existing setups
-npm update -g cdev
+npm update -g @aojdevstudio/cdev
 ```
 
 ✅ Automatic Git worktree management  
@@ -122,7 +122,7 @@ We welcome all contributions!
 
 📄 License
 
-MIT License  
+CC-BY-NC-SA-4.0 License  
 See LICENSE for details.
 
 ## 🎯 Understanding the Parallel Workflow
