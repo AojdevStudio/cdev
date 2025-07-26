@@ -74,3 +74,11 @@ node_modules/
 __pycache__/
 coverage/
 please-delete/
+
+# Development test files (temporary)
+test-hook-installer.js
+test-hook-mapping.js
+test-installation/
+test-mapping/
+archive/test-hook-installer.js
+archive/test-hook-mapping.js
