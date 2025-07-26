@@ -144,6 +144,7 @@ Transform CDEV into the premier development workflow automation tool for teams u
 - [ ] Progressive onboarding levels
 - [ ] Template gallery with examples
 - [ ] Built-in validation & troubleshooting
+- [ ] **Project dependency support** - Allow CDEV to be installed as local project dependency for better version management and team consistency
 
 ### Medium Priority (v0.3.0+)
 
