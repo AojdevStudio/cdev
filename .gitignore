@@ -23,6 +23,7 @@ coverage/
 dist/
 build/
 dist-manifest.json
+dist-manifest.yaml
 
 # IDE
 .vscode/
