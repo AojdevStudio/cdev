@@ -20,14 +20,13 @@ def is_dangerous_rm_command(command):
     # Normalize command by removing extra spaces and converting to lowercase
     normalized = ' '.join(command.lower().split())
     
-    # Pattern 1: Standard rm -rf variations
+    # Pattern 1: Standard rm -rf variations (only match actual flags, not filenames)
     patterns = [
-        r'\brm\s+.*-[a-z]*r[a-z]*f',  # rm -rf, rm -fr, rm -Rf, etc.
-        r'\brm\s+.*-[a-z]*f[a-z]*r',  # rm -fr variations
+        r'\brm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)\b',  # rm -rf, rm -fr, rm -Rf, etc.
         r'\brm\s+--recursive\s+--force',  # rm --recursive --force
         r'\brm\s+--force\s+--recursive',  # rm --force --recursive
-        r'\brm\s+-r\s+.*-f',  # rm -r ... -f
-        r'\brm\s+-f\s+.*-r',  # rm -f ... -r
+        r'\brm\s+-r\s+.*-f\b',  # rm -r ... -f
+        r'\brm\s+-f\s+.*-r\b',  # rm -f ... -r
     ]
     
     # Check for dangerous patterns
@@ -48,7 +47,7 @@ def is_dangerous_rm_command(command):
         r'\.\s*$',      # Current directory at end of command
     ]
     
-    if re.search(r'\brm\s+.*-[a-z]*r', normalized):  # If rm has recursive flag
+    if re.search(r'\brm\s+.*-[a-z]*r\b', normalized):  # If rm has recursive flag (only actual flags)
         for path in dangerous_paths:
             if re.search(path, normalized):
                 return True
@@ -189,12 +188,15 @@ def check_root_structure_violations(tool_name, tool_input):
         r'^.*\.sh$',              # Shell scripts
         r'^debug-.*\.js$',        # Debug scripts
         r'^test-.*\.js$',         # Test scripts
-        r'.*-report\.md$',        # Report docs
+        r'.*-report\.md$',        # Report docs  
+        r'.*enforcement.*\.md$',  # Enforcement reports
         r'.*-plan\.md$',          # Planning docs
         r'^USAGE\.md$',           # Usage docs
         r'^CONTRIBUTING\.md$',    # Contributing docs
         r'^ARCHITECTURE\.md$',    # Architecture docs
-        r'^API\.md$'              # API docs
+        r'^API\.md$',             # API docs
+        r'^.*\.yaml$',            # YAML manifests/configs
+        r'^.*\.yml$'              # YML manifests/configs
     ]
     
     file_path = tool_input.get('file_path', '')
@@ -224,7 +226,10 @@ def check_root_structure_violations(tool_name, tool_input):
             first_dir = dir_part.split('/')[0] if '/' in dir_part else dir_part
             if first_dir in essential_root_dirs:
                 return False
+            # If it's not in an essential directory, it's not a root violation
             return False
+    
+    # If no '/' in path, it's definitely in root - check if it's allowed
     
     # Special case: absolute paths to current project root
     if file_path.startswith('/Users/') and 'paralell-development-claude' in file_path:
@@ -320,6 +325,11 @@ def main():
             # Block rm -rf commands with comprehensive pattern matching
             if is_dangerous_rm_command(command):
                 print("BLOCKED: Dangerous rm command detected and prevented", file=sys.stderr)
+                print("Safe alternatives:", file=sys.stderr) 
+                print("  • For single files: rm filename", file=sys.stderr)
+                print("  • For directories: rm -r dirname (no -f flag)", file=sys.stderr)
+                print("  • Use specific paths instead of wildcards", file=sys.stderr)
+                print("  • Consider using trash/archive instead of permanent deletion", file=sys.stderr)
                 sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
         
         # Check for root directory structure violations
