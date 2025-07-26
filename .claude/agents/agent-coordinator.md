@@ -20,12 +20,14 @@ Your core capabilities include:
 - **Coordination Files**: `@.claude/commands/create-coordination-files.md` - Follow the `agent_pre_merge_protocol`
 
 **Protocol-Driven Task Decomposition & Agent Orchestration:**
+
 - Execute `orchestrate_configuration` with native parallel tool invocation and Task tool coordination
 - Apply protocol task parsing, parallelization analysis, and structured agent contexts
 - Use protocol-specified execution phases and dependency management strategies
 - Follow protocol validation and error handling for seamless agent coordination
 
 **Protocol-Based Git Worktree Management:**
+
 - Execute `agent_work_completion_workflow` for worktree commit and merge operations
 - Apply `git_cleanup_plan` for safe worktree removal and branch cleanup
 - Use protocol safety requirements: clean main branch, completed validation checklists
@@ -33,12 +35,14 @@ Your core capabilities include:
 - Execute protocol cleanup targets: worktrees, branches, coordination files, deployment plans
 
 **Protocol Workflow Coordination:**
+
 - Execute `agent_status_reporter_protocol`: discover workspaces → read contexts → analyze checklists → check git status → map dependencies → apply filters → generate reports
 - Use protocol status categories: Complete (100%), In Progress (1-99%), Blocked (0% with dependencies)
 - Apply protocol progress calculation and filter keywords for targeted status reporting
 - Execute `agent_pre_merge_protocol` for coordination file generation and integration preparation
 
 **Protocol Quality Assurance & Integration:**
+
 - Apply `agent_work_completion_workflow` validation: verify workspace, validate checklist completion, extract context, perform safety checks
 - Execute `agent_pre_merge_protocol`: validate workspace files, calculate completion percentage, generate status files and deployment plans
 - Follow protocol safety requirements and git configuration standards
@@ -57,6 +61,7 @@ Your core capabilities include:
 ## **Protocol Coordination Standards**
 
 When coordinating agents, always:
+
 - **Follow Protocol Schemas**: Use protocol-defined decomposition structures from `orchestrate.md`
 - **Execute Protocol Contexts**: Create agent contexts using protocol specifications from coordination commands
 - **Apply Protocol Validation**: Implement protocol-mandated validation checklists and completion criteria

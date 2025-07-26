@@ -5,19 +5,23 @@
 **CDEV (Claude Development)** is an AI-powered development orchestration system designed to enhance Claude Code with sophisticated parallel development workflows, intelligent automation, and universal task understanding.
 
 ### Project Purpose
+
 - **Transform Claude Code workflows** with parallel agent coordination and advanced automation
-- **Universal task processing** from Linear tickets, markdown tasks, or plain descriptions 
+- **Universal task processing** from Linear tickets, markdown tasks, or plain descriptions
 - **Zero-friction setup** with one-command installation for any project type
 - **Production-ready distribution** as a global NPM package (`@aojdevstudio/cdev`)
 
 ### Target Users
+
 Developers using Claude Code who want to:
+
 - Work on multiple parts of features simultaneously through parallel agents
 - Automate quality gates and validation with intelligent hooks
 - Process any task format (Linear, markdown, plain text) seamlessly
 - Enhance their development workflows with AI-powered orchestration
 
 ### Architecture
+
 - **CLI Tool** with modular command system and interactive installation
 - **Multi-language Hybrid** (JavaScript core + Python automation scripts)
 - **Git Worktree Management** for isolated parallel development environments
@@ -127,7 +131,7 @@ Developers using Claude Code who want to:
 }
 ```
 
-```yaml
+````yaml
 # A comprehensive cognitive operating system for parallel development workflows.
 development_operating_system:
   # Section 2: Core protocols for managing parallel development tasks.
@@ -637,7 +641,7 @@ CDEV integrates with Claude Code's specialized sub-agent system for enhanced fun
 
 ### Core Sub-Agents
 - **`git-flow-manager`**: Git operations, branch management, commit workflows
-- **`task-orchestrator`**: Complex task decomposition and workflow coordination  
+- **`task-orchestrator`**: Complex task decomposition and workflow coordination
 - **`pr-specialist`**: Pull request creation and review preparation
 - **`structure-enforcer`**: Code organization and architectural consistency
 - **`quality-guardian`**: Code validation, testing, and quality assurance
@@ -668,28 +672,30 @@ sub_agent_coordination:
     - 'Use the task-orchestrator sub-agent to decompose Linear issues'
     - 'Use the git-flow-manager sub-agent to manage agent worktrees'
     - 'Use the quality-guardian sub-agent to validate agent deliverables'
-  
+
   codebase_enhancement:
     - 'Use the structure-enforcer sub-agent to maintain code organization'
     - 'Use the deep-searcher sub-agent for comprehensive pattern analysis'
     - 'Use the project-organizer sub-agent to optimize file structure'
-  
+
   release_management:
     - 'Use the pr-specialist sub-agent to prepare comprehensive pull requests'
     - 'Use the doc-curator sub-agent to update documentation'
     - 'Use the roadmap-architect sub-agent for release planning'
-```
+````
 
 # CDEV Quick Start Guide
 
 ## Installation & Setup
 
 1. **Install CDEV globally:**
+
    ```bash
    npm install -g @aojdevstudio/cdev
    ```
 
 2. **Initialize in any project:**
+
    ```bash
    cdev init
    # Detects project type and installs appropriate Claude Code enhancements
@@ -704,6 +710,7 @@ sub_agent_coordination:
 ## Core Workflows
 
 ### Parallel Development
+
 ```bash
 # Process any task format (Linear, markdown, or plain description)
 cdev task "Implement user authentication with JWT and password reset"
@@ -723,6 +730,7 @@ cdev agent commit backend-auth
 ```
 
 ### Quality Automation
+
 ```bash
 # Pre-commit validation (automatic)
 git commit -m "feat: add authentication"
@@ -734,11 +742,12 @@ cdev validate
 ```
 
 ### Task Processing
+
 ```bash
 # From Linear ticket
 cdev task PROJ-123
 
-# From markdown file  
+# From markdown file
 cdev task @tasks.md
 
 # From plain description
@@ -748,17 +757,20 @@ cdev task "Build a REST API for user management"
 ## Development Commands Integration
 
 ### Mandatory Quality Checks
+
 - `npm run lint` - ESLint validation
-- `npm run typecheck` - TypeScript checking  
+- `npm run typecheck` - TypeScript checking
 - `npm run test` - Jest unit tests
 - `npm run test:e2e` - End-to-end tests
 - `npm run prettier:check` - Code formatting
 
 ### Security Validation
+
 - `npm run security:check` - Vulnerability scanning
 - `git secrets --scan` - Secret detection
 
 ### Database Operations
+
 - `npm run db:migrate` - Run migrations
 - `npm run db:seed` - Seed development data
 - `npm run db:reset` - Reset to clean state
@@ -777,4 +789,7 @@ cdev task "Build a REST API for user management"
 - **Hooks not firing**: Verify installation with `cdev status`
 - **Quality gates failing**: Run `cdev validate` for detailed feedback
 - **Worktree conflicts**: Use `cdev agent status` to identify blockers
+
+```
+
 ```

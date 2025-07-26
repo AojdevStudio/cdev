@@ -7,29 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [0.0.17] - 2025-07-26
 
-- **Comprehensive Claude Code sub-agent system** - Enhanced integration with specialized sub-agents including git-flow-manager, task-orchestrator, pr-specialist, structure-enforcer, quality-guardian, doc-curator, deep-searcher, project-organizer, and roadmap-architect
-- **PR creation command** - New `/create-pr` command for automated pull request creation with context gathering
-- **PR review and merge command** - New `/review-merge` command for comprehensive PR review and merge workflow
-- **Advanced documentation protocols** - Enhanced generate-readme, update-changelog, and build-roadmap command protocols with Feynman Technique integration
-- **Deep search capabilities** - New `/deep-search` command for comprehensive codebase analysis and pattern recognition
-- **Structure enforcement** - New `/enforce-structure` command for maintaining code organization and architectural consistency
-- **Agent start protocols** - Enhanced `/agent-start` command with systematic TDD workflow integration
+### Fixed
+
+- **Hook installation system** - Completely overhauled hook selection and installation logic
+  - Removed non-existent "Pre-bash validator" hook reference
+  - Fixed issue where all hooks were installing regardless of user selection
+  - Corrected hook name mapping for `command-template-guard` → `pre_tool_use_command_template_guard.py`
+  - Standard hooks now install automatically without user prompts
+  - Only user-selected optional hooks are installed
+- **Package distribution** - Enhanced `.claude/agents` folder inclusion in NPM package
+  - Added explicit inclusion patterns for all subdirectories
+  - Fixed missing agent files in distributed package installations
 
 ### Changed
 
-- **Documentation structure** - Reorganized project documentation with improved clarity and comprehensive protocol documentation
-- **Hook management** - Enhanced hook management in installers for better reliability
-- **CodeRabbit configuration** - Standardized quotes in .coderabbit.yaml to single quotes for consistency and improved readability
-- **Command protocol system** - Updated all custom commands to follow enhanced YAML protocol standards with sub-agent integration
-- **Project version management** - Updated version references throughout documentation to reflect current 0.0.15 release
+- **Hook installer UI** - Improved user experience with clear separation of standard vs optional hooks
+  - Added informational display showing 5 standard hooks that install automatically
+  - Simplified selection interface to only show optional hooks
+  - Enhanced installation feedback with detailed progress logging
+- **Hook categorization** - Restructured hook system into clear categories
+  - **Standard hooks (always installed)**: `pre_tool_use.py`, `post_tool_use.py`, `notification.py`, `stop.py`, `subagent_stop.py`
+  - **Optional hooks (user choice)**: TypeScript validator, import organizer, code quality reporter, task completion enforcer, commit message validator, command template guard, pnpm enforcer, API standards checker, universal linter
+
+### Added
+
+- **Comprehensive test suite** - Added automated testing for hook installation system
+  - Unit tests for selective hook installation
+  - Integration tests for hook name mapping validation
+  - End-to-end tests for complete installation workflow
+- **Installation validation** - Enhanced package.json files configuration
+  - Explicit patterns for `.claude/agents/**/*.md` inclusion
+  - Redundant inclusion patterns for maximum NPM compatibility
 
 ### Enhanced
 
-- **README.md** - Updated version references and improved documentation structure
-- **ROADMAP.md** - Enhanced with current progress tracking and updated completion status
-- **Command documentation** - Comprehensive updates to all Claude Code command protocols with sub-agent integration patterns
+- **Hook installation reliability** - Improved error handling and user feedback
+  - Clear success/failure indicators for each installed component
+  - Warning messages for missing hook files
+  - Detailed logging of installation progress
 
 ## [0.0.15] - 2025-07-26
 
