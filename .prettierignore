@@ -9,6 +9,7 @@ coverage/
 
 # Generated files
 dist-manifest.json
+dist-manifest.yaml
 *.min.js
 lcov.info
 
@@ -49,6 +50,9 @@ workspaces/
 .env.local
 .env.*.local
 
+# Claude Code configuration
+.claude/commands/
+
 # Package manager files
 package-lock.json
 yarn.lock
@@ -58,7 +62,7 @@ pnpm-lock.yaml
 test/fixtures/
 
 # Markdown files (optional - remove if you want to format markdown)
-# *.md
+**/ *.md
 
 # JSON files that shouldn't be formatted
 shared/deployment-plans/*.json
