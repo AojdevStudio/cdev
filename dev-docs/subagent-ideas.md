@@ -1,6 +1,6 @@
 # CDEV Sub-Agent Ideas
 
-*Generated from analyzing CDEV's comprehensive command structure and workflows*
+_Generated from analyzing CDEV's comprehensive command structure and workflows_
 
 ## Overview
 
@@ -11,6 +11,7 @@ CDEV is an AI-powered development orchestration system that enhances Claude Code
 ### **Development Workflow Specialists**
 
 **1. Agent Orchestrator (`orchestrator`)**
+
 ```markdown
 ---
 name: orchestrator
@@ -20,6 +21,7 @@ tools: Read, Write, Bash, Task
 ```
 
 **2. Agent Coordinator (`agent-coordinator`)**
+
 ```markdown
 ---
 name: agent-coordinator
@@ -29,6 +31,7 @@ tools: Bash, Read, Write, Glob
 ```
 
 **3. Quality Guardian (`quality-guardian`)**
+
 ```markdown
 ---
 name: quality-guardian
@@ -40,6 +43,7 @@ tools: Bash, Read, Grep, Glob
 ### **Project Management Specialists**
 
 **4. Project Initializer (`project-initializer`)**
+
 ```markdown
 ---
 name: project-initializer
@@ -49,6 +53,7 @@ tools: Read, Write, Bash, Glob, Grep
 ```
 
 **5. Roadmap Architect (`roadmap-architect`)**
+
 ```markdown
 ---
 name: roadmap-architect
@@ -60,6 +65,7 @@ tools: Read, Write, Task
 ### **Git & Integration Specialists**
 
 **6. Git Workflow Manager (`git-flow-manager`)**
+
 ```markdown
 ---
 name: git-flow-manager
@@ -69,6 +75,7 @@ tools: Bash, Read, Write
 ```
 
 **7. PR Specialist (`pr-specialist`)**
+
 ```markdown
 ---
 name: pr-specialist
@@ -80,6 +87,7 @@ tools: Bash, Read, Write, Grep
 ### **Documentation & Communication**
 
 **8. Documentation Curator (`doc-curator`)**
+
 ```markdown
 ---
 name: doc-curator
@@ -91,6 +99,7 @@ tools: Read, Write, Edit, MultiEdit
 ### **Search & Analysis Specialists**
 
 **9. Deep Search Agent (`deep-searcher`)**
+
 ```markdown
 ---
 name: deep-searcher
@@ -100,6 +109,7 @@ tools: Grep, Glob, Read, Task
 ```
 
 **10. Structure Enforcer (`structure-enforcer`)**
+
 ```markdown
 ---
 name: structure-enforcer
@@ -114,17 +124,17 @@ Based on CDEV's existing command structure, here's how custom commands could be 
 
 ### Current Commands → Potential Sub-Agents
 
-| Command | Sub-Agent | Specialization |
-|---------|-----------|----------------|
-| `/orchestrate` | `orchestrator` | Task decomposition and workflow management |
-| `/agent-start`, `/agent-status`, `/agent-commit` | `agent-coordinator` | Multi-agent workflow coordination |
-| `/init-protocol` | `project-initializer` | Intelligent project setup and analysis |
-| `/build-roadmap` | `roadmap-architect` | Strategic planning and roadmaps |
-| `/create-pr`, `/review-merge` | `pr-specialist` | Pull request lifecycle management |
-| `/commit`, `/git-status` | `git-flow-manager` | Advanced git operations |
-| `/generate-readme`, `/update-changelog` | `doc-curator` | Documentation maintenance |
-| `/deep-search`, `/quick-search` | `deep-searcher` | Advanced codebase search |
-| `/enforce-structure` | `structure-enforcer` | Project organization and standards |
+| Command                                          | Sub-Agent             | Specialization                             |
+| ------------------------------------------------ | --------------------- | ------------------------------------------ |
+| `/orchestrate`                                   | `orchestrator`        | Task decomposition and workflow management |
+| `/agent-start`, `/agent-status`, `/agent-commit` | `agent-coordinator`   | Multi-agent workflow coordination          |
+| `/init-protocol`                                 | `project-initializer` | Intelligent project setup and analysis     |
+| `/build-roadmap`                                 | `roadmap-architect`   | Strategic planning and roadmaps            |
+| `/create-pr`, `/review-merge`                    | `pr-specialist`       | Pull request lifecycle management          |
+| `/commit`, `/git-status`                         | `git-flow-manager`    | Advanced git operations                    |
+| `/generate-readme`, `/update-changelog`          | `doc-curator`         | Documentation maintenance                  |
+| `/deep-search`, `/quick-search`                  | `deep-searcher`       | Advanced codebase search                   |
+| `/enforce-structure`                             | `structure-enforcer`  | Project organization and standards         |
 
 ## Implementation Strategy
 
@@ -135,11 +145,12 @@ Based on CDEV's existing command structure, here's how custom commands could be 
 
 ## 🚀 Google Apps Script Specialist Suite
 
-*Additional sub-agent ideas from ChatGPT o3 collaboration*
+_Additional sub-agent ideas from ChatGPT o3 collaboration_
 
 ### **Apps Script Development Pipeline**
 
 **11. Apps Script Requirements Planner (`apps-script-requirements-planner`)**
+
 ```markdown
 ---
 name: apps-script-requirements-planner
@@ -153,6 +164,7 @@ Begin work immediately when invoked. Provide concise outputs. Ask clarifying que
 ```
 
 **12. Apps Script Developer (`apps-script-developer`)**
+
 ```markdown
 ---
 name: apps-script-developer
@@ -166,6 +178,7 @@ Use clear, action-oriented language. Begin work immediately when invoked. Provid
 ```
 
 **13. Apps Script API Integrator (`apps-script-integrator-api`)**
+
 ```markdown
 ---
 name: apps-script-integrator-api
@@ -179,6 +192,7 @@ Begin work immediately when invoked. Provide concise outputs. Ask clarifying que
 ```
 
 **14. Apps Script QA Tester (`apps-script-qa-tester`)**
+
 ```markdown
 ---
 name: apps-script-qa-tester
@@ -192,6 +206,7 @@ Use clear, action-oriented language. Begin work immediately when invoked. Provid
 ```
 
 **15. Apps Script Deploy Maintainer (`apps-script-deploy-maintainer`)**
+
 ```markdown
 ---
 name: apps-script-deploy-maintainer
@@ -206,23 +221,23 @@ Begin work immediately when invoked. Provide concise outputs. Ask clarifying que
 
 ## Complete Sub-Agent Summary
 
-| Agent | Purpose | Domain |
-|-------|---------|--------|
-| `orchestrator` | Task decomposition and workflow management | CDEV Core |
-| `agent-coordinator` | Multi-agent workflow coordination | CDEV Core |
-| `quality-guardian` | Code quality and standards enforcement | CDEV Core |
-| `project-initializer` | Intelligent project setup and analysis | CDEV Core |
-| `roadmap-architect` | Strategic planning and roadmaps | CDEV Core |
-| `git-flow-manager` | Advanced git operations | CDEV Core |
-| `pr-specialist` | Pull request lifecycle management | CDEV Core |
-| `doc-curator` | Documentation maintenance | CDEV Core |
-| `deep-searcher` | Advanced codebase search | CDEV Core |
-| `structure-enforcer` | Project organization and standards | CDEV Core |
-| `apps-script-requirements-planner` | Requirements elicitation for Apps Script | Google Workspace |
-| `apps-script-developer` | Apps Script implementation | Google Workspace |
-| `apps-script-integrator-api` | Apps Script API integrations | Google Workspace |
-| `apps-script-qa-tester` | Apps Script testing and QA | Google Workspace |
-| `apps-script-deploy-maintainer` | Apps Script deployment and maintenance | Google Workspace |
+| Agent                              | Purpose                                    | Domain           |
+| ---------------------------------- | ------------------------------------------ | ---------------- |
+| `orchestrator`                     | Task decomposition and workflow management | CDEV Core        |
+| `agent-coordinator`                | Multi-agent workflow coordination          | CDEV Core        |
+| `quality-guardian`                 | Code quality and standards enforcement     | CDEV Core        |
+| `project-initializer`              | Intelligent project setup and analysis     | CDEV Core        |
+| `roadmap-architect`                | Strategic planning and roadmaps            | CDEV Core        |
+| `git-flow-manager`                 | Advanced git operations                    | CDEV Core        |
+| `pr-specialist`                    | Pull request lifecycle management          | CDEV Core        |
+| `doc-curator`                      | Documentation maintenance                  | CDEV Core        |
+| `deep-searcher`                    | Advanced codebase search                   | CDEV Core        |
+| `structure-enforcer`               | Project organization and standards         | CDEV Core        |
+| `apps-script-requirements-planner` | Requirements elicitation for Apps Script   | Google Workspace |
+| `apps-script-developer`            | Apps Script implementation                 | Google Workspace |
+| `apps-script-integrator-api`       | Apps Script API integrations               | Google Workspace |
+| `apps-script-qa-tester`            | Apps Script testing and QA                 | Google Workspace |
+| `apps-script-deploy-maintainer`    | Apps Script deployment and maintenance     | Google Workspace |
 
 ## Next Steps
 

@@ -49,7 +49,7 @@ command_configuration:
     - step: 1
       action: "Use the [sub-agent-name] sub-agent to handle [specific functionality]"
       details: "The sub-agent will manage [domain-specific tasks]"
-    
+
     # For Regular Commands: Standard action flow
     - step: 1
       action: "What to do first"
