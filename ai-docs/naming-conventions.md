@@ -9,6 +9,7 @@ This document establishes official naming conventions for consistent code, file,
 ### Markdown Files
 
 **Use kebab-case for all regular documentation:**
+
 - ✅ `api-reference.md`
 - ✅ `installation-guide.md`
 - ✅ `troubleshooting-tips.md`
@@ -18,6 +19,7 @@ This document establishes official naming conventions for consistent code, file,
 - ❌ `UserAuthentication.md`
 
 **Exception - Special Files (ALL_CAPS):**
+
 - ✅ `README.md`
 - ✅ `CHANGELOG.md`
 - ✅ `ROADMAP.md`
@@ -29,6 +31,7 @@ This document establishes official naming conventions for consistent code, file,
 ### Source Code Files
 
 **JavaScript/TypeScript:**
+
 - ✅ `user-service.js`
 - ✅ `data-processor.ts`
 - ✅ `auth-middleware.js`
@@ -37,6 +40,7 @@ This document establishes official naming conventions for consistent code, file,
 - ❌ `auth_middleware.js`
 
 **Configuration Files:**
+
 - ✅ `eslint.config.js`
 - ✅ `typescript.config.json`
 - ✅ `docker-compose.yml`
@@ -46,6 +50,7 @@ This document establishes official naming conventions for consistent code, file,
 ### Directory Structure
 
 **Use kebab-case for directories:**
+
 - ✅ `src/user-management/`
 - ✅ `docs/api-reference/`
 - ✅ `tests/integration-tests/`
@@ -54,6 +59,7 @@ This document establishes official naming conventions for consistent code, file,
 - ❌ `tests/integration_tests/`
 
 **Exception - Node.js conventions:**
+
 - ✅ `node_modules/` (follow ecosystem standard)
 - ✅ `.github/` (follow platform standard)
 
@@ -62,6 +68,7 @@ This document establishes official naming conventions for consistent code, file,
 ### Variables and Functions
 
 **Use camelCase:**
+
 ```javascript
 // ✅ Good
 const userName = 'john_doe';
@@ -89,6 +96,7 @@ function get_user_profile(user_id) {
 ### Constants
 
 **Use SCREAMING_SNAKE_CASE:**
+
 ```javascript
 // ✅ Good
 const MAX_RETRY_ATTEMPTS = 3;
@@ -104,6 +112,7 @@ const defaultTimeout = 5000;
 ### Classes and Constructors
 
 **Use PascalCase:**
+
 ```javascript
 // ✅ Good
 class UserManager {
@@ -135,14 +144,15 @@ class api_client {
 ### Object Properties
 
 **Use camelCase for object properties:**
+
 ```javascript
 // ✅ Good
 const userConfig = {
   firstName: 'John',
-  lastName: 'Doe', 
+  lastName: 'Doe',
   emailAddress: 'john@example.com',
   isActive: true,
-  lastLoginDate: new Date()
+  lastLoginDate: new Date(),
 };
 
 // ❌ Bad
@@ -151,7 +161,7 @@ const userConfig = {
   last_name: 'Doe',
   'email-address': 'john@example.com',
   IsActive: true,
-  'last-login-date': new Date()
+  'last-login-date': new Date(),
 };
 ```
 
@@ -160,23 +170,25 @@ const userConfig = {
 ### REST API Endpoints
 
 **Use kebab-case for URL paths:**
+
 ```javascript
 // ✅ Good
-GET /api/user-profiles
-POST /api/authentication-tokens
-PUT /api/user-settings/{id}
-DELETE /api/session-data/{sessionId}
+GET / api / user - profiles;
+POST / api / authentication - tokens;
+PUT / api / user - settings / { id };
+DELETE / api / session - data / { sessionId };
 
-// ❌ Bad  
-GET /api/userProfiles
-POST /api/authentication_tokens
-PUT /api/UserSettings/{id}
-DELETE /api/session_Data/{sessionId}
+// ❌ Bad
+GET / api / userProfiles;
+POST / api / authentication_tokens;
+PUT / api / UserSettings / { id };
+DELETE / api / session_Data / { sessionId };
 ```
 
 ### Query Parameters
 
 **Use camelCase for query parameters:**
+
 ```javascript
 // ✅ Good
 GET /api/users?firstName=John&isActive=true&pageSize=20
@@ -191,6 +203,7 @@ GET /api/users?first-name=John&is-active=true&page-size=20
 ### NPM Package Names
 
 **Use kebab-case with scope:**
+
 ```json
 {
   "name": "@simple-memory/mcp-server",
@@ -200,6 +213,7 @@ GET /api/users?first-name=John&is-active=true&page-size=20
 ```
 
 **Avoid:**
+
 ```json
 {
   "name": "@simple_memory/mcp_server",
@@ -211,8 +225,9 @@ GET /api/users?first-name=John&is-active=true&page-size=20
 ### Git Repository Names
 
 **Use kebab-case:**
+
 - ✅ `simple-memory-mcp`
-- ✅ `user-authentication-service`  
+- ✅ `user-authentication-service`
 - ✅ `data-processing-pipeline`
 - ❌ `simple_memory_mcp`
 - ❌ `UserAuthenticationService`
@@ -223,6 +238,7 @@ GET /api/users?first-name=John&is-active=true&page-size=20
 ### Table Names
 
 **Use snake_case (following SQL conventions):**
+
 ```sql
 -- ✅ Good
 CREATE TABLE user_profiles (
@@ -246,11 +262,12 @@ CREATE TABLE userProfiles (
 ### Column Names
 
 **Use snake_case:**
+
 ```sql
 -- ✅ Good
 user_id, first_name, email_address, created_at, is_active
 
--- ❌ Bad  
+-- ❌ Bad
 userId, firstName, emailAddress, createdAt, isActive
 ```
 
@@ -259,6 +276,7 @@ userId, firstName, emailAddress, createdAt, isActive
 ### Environment Variables
 
 **Use SCREAMING_SNAKE_CASE:**
+
 ```bash
 # ✅ Good
 DATABASE_URL=postgresql://localhost:5432/mydb
@@ -276,6 +294,7 @@ obsidian-vault-path=/path/to/vault
 ### Configuration Files
 
 **Use kebab-case for filenames, appropriate casing for content:**
+
 ```javascript
 // eslint.config.js
 export default {
@@ -299,6 +318,7 @@ export default {
 ### JSON Keys
 
 **Use camelCase for API responses and configuration:**
+
 ```json
 {
   "userId": 123,
@@ -316,11 +336,12 @@ export default {
 ### Exception - External APIs
 
 **Match the external API's conventions:**
+
 ```json
 // If external API uses snake_case, match it
 {
   "user_id": 123,
-  "first_name": "John", 
+  "first_name": "John",
   "created_at": "2023-01-15T10:30:00Z"
 }
 ```
@@ -330,6 +351,7 @@ export default {
 ### CSS Classes
 
 **Use kebab-case:**
+
 ```css
 /* ✅ Good */
 .user-profile-card {
@@ -361,6 +383,7 @@ export default {
 ### CSS Custom Properties
 
 **Use kebab-case:**
+
 ```css
 :root {
   --primary-color: #007bff;
@@ -375,6 +398,7 @@ export default {
 ### Test Files
 
 **Use kebab-case with descriptive suffixes:**
+
 - ✅ `user-service.test.js`
 - ✅ `auth-middleware.spec.js`
 - ✅ `integration-api.test.js`
@@ -384,13 +408,14 @@ export default {
 ### Test Descriptions
 
 **Use descriptive sentences:**
+
 ```javascript
 // ✅ Good
 describe('UserService', () => {
   it('should return user profile when valid ID provided', () => {
     // test implementation
   });
-  
+
   it('should throw error when user ID does not exist', () => {
     // test implementation
   });
@@ -401,7 +426,7 @@ describe('UserService', () => {
   it('returns user', () => {
     // test implementation
   });
-  
+
   it('throws error', () => {
     // test implementation
   });
@@ -413,12 +438,13 @@ describe('UserService', () => {
 ### Docker Images
 
 **Use kebab-case:**
+
 ```dockerfile
 # ✅ Good
 FROM node:18-alpine AS simple-memory-mcp
 FROM nginx:alpine AS api-gateway
 
-# ❌ Bad  
+# ❌ Bad
 FROM node:18-alpine AS SimpleMemoryMCP
 FROM nginx:alpine AS api_gateway
 ```
@@ -426,6 +452,7 @@ FROM nginx:alpine AS api_gateway
 ### Docker Compose Services
 
 **Use kebab-case:**
+
 ```yaml
 # docker-compose.yml
 version: '3.8'
@@ -433,8 +460,8 @@ services:
   api-server:
     build: .
     ports:
-      - "3000:3000"
-  
+      - '3000:3000'
+
   postgres-db:
     image: postgres:14
     environment:
@@ -443,23 +470,23 @@ services:
 
 ## 📋 Quick Reference
 
-| Context | Convention | Example |
-|---------|------------|---------|
-| **Files** | kebab-case | `user-service.js` |
-| **Special Files** | ALL_CAPS | `README.md` |
-| **Directories** | kebab-case | `src/user-management/` |
-| **Variables** | camelCase | `userName` |
-| **Constants** | SCREAMING_SNAKE_CASE | `MAX_RETRY_ATTEMPTS` |
-| **Classes** | PascalCase | `UserManager` |
-| **Functions** | camelCase | `getUserProfile()` |
-| **API Endpoints** | kebab-case | `/api/user-profiles` |
-| **Query Params** | camelCase | `?firstName=John` |
-| **Database Tables** | snake_case | `user_profiles` |
-| **Database Columns** | snake_case | `first_name` |
-| **Environment Vars** | SCREAMING_SNAKE_CASE | `DATABASE_URL` |
-| **CSS Classes** | kebab-case | `.user-profile-card` |
-| **NPM Packages** | kebab-case | `@scope/package-name` |
-| **Git Repos** | kebab-case | `simple-memory-mcp` |
+| Context              | Convention           | Example                |
+| -------------------- | -------------------- | ---------------------- |
+| **Files**            | kebab-case           | `user-service.js`      |
+| **Special Files**    | ALL_CAPS             | `README.md`            |
+| **Directories**      | kebab-case           | `src/user-management/` |
+| **Variables**        | camelCase            | `userName`             |
+| **Constants**        | SCREAMING_SNAKE_CASE | `MAX_RETRY_ATTEMPTS`   |
+| **Classes**          | PascalCase           | `UserManager`          |
+| **Functions**        | camelCase            | `getUserProfile()`     |
+| **API Endpoints**    | kebab-case           | `/api/user-profiles`   |
+| **Query Params**     | camelCase            | `?firstName=John`      |
+| **Database Tables**  | snake_case           | `user_profiles`        |
+| **Database Columns** | snake_case           | `first_name`           |
+| **Environment Vars** | SCREAMING_SNAKE_CASE | `DATABASE_URL`         |
+| **CSS Classes**      | kebab-case           | `.user-profile-card`   |
+| **NPM Packages**     | kebab-case           | `@scope/package-name`  |
+| **Git Repos**        | kebab-case           | `simple-memory-mcp`    |
 
 ## ✅ Validation Checklist
 
@@ -499,4 +526,4 @@ Following these conventions provides:
 
 ---
 
-*This document should be included in all repositories and referenced in project README files for consistency across all development work.*
+_This document should be included in all repositories and referenced in project README files for consistency across all development work._
