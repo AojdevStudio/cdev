@@ -1,6 +1,6 @@
 {
   "name": "@aojdevstudio/cdev",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Claude Development - Parallel workflow system with intelligent hooks, Linear integration, and automated agent management",
   "main": "src/installer.js",
   "bin": {
