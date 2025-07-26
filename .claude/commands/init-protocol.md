@@ -39,6 +39,7 @@ init_protocol_command:
       - "Start CLAUDE.md with a clear 'Project Context' section explaining what this project is actually about."
       - "Create a comprehensive CLAUDE.md file with all selected frameworks adapted to the project's true purpose and place it in the root of the project."
       - 'Include a project-specific quick start guide based on the actual project goals.'
+      - "Reference the naming conventions guide (@ai-docs/naming-conventions.md) for consistent, professional naming across files, functions, and project organization."
       - "Save the final CLAUDE.md and provide a summary focused on how it will help achieve the project's objectives."
 
     # Defines the information to be gathered from the project environment.
@@ -46,6 +47,9 @@ init_protocol_command:
       - name: 'Protocol Template Source'
         command: '@ai-docs/CLAUDE-protocol-template.yaml'
         description: 'The base template for generating protocols.'
+      - name: 'Naming Conventions Guide'
+        command: '@ai-docs/naming-conventions.md'
+        description: 'Official naming conventions for files, functions, and project organization to ensure professional, consistent naming.'
       - name: 'Current Directory'
         command: '!`pwd`'
         description: 'The working directory where the script is run.'
