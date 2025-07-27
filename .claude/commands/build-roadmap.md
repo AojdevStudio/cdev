@@ -1,229 +1,161 @@
 ---
-allowed-tools: Read, Write, Bash, TodoWrite, WebSearch
-description: Build comprehensive project roadmaps with strategic planning and timeline visualization
+allowed-tools: Read, Write, Bash, TodoWrite
+description: Build concrete project roadmaps with clear decisions, dates, and accountability
 ---
 
 # Build Roadmap
 
-This command creates comprehensive project roadmaps by analyzing current state, defining objectives, and organizing deliverables into strategic phases with timelines and dependencies.
-
-**🤖 Sub-Agent Integration:** This command leverages the specialized `roadmap-architect` sub-agent for expert strategic planning and roadmap development. The sub-agent will be automatically invoked to handle feature prioritization, timeline estimation, strategic planning, and comprehensive roadmap creation with deep understanding of project management and strategic thinking principles.
+Creates actionable project roadmaps focused on decisions, deadlines, and deliverables rather than analysis.
 
 **variables:**
 RoadmapScope: $ARGUMENTS
 
-**Primary Action:** Use the roadmap-architect sub-agent to handle strategic planning and roadmap development including feature prioritization, timeline estimation, and comprehensive roadmap creation.
+**Core Principle:** A roadmap is a **commitment document** - it shows what will be built, by when, by whom, and how success is measured.
 
 **Usage Examples:**
-
-- `/build-roadmap` - Interactive roadmap creation for current project
-- `/build-roadmap "OAuth implementation Q1-Q2"` - Specific feature roadmap
-- `/build-roadmap "product launch" --strategic` - High-level strategic roadmap
-- `/build-roadmap "technical debt" --quarterly` - Technical improvement roadmap
+- `/build-roadmap "OAuth implementation Q1"` - Feature delivery roadmap
+- `/build-roadmap "technical debt sprint"` - Infrastructure improvement roadmap
+- `/build-roadmap "product launch"` - Go-to-market roadmap
 
 ```yaml
-# A comprehensive protocol for building project roadmaps with strategic planning and execution details.
-roadmap_building_protocol:
-  description: 'Create structured project roadmaps with phases, timelines, dependencies, and success metrics.'
+# Focused protocol for building decision-oriented roadmaps
+roadmap_protocol:
+  description: 'Create actionable roadmaps with clear commitments, not analysis documents'
 
-  # The sequence of operations for roadmap creation.
-  execution_flow:
-    - phase: 'Discovery & Analysis'
-      steps:
-        - 'Parse $ARGUMENTS to extract scope, timeline, and focus areas.'
-        - 'Analyze current project state from git history, documentation, and codebase.'
-        - 'Identify stakeholders, constraints, and success criteria.'
-        - 'Gather requirements from existing documentation and user feedback.'
+  # Core roadmap components (mandatory)
+  essential_elements:
+    - 'WHAT: Specific deliverables with acceptance criteria'
+    - 'WHEN: Concrete dates and milestones'
+    - 'WHO: Clear ownership and accountability'
+    - 'WHY: Business justification and success metrics'
+    - 'DEPENDENCIES: What must happen first'
+    - 'DECISIONS: Key choices made and alternatives rejected'
 
-    - phase: 'Strategic Planning'
-      steps:
-        - 'Define vision, objectives, and key results (OKRs).'
-        - 'Identify major themes and strategic initiatives.'
-        - 'Assess technical feasibility and resource requirements.'
-        - 'Create high-level timeline with major milestones.'
+  # Simple execution flow
+  execution_steps:
+    1. 'Extract scope and constraints from $ARGUMENTS'
+    2. 'Identify current state and target outcome'
+    3. 'Define 3-5 concrete deliverables'
+    4. 'Set realistic dates based on capacity'
+    5. 'Map dependencies and critical path'
+    6. 'Assign ownership for each deliverable'
+    7. 'Define success criteria and review checkpoints'
 
-    - phase: 'Roadmap Structure'
-      steps:
-        - 'Break down objectives into executable phases.'
-        - 'Define deliverables, acceptance criteria, and success metrics.'
-        - 'Map dependencies between features and initiatives.'
-        - 'Assign effort estimates and resource requirements.'
-
-    - phase: 'Documentation & Visualization'
-      steps:
-        - 'Create structured roadmap document with timelines.'
-        - 'Generate visual timeline with Mermaid diagrams.'
-        - 'Document assumptions, risks, and mitigation strategies.'
-        - 'Create tracking mechanisms and review processes.'
-
-  # Contextual data and reference materials for roadmap creation.
-  context_and_standards:
-    data_sources:
-      - name: 'Project Structure'
-        command: 'find . -name "*.md" -o -name "package.json" -o -name "README*" | head -20'
-      - name: 'Git History Analysis'
-        command: 'git log --oneline --since="3 months ago" | head -10'
-      - name: 'Current Issues'
-        command: 'grep -r "TODO\\|FIXME\\|BUG" --include="*.md" --include="*.ts" --include="*.js" . | head -5 || echo "No issues found"'
-      - name: 'Documentation Files'
-        command: 'find . -name "docs" -type d -exec find {} -name "*.md" \\; | head -10'
-      - name: 'Recent Changes'
-        command: 'git status --porcelain | head -10'
-      - name: 'Branch Analysis'
-        command: 'git branch -r | head -5'
-
+  # Context gathering (minimal, focused)
+  context_sources:
+    project_state:
+      - command: 'git log --oneline --since="1 month ago" | head -5'
+        purpose: 'Recent development velocity'
+      - command: 'find . -name "*.md" | grep -E "(README|TODO|ROADMAP)" | head -3'
+        purpose: 'Existing plans and documentation'
+    
     input_files:
       - '@README.md'
-      - '@CHANGELOG.md'
       - '@package.json'
-      - '@docs/'
       - '@CLAUDE.md'
 
-    reference_docs:
-      - '@ai-docs/readme-template.yaml'
-      - '@docs/implementation-plan.md'
-      - '@docs/oauth-token-refresh-research.md'
+  # Roadmap structure (simplified)
+  output_structure:
+    sections:
+      executive_summary:
+        - 'One sentence: What we\'re building and why'
+        - 'Target completion date'
+        - 'Success definition (1-2 metrics)'
+      
+      deliverables:
+        format: |
+          ## [Deliverable Name]
+          **Owner:** [Person/Team]
+          **Due Date:** [Specific date]
+          **Definition of Done:** [Acceptance criteria]
+          **Dependencies:** [What must be completed first]
+          **Risk Level:** [High/Medium/Low with mitigation]
+      
+      timeline:
+        - 'Mermaid gantt chart with critical path'
+        - 'Key milestone dates'
+        - 'Review/checkpoint schedule'
+      
+      decisions_made:
+        - 'Architecture choices and alternatives rejected'
+        - 'Scope boundaries (what\'s NOT included)'
+        - 'Resource allocation decisions'
 
-    roadmap_frameworks:
-      - name: 'NOW-NEXT-LATER'
-        description: 'Simple three-phase prioritization framework'
-        phases: ['NOW (0-3 months)', 'NEXT (3-6 months)', 'LATER (6+ months)']
-      - name: 'OKR-BASED'
-        description: 'Objectives and Key Results driven roadmap'
-        structure: ['Objectives', 'Key Results', 'Initiatives', 'Metrics']
-      - name: 'FEATURE-DRIVEN'
-        description: 'Feature-centric development roadmap'
-        phases: ['Discovery', 'Design', 'Development', 'Launch', 'Iterate']
-      - name: 'QUARTERLY'
-        description: 'Quarter-based strategic planning'
-        phases: ['Q1', 'Q2', 'Q3', 'Q4']
+  # Quality gates (prevent AI slop)
+  validation_rules:
+    mandatory_checks:
+      - 'Every deliverable has specific due date'
+      - 'Every deliverable has named owner'
+      - 'Success criteria are measurable'
+      - 'Dependencies are explicitly mapped'
+      - 'No "TBD" or "To be determined" items'
+    
+    slop_detection:
+      reject_if_contains:
+        - 'Strategic thinking'
+        - 'Comprehensive analysis'
+        - 'Multiple options without decisions'
+        - 'Vague timelines like "Q1-Q2"'
+        - 'Bullet points without owners'
 
-    roadmap_components:
-      strategic_elements:
-        - 'Vision statement'
-        - 'Strategic objectives'
-        - 'Success metrics'
-        - 'Key assumptions'
-        - 'Risk assessment'
-      tactical_elements:
-        - 'Feature specifications'
-        - 'Technical requirements'
-        - 'Resource allocation'
-        - 'Timeline estimates'
-        - 'Dependency mapping'
-      operational_elements:
-        - 'Sprint planning'
-        - 'Milestone tracking'
-        - 'Progress reporting'
-        - 'Stakeholder communication'
-        - 'Review processes'
-
-    timeline_patterns:
-      - pattern: 'AGILE_SPRINTS'
-        duration: '2-4 weeks per sprint'
-        focus: 'Incremental delivery'
-      - pattern: 'MONTHLY_MILESTONES'
-        duration: '4 weeks per milestone'
-        focus: 'Feature completion'
-      - pattern: 'QUARTERLY_GOALS'
-        duration: '12 weeks per quarter'
-        focus: 'Strategic objectives'
-      - pattern: 'ANNUAL_PLANNING'
-        duration: '52 weeks per year'
-        focus: 'Long-term vision'
-
-    success_metrics:
-      delivery_metrics:
-        - 'Features delivered on time'
-        - 'Quality metrics (bugs, performance)'
-        - 'User adoption and satisfaction'
-        - 'Technical debt reduction'
-      process_metrics:
-        - 'Planning accuracy'
-        - 'Velocity consistency'
-        - 'Stakeholder engagement'
-        - 'Risk mitigation effectiveness'
-
-    risk_categories:
-      - category: 'TECHNICAL'
-        examples: ['Scalability limits', 'Technology constraints', 'Integration complexity']
-      - category: 'RESOURCE'
-        examples: ['Team capacity', 'Budget constraints', 'Skill gaps']
-      - category: 'MARKET'
-        examples: ['Competitive pressure', 'User needs evolution', 'Regulatory changes']
-      - category: 'EXECUTION'
-        examples: ['Scope creep', 'Communication gaps', 'Process inefficiencies']
-
-  # Validation rules and quality checks for roadmaps.
-  validation_framework:
-    completeness_checks:
-      - 'Vision and objectives clearly defined'
-      - 'Success metrics are measurable'
-      - 'Timeline is realistic and achievable'
-      - 'Dependencies are identified and managed'
-      - 'Risks are assessed with mitigation plans'
-
-    feasibility_assessment:
-      - 'Resource requirements vs availability'
-      - 'Technical complexity vs team capability'
-      - 'Timeline vs historical velocity'
-      - 'Scope vs strategic priorities'
-
-    stakeholder_alignment:
-      - 'Business objectives alignment'
-      - 'User value proposition'
-      - 'Technical architecture consistency'
-      - 'Resource allocation approval'
-
-  # Templates for different roadmap types and formats.
-  roadmap_templates:
-    strategic_roadmap:
-      sections:
-        - 'Executive Summary'
-        - 'Vision & Objectives'
-        - 'Strategic Initiatives'
-        - 'Timeline & Milestones'
-        - 'Resource Requirements'
-        - 'Success Metrics'
-        - 'Risk Management'
-
+  # Simple templates by type
+  templates:
     feature_roadmap:
-      sections:
-        - 'Feature Overview'
-        - 'User Value Proposition'
-        - 'Technical Requirements'
-        - 'Development Phases'
-        - 'Testing Strategy'
-        - 'Launch Plan'
-        - 'Success Criteria'
-
+      focus: 'Single feature from idea to production'
+      timeline: '4-12 weeks'
+      deliverables: ['Requirements', 'Design', 'Implementation', 'Testing', 'Launch']
+    
     technical_roadmap:
-      sections:
-        - 'Current Architecture'
-        - 'Technical Objectives'
-        - 'Improvement Initiatives'
-        - 'Migration Plans'
-        - 'Quality Metrics'
-        - 'Performance Targets'
-        - 'Security Considerations'
+      focus: 'Infrastructure or technical improvement'
+      timeline: '2-8 weeks'
+      deliverables: ['Assessment', 'Plan', 'Implementation', 'Validation', 'Documentation']
+    
+    sprint_roadmap:
+      focus: 'Short-term execution plan'
+      timeline: '1-4 weeks'
+      deliverables: ['Tasks defined', 'Daily progress', 'Sprint review', 'Retrospective']
 
-  # Output formats and delivery mechanisms.
-  deliverable_formats:
-    documentation:
-      - 'Comprehensive roadmap document (Markdown)'
-      - 'Executive summary presentation'
-      - 'Technical implementation guide'
-      - 'Timeline visualization (Mermaid)'
+  # Output format (concrete, not fluffy)
+  deliverable_format: |
+    # [Project Name] Roadmap
+    
+    **Target:** [One clear sentence]
+    **Completion:** [Specific date]
+    **Success Metric:** [How we measure success]
+    
+    ## Deliverables
+    
+    [For each deliverable: Name, Owner, Date, Done criteria, Dependencies]
+    
+    ## Timeline
+    
+    ```mermaid
+    gantt
+        title Project Timeline
+        [Actual gantt chart with dependencies]
+    ```
+    
+    ## Key Decisions
+    
+    - **Architecture:** [What we chose and why]
+    - **Scope:** [What's included/excluded]
+    - **Resources:** [Team allocation]
+    
+    ## Review Schedule
+    
+    - [Date]: Milestone 1 review
+    - [Date]: Milestone 2 review
+    - [Date]: Final delivery review
+    
+    ## Risks & Mitigation
+    
+    [Only real risks with specific mitigation plans]
 
-    tracking_tools:
-      - 'TodoWrite integration for task management'
-      - 'Milestone tracking spreadsheet'
-      - 'Progress dashboard'
-      - 'Stakeholder communication templates'
-
-    review_processes:
-      - 'Weekly progress reviews'
-      - 'Monthly stakeholder updates'
-      - 'Quarterly strategic assessments'
-      - 'Annual roadmap planning'
+# Sub-agent instructions
+sub_agent_focus:
+  - 'Force concrete decisions over analysis'
+  - 'Require specific dates and owners'
+  - 'Reject vague or aspirational language'
+  - 'Focus on execution over strategy'
+  - 'Create commitment documents, not wish lists'
 ```
