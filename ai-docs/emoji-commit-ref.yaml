@@ -190,3 +190,85 @@ commit_message_conventions:
   - emoji: '✈️'
     type: 'feat'
     description: 'Improve offline support'
+
+# Issue linking and auto-close magic words for GitHub and Linear integration
+issue_linking_conventions:
+  closing_keywords:
+    description: 'Keywords that automatically close issues when PR is merged'
+    keywords:
+      - 'close'
+      - 'closes'
+      - 'closed'
+      - 'fix'
+      - 'fixes'
+      - 'fixed'
+      - 'resolve'
+      - 'resolves'
+      - 'resolved'
+      - 'complete'
+      - 'completes'
+      - 'completed'
+      - 'closing'
+      - 'fixing'
+      - 'resolving'
+      - 'completing'
+  
+  referencing_keywords:
+    description: 'Keywords that link to issues without closing them'
+    keywords:
+      - 'ref'
+      - 'references'
+      - 'part of'
+      - 'related to'
+      - 'contributes to'
+      - 'towards'
+  
+  format_examples:
+    github_issues:
+      - pattern: '#<issue-number>'
+        example: 'Closes #42'
+        description: 'References issue in the current repository'
+      
+      - pattern: '<org>/<repo>#<issue-number>'
+        example: 'Fixes user-org/repo#456'
+        description: 'References issue in another repository'
+    
+    linear_issues:
+      - pattern: '<team-key>-<issue-number>'
+        example: 'Fixes ENG-123'
+        description: 'References Linear issue using team key format'
+      
+      - pattern: 'Multiple issues'
+        example: 'Fixes ENG-123, ENG-124'
+        description: 'Can reference multiple issues with comma separation'
+  
+  commit_message_examples:
+    - |
+      ✨ feat: add user authentication
+      
+      Implements JWT-based authentication with refresh tokens.
+      
+      Closes #42
+      Fixes ENG-123, ENG-124
+    
+    - |
+      🐛 fix: resolve login validation error
+      
+      Properly validates email format before submission.
+      
+      Resolves user-org/api#789
+    
+    - |
+      ♻️ refactor: improve database query performance
+      
+      Optimizes user lookup queries with proper indexing.
+      
+      Part of #100
+      Related to ENG-456
+  
+  best_practices:
+    - 'Place issue references at the end of the commit body, not in the subject line'
+    - 'Use closing keywords when the commit fully addresses the issue'
+    - 'Use referencing keywords when the commit partially addresses the issue'
+    - 'For Linear issues, ensure your team key is correct (e.g., ENG, CDE, etc.)'
+    - 'Always verify issue numbers before committing to avoid linking to wrong issues'
