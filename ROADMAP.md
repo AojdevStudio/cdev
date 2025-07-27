@@ -1,282 +1,151 @@
 # CDEV Roadmap
 
-## Vision
+**Target:** Launch CDEV v1.0.0 as the premier Claude Code workflow automation tool
+**Completion:** March 31, 2025
+**Success Metric:** 10,000 monthly active developers with 80%+ retention
 
-Transform CDEV into the premier development workflow automation tool for teams using Claude and modern AI-assisted development practices. Follow the principle: **"Works in 30 seconds, powerful in 30 minutes, customizable over 30 days."**
+## Deliverables
 
-## Current Version: 0.0.15
+### v0.0.17 - Hook System Stabilization
+**Owner:** Core Team
+**Due Date:** August 15, 2025
+**Definition of Done:** 
+- All hooks execute reliably across npm/yarn/pnpm/bun
+- Error messages are clear and actionable
+- Installation success rate > 95%
+**Dependencies:** None
+**Risk Level:** Low - Already in progress
 
-### Recently Completed ✅
+### v0.1.0 - Terminal Integration & Documentation
+**Owner:** Core Team
+**Due Date:** August 31, 2025
+**Definition of Done:**
+- Users can choose terminal or Cursor for worktree opening
+- Choice is persisted in user preferences
+- All mermaid diagrams render correctly
+- Zero duplicate content in documentation
+**Dependencies:** v0.0.17 completion
+**Risk Level:** Low - Clear requirements
 
-- **Comprehensive Claude Code Sub-Agent System** - Complete integration with 9 specialized sub-agents
-- **Enhanced Documentation Protocols** - Advanced README generation, changelog automation, and roadmap building
-- **Advanced Command System** - New `/deep-search`, `/enforce-structure`, `/agent-start`, `/create-pr`, `/review-merge` commands
-- **Documentation Structure Reorganization** - Improved clarity and comprehensive protocol documentation
-- **Version Management Updates** - Consistent version references across all documentation
-- Package name migration to `@aojdevstudio/cdev` ✅
-- Enhanced README with Feynman Technique ✅
-- Dynamic npm badges (downloads, CI status) ✅
-- Credits section acknowledging open-source inspirations ✅
-- Production-grade `/init-protocol` emphasis ✅
-- Complete workflow documentation ✅
-- Quick Start Guide with visual journey ✅
-- Python to JavaScript/CJS script migration ✅
-- Comprehensive linting (ESLint + Prettier) ✅
-- UV package manager integration for Python scripts ✅
-- `/orchestrate` command with universal task support ✅
-- Smart sub-agent decomposition ✅
-- Improved hook system with validation ✅
+### v0.2.0 - Zero-Friction Onboarding
+**Owner:** Product Team
+**Due Date:** September 30, 2025
+**Definition of Done:**
+- `npx @aojdevstudio/cdev demo` runs in < 30 seconds without setup
+- Interactive setup wizard detects project type and configures automatically
+- MCP agents report completion status to main worktree
+- 80% of new users complete setup successfully
+**Dependencies:** v0.1.0 completion
+**Risk Level:** Medium - Requires significant UX work
 
-## Release Timeline
+### v0.3.0 - Subscription System
+**Owner:** Business Team
+**Due Date:** October 31, 2025
+**Definition of Done:**
+- Stripe integration complete with Free/Pro/Enterprise tiers
+- Usage tracking for agent runs
+- Self-service upgrade/downgrade flow
+- Revenue dashboard operational
+**Dependencies:** v0.2.0 user base established
+**Risk Level:** High - Payment systems are complex
 
-### v0.1.0 (Next Release) - Stabilization & Polish
+### v1.0.0 - Production Ready
+**Owner:** Core Team
+**Due Date:** December 31, 2025
+**Definition of Done:**
+- 90%+ test coverage
+- < 100ms hook execution time
+- Self-healing agents recover from 80% of errors
+- Comprehensive error catalog with solutions
+- 1,000+ paying customers
+**Dependencies:** v0.3.0 subscription system
+**Risk Level:** Medium - Requires extensive testing and optimization
 
-🚀 **Status**: Next Release
+### v2.0.0 - Web Platform
+**Owner:** Platform Team
+**Due Date:** March 31, 2026
+**Definition of Done:**
+- Web dashboard displays real-time agent status
+- REST API handles 100+ requests/second
+- Visual workflow designer creates valid agent configurations
+- 50+ enterprise customers using platform features
+**Dependencies:** v1.0.0 stability
+**Risk Level:** High - Major architectural expansion
 
-- **Documentation Cleanup**
-  - Fix remaining mermaid diagram issues
-  - Remove duplicate content across docs
-  - Add video tutorials and GIFs
-- **Installation Improvements**
-  - Support for bun, pnpm, yarn package managers
-  - Auto-detect package manager in use
-  - Dynamic spawn script behavior based on setup choices
-- **Terminal Options**
-  - Add option to open worktrees in terminal instead of Cursor
-  - Remember user preference for future spawns
+## Timeline
 
-### v0.2.0 (Q3 2024) - Zero-Friction Onboarding
-
-🎯 **Status**: High Priority
-
-- **Interactive Setup System**
-  - `npx @aojdevstudio/cdev demo` - 30-second value demonstration
-  - `npx @aojdevstudio/cdev init` - Smart project detection & setup
-  - `npx @aojdevstudio/cdev doctor` - Prerequisite checking & auto-fixing
-  - Progressive setup levels (Basic → Project → Team)
-- **Template Library**
-  - Pre-configured templates: nextjs, react, node-api, python-django
-  - Each includes hooks, sample issues, and documentation
-  - `npx @aojdevstudio/cdev init --template=nextjs`
-- **MCP Agent Communication**
-  - Agents report completion status back to main worktree
-  - Real-time progress dashboard
-  - Inter-agent dependency resolution
-  - Automatic merge orchestration
-
-### v0.3.0 (Q4 2024) - Developer Experience
-
-💼 **Status**: Planning
-
-- **Subscription System**
-  - Structured payment tiers (Free, Pro, Enterprise)
-  - Usage-based pricing for agent runs
-  - Team collaboration features in paid tiers
-  - Private hook registry for Enterprise
-- **Enhanced Developer Experience**
-  - Guided API setup with validation
-  - Built-in troubleshooting (`cdev validate`)
-  - Example-driven learning system
-  - Interactive terminal tutorials
-
-### v1.0.0 (Q1 2025) - Production Ready
-
-🤖 **Status**: Concept
-
-- **AI-Powered Features**
-  - Smarter task decomposition with context awareness
-  - Code review suggestions via hooks
-  - Automatic PR description generation
-  - Intelligent merge conflict resolution
-- **Advanced Automation**
-  - Self-healing agents that recover from errors
-  - Automatic conflict resolution strategies
-  - Predictive agent scheduling
-  - Performance optimization suggestions
-
-### v2.0.0 (Q2 2025) - Platform Evolution
-
-🌐 **Status**: Vision
-
-- **Web Dashboard**
-  - Real-time agent monitoring
-  - Visual workflow designer
-  - Team collaboration hub
-  - Analytics and insights
-- **API & Integrations**
-  - REST API for programmatic access
-  - GraphQL endpoint for flexible queries
-  - Webhook system for external tools
-  - Native integrations: Slack, Discord, Teams
-
-## Onboarding Improvements (Based on Feedback)
-
-### Current Pain Points → Solutions
-
-1. **Manual file copying** → One-command setup: `npx @aojdevstudio/cdev init`
-2. **Environment complexity** → Interactive API setup with validation
-3. **Prerequisite confusion** → Smart detection and guided installation
-4. **No immediate value** → 30-second demo mode without setup
-
-### New Onboarding Flow
-
-```
-1. npx @aojdevstudio/cdev demo              # 30 seconds - see it work
-2. npx @aojdevstudio/cdev init --template=nextjs  # 2 minutes - auto-setup
-3. cdev example auth-system                  # 1 minute - try example
-4. cdev split YOUR-ISSUE-001                # Real workflow
-5. Start building! 🚀
+```mermaid
+gantt
+    title CDEV Product Timeline
+    dateFormat YYYY-MM-DD
+    
+    section Core Releases
+    v0.0.17 Hook Stabilization    :2025-07-27, 2025-08-15
+    v0.1.0 Terminal & Docs        :2025-08-16, 2025-08-31
+    v0.2.0 Zero-Friction          :2025-09-01, 2025-09-30
+    v0.3.0 Subscriptions          :2025-10-01, 2025-10-31
+    v1.0.0 Production Ready       :2025-11-01, 2025-12-31
+    v2.0.0 Web Platform           :2026-01-01, 2026-03-31
+    
+    section Milestones
+    Demo Mode Launch              :milestone, 2025-09-15
+    First Paying Customer         :milestone, 2025-10-15
+    1K Active Users               :milestone, 2025-11-15
+    10K Active Users              :milestone, 2026-02-15
 ```
 
-## Feature Backlog
+## Key Decisions
 
-### Critical (v0.1.0)
+- **Architecture:** Hybrid JavaScript/Python for maximum compatibility, not pure JS
+- **Distribution:** NPM global package, not desktop app or VS Code extension
+- **Pricing Model:** Usage-based with generous free tier, not flat subscription
+- **Hook System:** File-based in .claude/hooks/, not database or API-based
+- **Scope:** Focus on Claude Code integration only, not general AI tool support
 
-- [x] Package name migration to @aojdevstudio/cdev ✅
-- [x] Support all package managers (npm, pnpm, yarn, bun) ✅
-- [x] **Enhanced README** - Complete rewrite with Feynman Technique ✅
-- [x] **Dynamic badges** - npm downloads and CI status ✅
-- [x] **Credits section** - Acknowledge open-source inspirations ✅
-- [x] **Sub-agent system integration** - Complete 9 specialized sub-agents ✅
-- [x] **Advanced command protocols** - Enhanced documentation generation ✅
-- [x] **Documentation reorganization** - Improved structure and clarity ✅
-- [ ] Terminal vs Cursor choice for worktree opening
-- [ ] Fix duplication in documentation
-- [ ] Add error catalog with solutions
+## Review Schedule
 
-### High Priority (v0.2.0)
+- August 20, 2025: v0.1.0 progress review
+- September 15, 2025: Demo mode launch review
+- October 15, 2025: First customer onboarding review
+- November 30, 2025: v1.0.0 readiness assessment
+- January 15, 2026: Platform architecture review
 
-- [ ] Zero-config demo mode
-- [ ] Interactive setup wizard
-- [ ] MCP agent communication protocol
-- [ ] Progressive onboarding levels
-- [ ] Template gallery with examples
-- [ ] Built-in validation & troubleshooting
-- [ ] **Project dependency support** - Allow CDEV to be installed as local project dependency for better version management and team consistency
+## Risks & Mitigation
 
-### Medium Priority (v0.3.0+)
+### Technical Risks
+- **Hook execution failures across package managers**
+  - Mitigation: Extensive testing matrix, fallback mechanisms
+- **MCP agent communication complexity**
+  - Mitigation: Start with simple status reporting, iterate based on usage
 
-- [ ] Subscription payment system
-- [ ] GitHub Issues integration
-- [ ] Jira integration
-- [ ] Team collaboration features
-- [ ] Visual workflow diagram generator
-- [ ] CI/CD pipeline templates
+### Business Risks
+- **Low adoption rate**
+  - Mitigation: 30-second demo mode, extensive documentation, community outreach
+- **Payment processing issues**
+  - Mitigation: Use proven Stripe integration, implement retry logic
 
-### Innovation Ideas
+### Resource Risks
+- **Limited development capacity**
+  - Mitigation: Focus on core features, defer nice-to-haves, encourage community contributions
 
-- [ ] AI pair programming mode
-- [ ] Voice-controlled agent commands
-- [ ] AR visualization of parallel workflows
-- [ ] Predictive task decomposition
-- [ ] **Advanced Search & Analytics** (Building on Claude-Historian)
-  - Code pattern search across all conversations
-  - Error resolution knowledge base
-  - Team productivity analytics
-  - Learning from past problem-solving patterns
+## Current Sprint (July 27 - August 10, 2025)
 
-## Community Contributions
+### Active Tasks
+1. **Fix hook installation system** (Owner: Core Team, Due: July 30)
+2. **Add terminal choice option** (Owner: Core Team, Due: August 5)
+3. **Clean up duplicate documentation** (Owner: Core Team, Due: August 7)
+4. **Create error catalog** (Owner: Core Team, Due: August 10)
 
-We welcome community input! Priority areas for contribution:
+### Blocked Items
+- None
 
-1. **Additional Framework Support**
-   - Vue.js specific hooks
-   - Angular validation
-   - Svelte/SvelteKit integration
-   - Rust development workflows
-   - Go module management
-
-2. **Language-Specific Hooks**
-   - Python type checking (mypy)
-   - Java build validation
-   - C++ linting
-   - Ruby style guides
-   - PHP standards
-
-3. **Tool Integrations**
-   - Docker/Kubernetes workflows
-   - CI/CD pipeline integration
-   - Database migration validation
-   - API documentation sync
-
-## Implementation Strategy
-
-### Phase 1: Foundation (v0.1.0) ✅ In Progress
-
-Focus on removing friction and fixing critical issues:
-
-1. Package name migration ✅
-2. Multi-package manager support ✅
-3. Terminal flexibility
-4. Documentation cleanup
-
-### Phase 2: Onboarding Excellence (v0.2.0)
-
-Achieve "30-second value" goal:
-
-1. Demo mode without setup
-2. Interactive wizards
-3. Template library
-4. MCP agent communication
-
-### Phase 3: Developer Experience (v0.3.0)
-
-Build better developer experience:
-
-1. Enhanced error handling
-2. Better debugging tools
-3. Performance optimizations
-4. Community contributions
-
-### Phase 4: Production Ready (v1.0.0)
-
-Evolve from tool to platform:
-
-1. Web interface
-2. API ecosystem
-3. Marketplace
-4. Community hub
-
-## Success Metrics
-
-### Onboarding Success
-
-- Time to first value: < 30 seconds
-- Setup completion rate: > 80%
-- Documentation clarity score: > 9/10
-- Zero-to-productivity: < 5 minutes
-
-### Technical Excellence
-
-- Package manager support: 100% (npm, yarn, pnpm, bun)
-- Platform coverage: Windows, macOS, Linux
-- Test coverage: > 90%
-- Performance: < 100ms hook execution
-
-### Business Growth
-
-- Monthly active developers: 10,000+ by Q2 2025
-- Paid subscriptions: 1,000+ by Q1 2025
-- Enterprise clients: 50+ by Q4 2024
-- Community hooks: 200+ published
-
-## How to Contribute
-
-1. **Feature Requests**: Open an issue with the `enhancement` label
-2. **Bug Reports**: Use the bug report template
-3. **Code Contributions**: See CONTRIBUTING.md
-4. **Documentation**: Help improve our docs
-5. **Hooks**: Submit hooks to our registry
-
-## Feedback Channels
-
-- GitHub Issues: [github.com/AOJDevStudio/cdev/issues](https://github.com/AOJDevStudio/cdev/issues)
-- Email: admin@kamdental.com
-- Discord: [Coming Soon]
-- Twitter: [Coming Soon]
+### Completed This Sprint
+- ✅ Updated version to 0.0.17
+- ✅ Identified hook system issues
+- ✅ Created roadmap in commitment format
 
 ---
 
-_This roadmap is subject to change based on user feedback and market demands. We believe in building what our users need, not what we think they need._
-
-**Last Updated**: July 2025
+**Last Updated:** July 27, 2025
+**Next Review:** August 20, 2025
+**Contact:** admin@kamdental.com
