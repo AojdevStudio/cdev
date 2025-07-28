@@ -38,6 +38,7 @@ ai-docs/*.yml
 
 # Logs
 logs/
+CHANGELOG.md
 
 # Workspaces (agent-generated content)
 workspaces/
