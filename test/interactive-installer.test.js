@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
 
-const { InteractiveInstaller } = require('../src/interactive-installer');
+const InteractiveInstaller = require('../src/interactive-installer');
 
 // Mock dependencies
 jest.mock('fs-extra');
