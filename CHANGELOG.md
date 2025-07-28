@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.1.0] - 2025-07-28
+
+### Added
+
+- 🏗️ feat: complete command ecosystem standardization achieving 100% Anthropic compliance
+- 🙈 chore: add gitignore entries for development test files
+- 📝 docs: update CLAUDE.md and add USAGE.md for improved documentation
+- ✨ feat: add comprehensive Claude Code sub-agent system
+- 📝 feat: add dist-manifest.yaml for global npx package configuration
+
+### Changed
+
+- simplify and focus build-roadmap command on concrete commitments
+- 🏗️ refactor: reorganize configuration files into dedicated config/ directory
+- 0.0.16
+- 🏗️ refactor: enhance Claude Code framework with protocol-driven system
+- 📝 docs: update project documentation for v0.0.15 release
+- exclude dist-manifest.yaml from git tracking
+- 📝 chore: update .prettierignore to include dist-manifest.yaml and refine markdown exclusions
+
+### Removed
+
+- remove dist-manifest.yaml completely from tracking
+
+### Fixed
+
+- 🔧 fix: v0.0.17 hook installation system overhaul and package improvements
+
 ## [0.1.0] - 2025-07-28
 
 ### Added
@@ -305,4 +334,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Links
 
 [Unreleased]: https://github.com/AOJDevStudio/cdev/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0

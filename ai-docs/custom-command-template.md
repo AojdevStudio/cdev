@@ -20,22 +20,23 @@ Write direct instructions for Claude Code:
 ````markdown
 # Command Name
 
-Do [specific action] by running this command:
+One sentence description of what the command does.
 
-```bash
-command-to-run
-```
-````
+$ARGUMENTS: [specific arguments]
 
-After completion, review [output/file] and edit according to [specific guidelines/conventions].
+## Instructions
 
-Focus on:
+- [specific action]
+- [specific action]
 
-- Specific requirement 1
-- Specific requirement 2
-- Reference to relevant documentation
+## Context
 
-Then [final action like commit/save].
+Include any relevant context that is needed to understand the command, such as bash commands, or file references in the @ai-docs/ directory or the codebase. IMPORTANT: Should not exceed 3 files. 
+
+## Output
+
+- [specific output]
+- [specific output]
 
 ````
 
