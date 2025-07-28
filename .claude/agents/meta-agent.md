@@ -1,7 +1,7 @@
 ---
 name: meta-agent
 description: Use proactively for sub-agent creation, modification, and architecture. Specialist for reviewing and optimizing sub-agent configurations based on requirements.
-tools: Read, Write, MultiEdit, Grep, Glob
+tools: Read, Write, MultiEdit, Grep, Glob, mcp__mcp-server-firecrawl__firecrawl_scrape, mcp__mcp-server-firecrawl__firecrawl_search
 color: Purple
 ---
 

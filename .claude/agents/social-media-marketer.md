@@ -1,7 +1,7 @@
 ---
 name: social-media-marketer
 description: Use this agent when you need to create professional marketing content for social media platforms based on project updates, commits, and development progress. Examples: After implementing a new feature and wanting to announce it on social media, when preparing a marketing campaign for a product release, or when you need to regularly promote project milestones across Twitter, Reddit, and LinkedIn with platform-specific messaging.
-tools: Bash, Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool, Write
+tools: Bash, Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, ListMcpResourcesTool, ReadMcpResourceTool, Write, mcp__exa__linkedin_search_exa
 color: yellow
 ---
 
