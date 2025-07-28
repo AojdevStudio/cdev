@@ -17,7 +17,7 @@ description: Brief one-line description of what the command does
 
 Write direct instructions for Claude Code:
 
-````markdown
+```markdown
 # Command Name
 
 One sentence description of what the command does.
@@ -31,14 +31,13 @@ $ARGUMENTS: [specific arguments]
 
 ## Context
 
-Include any relevant context that is needed to understand the command, such as bash commands, or file references in the @ai-docs/ directory or the codebase. IMPORTANT: Should not exceed 3 files. 
+Include any relevant context that is needed to understand the command, such as bash commands, or file references in the @ai-docs/ directory or the codebase. IMPORTANT: Should not exceed 3 files.
 
 ## Output
 
 - [specific output]
 - [specific output]
-
-````
+```
 
 ### 3. Sub-Agent Commands (if applicable)
 
@@ -46,7 +45,7 @@ For sub-agent commands, use explicit spawning language:
 
 ```markdown
 Use the [sub-agent-name] sub-agent to [specific action and domain expertise].
-````
+```
 
 ### 4. Arguments Section (if needed)
 
