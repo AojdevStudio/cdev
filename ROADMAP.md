@@ -13,6 +13,7 @@ Transform CDEV into the premier development workflow automation tool for teams u
 - **Advanced Command System** - New `/deep-search`, `/enforce-structure`, `/agent-start`, `/create-pr`, `/review-merge` commands
 - **Documentation Structure Reorganization** - Improved clarity and comprehensive protocol documentation
 - **Version Management Updates** - Consistent version references across all documentation
+- **Semgrep MCP Integration** - Security scanning capabilities with comprehensive rule-based analysis ✅
 - Package name migration to `@aojdevstudio/cdev` ✅
 - Enhanced README with Feynman Technique ✅
 - Dynamic npm badges (downloads, CI status) ✅
@@ -152,6 +153,8 @@ Transform CDEV into the premier development workflow automation tool for teams u
 - [ ] Progressive onboarding levels
 - [ ] Template gallery with examples
 - [ ] Built-in validation & troubleshooting
+- [ ] **Semgrep MCP Hook Integration** - Add Semgrep security validation to the `.claude/hooks/` system for pre-commit and pre-tool security scanning
+- [ ] **Security-Focused Agent Development** - Create specialized security agents that use Semgrep MCP for automated code review and vulnerability detection
 - [ ] **Project dependency support** - Allow CDEV to be installed as local project dependency for better version management and team consistency
 
 ### Medium Priority (v0.3.0+)

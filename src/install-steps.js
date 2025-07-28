@@ -157,6 +157,9 @@ class InstallSteps {
       'scripts/resolve-conflicts.sh',
       'scripts/validate-parallel-work.sh',
       'scripts/intelligent-agent-generator.js',
+      'scripts/changelog/update-changelog.js',
+      'scripts/changelog/utils.js',
+      'scripts/changelog/README.md',
       'utils/llm-decomposer.js',
       'README.md',
       'CLAUDE.md',
@@ -269,6 +272,16 @@ fi
           console.log(chalk.gray(`    Made executable: ${script}`));
         }
       }
+
+      // Make changelog scripts executable
+      const changelogScripts = ['changelog/update-changelog.js', 'changelog/utils.js'];
+      for (const script of changelogScripts) {
+        const scriptPath = path.join(scriptsDir, script);
+        if (await fs.pathExists(scriptPath)) {
+          await fs.chmod(scriptPath, '755');
+          console.log(chalk.gray(`    Made executable: ${script}`));
+        }
+      }
     } catch (error) {
       console.log(chalk.yellow(`    Warning: Could not set script permissions: ${error.message}`));
     }
@@ -356,6 +369,14 @@ EDITOR=cursor
       decompose: 'node workflows/paralell-development-claude/scripts/decompose-parallel.cjs',
       'spawn-agents': 'workflows/paralell-development-claude/scripts/spawn-agents.sh',
       'cache-issue': 'workflows/paralell-development-claude/scripts/cache-linear-issue.sh',
+      'changelog:update':
+        'node workflows/paralell-development-claude/scripts/changelog/update-changelog.js',
+      'changelog:auto':
+        'node workflows/paralell-development-claude/scripts/changelog/update-changelog.js --auto',
+      'changelog:manual':
+        'node workflows/paralell-development-claude/scripts/changelog/update-changelog.js --manual',
+      'changelog:preview':
+        'node workflows/paralell-development-claude/scripts/changelog/update-changelog.js --auto --dry-run',
     });
 
     await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
@@ -573,6 +594,82 @@ except Exception as e:
 
     // Create framework-specific command templates
     const commands = this.getFrameworkCommands(config.projectType);
+
+    // Add changelog command template
+    commands['update-changelog.md'] = `---
+allowed-tools: Bash
+description: Update project CHANGELOG.md using automated scripts
+---
+
+# Update Changelog
+
+Simple command to update CHANGELOG.md using the automated changelog scripts. Supports automatic git analysis or manual entry modes.
+
+## Quick Usage
+
+\`\`\`bash
+# Auto-generate from git commits
+npm run changelog:auto
+
+# Manual entry mode
+npm run changelog:manual
+
+# Preview changes without saving
+npm run changelog:preview
+
+# Update with specific version
+npm run changelog:update 1.5.0 --auto
+\`\`\`
+
+## Command Options
+
+**Auto Mode** (Default):
+\`\`\`bash
+npm run changelog:auto
+\`\`\`
+- Analyzes git commits since last release
+- Automatically categorizes changes
+- Determines semantic version bump
+
+**Manual Mode**:
+\`\`\`bash
+npm run changelog:manual
+\`\`\`
+- Interactive prompts for each category
+- Full control over changelog entries
+- Guided entry process
+
+**Preview Mode**:
+\`\`\`bash
+npm run changelog:preview
+\`\`\`
+- Shows what would be added
+- No file modifications
+- Safe to run anytime
+
+**Custom Version**:
+\`\`\`bash
+npm run changelog:update 2.1.0 --auto
+npm run changelog:update 1.0.3 --manual --verbose
+\`\`\`
+
+## Workflow
+
+1. Run changelog command
+2. Review generated/entered changes
+3. Commit the updated CHANGELOG.md:
+
+\`\`\`bash
+git add CHANGELOG.md
+git commit -m "docs: update changelog for v1.5.0"
+\`\`\`
+
+## Available Scripts
+
+- \`scripts/changelog/update-changelog.js\` - Main automation script
+- \`scripts/changelog/utils.js\` - Helper functions
+- Full documentation: \`scripts/changelog/README.md\`
+`;
 
     for (const [filename, content] of Object.entries(commands)) {
       const commandPath = path.join(commandsDir, filename);
@@ -936,6 +1033,9 @@ echo "Pre-commit validation passed"
       'workflows/paralell-development-claude/scripts/cache-linear-issue.sh',
       'workflows/paralell-development-claude/scripts/decompose-parallel.cjs',
       'workflows/paralell-development-claude/scripts/spawn-agents.sh',
+      'workflows/paralell-development-claude/scripts/changelog/update-changelog.js',
+      'workflows/paralell-development-claude/scripts/changelog/utils.js',
+      'workflows/paralell-development-claude/scripts/changelog/README.md',
       '.env.example',
     ];
 

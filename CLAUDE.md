@@ -783,6 +783,41 @@ cdev task "Build a REST API for user management"
 4. **Leverage quality automation** instead of manual checks
 5. **Process tasks in any format** - CDEV handles the conversion
 
+## Command Creation Guidelines
+
+When asked to create custom commands, make them **instructional, not explanatory**:
+
+✅ **Instructional** (correct):
+
+````markdown
+# Update Database
+
+Run the migration command:
+
+```bash
+npm run db:migrate
+```
+````
+
+After completion, verify tables were created correctly and commit the changes.
+
+````
+
+❌ **Explanatory** (incorrect):
+```markdown
+# Update Database
+
+This command updates the database schema by running migrations.
+It supports various options and can handle rollbacks.
+````
+
+**Key principles**:
+
+- Tell Claude Code exactly what to do
+- Use direct action verbs (run, edit, review, commit)
+- Reference specific documentation/conventions for guidance
+- Follow the template in `ai-docs/custom-command-template.md`
+
 ## Troubleshooting
 
 - **Agent won't spawn**: Check for explicit "Use the [agent-name] sub-agent to..." language
