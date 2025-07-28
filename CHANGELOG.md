@@ -7,93 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2025-07-28
-
-### Added
-
-- .claude/agents/meta-agent.md
-
-### Changed
-
-- created an expert agent architect, that takes user's prompt description to create a sub-agent
 
 ## [0.1.0] - 2025-07-28
 
 ### Added
 
-- 🏗️ feat: complete command ecosystem standardization achieving 100% Anthropic compliance
-- 🙈 chore: add gitignore entries for development test files
-- 📝 docs: update CLAUDE.md and add USAGE.md for improved documentation
-- ✨ feat: add comprehensive Claude Code sub-agent system
-- 📝 feat: add dist-manifest.yaml for global npx package configuration
+- Meta-agent sub-agent for creating new specialized sub-agents from user descriptions
+- Enhanced git-flow-manager with iterative commit protocol ensuring clean working directory
+- Social media marketing agent for platform-specific content creation  
+- Changelog writer agent for automated changelog generation from git commits
+- File counter agent for statistical project analysis
+- Frontend verifier agent for comprehensive E2E testing with Playwright
+- Five new specialized sub-agents expanding the Claude Code ecosystem
+- Command ecosystem standardization achieving 100% Anthropic compliance
+- Comprehensive Claude Code sub-agent system with 11 specialized agents
+- Global NPX package configuration via dist-manifest.yaml
 
 ### Changed
 
-- simplify and focus build-roadmap command on concrete commitments
-- 🏗️ refactor: reorganize configuration files into dedicated config/ directory
-- 0.0.16
-- 🏗️ refactor: enhance Claude Code framework with protocol-driven system
-- 📝 docs: update project documentation for v0.0.15 release
-- exclude dist-manifest.yaml from git tracking
-- 📝 chore: update .prettierignore to include dist-manifest.yaml and refine markdown exclusions
+- Reorganized configuration files into dedicated config/ directory structure
+- Enhanced Claude Code framework with protocol-driven command system  
+- Simplified build-roadmap command to focus on concrete commitments
+- Updated project documentation for improved clarity and completeness
+- Refined .prettierignore to include dist-manifest.yaml and markdown exclusions
 
-### Removed
+### Removed  
 
-- remove dist-manifest.yaml completely from tracking
+- Deprecated command documentation files (.command-index.md, .future-proofing.md)
+- Obsolete settings backup files for cleaner repository
+- Removed dist-manifest.yaml from git tracking to prevent conflicts
 
 ### Fixed
 
-- 🔧 fix: v0.0.17 hook installation system overhaul and package improvements
-
-## [0.1.0] - 2025-07-28
-
-### Added
-
-- 🙈 chore: add gitignore entries for development test files
-- 📝 docs: update CLAUDE.md and add USAGE.md for improved documentation
-- ✨ feat: add comprehensive Claude Code sub-agent system
-- 📝 feat: add dist-manifest.yaml for global npx package configuration
-
-### Changed
-
-- 🏗️ refactor: reorganize configuration files into dedicated config/ directory
-- 0.0.16
-- 🏗️ refactor: enhance Claude Code framework with protocol-driven system
-- 📝 docs: update project documentation for v0.0.15 release
-- exclude dist-manifest.yaml from git tracking
-- 📝 chore: update .prettierignore to include dist-manifest.yaml and refine markdown exclusions
-
-### Removed
-
-- remove dist-manifest.yaml completely from tracking
-
-### Fixed
-
-- 🔧 fix: v0.0.17 hook installation system overhaul and package improvements
-
-## [0.1.0] - 2025-07-28
-
-### Added
-
-- 🙈 chore: add gitignore entries for development test files
-- 📝 docs: update CLAUDE.md and add USAGE.md for improved documentation
-- ✨ feat: add comprehensive Claude Code sub-agent system
-- 📝 feat: add dist-manifest.yaml for global npx package configuration
-
-### Changed
-
-- 🏗️ refactor: reorganize configuration files into dedicated config/ directory
-- 🏗️ refactor: enhance Claude Code framework with protocol-driven system
-- 📝 docs: update project documentation for v0.0.15 release
-- 📝 chore: update .prettierignore to include dist-manifest.yaml and refine markdown exclusions
-
-### Removed
-
-- remove dist-manifest.yaml completely from tracking
-
-### Fixed
-
-- 🔧 fix: v0.0.17 hook installation system overhaul and package improvements
+- Markdown formatting issues in custom command template
+- Hook installation system overhaul with package improvements (v0.0.17)
 
 ## [0.0.17] - 2025-07-26
 
@@ -340,9 +287,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [GitHub Repository](https://github.com/AOJDevStudio/cdev)
 - [Documentation](https://github.com/AOJDevStudio/cdev/tree/main/docs)
 
-## Links
-
 [Unreleased]: https://github.com/AOJDevStudio/cdev/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
-[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
-[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
+[0.0.17]: https://github.com/AOJDevStudio/cdev/compare/v0.0.15...v0.0.17
+[0.0.15]: https://github.com/AOJDevStudio/cdev/compare/v0.0.7...v0.0.15
+[0.0.7]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.0.7
