@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2025-07-28
+
+### Added
+
+- .claude/agents/meta-agent.md
+
+### Changed
+
+- created an expert agent architect, that takes user's prompt description to create a sub-agent
 
 ## [0.1.0] - 2025-07-28
 
@@ -334,5 +343,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Links
 
 [Unreleased]: https://github.com/AOJDevStudio/cdev/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
