@@ -330,7 +330,7 @@ const projectInfo = await installer.detectProjectType('./');
 Enhanced installer with interactive CLI prompts.
 
 ```javascript
-const { InteractiveInstaller } = require('@aojdevstudio/cdev');
+const InteractiveInstaller = require('@aojdevstudio/cdev');
 
 const installer = new InteractiveInstaller();
 await installer.run('./my-project');

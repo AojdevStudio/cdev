@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { showHelp } = require('./cli-parser');
-const { InteractiveInstaller } = require('./interactive-installer');
+const InteractiveInstaller = require('./interactive-installer');
 
 /**
  * Execute CLI commands for parallel development workflow
