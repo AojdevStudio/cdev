@@ -44,6 +44,7 @@ pnpm-lock.yaml
 # Cache
 .cache/
 .linear-cache/
+.ruff_cache/
 
 # Shared development artifacts
 /shared/
@@ -82,3 +83,7 @@ test-installation/
 test-mapping/
 archive/test-hook-installer.js
 archive/test-hook-mapping.js
+# Parallel development workspace files
+agent_context_*.yaml
+validation_checklist_*.txt
+task-deployment-plan.yaml

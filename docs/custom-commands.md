@@ -293,14 +293,14 @@ This document provides a comprehensive reference for all custom commands availab
 
 ## Command Development Guidelines
 
-When creating new custom commands:
+When creating new custom commands, make them **instructional, not explanatory**:
 
-1. **Clear Purpose**: Each command should solve a specific workflow problem
-2. **Intelligent Defaults**: Work out-of-the-box with smart defaults
-3. **Progressive Options**: Simple usage with advanced options available
-4. **Context Awareness**: Adapt to project type and structure
-5. **Error Recovery**: Graceful handling of edge cases
-6. **Documentation**: Include usage examples and explanations
+1. **Direct Instructions**: Tell Claude Code exactly what to do, not what the tool does
+2. **Clear Workflow**: Command → Review → Edit → Next action
+3. **Reference Standards**: Point to specific documentation/conventions
+4. **Action-Oriented**: Use direct verbs (run, edit, review, commit)
+5. **Self-Contained**: Each command works independently
+6. **Progressive Options**: Simple usage with advanced options available
 
 ## Best Practices
 
@@ -332,25 +332,36 @@ When creating new custom commands:
 To add a new custom command:
 
 1. Create command file in `.claude/commands/`
-2. Follow the established format or use the command `.claude/commands/create-command.md` to create a new command:
+2. Follow the instructional template in `ai-docs/custom-command-template.md`:
 
-   ```markdown
+   ````markdown
    ---
-   allowed-tools: Read, Write, Edit, MultiEdit, Bash, Grep, Task
-   description: Brief description of command purpose
+   allowed-tools: Bash, Read, Edit
+   description: Brief action-oriented description
    ---
 
    # Command Name
 
-   Detailed description...
+   Do [specific action] by running this command:
+
+   ```bash
+   command-to-run
+   ```
+   ````
+
+   After completion, review [output] and edit according to [conventions].
+   Focus on [specific requirements].
+   Then [final action].
+
    ```
 
-3. Include:
-   - Clear usage examples
-   - Variable definitions
-   - Step-by-step instructions
-   - Error handling
-   - Return status format
+   ```
+
+3. Make it instructional:
+   - Direct commands for Claude Code to execute
+   - Clear workflow: run → review → edit → commit
+   - Reference specific documentation/conventions
+   - Use action verbs (run, edit, review, commit)
 
 4. Test thoroughly with various inputs
 5. Document in this reference guide

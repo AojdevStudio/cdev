@@ -19,8 +19,8 @@ describe('Full Installation Integration Test', () => {
     installer = new Installer();
 
     // Mock console methods to reduce noise in tests
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-    jest.spyOn(console, 'info').mockImplementation(() => {});
+    // jest.spyOn(console, 'log').mockImplementation(() => {});
+    // jest.spyOn(console, 'info').mockImplementation(() => {});
   });
 
   afterEach(async () => {
@@ -28,8 +28,8 @@ describe('Full Installation Integration Test', () => {
     await fs.remove(tempDir);
 
     // Restore console methods
-    console.log.mockRestore();
-    console.info.mockRestore();
+    // console.log.mockRestore();
+    // console.info.mockRestore();
   });
 
   describe('Fresh Installation', () => {
@@ -39,11 +39,20 @@ describe('Full Installation Integration Test', () => {
       await fs.ensureDir(projectPath);
 
       // Act
-      await installer.install(projectPath, {
-        force: false,
-        skipPrompts: true,
-        packageManager: 'npm',
-      });
+      try {
+        await installer.install(projectPath, {
+          force: false,
+          skipPrompts: true,
+          packageManager: 'npm',
+        });
+      } catch (error) {
+        console.error('Installation failed:', error.message);
+        // Check what files actually exist
+        console.log('Files in project after failed install:');
+        const files = await fs.readdir(projectPath).catch(() => []);
+        console.log(files);
+        throw error;
+      }
 
       // Assert - Check that all essential files were created
       expect(await fs.pathExists(path.join(projectPath, '.claude'))).toBe(true);
@@ -58,6 +67,52 @@ describe('Full Installation Integration Test', () => {
         true,
       );
       expect(await fs.pathExists(path.join(projectPath, 'scripts/spawn-agents.sh'))).toBe(true);
+
+      // Debug: List what actually exists
+      const workflowScriptsPath = path.join(
+        projectPath,
+        'workflows/paralell-development-claude/scripts',
+      );
+      if (await fs.pathExists(workflowScriptsPath)) {
+        const scriptFiles = await fs.readdir(workflowScriptsPath);
+        console.log('Scripts directory contents:', scriptFiles);
+      } else {
+        console.log('Scripts directory does not exist');
+      }
+
+      // Assert - Check that changelog scripts were created
+      expect(
+        await fs.pathExists(
+          path.join(projectPath, 'workflows/paralell-development-claude/scripts/changelog'),
+        ),
+      ).toBe(true);
+      expect(
+        await fs.pathExists(
+          path.join(
+            projectPath,
+            'workflows/paralell-development-claude/scripts/changelog/update-changelog.js',
+          ),
+        ),
+      ).toBe(true);
+      expect(
+        await fs.pathExists(
+          path.join(
+            projectPath,
+            'workflows/paralell-development-claude/scripts/changelog/utils.js',
+          ),
+        ),
+      ).toBe(true);
+      expect(
+        await fs.pathExists(
+          path.join(
+            projectPath,
+            'workflows/paralell-development-claude/scripts/changelog/README.md',
+          ),
+        ),
+      ).toBe(true);
+      expect(
+        await fs.pathExists(path.join(projectPath, '.claude/commands/update-changelog.md')),
+      ).toBe(true);
     });
 
     test('should install with correct file permissions', async () => {
@@ -82,6 +137,22 @@ describe('Full Installation Integration Test', () => {
         const isExecutable = (stats.mode & 0o100) !== 0;
         expect(isExecutable).toBe(true);
       }
+
+      // Assert - Check that changelog scripts are executable
+      const changelogScriptsToCheck = [
+        'workflows/paralell-development-claude/scripts/changelog/update-changelog.js',
+        'workflows/paralell-development-claude/scripts/changelog/utils.js',
+      ];
+
+      for (const script of changelogScriptsToCheck) {
+        const scriptPath = path.join(projectPath, script);
+        if (await fs.pathExists(scriptPath)) {
+          const stats = await fs.stat(scriptPath);
+          // Check if file is executable (Unix permissions: owner execute bit)
+          const isExecutable = (stats.mode & 0o100) !== 0;
+          expect(isExecutable).toBe(true);
+        }
+      }
     });
 
     test('should create .gitignore with proper entries', async () => {
@@ -105,6 +176,40 @@ describe('Full Installation Integration Test', () => {
       expect(gitignoreContent).toContain('node_modules/');
       expect(gitignoreContent).toContain('.env');
       expect(gitignoreContent).toContain('.env.local');
+    });
+
+    test('should add changelog scripts to package.json', async () => {
+      // Arrange
+      const projectPath = path.join(tempDir, 'package-scripts-test');
+      await fs.ensureDir(projectPath);
+
+      // Act
+      await installer.install(projectPath, {
+        skipPrompts: true,
+        packageManager: 'npm',
+        force: true,
+      });
+
+      // Assert
+      const packageJsonPath = path.join(projectPath, 'package.json');
+      expect(await fs.pathExists(packageJsonPath)).toBe(true);
+
+      const packageJson = await fs.readJson(packageJsonPath);
+      expect(packageJson.scripts).toBeDefined();
+
+      // Check that changelog scripts were added
+      expect(packageJson.scripts['changelog:update']).toBeDefined();
+      expect(packageJson.scripts['changelog:auto']).toBeDefined();
+      expect(packageJson.scripts['changelog:manual']).toBeDefined();
+      expect(packageJson.scripts['changelog:preview']).toBeDefined();
+
+      // Verify script paths are correct
+      expect(packageJson.scripts['changelog:update']).toContain(
+        'scripts/changelog/update-changelog.js',
+      );
+      expect(packageJson.scripts['changelog:auto']).toContain('--auto');
+      expect(packageJson.scripts['changelog:manual']).toContain('--manual');
+      expect(packageJson.scripts['changelog:preview']).toContain('--dry-run');
     });
   });
 

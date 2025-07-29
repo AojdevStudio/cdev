@@ -1,11 +1,11 @@
 ---
-allowed-tools: Read, Bash, Write, Edit, MultiEdit
-description: Commit and merge completed agent work with validation checks
+allowed-tools: Bash, Read, Write, Edit
+description: Commit and merge completed agent work
 ---
 
 # Agent Commit
 
-This command commits completed agent work and merges the worktree back to main branch with comprehensive validation and safety checks.
+Use the git-flow-manager sub-agent to commit and merge completed agent work from workspace $ARGUMENTS. Validate checklist completion, generate structured commit message from agent_context.json with issue linking support, merge to main branch with --no-ff, and clean up worktree after successful integration.
 
 **variables:**
 WorkspacePath: $ARGUMENTS

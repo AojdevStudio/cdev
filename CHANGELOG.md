@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.1.0] - 2025-07-28
+
+### Added
+
+- Meta-agent sub-agent for creating new specialized sub-agents from user descriptions
+- Enhanced git-flow-manager with iterative commit protocol ensuring clean working directory
+- Social media marketing agent for platform-specific content creation  
+- Changelog writer agent for automated changelog generation from git commits
+- File counter agent for statistical project analysis
+- Frontend verifier agent for comprehensive E2E testing with Playwright
+- Five new specialized sub-agents expanding the Claude Code ecosystem
+- Command ecosystem standardization achieving 100% Anthropic compliance
+- Comprehensive Claude Code sub-agent system with 11 specialized agents
+- Global NPX package configuration via dist-manifest.yaml
+
+### Changed
+
+- Reorganized configuration files into dedicated config/ directory structure
+- Enhanced Claude Code framework with protocol-driven command system  
+- Simplified build-roadmap command to focus on concrete commitments
+- Updated project documentation for improved clarity and completeness
+- Refined .prettierignore to include dist-manifest.yaml and markdown exclusions
+
+### Removed  
+
+- Deprecated command documentation files (.command-index.md, .future-proofing.md)
+- Obsolete settings backup files for cleaner repository
+- Removed dist-manifest.yaml from git tracking to prevent conflicts
+
+### Fixed
+
+- Markdown formatting issues in custom command template
+- Hook installation system overhaul with package improvements (v0.0.17)
+
 ## [0.0.17] - 2025-07-26
 
 ### Fixed
@@ -251,3 +286,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [npm Package](https://www.npmjs.com/package/@aojdevstudio/cdev)
 - [GitHub Repository](https://github.com/AOJDevStudio/cdev)
 - [Documentation](https://github.com/AOJDevStudio/cdev/tree/main/docs)
+
+[Unreleased]: https://github.com/AOJDevStudio/cdev/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
+[0.0.17]: https://github.com/AOJDevStudio/cdev/compare/v0.0.15...v0.0.17
+[0.0.15]: https://github.com/AOJDevStudio/cdev/compare/v0.0.7...v0.0.15
+[0.0.7]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.0.7

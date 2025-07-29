@@ -1,8 +1,8 @@
 # Custom Command Template
 
-This template provides the standard structure for creating custom Claude Code slash commands.
+Create instructional commands that tell Claude Code exactly what to do, not explanatory descriptions.
 
-## Required Structure
+## Command Structure
 
 ### 1. YAML Frontmatter
 
@@ -13,19 +13,39 @@ description: Brief one-line description of what the command does
 ---
 ```
 
-### 2. Main Heading
+### 2. Command Instructions
+
+Write direct instructions for Claude Code:
 
 ```markdown
 # Command Name
+
+One sentence description of what the command does.
+
+$ARGUMENTS: [specific arguments]
+
+## Instructions
+
+- [specific action]
+- [specific action]
+
+## Context
+
+Include any relevant context that is needed to understand the command, such as bash commands, or file references in the @ai-docs/ directory or the codebase. IMPORTANT: Should not exceed 3 files.
+
+## Output
+
+- [specific output]
+- [specific output]
 ```
 
-### 3. Brief Description
+### 3. Sub-Agent Commands (if applicable)
 
-Single sentence explaining the command's purpose and benefit.
+For sub-agent commands, use explicit spawning language:
 
-**🤖 Sub-Agent Integration (Optional):** If using a specialized sub-agent, describe which one and its role.
-
-**Primary Action (If Using Sub-Agent):** Use the [sub-agent-name] sub-agent to handle [specific functionality and domain expertise].
+```markdown
+Use the [sub-agent-name] sub-agent to [specific action and domain expertise].
+```
 
 ### 4. Arguments Section (if needed)
 
@@ -70,20 +90,24 @@ command_configuration:
 
 ## Key Requirements
 
+**INSTRUCTIONAL vs EXPLANATORY**:
+- ✅ "Run this command: `npm test`"
+- ❌ "This command runs tests"
+- ✅ "Edit the file according to conventions in docs/style.md"
+- ❌ "The file can be edited for better formatting"
+
+**Command Structure**:
 - Keep descriptions under 80 characters
-- Use action verbs (analyze, convert, generate)
+- Use direct action verbs (run, edit, review, commit)
 - Use `!`command`` for shell commands
 - Use `@filename` for file references
-- Include validation and error handling
-- Structure data hierarchically in YAML
 - **For sub-agent commands**: Use explicit "Use the [agent-name] sub-agent to [action]" language
-- **Sub-agent spawning**: Must be explicit and direct for Claude to recognize
 
 ## Best Practices
 
-- Self-contained commands that work independently
-- Consistent markdown + YAML structure
-- Clear, actionable instructions
-- Comprehensive context information
-- Proper error handling
+- **Direct instructions**: Tell Claude Code what to do, not what the tool does
+- **Clear workflow**: Command → Review → Edit → Next action
+- **Reference standards**: Point to specific documentation/conventions
+- **Self-contained**: Each command works independently
+- **Action-oriented**: Focus on the task, not the explanation
 ```

@@ -5,7 +5,7 @@ description: Create well-formatted commits with conventional messages and emoji
 
 # Commit
 
-This command creates well-formatted Git commits using conventional commit messages with emoji, automated quality checks, and intelligent change analysis.
+Use the git-flow-manager sub-agent to create well-formatted Git commits with conventional messages and emoji. Parse $ARGUMENTS for commit options and --no-verify flag, run pre-commit checks (lint, build, tests) unless skipped, validate .gitignore configuration, auto-stage modified files if none staged, analyze changes for atomic commit splitting, generate conventional commit messages with appropriate emoji from ai-docs/emoji-commit-ref.yaml, execute commits, and display summary.
 
 **🤖 Sub-Agent Integration:** This command leverages the specialized `git-flow-manager` sub-agent for optimal git workflow management. The sub-agent will be automatically invoked to handle complex git operations, commit message generation, and repository state management.
 

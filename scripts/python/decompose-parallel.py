@@ -179,7 +179,7 @@ class ExclusiveOwnershipDecomposer:
 
             # Check for LLM decomposer availability
             try:
-                from utils.llm_decomposer import LLMDecomposer
+                from src.utils import LLMDecomposer
 
                 llm_decomposer = LLMDecomposer()
             except ImportError:

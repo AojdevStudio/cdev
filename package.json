@@ -1,6 +1,6 @@
 {
   "name": "@aojdevstudio/cdev",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "description": "Claude Development - Parallel workflow system with intelligent hooks, Linear integration, and automated agent management",
   "main": "src/installer.js",
   "bin": {
@@ -22,7 +22,7 @@
     "lint:prettier": "prettier --check \"**/*.{js,json,md,yml,yaml}\"",
     "quality": "npm run lint && npm run format:check",
     "quality:fix": "npm run lint:fix && npm run format",
-    "build": "npm run quality && chmod +x scripts/python/*.py && chmod +x bin/cli.js",
+    "build": "npm run quality && chmod +x scripts/python/*.py && chmod +x scripts/changelog/*.js && chmod +x bin/cli.js",
     "prepublishOnly": "npm run security:check && npm run build",
     "security:check": "./scripts/python/security-check.py",
     "security:audit": "npm audit --audit-level moderate",
@@ -34,7 +34,12 @@
     "format:python:check": "ruff format scripts/python/ --check",
     "quality:python": "npm run lint:python && npm run format:python:check",
     "quality:python:fix": "npm run lint:python:fix && npm run format:python",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "changelog:update": "node scripts/changelog/update-changelog.js",
+    "changelog:auto": "node scripts/changelog/update-changelog.js --auto",
+    "changelog:manual": "node scripts/changelog/update-changelog.js --manual",
+    "changelog:preview": "node scripts/changelog/update-changelog.js --auto --dry-run",
+    "changelog:force": "node scripts/changelog/update-changelog.js --auto --force"
   },
   "keywords": [
     "claude",
@@ -68,6 +73,7 @@
     "!src/**/*.spec.js",
     "scripts/python/",
     "scripts/wrappers/",
+    "scripts/changelog/",
     ".claude/",
     ".claude/**/*",
     ".claude/agents/",
