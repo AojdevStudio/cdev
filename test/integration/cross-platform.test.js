@@ -29,7 +29,7 @@ describe('Cross-Platform Integration Test', () => {
     // Mock inquirer to avoid interactive prompts
     jest.spyOn(inquirer, 'prompt').mockResolvedValue({
       projectName: 'test-project',
-      setupLinear: true,
+      setupLinear: false,
       linearApiKey: '',
       setupGitHooks: true,
       worktreeLocation: 'tmp',

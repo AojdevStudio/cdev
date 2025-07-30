@@ -345,8 +345,12 @@ describe('Full Installation Integration Test', () => {
       const settings = await fs.readJson(settingsPath);
 
       expect(settings.hooks).toBeDefined();
-      expect(settings.hooks.pre_tool_use).toContain('python3 .claude/hooks/pre_tool_use.py');
-      expect(settings.hooks.post_tool_use).toContain('python3 .claude/hooks/post_tool_use.py');
+      expect(settings.hooks.PreToolUse[0].hooks[0].command).toContain(
+        'uv run .claude/hooks/pre_tool_use.py',
+      );
+      expect(settings.hooks.PostToolUse[0].hooks[0].command).toContain(
+        'uv run .claude/hooks/post_tool_use.py',
+      );
     });
   });
 

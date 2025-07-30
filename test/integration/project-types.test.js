@@ -119,7 +119,7 @@ describe('Project Types Integration Test', () => {
       expect(claudeSettings.packageManager).toBe('pip');
 
       // Check for Python-specific configurations
-      expect(claudeSettings.hooks.pre_tool_use[0]).toContain('python3');
+      expect(claudeSettings.hooks.PreToolUse[0].hooks[0].command).toContain('uv run');
     });
 
     test('should correctly handle monorepo projects', async () => {

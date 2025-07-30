@@ -9,11 +9,21 @@ const { InstallUtils } = require('./install-utils');
 
 const execAsync = promisify(exec);
 
+/**
+ * InstallSteps class handles the step-by-step installation process
+ * for the Claude Development workflow system
+ */
 class InstallSteps {
   constructor() {
     this.utils = new InstallUtils();
   }
 
+  /**
+   * Validates the target directory for installation
+   * - Creates directory if it doesn't exist
+   * - Checks for existing workflows to prevent conflicts
+   * - Validates write permissions
+   */
   async validateTargetDirectory(targetDir, options) {
     console.log(chalk.gray('  • Validating target directory...'));
 
@@ -25,18 +35,23 @@ class InstallSteps {
       console.log(chalk.gray(`    Created directory: ${targetDir}`));
     } else {
       // Check if directory is empty or has existing workflow
+      // Get list of all files/folders in the target directory
       const files = await fs.readdir(targetDir);
+
+      // Look for existing Claude workflow installations
       const hasClaudeWorkflow = files.includes('.claude');
       const hasWorkflowDir =
         files.includes('workflows') &&
         (await fs.pathExists(path.join(targetDir, 'workflows', 'paralell-development-claude')));
 
+      // Prevent overwriting existing installations unless forced
       if ((hasClaudeWorkflow || hasWorkflowDir) && !options.force && !options.update) {
         throw new Error(
           `Directory ${targetDir} already contains a workflow. Use --force to overwrite.`,
         );
       }
 
+      // Warn about non-empty directories (unless forced)
       if (files.length > 0 && !options.force) {
         const isEmpty = await this.utils.isDirectoryEmpty(targetDir);
         if (!isEmpty) {
@@ -45,7 +60,7 @@ class InstallSteps {
       }
     }
 
-    // Validate write permissions
+    // Validate write permissions - critical for installation success
     try {
       await fs.access(targetDir, fs.constants.W_OK);
     } catch (error) {
@@ -53,6 +68,13 @@ class InstallSteps {
     }
   }
 
+  /**
+   * Validates that required system dependencies are available
+   * - Node.js (required for running scripts)
+   * - Git (required for worktree management)
+   * - Claude Code (optional but recommended)
+   * - npm (required for package management)
+   */
   async validateEnvironment() {
     console.log(chalk.gray('  • Validating environment dependencies...'));
 
@@ -65,6 +87,7 @@ class InstallSteps {
 
     const results = [];
 
+    // Check each dependency by trying to run its version command
     for (const dep of dependencies) {
       try {
         const { stdout } = await execAsync(dep.command);
@@ -91,6 +114,7 @@ class InstallSteps {
       }
     }
 
+    // Fail installation if any required dependencies are missing
     const missingRequired = results.filter((r) => r.required && !r.available);
 
     if (missingRequired.length > 0) {
@@ -110,27 +134,36 @@ class InstallSteps {
     return results;
   }
 
+  /**
+   * Creates the complete directory structure needed for the workflow
+   * - .claude/ for Claude Code configuration and hooks
+   * - scripts/ for workflow automation
+   * - workflows/ for the main parallel development system
+   * - shared/ for coordination between agents
+   * - .linear-cache/ for offline Linear issue storage
+   */
   async createDirectoryStructure(targetDir) {
     console.log(chalk.gray('  • Creating directory structure...'));
 
     const directories = [
-      '.claude',
-      '.claude/hooks',
-      '.claude/commands',
-      '.claude/logs',
-      '.claude/templates',
-      'scripts',
-      'workflows',
-      'workflows/paralell-development-claude',
-      'workflows/paralell-development-claude/scripts',
-      'workflows/paralell-development-claude/ai_docs',
-      'shared',
-      'shared/deployment-plans',
-      'shared/coordination',
-      'shared/reports',
-      '.linear-cache',
+      '.claude', // Claude Code configuration
+      '.claude/hooks', // Hook scripts for Claude integration
+      '.claude/commands', // Custom Claude commands
+      '.claude/logs', // Hook execution logs
+      '.claude/templates', // Template files for Claude
+      'scripts', // General automation scripts
+      'workflows', // Workflow definitions
+      'workflows/paralell-development-claude', // Main parallel workflow
+      'workflows/paralell-development-claude/scripts', // Workflow-specific scripts
+      'workflows/paralell-development-claude/ai_docs', // AI documentation
+      'shared', // Shared resources between agents
+      'shared/deployment-plans', // Agent deployment configurations
+      'shared/coordination', // Inter-agent coordination files
+      'shared/reports', // Progress and status reports
+      '.linear-cache', // Cached Linear issues for offline work
     ];
 
+    // Create each directory with proper error handling
     for (const dir of directories) {
       const fullPath = path.join(targetDir, dir);
       await fs.ensureDir(fullPath);
@@ -138,61 +171,73 @@ class InstallSteps {
     }
   }
 
-  async copyWorkflowTemplates(targetDir) {
-    console.log(chalk.gray('  • Copying workflow templates...'));
-
-    const packageRoot = path.join(__dirname, '..');
-    const workflowDir = path.join(targetDir, 'workflows', 'paralell-development-claude');
-    const scriptsDir = path.join(targetDir, 'scripts');
-
-    // Copy all template files
-    const templateFiles = [
-      'scripts/cache-linear-issue.sh',
-      'scripts/decompose-parallel.cjs',
-      'scripts/spawn-agents.sh',
-      'scripts/agent-commit-enhanced.sh',
-      'scripts/deploy.sh',
-      'scripts/integrate-parallel-work.sh',
-      'scripts/monitor-agents.sh',
-      'scripts/resolve-conflicts.sh',
-      'scripts/validate-parallel-work.sh',
-      'scripts/intelligent-agent-generator.js',
-      'scripts/changelog/update-changelog.js',
-      'scripts/changelog/utils.js',
-      'scripts/changelog/README.md',
-      'utils/llm-decomposer.js',
-      'README.md',
-      'CLAUDE.md',
-      'ai_docs/claude-code-hooks-documentation.md',
-      'ai_docs/custom-command-template.md',
-      'ai_docs/emoji-commit-ref.md',
-      'ai_docs/linear-issue-template.md',
-      'ai_docs/readme-template.md',
-      'ai_docs/astral-uv-scripting-documentation.md',
+  /**
+   * Copies workflow template files from the package to the target directory
+   * - Python scripts for core workflow functionality
+   * - Shell wrapper scripts for compatibility
+   * - Conditional Linear integration scripts
+   */
+  async copyWorkflowTemplates(targetDir, config) {
+    // Base Python scripts (always installed) - core workflow functionality
+    const baseTemplates = [
+      'scripts/python/spawn-agents.py', // Create agent worktrees
+      'scripts/python/monitor-agents.py', // Monitor agent progress
+      'scripts/python/agent-commit.py', // Handle agent commits
+      'scripts/python/validate-parallel-work.py', // Validate parallel work
+      'scripts/python/integrate-parallel-work.py', // Merge agent work
+      'scripts/python/resolve-conflicts.py', // Handle merge conflicts
+      'scripts/python/intelligent-agent-generator.py', // Generate new agents
     ];
 
-    // Copy from current package root since templates directory doesn't exist
-    const sourceDir = packageRoot;
+    // Linear-specific Python scripts (only if Linear integration enabled)
+    const linearTemplates = config.setupLinear
+      ? [
+          'scripts/python/cache-linear-issue.py', // Cache Linear issues offline
+          'scripts/python/decompose-parallel.py', // Break down Linear issues
+        ]
+      : [];
 
-    for (const file of templateFiles) {
-      const sourcePath = path.join(sourceDir, file);
-      const targetPath = path.join(workflowDir, file);
+    // Wrapper scripts for compatibility with existing workflows
+    const wrapperTemplates = [
+      'scripts/wrappers/deploy.sh', // Deployment wrapper
+      'scripts/wrappers/spawn-agents.sh', // Agent spawning wrapper
+      'scripts/wrappers/monitor-agents.sh', // Monitoring wrapper
+      // ... other wrappers from scripts/wrappers/
+    ];
+
+    const templateFiles = [...baseTemplates, ...linearTemplates, ...wrapperTemplates];
+
+    // Copy each template file from package to target directory
+    for (const templateFile of templateFiles) {
+      // Source: file in the installed package
+      const sourcePath = path.join(__dirname, '..', templateFile);
+      // Target: file in user's project
+      const targetPath = path.join(targetDir, templateFile);
+
+      // Ensure target directory exists before copying
+      await fs.ensureDir(path.dirname(targetPath));
 
       if (await fs.pathExists(sourcePath)) {
-        await fs.ensureDir(path.dirname(targetPath));
         await fs.copy(sourcePath, targetPath);
-        console.log(chalk.gray(`    Copied: ${file}`));
+
+        // Make Python scripts executable (important for direct execution)
+        if (templateFile.endsWith('.py')) {
+          await fs.chmod(targetPath, 0o755);
+        }
       } else {
-        console.log(chalk.yellow(`    Warning: Template file not found: ${file}`));
+        console.warn(`⚠️  Template not found: ${sourcePath}`);
       }
     }
-
-    // Create essential scripts that integration tests expect
-    await this.createEssentialScripts(scriptsDir);
   }
 
+  /**
+   * Creates essential scripts with embedded content
+   * Used as fallback when template files aren't available
+   * These are basic implementations that can be enhanced later
+   */
   async createEssentialScripts(scriptsDir) {
     const essentialScripts = {
+      // Basic Linear issue caching script
       'cache-linear-issue.sh': `#!/bin/bash
 # Cache Linear issue script for Claude Code integration
 ISSUE_ID=\${1:-""}
@@ -205,6 +250,7 @@ echo "Caching Linear issue: $ISSUE_ID"
 # Linear API integration would go here
 echo "Issue cached successfully"
 `,
+      // Basic task decomposition script
       'decompose-parallel.cjs': `#!/usr/bin/env node
 // Parallel decomposition script for Claude Code
 const fs = require('fs');
@@ -221,6 +267,7 @@ const deploymentPlan = {
 
 console.log('Deployment plan created:', deploymentPlan);
 `,
+      // Basic agent spawning script
       'spawn-agents.sh': `#!/bin/bash
 # Spawn parallel agents script for Claude Code
 echo "Spawning parallel development agents..."
@@ -361,7 +408,7 @@ EDITOR=cursor
     }
 
     // Add framework-specific scripts based on project type
-    const frameworkScripts = this.getFrameworkScripts(config.projectType);
+    const frameworkScripts = this.getFrameworkScripts(config.projectType, config);
     Object.assign(packageJson.scripts, frameworkScripts);
 
     // Add core parallel development scripts
@@ -448,11 +495,85 @@ Thumbs.db
         deny: [],
       },
       hooks: {
-        pre_tool_use: [`python3 .claude/hooks/pre_tool_use.py`],
-        post_tool_use: [`python3 .claude/hooks/post_tool_use.py`],
-        stop: [`python3 .claude/hooks/stop.py`],
-        subagent_stop: [`python3 .claude/hooks/subagent_stop.py`],
-        notification: [`python3 .claude/hooks/notification.py`],
+        PreToolUse: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/pre_tool_use.py',
+              },
+            ],
+          },
+        ],
+        PostToolUse: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/post_tool_use.py',
+              },
+            ],
+          },
+          {
+            matcher: 'Write|Edit',
+            hooks: [
+              {
+                type: 'command',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/import-organizer.py',
+              },
+              {
+                type: 'command',
+                command:
+                  'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/auto_commit_on_changes.py',
+              },
+            ],
+          },
+          {
+            matcher: 'Write|Edit',
+            hooks: [
+              {
+                type: 'command',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/universal-linter.py',
+              },
+            ],
+          },
+        ],
+        Notification: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command:
+                  'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/notification.py --notify',
+              },
+            ],
+          },
+        ],
+        Stop: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/stop.py --chat',
+              },
+            ],
+          },
+        ],
+        SubagentStop: [
+          {
+            matcher: '',
+            hooks: [
+              {
+                type: 'command',
+                command: 'cd "$CLAUDE_PROJECT_DIR" && uv run .claude/hooks/subagent_stop.py',
+              },
+            ],
+          },
+        ],
       },
       ...projectSpecificSettings,
     };
@@ -691,26 +812,23 @@ git commit -m "docs: update changelog for v1.5.0"
     return 'npm';
   }
 
-  getFrameworkScripts(projectType) {
-    switch (projectType) {
-      case 'nextjs':
-        return {
-          'claude:cache': 'node scripts/cache-linear-issue.sh',
-          'claude:decompose': 'node scripts/decompose-parallel.cjs',
-          'claude:spawn': 'bash scripts/spawn-agents.sh',
-        };
-      case 'react':
-        return {
-          'claude:build': 'vite build',
-          'claude:test': 'vitest',
-        };
-      case 'nodejs':
-        return {
-          'claude:api': 'node server.js',
-        };
-      default:
-        return {};
-    }
+  getFrameworkScripts(projectType, config) {
+    const baseScripts = {
+      'claude:spawn': './scripts/python/spawn-agents.py',
+      'claude:integrate': './scripts/python/integrate-parallel-work.py',
+      'claude:monitor': './scripts/python/monitor-agents.py',
+      'claude:validate': './scripts/python/validate-parallel-work.py',
+      'claude:resolve': './scripts/python/resolve-conflicts.py',
+    };
+
+    const linearScripts = config.setupLinear
+      ? {
+          'claude:cache': './scripts/python/cache-linear-issue.py',
+          'claude:decompose': './scripts/python/decompose-parallel.py',
+        }
+      : {};
+
+    return { ...baseScripts, ...linearScripts };
   }
 
   getFrameworkCommands(projectType) {

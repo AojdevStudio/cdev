@@ -1,29 +1,76 @@
+// Core Node.js modules for file system operations and path handling
 const path = require('path');
 
+// External dependencies for enhanced CLI experience and user interaction
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 
+// Internal modules for installation workflow and utility functions
 const { InstallSteps } = require('./install-steps');
 const { InstallUtils } = require('./install-utils');
 
+/**
+ * Main Installer Class - Orchestrates the CDEV installation process
+ *
+ * This class serves as the central coordinator for installing the Claude Development (CDEV)
+ * system into any project. It handles project type detection, interactive configuration,
+ * and manages the complete installation workflow through distinct phases.
+ *
+ * The installer is designed to be flexible and robust, supporting various project types
+ * including Node.js, Python, monorepos, and more. It provides both interactive and
+ * programmatic installation modes for different use cases.
+ *
+ * Installation Architecture:
+ * - Phase 1: Pre-installation validation (dependencies, permissions, environment)
+ * - Phase 2: Interactive configuration (project settings, preferences)
+ * - Phase 3: Core installation (files, templates, scripts)
+ * - Phase 4: Post-installation setup (hooks, environment, examples)
+ * - Phase 5: Success messaging and guidance
+ */
 class Installer {
+  /**
+   * Initialize the installer with configuration options
+   *
+   * @param {object} options - Installation configuration options
+   * @param {boolean} options.skipPrompts - Skip interactive prompts for automated installation
+   * @param {string} options.packageManager - Override package manager detection
+   */
   constructor(options = {}) {
     this.options = options;
-    this.steps = new InstallSteps();
-    this.utils = new InstallUtils();
+    this.steps = new InstallSteps(); // Handles individual installation steps
+    this.utils = new InstallUtils(); // Provides utility functions for file operations
   }
 
   /**
-   * Detects the project type based on package.json and configuration files
-   * @param {string} projectPath - Path to the project directory
-   * @returns {object} Project type object with type, confidence, and metadata
+   * Intelligent Project Type Detection
+   *
+   * Analyzes the project directory structure and configuration files to determine
+   * the project type, framework, and build tools. This information is used to
+   * customize the installation process and select appropriate hooks and templates.
+   *
+   * Detection Strategy:
+   * 1. Check for Python project indicators first (requirements.txt, pyproject.toml, setup.py)
+   * 2. Look for Node.js package.json and analyze dependencies
+   * 3. Detect specific frameworks (Next.js, React, Express) based on dependencies and config files
+   * 4. Identify monorepo structures (workspaces, turbo.json)
+   * 5. Fall back to minimal setup if no clear indicators are found
+   *
+   * @param {string} projectPath - Absolute path to the project directory to analyze
+   * @returns {object} Project type metadata with confidence scoring
+   * @returns {string} returns.type - Project type (python, nextjs, react, nodejs, monorepo, minimal)
+   * @returns {number} returns.confidence - Confidence score from 0.5 to 0.95
+   * @returns {string} returns.runtime - Runtime environment (python, node)
+   * @returns {string} returns.framework - Primary framework (flask, next, react, express)
+   * @returns {string} returns.buildTool - Build tool used (next, vite, webpack)
    */
   detectProjectType(projectPath) {
     const packageJsonPath = path.join(projectPath, 'package.json');
     const fs = require('fs');
 
     try {
-      // Check for Python first
+      // Priority 1: Python Project Detection
+      // Python projects are checked first as they don't use package.json
+      // and may coexist with Node.js in some polyglot projects
       if (
         fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
         fs.existsSync(path.join(projectPath, 'pyproject.toml')) ||
@@ -33,10 +80,12 @@ class Installer {
           type: 'python',
           confidence: 0.9,
           runtime: 'python',
-          framework: 'flask',
+          framework: 'flask', // Default assumption, could be Django, FastAPI, etc.
         };
       }
 
+      // Priority 2: Check for package.json existence
+      // If no package.json exists, this is likely a minimal project or non-Node.js project
       if (!fs.existsSync(packageJsonPath)) {
         return {
           type: 'minimal',
@@ -44,10 +93,13 @@ class Installer {
         };
       }
 
+      // Priority 3: Parse package.json and analyze dependencies
+      // Combine both dependencies and devDependencies for comprehensive analysis
       const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
       const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
 
-      // Check for Next.js with high confidence
+      // Priority 4: Framework-specific detection with high confidence
+      // Next.js detection - check both dependency and config file for highest accuracy
       if (dependencies.next || fs.existsSync(path.join(projectPath, 'next.config.js'))) {
         return {
           type: 'nextjs',
@@ -57,7 +109,7 @@ class Installer {
         };
       }
 
-      // Check for Vite React
+      // React with Vite detection - modern React setup
       if (dependencies.vite && dependencies.react) {
         return {
           type: 'react',
@@ -67,7 +119,8 @@ class Installer {
         };
       }
 
-      // Check for monorepo
+      // Priority 5: Monorepo detection
+      // Check for workspace configuration or Turbo.js monorepo setup
       if (packageJson.workspaces || fs.existsSync(path.join(projectPath, 'turbo.json'))) {
         return {
           type: 'monorepo',
@@ -76,21 +129,25 @@ class Installer {
         };
       }
 
-      // Check for Express/Node.js
+      // Priority 6: Backend framework detection
+      // Common Node.js backend frameworks
       if (dependencies.express || dependencies.fastify || dependencies.koa) {
         return {
           type: 'nodejs',
           confidence: 0.85,
           runtime: 'node',
-          framework: 'express',
+          framework: 'express', // Default to Express, most common
         };
       }
 
+      // Priority 7: Default fallback for Node.js projects without clear framework
       return {
         type: 'minimal',
         confidence: 0.7,
       };
     } catch (error) {
+      // Error handling: JSON parsing errors or file system access issues
+      // Return minimal setup with low confidence to allow installation to proceed
       return {
         type: 'minimal',
         confidence: 0.5,
@@ -99,59 +156,119 @@ class Installer {
   }
 
   /**
-   * Detects the package manager used in the project
-   * @param {string} projectPath - Path to the project directory
-   * @returns {string} Package manager (npm, yarn, pnpm)
+   * Package Manager Detection
+   *
+   * Determines which package manager is being used in the project by checking
+   * for specific lock files. This information is crucial for running the correct
+   * package manager commands during installation and in generated scripts.
+   *
+   * Detection Priority:
+   * 1. pnpm-lock.yaml (pnpm - fast, disk efficient)
+   * 2. yarn.lock (Yarn - popular alternative to npm)
+   * 3. package-lock.json (npm - Node.js default)
+   * 4. Default to npm if no lock files found
+   *
+   * @param {string} projectPath - Absolute path to the project directory
+   * @returns {string} Package manager identifier ('pnpm', 'yarn', 'npm')
    */
   detectPackageManager(projectPath) {
     const fs = require('fs');
 
-    // Check for lock files
+    // Priority order matters - check most specific first
+    // pnpm is checked first as it's often used in monorepos for performance
     if (fs.existsSync(path.join(projectPath, 'pnpm-lock.yaml'))) {
       return 'pnpm';
     }
+
+    // Yarn is common in React and modern frontend projects
     if (fs.existsSync(path.join(projectPath, 'yarn.lock'))) {
       return 'yarn';
     }
+
+    // npm is the default Node.js package manager
     if (fs.existsSync(path.join(projectPath, 'package-lock.json'))) {
       return 'npm';
     }
 
-    // Default to npm
+    // Fallback to npm if no lock files are present
+    // This allows installation to proceed even in new projects
     return 'npm';
   }
 
+  /**
+   * Main Installation Orchestrator
+   *
+   * This is the primary entry point for the CDEV installation process. It coordinates
+   * all installation phases in a specific order to ensure a reliable and user-friendly
+   * installation experience. The method is designed to be fault-tolerant and provides
+   * clear feedback at each stage.
+   *
+   * Installation Flow:
+   * 1. Pre-installation validation ensures environment readiness
+   * 2. Interactive configuration gathers user preferences (skippable for automation)
+   * 3. Core installation deploys files, templates, and scripts
+   * 4. Post-installation setup configures hooks and environment
+   * 5. Success messaging provides next steps and guidance
+   *
+   * Error Handling Strategy:
+   * - Catches all errors to prevent unhandled rejections
+   * - Provides clear error messages with context
+   * - Exits gracefully in interactive mode
+   * - Re-throws errors in programmatic mode for proper test handling
+   *
+   * @param {string} targetDir - Target directory for installation (default: current directory)
+   * @param {object} options - Installation options and overrides
+   * @param {boolean} options.skipPrompts - Skip interactive prompts for automated installation
+   * @param {string} options.packageManager - Override package manager detection
+   */
   async install(targetDir = '.', options = {}) {
     try {
+      // Welcome message with clear branding
       console.log(chalk.cyan('🚀 Installing Parallel Claude Development Workflow'));
       console.log('');
 
+      // Convert relative path to absolute for consistent path handling throughout installation
       const resolvedTargetDir = path.resolve(targetDir);
 
-      // Phase 1: Pre-installation validation
+      // Phase 1: Pre-installation Validation
+      // Validates environment dependencies, target directory permissions, and prerequisites
+      // This phase prevents installation from proceeding if critical requirements aren't met
       await this.preInstallValidation(resolvedTargetDir, options);
 
-      // Phase 2: Interactive configuration (skip if requested)
+      // Phase 2: Interactive Configuration
+      // Gathers user preferences through interactive prompts or uses defaults
+      // Can be skipped for automated installations (CI/CD, testing, etc.)
       const config = options.skipPrompts
         ? this.getDefaultConfiguration(resolvedTargetDir, options)
         : await this.interactiveConfiguration(resolvedTargetDir);
 
-      // Phase 3: Core installation
+      // Phase 3: Core Installation
+      // Deploys the core CDEV files, templates, and scripts to the target directory
+      // Creates the essential directory structure and copies workflow templates
       await this.coreInstallation(resolvedTargetDir, config, options);
 
-      // Phase 4: Post-installation setup
+      // Phase 4: Post-installation Setup
+      // Configures environment variables, sets up Git hooks, creates examples
+      // This phase makes the installation immediately usable
       await this.postInstallationSetup(resolvedTargetDir, config);
 
-      // Phase 5: Success message
+      // Phase 5: Success Messaging and Guidance
+      // Provides clear next steps and usage instructions to the user
+      // Skipped in programmatic mode to avoid polluting test output
       if (!options.skipPrompts) {
         this.displaySuccessMessage(resolvedTargetDir, config);
       }
     } catch (error) {
+      // Comprehensive error handling with user-friendly messaging
       console.error(chalk.red('❌ Installation failed:'), error.message);
+
       if (!options.skipPrompts) {
+        // Interactive mode: exit cleanly with error code
         process.exit(1);
       } else {
-        throw error; // Re-throw for tests
+        // Programmatic mode: re-throw for proper test error handling
+        // This allows calling code to handle the error appropriately
+        throw error;
       }
     }
   }
@@ -318,24 +435,20 @@ class Installer {
     }
 
     console.log('2. Try the workflow:');
-    console.log(
-      chalk.cyan(
-        '   ./workflows/paralell-development-claude/scripts/cache-linear-issue.sh TASK-123',
-      ),
-    );
+    if (config.setupLinear) {
+      console.log(chalk.cyan('   ./scripts/python/cache-linear-issue.py TASK-123'));
+      console.log(chalk.cyan('   ./scripts/python/decompose-parallel.py TASK-123'));
+    }
+    console.log(chalk.cyan('   ./scripts/python/spawn-agents.py'));
     console.log('');
 
     console.log('3. Read the documentation:');
-    console.log(chalk.cyan('   ./workflows/paralell-development-claude/README.md'));
+    console.log(chalk.cyan('   ./scripts/python/README.md'));
     console.log('');
 
-    console.log('4. Start with Claude Code:');
-    console.log(chalk.cyan('   claude'));
-    console.log('');
-
-    console.log(chalk.blue('📚 Documentation and examples:'));
-    console.log('   • README.md - Complete workflow guide');
-    console.log('   • ai_docs/ - AI-specific documentation');
+    console.log(chalk.blue('📚 Available Python scripts:'));
+    console.log('   • scripts/python/ - All UV-based Python scripts');
+    console.log('   • scripts/wrappers/ - Shell/JS compatibility wrappers');
     console.log('');
 
     console.log(chalk.magenta('🚀 Happy parallel development!'));

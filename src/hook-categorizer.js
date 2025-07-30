@@ -1,14 +1,40 @@
 /**
- * HookCategorizer - Categorizes hooks into tiers based on security and importance
+ * Hook Categorization Engine
  *
- * Tier 1 (Critical): Security, validation, and enforcement hooks
- * Tier 2 (Important): Quality, standards, and automation hooks
- * Tier 3 (Optional): Convenience and notification hooks
- * Utils: Shared utilities and helper functions
+ * The HookCategorizer is responsible for analyzing hook files and categorizing them
+ * into appropriate tiers based on their functionality, importance, and security impact.
+ * This categorization system ensures that critical hooks are properly prioritized
+ * and organized for optimal workflow integration.
+ *
+ * Tier Classification System:
+ * - Tier 1 (Critical): Security, validation, and enforcement hooks that are mandatory
+ *   for maintaining code quality and security standards. These hooks can block operations.
+ *
+ * - Tier 2 (Important): Quality, standards, and automation hooks that significantly
+ *   improve code maintainability and consistency. These are recommended for most projects.
+ *
+ * - Tier 3 (Optional): Convenience and notification hooks that enhance developer
+ *   experience but are not essential for core functionality.
+ *
+ * - Utils: Shared utilities and helper functions that provide common functionality
+ *   used by hooks across all tiers.
+ *
+ * Categorization Strategy:
+ * The categorizer uses multiple analysis techniques including filename patterns,
+ * content analysis, keyword matching, and explicit hook lists to determine
+ * the appropriate tier for each hook.
  */
 class HookCategorizer {
+  /**
+   * Initialize the categorization engine with tier classification rules
+   *
+   * Sets up the comprehensive rule system used to analyze and categorize hooks.
+   * Each tier has specific patterns, keywords, and explicit hook lists that
+   * guide the categorization process.
+   */
   constructor() {
-    // Define hook categorization rules
+    // Define comprehensive hook categorization rules by tier
+    // Each tier contains patterns, keywords, and explicit hook lists for accurate classification
     this.categoryRules = {
       tier1: {
         description: 'Critical security and validation hooks',
@@ -54,26 +80,55 @@ class HookCategorizer {
   }
 
   /**
-   * Categorize a list of hooks into tiers
+   * Main Hook Categorization Process
+   *
+   * Analyzes a collection of hooks and categorizes them into appropriate tiers
+   * based on their functionality, security impact, and importance. Each hook
+   * is enhanced with additional metadata for better organization and selection.
+   *
+   * Categorization Process:
+   * 1. Initialize tier buckets (tier1, tier2, tier3, utils)
+   * 2. For each hook, determine its appropriate tier
+   * 3. Classify hook functionality and generate description
+   * 4. Assign importance level based on tier classification
+   * 5. Create enhanced hook object with all metadata
+   * 6. Group categorized hooks by tier for organized access
+   *
+   * @param {Array} hooks - Array of hook objects with name, path, content, and metadata
+   * @returns {object} Categorized hooks organized by tier with enhanced metadata
+   *
+   * Return Structure:
+   * {
+   *   tier1: [hook objects], // Critical security and validation hooks
+   *   tier2: [hook objects], // Important quality and standards hooks
+   *   tier3: [hook objects], // Optional convenience hooks
+   *   utils: [hook objects]  // Shared utilities and helper functions
+   * }
    */
   async categorize(hooks) {
+    // Initialize tier-based categorization buckets
     const categorized = {
-      tier1: [],
-      tier2: [],
-      tier3: [],
-      utils: [],
+      tier1: [], // Critical hooks that can block operations
+      tier2: [], // Important hooks for code quality
+      tier3: [], // Optional convenience hooks
+      utils: [], // Shared utilities and helpers
     };
 
+    // Process each hook through the categorization pipeline
     for (const hook of hooks) {
+      // Step 1: Determine appropriate tier based on analysis
       const tier = this.determineHookTier(hook);
+
+      // Step 2: Create enhanced hook object with additional metadata
       const categorizedHook = {
-        ...hook,
-        tier,
-        category: this.getHookCategory(hook),
-        description: this.getHookDescription(hook),
-        importance: this.getImportanceLevel(tier),
+        ...hook, // Preserve original hook data
+        tier, // Assigned tier classification
+        category: this.getHookCategory(hook), // Functional category (validation, enforcement, etc.)
+        description: this.getHookDescription(hook), // Human-readable description
+        importance: this.getImportanceLevel(tier), // Importance level based on tier
       };
 
+      // Step 3: Add categorized hook to appropriate tier bucket
       categorized[tier].push(categorizedHook);
     }
 
@@ -81,29 +136,53 @@ class HookCategorizer {
   }
 
   /**
-   * Determine which tier a hook belongs to
+   * Tier Determination Algorithm
+   *
+   * Analyzes a single hook to determine its appropriate tier classification.
+   * Uses multiple analysis techniques in priority order to ensure accurate
+   * categorization based on functionality and importance.
+   *
+   * Analysis Priority Order:
+   * 1. Path-based detection (utils directory check)
+   * 2. Explicit hook name matching (predefined lists)
+   * 3. Filename pattern matching (regex patterns)
+   * 4. Content-based keyword analysis
+   * 5. Default tier assignment (tier3 as fallback)
+   *
+   * @param {object} hook - Hook object with name, path, and content
+   * @returns {string} Tier classification ('tier1', 'tier2', 'tier3', 'utils')
+   *
+   * Special Cases:
+   * - Hooks in /utils/ subdirectory are automatically classified as 'utils'
+   * - Explicit hook lists take precedence over pattern/keyword matching
+   * - Content analysis is used for hooks without clear filename indicators
    */
   determineHookTier(hook) {
-    // Check if it's a utility
+    // Priority 1: Utility Detection
+    // Check if hook is in utils subdirectory - these are shared helper functions
     if (hook.path && hook.path.includes('/utils/')) {
       return 'utils';
     }
 
-    // Check each tier's rules
+    // Priority 2-4: Tier-based Analysis
+    // Check each tier's classification rules in order (tier1 -> tier2 -> tier3 -> utils)
     for (const [tier, rules] of Object.entries(this.categoryRules)) {
-      // Check if hook name is in explicit list
+      // Priority 2: Explicit Hook Name Matching
+      // Check if hook name is in the predefined list for this tier
       if (rules.hooks.includes(hook.name)) {
         return tier;
       }
 
-      // Check patterns
+      // Priority 3: Filename Pattern Matching
+      // Check if hook name or path matches tier-specific regex patterns
       for (const pattern of rules.patterns) {
         if (pattern.test(hook.name) || (hook.path && pattern.test(hook.path))) {
           return tier;
         }
       }
 
-      // Check keywords in content
+      // Priority 4: Content-based Keyword Analysis
+      // Analyze hook content for tier-specific keywords and functionality indicators
       if (hook.content) {
         const contentLower = hook.content.toLowerCase();
         for (const keyword of rules.keywords) {
@@ -114,7 +193,9 @@ class HookCategorizer {
       }
     }
 
-    // Default to tier3 if no match
+    // Priority 5: Default Fallback
+    // If no specific tier can be determined, default to tier3 (optional)
+    // This ensures all hooks are categorized and available for selection
     return 'tier3';
   }
 

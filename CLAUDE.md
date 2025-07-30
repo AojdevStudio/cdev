@@ -23,5 +23,6 @@ Developers using Claude Code who want to:
 ### Development Memories
 
 - removing obsolete tests is better than maintaining stale mocks.
-
-[Rest of the existing content remains unchanged]
+- After making changes to existing functionality or adding new features, update existing tests, remove old obsolete tests, build new tests
+- When writing code, always add clear, descriptive comments explaining each section. Always group related items together. It is important to explain the purpose of each script, dependency, and configuration. Make it easy to understand for someone who might be overwhelmed by complexity. It should not be too verbose, but it should use complete, concise sentences that an educated person can follow.
+- For JSON-related files, make sure to create separate documentation to explain those files, because comments are not approved or allowed in JSON.

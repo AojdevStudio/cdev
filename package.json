@@ -2,7 +2,7 @@
   "name": "@aojdevstudio/cdev",
   "version": "0.0.20",
   "description": "Claude Development - Parallel workflow system with intelligent hooks, Linear integration, and automated agent management",
-  "main": "src/installer.js",
+  "main": "bin/cli.js",
   "bin": {
     "cdev": "bin/cli.js"
   },
@@ -68,18 +68,11 @@
   "homepage": "https://github.com/AOJDevStudio/cdev#readme",
   "files": [
     "bin/",
-    "src/**/*.js",
-    "!src/**/*.test.js",
-    "!src/**/*.spec.js",
+    "src/",
     "scripts/python/",
     "scripts/wrappers/",
     "scripts/changelog/",
     ".claude/",
-    ".claude/**/*",
-    ".claude/agents/",
-    ".claude/agents/**/*.md",
-    ".claude/hooks/",
-    ".claude/hooks/**/*",
     "ai-docs/",
     "README.md",
     "LICENSE",
