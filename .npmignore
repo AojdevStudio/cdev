@@ -123,6 +123,7 @@ lib/
 api/
 operations/
 integration/
+archive/
 
 # Git worktree related
 *-work-trees/
