@@ -44,6 +44,10 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/import-organizer.py"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/auto_commit_on_changes.py"
           }
         ]
       },
