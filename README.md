@@ -1,6 +1,6 @@
 # CDEV: AI-Powered Development Orchestration System
 
-**Version**: 0.0.15  
+**Version**: 0.0.22  
 **License**: CC-BY-NC-SA-4.0  
 **Requirements**: Node.js ≥ 16.0.0  
 **Community**: [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues) | [NPM Package](https://www.npmjs.com/package/@aojdevstudio/cdev)
@@ -89,10 +89,14 @@ graph TD
     E --> G("/orchestrate tasks")
 ```
 
-**Step 1:** Install CDEV globally
+**Step 1:** Install CDEV in your project
 
 ```bash
-npm install -g @aojdevstudio/cdev
+# One-time use (recommended for trying CDEV)
+npx @aojdevstudio/cdev@latest install
+
+# OR install as a dev dependency
+npm install --save-dev @aojdevstudio/cdev
 ```
 
 **Step 2:** Initialize in your project _(CRITICAL!)_
@@ -110,12 +114,18 @@ npm install -g @aojdevstudio/cdev
 
 ## 🛠 Setup & Updates
 
-**Recommended Command:**
+**Installation Options:**
 
 ```bash
-npm install -g @aojdevstudio/cdev
-# OR for existing setups
-npm update -g @aojdevstudio/cdev
+# Option 1: One-time use with npx (no installation needed)
+npx @aojdevstudio/cdev@latest install
+
+# Option 2: Install as project dev dependency
+npm install --save-dev @aojdevstudio/cdev
+# Then run: npx cdev install
+
+# Update existing installation
+npm update @aojdevstudio/cdev
 ```
 
 ✅ Automatic Claude configuration with CLAUDE.md generation  

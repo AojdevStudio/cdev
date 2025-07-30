@@ -82,16 +82,16 @@ async def verify_published_package() -> bool:
             return False
 
 
-async def test_global_installation() -> bool:
-    """Test that the package can be installed globally via NPX"""
-    log("Testing global NPX installation...")
+async def test_npx_execution() -> bool:
+    """Test that the package can be executed via NPX"""
+    log("Testing NPX execution...")
 
     package_path = PROJECT_ROOT / "package.json"
     with open(package_path) as f:
         pkg = json.load(f)
 
     try:
-        # Test that the package can be installed globally
+        # Test that the package can be executed via NPX
         test_command = f"npx {pkg['name']}@{pkg['version']} --version"
         log(f"Testing command: {test_command}")
 
@@ -101,17 +101,17 @@ async def test_global_installation() -> bool:
         result = subprocess.run(test_command, check=False, shell=True, capture_output=True, text=True, timeout=30)
 
         if result.returncode == 0:
-            log(f"✅ Global NPX installation test passed: {result.stdout.strip()}")
+            log(f"✅ NPX execution test passed: {result.stdout.strip()}")
             return True
         else:
-            log(f"❌ Global NPX installation test failed: {result.stderr}", "error")
+            log(f"❌ NPX execution test failed: {result.stderr}", "error")
             return False
 
     except subprocess.TimeoutExpired:
-        log("❌ Global NPX installation test timed out", "error")
+        log("❌ NPX execution test timed out", "error")
         return False
     except Exception as error:
-        log(f"❌ Global NPX installation test failed: {error!s}", "error")
+        log(f"❌ NPX execution test failed: {error!s}", "error")
         return False
 
 
@@ -145,70 +145,47 @@ def update_distribution_manifest() -> None:
     log(f"Distribution manifest updated: {manifest_path}")
 
 
-def generate_usage_documentation() -> None:
-    """Generate usage documentation for the published package"""
-    log("Generating usage documentation...")
+def update_readme_version() -> None:
+    """Update version information in README.md"""
+    log("Updating README.md version information...")
 
     package_path = PROJECT_ROOT / "package.json"
     with open(package_path) as f:
         pkg = json.load(f)
 
-    usage_doc = f"""# {pkg["name"]} - Usage Guide
+    readme_path = PROJECT_ROOT / "README.md"
 
-## Installation
+    # Read current README content
+    with open(readme_path, 'r') as f:
+        readme_content = f.read()
 
-```bash
-# Global installation
-npm install -g {pkg["name"]}
+    # Update the version line (line 3: **Version**: X.X.X)
+    import re
 
-# Or use with npx (recommended)
-npx {pkg["name"]}
-```
+    # Pattern to match the version line
+    version_pattern = r'(\*\*Version\*\*:\s+)[\d.]+(\s*)'
+    new_version_line = f'\\g<1>{pkg["version"]}\\g<2>'
 
-## Quick Start
+    # Check if pattern matches
+    match = re.search(version_pattern, readme_content)
+    if not match:
+        log("Warning: Version pattern not found in README.md", "warn")
+        return
 
-```bash
-# Cache a Linear issue
-npx {pkg["name"]} cache-linear-issue PROJ-123
+    # Replace the version
+    updated_content = re.sub(version_pattern, new_version_line, readme_content)
 
-# Decompose into parallel agents
-npx {pkg["name"]} decompose-parallel PROJ-123
+    # Verify the change was made
+    if updated_content == readme_content:
+        log("Warning: README content unchanged after regex replacement", "warn")
+        return
 
-# Spawn all agents
-npx {pkg["name"]} spawn-agents shared/deployment-plans/proj-123-deployment-plan.json
-```
+    # Write back to README
+    with open(readme_path, 'w') as f:
+        f.write(updated_content)
 
-## Commands
-
-### cache-linear-issue
-Downloads and caches a Linear issue for offline work.
-
-### decompose-parallel
-Analyzes the cached issue and breaks it into parallel workstreams.
-
-### spawn-agents
-Creates isolated Git worktrees for each agent to work independently.
-
-## Version Information
-
-- Package: {pkg["name"]}
-- Version: {pkg["version"]}
-- Published: {datetime.now().isoformat()}
-
-## Global NPX Distribution
-
-This package is designed to be used globally via NPX, providing:
-- ✅ Offline workflow capabilities
-- ✅ Parallel agent development
-- ✅ Git worktree isolation
-- ✅ Intelligent task decomposition
-
-For more information, see the [README](./README.md).
-"""
-
-    usage_path = PROJECT_ROOT / "USAGE.md"
-    usage_path.write_text(usage_doc)
-    log(f"Usage documentation generated: {usage_path}")
+    log(f"README.md updated with version {pkg['version']}")
+    log(f"Package: {pkg['name']} v{pkg['version']} published at {datetime.now().isoformat()}")
 
 
 def log_publish_success() -> None:
@@ -231,7 +208,7 @@ Global usage:
   npx {pkg["name"]} decompose-parallel PROJ-123
   npx {pkg["name"]} spawn-agents deployment-plan.json
 
-✅ Ready for global distribution via NPX!
+✅ Ready for distribution via NPX!
 """
 
     console.print(success_message)
@@ -241,7 +218,7 @@ def cleanup_temporary_files() -> None:
     """Clean up temporary files created during the publish process"""
     log("Cleaning up temporary files...")
 
-    temp_files = ["dist-manifest.json", "npm-debug.log", ".npm-debug.log"]
+    temp_files = ["dist-manifest.json", "npm-debug.log", ".npm-debug.log", "USAGE.md"]
 
     for file in temp_files:
         file_path = PROJECT_ROOT / file
@@ -275,20 +252,20 @@ async def async_main(output_format: str, skip_verification: bool):
             log("Skipping NPM verification (--skip-verification flag)", "warn")
             results["postpublish_operations"]["operations"]["npm_verification"] = "skipped"
 
-        # Test global installation
-        global_install_works = await test_global_installation()
-        results["postpublish_operations"]["operations"]["global_install_test"] = global_install_works
+        # Test NPX execution
+        npx_works = await test_npx_execution()
+        results["postpublish_operations"]["operations"]["npx_execution_test"] = npx_works
 
-        if not global_install_works:
-            log("Global installation test failed - package may need time to propagate", "warn")
+        if not npx_works:
+            log("NPX execution test failed - package may need time to propagate", "warn")
 
         # Update distribution manifest
         update_distribution_manifest()
         results["postpublish_operations"]["operations"]["manifest_update"] = True
 
-        # Generate usage documentation
-        generate_usage_documentation()
-        results["postpublish_operations"]["operations"]["documentation_generation"] = True
+        # Update README version information
+        update_readme_version()
+        results["postpublish_operations"]["operations"]["readme_update"] = True
 
         # Log success
         log_publish_success()

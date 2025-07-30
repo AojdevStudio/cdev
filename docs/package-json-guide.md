@@ -20,7 +20,7 @@ This document explains every section of the `package.json` file.
 
 ```json
 {
-  "main": "src/installer.js",
+  "main": "bin/cli.js",
   "bin": {
     "cdev": "bin/cli.js"
   }

@@ -187,6 +187,11 @@ class InstallSteps {
       'scripts/python/integrate-parallel-work.py', // Merge agent work
       'scripts/python/resolve-conflicts.py', // Handle merge conflicts
       'scripts/python/intelligent-agent-generator.py', // Generate new agents
+      'scripts/python/security-check.py', // Security and secrets scanning
+      'scripts/python/changelog/update-changelog.py', // Update changelog
+      'scripts/python/changelog/utils.py', // Changelog utilities
+      'scripts/python/changelog/README.md', // Changelog documentation
+      'scripts/python/test-locally.py', // Test locally before deployment
     ];
 
     // Linear-specific Python scripts (only if Linear integration enabled)

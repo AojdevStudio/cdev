@@ -59,7 +59,7 @@ Post-publication operations script.
 Features:
 
 - Verifies package on NPM registry
-- Tests global NPX installation
+- Tests NPX execution
 - Updates distribution manifest
 - Generates usage documentation
 - Cleans up temporary files

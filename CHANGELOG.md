@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Installation Consolidation** - Removed global installation support entirely
+  - Package is now project-local only (no more `npm install -g`)
+  - Removed `preferGlobal: true` from package.json
+  - Updated all documentation to reflect project-local installation methods
+  - Created comprehensive MIGRATION.md guide for users transitioning from global installations
+  - Simplified installation to two methods: NPX one-time use or dev dependency
+
+### Removed
+
+- **Obsolete Installation Files** - Cleaned up unused installation infrastructure
+  - Removed `src/installer.js` and `src/simple-installer.js` (never used by CLI)
+  - Removed all related test files for obsolete installers
+  - Removed `test/integration/` directory with unused integration tests
+  - Removed `scripts/test-installer.sh` shell script
+- **Unused Utils Directory** - Removed entire `utils/` directory containing:
+  - `llm-decomposer.js` - Unused LLM task decomposition utility
+  - `subagent-decomposer.js` - Unused concurrent task decomposer
+  - `task-parser.js` - Unused universal task parser
+- **Redundant Documentation** - Removed duplicate README files
+  - Deleted `scripts/python/complex-scripts-readme.md` (content already in main README)
+
+### Fixed
+
+- **Installation Validation** - Updated post-install validator to check for NPX commands
+  - Removed `validateGlobalPackage()` method entirely
+  - Updated CLI command validation for project-local usage
+  - Fixed hook paths to use tier-based structure
+- **Documentation References** - Removed all global installation references
+  - Updated docs/guides/installation.md to remove `npm install -g` commands
+  - Changed postpublish script from "global NPX installation" to "NPX execution" testing
+  - Updated pnpm-enforcer.py hook to block global installation patterns
+- **Installation Guide** - Corrected and clarified installation instructions
+  - Restored script verification commands after confirming installer copies scripts to project
+  - Clarified that `npx cdev install` copies all necessary files including Python scripts
+  - Added proper manual setup options with three clear paths
+  - Fixed verification commands to use `npx cdev` instead of `cdev`
+
 
 ## [0.1.0] - 2025-07-28
 

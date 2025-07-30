@@ -48,80 +48,100 @@ Before installing Claude Code Hooks, ensure you have:
 The fastest way to get started:
 
 ```bash
-# Install globally (recommended)
-npm install -g @aojdevstudio/cdev
+# Use directly with npx (no installation needed)
+npx @aojdevstudio/cdev@latest install
 
-# Or use directly with npx
-npx @aojdevstudio/cdev get PROJ-123
+# Or install as a project dependency
+npm install --save-dev @aojdevstudio/cdev
 ```
 
 ## Setting Up Your Project
 
-After installing CDEV globally, you need to set up the hooks and scripts in your project:
+After installing CDEV, run the interactive installer:
 
-1. **Clone the hooks and scripts**
+```bash
+# Initialize CDEV in your project
+npx cdev install
 
-   ```bash
-   # Navigate to your project
-   cd your-project
+# This will:
+# - Copy necessary hooks and scripts to your project
+# - Configure your project settings
+# - Set up the required directory structure
+# - Create .env file from template
+```
 
-   # Get the necessary files from the CDEV repository
-   git clone https://github.com/AOJDevStudio/cdev.git temp-cdev
-   cp -r temp-cdev/.claude .
-   cp -r temp-cdev/scripts .
-   rm -rf temp-cdev
-   ```
+### Verify the Installation
 
-2. **Set up environment variables**
+After running the installer, you should have these files in your project:
 
-   ```bash
-   # Create .env file from example
-   cp .env.example .env
+```bash
+# Test that Python scripts were copied successfully
+./scripts/python/test-locally.py --help
 
-   # Edit .env and configure:
-   # Linear API (optional, for issue tracking)
-   LINEAR_API_KEY=lin_api_xxxxx
+# Run security check (if available)
+./scripts/python/security-check.py
+```
 
-   # LLM Configuration (required for decompose-parallel.cjs)
-   LLM_PROVIDER=openrouter  # or "openai" or "anthropic"
-   LLM_MODEL=mistralai/mistral-large-2411
-   OPENROUTER_API_KEY=sk-or-v1-xxxxx  # or OPENAI_API_KEY or ANTHROPIC_API_KEY
-   ```
+### Environment Configuration
 
-3. **Make scripts executable**
+If you need to manually configure environment variables:
 
-   ```bash
-   chmod +x scripts/*.sh
-   chmod +x scripts/python/*.py
-   ```
+```bash
+# Edit the generated .env file
+# Linear API (optional, for issue tracking)
+LINEAR_API_KEY=lin_api_xxxxx
 
-4. **Verify Python scripts setup**
-
-   ```bash
-   # Test that Python scripts are working
-   ./scripts/python/test-locally.py --help
-
-   # Run security check
-   ./scripts/python/security-check.py
-   ```
+# LLM Configuration (required for decompose-parallel features)
+LLM_PROVIDER=openrouter  # or "openai" or "anthropic"
+LLM_MODEL=mistralai/mistral-large-2411
+OPENROUTER_API_KEY=sk-or-v1-xxxxx  # or OPENAI_API_KEY or ANTHROPIC_API_KEY
+```
 
 ## Manual Setup
 
 For complete control over the setup process:
 
-### Basic Setup
+### Option 1: Run the Installer Non-Interactively
 
 ```bash
-# Clone the repository
+# Install with default settings
+npx cdev install --yes
+
+# This skips all prompts and uses default configurations
+```
+
+### Option 2: Copy Files from Node Modules
+
+If the installer doesn't work, you can manually copy files:
+
+```bash
+# After installing CDEV as a dependency
+cd your-project
+
+# Copy files from node_modules
+cp -r node_modules/@aojdevstudio/cdev/.claude .
+cp -r node_modules/@aojdevstudio/cdev/scripts .
+cp node_modules/@aojdevstudio/cdev/.env.example .env
+
+# Make scripts executable
+chmod +x scripts/*.sh
+chmod +x scripts/python/*.py
+```
+
+### Option 3: Clone Repository for Development
+
+```bash
+# Clone the repository for development/contribution
 git clone https://github.com/AOJDevStudio/cdev.git
 cd cdev
 
-# Install as global package
-npm install -g .
+# Install dependencies
+npm install
 
 # Copy necessary files to your project
 cp -r .claude /path/to/your-project/
 cp -r scripts /path/to/your-project/
+cp .env.example /path/to/your-project/.env
 ```
 
 ### Selective Hook Installation
@@ -217,15 +237,15 @@ For Python applications:
 ### 1. Verify Installation
 
 ```bash
-# Check that cdev is installed
-cdev --version
+# Check that cdev is available
+npx cdev --version
 
 # Check installed files in your project
 ls -la .claude/
 ls -la scripts/
 
 # Test a simple command
-cdev help
+npx cdev help
 ```
 
 ### 2. Configure Environment
@@ -271,8 +291,8 @@ For VS Code:
 ### Update to Latest Version
 
 ```bash
-# Update global installation
-npm update -g cdev
+# Update project dependency
+npm update @aojdevstudio/cdev
 
 # Update project files manually
 cd your-project
@@ -287,8 +307,8 @@ rm -rf temp-cdev
 ### Complete Removal
 
 ```bash
-# Remove global installation
-npm uninstall -g cdev
+# Remove project dependency
+npm uninstall @aojdevstudio/cdev
 
 # Remove from project
 rm -rf .claude/
@@ -319,7 +339,7 @@ npm pkg delete scripts.claude:spawn
 ```bash
 # Better: use a Node version manager
 nvm use 18
-npm install -g @aojdevstudio/cdev
+npm install --save-dev @aojdevstudio/cdev
 
 # Or use npx directly without installing
 npx @aojdevstudio/cdev get PROJ-123
@@ -419,7 +439,7 @@ export CLAUDE_ENV=development
 # GitHub Actions
 - name: Install CDEV
   run: |
-    npm install -g @aojdevstudio/cdev
+    npm install --save-dev @aojdevstudio/cdev
     # Copy hooks and scripts from your repository
     # (assumes they're already committed to your repo)
 

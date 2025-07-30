@@ -21,9 +21,9 @@ class PostInstallValidator {
         'scripts/spawn-agents.sh',
       ],
       hooks: [
-        '.claude/hooks/api-standards-checker.py',
-        '.claude/hooks/code-quality-reporter.py',
-        '.claude/hooks/typescript-validator.py',
+        '.claude/hooks/tier1/api-standards-checker.py',
+        '.claude/hooks/tier1/code-quality-reporter.py',
+        '.claude/hooks/tier2/typescript-validator.py',
       ],
     };
   }
@@ -37,7 +37,6 @@ class PostInstallValidator {
     const errors = new ValidationErrorCollection();
     const results = {
       cliCommand: await this.validateCliCommand(),
-      globalPackage: await this.validateGlobalPackage(),
       projectStructure: await this.validateProjectStructure(options.projectPath),
       hooks: await this.validateHooks(options.projectPath),
       permissions: await this.validatePermissions(options.projectPath),
@@ -71,7 +70,7 @@ class PostInstallValidator {
    */
   async validateCliCommand() {
     try {
-      const commands = ['claude-code-hooks', 'npx claude-code-hooks'];
+      const commands = ['npx cdev', 'npx @aojdevstudio/cdev'];
       let commandFound = false;
       let workingCommand = null;
 
@@ -95,40 +94,6 @@ class PostInstallValidator {
       return {
         valid: false,
         message: 'Failed to validate CLI command',
-        error: error.message,
-      };
-    }
-  }
-
-  /**
-   * Validate global NPM package installation
-   * @returns {Object} Validation result
-   */
-  async validateGlobalPackage() {
-    try {
-      const result = platformUtils.executeCommand('npm list -g claude-code-hooks');
-      const isInstalled = result.success && result.output.includes('claude-code-hooks');
-
-      if (isInstalled) {
-        // Extract version
-        const versionMatch = result.output.match(/claude-code-hooks@(\d+\.\d+\.\d+)/);
-        const version = versionMatch ? versionMatch[1] : 'unknown';
-
-        return {
-          valid: true,
-          version,
-          message: `Global package installed (version: ${version})`,
-        };
-      }
-
-      return {
-        valid: false,
-        message: 'Global package not found',
-      };
-    } catch (error) {
-      return {
-        valid: false,
-        message: 'Failed to check global package',
         error: error.message,
       };
     }
@@ -399,11 +364,13 @@ class PostInstallValidator {
     const recommendations = [];
 
     if (!results.cliCommand.valid) {
-      recommendations.push('Run "npm install -g claude-code-hooks" to install the CLI globally');
+      recommendations.push(
+        'Run "npm install --save-dev @aojdevstudio/cdev" to install CDEV in your project',
+      );
     }
 
     if (!results.projectStructure.valid) {
-      recommendations.push('Run "claude-code-hooks init" to create missing directories');
+      recommendations.push('Run "npx cdev install" to create missing directories');
     }
 
     if (results.hooks.missingHooks.length > 0) {

@@ -50,8 +50,9 @@ class PnpmEnforcer:
             (r'npm i\s+(.+)', r'pnpm add \1'),
             (r'npm install\s+--save-dev\s+(.+)', r'pnpm add -D \1'),
             (r'npm install\s+-D\s+(.+)', r'pnpm add -D \1'),
-            (r'npm install\s+--global\s+(.+)', r'pnpm add -g \1'),
-            (r'npm install\s+-g\s+(.+)', r'pnpm add -g \1'),
+            # Global installs are project-specific in CDEV
+            (r'npm install\s+--global\s+(.+)', r'# Global installs not supported - use npx or install as dev dependency'),
+            (r'npm install\s+-g\s+(.+)', r'# Global installs not supported - use npx or install as dev dependency'),
             
             # Uninstall
             (r'npm uninstall\s+(.+)', r'pnpm remove \1'),
