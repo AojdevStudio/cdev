@@ -141,7 +141,7 @@ class InstallSteps {
   async copyWorkflowTemplates(targetDir) {
     console.log(chalk.gray('  • Copying workflow templates...'));
 
-    const templateDir = path.join(__dirname, '..', 'templates');
+    const packageRoot = path.join(__dirname, '..');
     const workflowDir = path.join(targetDir, 'workflows', 'paralell-development-claude');
     const scriptsDir = path.join(targetDir, 'scripts');
 
@@ -171,8 +171,8 @@ class InstallSteps {
       'ai_docs/astral-uv-scripting-documentation.md',
     ];
 
-    // If templates directory doesn't exist, copy from current workflow
-    const sourceDir = (await fs.pathExists(templateDir)) ? templateDir : path.join(__dirname, '..');
+    // Copy from current package root since templates directory doesn't exist
+    const sourceDir = packageRoot;
 
     for (const file of templateFiles) {
       const sourcePath = path.join(sourceDir, file);

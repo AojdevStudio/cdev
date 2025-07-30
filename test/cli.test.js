@@ -1,85 +1,53 @@
-#!/usr/bin/env node
-
 const { execSync } = require('child_process');
+const path = require('path');
 
-const { main } = require('../bin/cli.js');
+describe('CLI', () => {
+  const cliPath = path.join(__dirname, '..', 'bin', 'cli.js');
 
-// Test suite for CLI entry point
-function runTests() {
-  console.log('Running CLI tests...');
-
-  let passed = 0;
-  let total = 0;
-
-  function test(name, fn) {
-    total++;
+  test('should show help when no arguments provided', () => {
     try {
-      fn();
-      console.log(`✓ ${name}`);
-      passed++;
+      const result = execSync(`node ${cliPath} help`, {
+        encoding: 'utf8',
+        timeout: 5000,
+      });
+      expect(result).toContain('Usage:');
     } catch (error) {
-      console.log(`✗ ${name}: ${error.message}`);
-    }
-  }
-
-  // Test 1: CLI module exports main function
-  test('CLI module exports main function', () => {
-    if (typeof main !== 'function') {
-      throw new Error('main is not a function');
+      // Help command might exit with status 0, which is expected
+      if (error.status === 0 && error.stdout) {
+        expect(error.stdout).toContain('Usage:');
+      } else {
+        throw error;
+      }
     }
   });
 
-  // Test 2: CLI shows help when no arguments
-  test('CLI shows help when no arguments', () => {
-    const originalArgv = process.argv;
-    process.argv = ['node', 'cli.js', 'help'];
-
+  test('should show version with --version flag', () => {
     try {
-      // This would show help, which is expected behavior
-      const result = execSync('node bin/cli.js help', { encoding: 'utf8' });
-      if (!result.includes('Usage:')) {
-        throw new Error('Help message not displayed');
-      }
+      const result = execSync(`node ${cliPath} --version`, {
+        encoding: 'utf8',
+        timeout: 5000,
+      });
+      expect(result).toMatch(/\d+\.\d+\.\d+/); // Version pattern
     } catch (error) {
-      if (error.status === 0) {
-        // Help command should exit with status 0
-        return;
+      // Version command might exit with status 0, which is expected
+      if (error.status === 0 && error.stdout) {
+        expect(error.stdout).toMatch(/\d+\.\d+\.\d+/);
+      } else {
+        throw error;
       }
-      throw error;
-    } finally {
-      process.argv = originalArgv;
     }
   });
 
-  // Test 3: CLI handles version flag
-  test('CLI handles version flag', () => {
+  test('should handle unknown commands gracefully', () => {
     try {
-      const result = execSync('node bin/cli.js --version', { encoding: 'utf8' });
-      if (!result.includes('v')) {
-        throw new Error('Version not displayed');
-      }
+      execSync(`node ${cliPath} unknown-command`, {
+        encoding: 'utf8',
+        timeout: 5000,
+      });
     } catch (error) {
-      if (error.status === 0) {
-        // Version command should exit with status 0
-        return;
-      }
-      throw error;
+      // Should exit with non-zero status for unknown commands
+      expect(error.status).not.toBe(0);
+      expect(error.stderr || error.stdout).toMatch(/unknown|invalid|error/i);
     }
   });
-
-  console.log(`\nCLI Tests: ${passed}/${total} passed`);
-
-  if (passed === total) {
-    console.log('All CLI tests passed!');
-    process.exit(0);
-  } else {
-    console.log('Some CLI tests failed!');
-    process.exit(1);
-  }
-}
-
-if (require.main === module) {
-  runTests();
-}
-
-module.exports = { runTests };
+});

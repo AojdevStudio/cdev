@@ -27,6 +27,7 @@ async function executeCommand(args) {
 
   // Handle commands
   switch (command) {
+    case 'init':
     case 'install':
       await installCommand(positional, options);
       break;
