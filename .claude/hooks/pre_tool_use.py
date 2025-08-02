@@ -12,29 +12,124 @@ import time
 from pathlib import Path
 
 
-def is_dangerous_rm_command(command):
+def is_dangerous_deletion_command(command):
     """
-    Comprehensive detection of dangerous rm commands.
-    Matches various forms of rm -rf and similar destructive patterns.
+    ULTRA-COMPREHENSIVE detection of ANY deletion or destructive commands.
+    Blocks absolutely ALL forms of file/directory removal and destructive operations.
     """
     # Normalize command by removing extra spaces and converting to lowercase
     normalized = ' '.join(command.lower().split())
-    
-    # Pattern 1: Standard rm -rf variations (only match actual flags, not filenames)
-    patterns = [
-        r'\brm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)\b',  # rm -rf, rm -fr, rm -Rf, etc.
-        r'\brm\s+--recursive\s+--force',  # rm --recursive --force
-        r'\brm\s+--force\s+--recursive',  # rm --force --recursive
-        r'\brm\s+-r\s+.*-f\b',  # rm -r ... -f
-        r'\brm\s+-f\s+.*-r\b',  # rm -f ... -r
+
+    # PATTERN 1: ALL rm command variations (any rm usage is blocked)
+    rm_patterns = [
+        r'\brm\b',                                      # Any rm command at all
+        r'\bunlink\b',                                  # unlink command
+        r'\brmdir\b',                                   # rmdir command
+        r'\brm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)\b', # rm -rf, rm -fr, rm -Rf, etc.
+        r'\brm\s+--recursive\s+--force',               # rm --recursive --force
+        r'\brm\s+--force\s+--recursive',               # rm --force --recursive
+        r'\brm\s+-[a-z]*r\b',                          # rm with recursive flag
+        r'\brm\s+-[a-z]*f\b',                          # rm with force flag
+        r'\brm\s+--recursive\b',                       # rm --recursive
+        r'\brm\s+--force\b',                           # rm --force
+        r'\brm\s+-[a-z]*i\b',                          # rm with interactive flag
+        r'\brm\s+--interactive\b',                     # rm --interactive
     ]
-    
-    # Check for dangerous patterns
-    for pattern in patterns:
-        if re.search(pattern, normalized):
-            return True
-    
-    # Pattern 2: Check for rm with recursive flag targeting dangerous paths
+
+    # PATTERN 2: File system destructive operations
+    destructive_patterns = [
+        r'\bdd\s+.*of=',                               # dd command writing to files
+        r'\bshred\b',                                  # shred command
+        r'\bwipe\b',                                   # wipe command
+        r'\bsrm\b',                                    # secure rm
+        r'\btrash\b',                                  # trash command
+        r'\bgio\s+trash\b',                           # gio trash
+        r'\bmv\s+.*\s+/dev/null',                     # move to /dev/null
+        r'\bcp\s+/dev/null\b',                        # copy /dev/null (truncate)
+        r'>\s*/dev/null',                             # redirect to /dev/null
+        r'\btruncate\b',                              # truncate command
+        r'\b:\s*>\s*[^|&;]+',                         # shell truncation (:> file)
+        r'\btrue\s*>\s*[^|&;]+',                      # true > file (truncation)
+        r'\bfalse\s*>\s*[^|&;]+',                     # false > file (truncation)
+    ]
+
+    # PATTERN 3: Dangerous redirection and overwrite operations
+    overwrite_patterns = [
+        r'>\s*[^|&;>\s]+\s*$',                        # Simple redirection that overwrites
+        r'\becho\s+.*>\s*[^|&;>\s]+',                 # echo > file (overwrite)
+        r'\bprintf\s+.*>\s*[^|&;>\s]+',               # printf > file (overwrite)
+        r'\bcat\s+.*>\s*[^|&;>\s]+',                  # cat > file (overwrite)
+        r'\bcp\s+/dev/null\s+',                       # copy /dev/null to file
+        r'\bdd\s+.*>\s*[^|&;>\s]+',                   # dd > file
+    ]
+
+    # PATTERN 4: Archive/compression destructive operations
+    archive_destructive_patterns = [
+        r'\btar\s+.*--delete\b',                      # tar delete
+        r'\bzip\s+.*-d\b',                            # zip delete
+        r'\bunzip\b',                                 # unzip (can overwrite)
+        r'\bgunzip\b',                                # gunzip (deletes .gz)
+        r'\bbunzip2\b',                               # bunzip2 (deletes .bz2)
+        r'\bunxz\b',                                  # unxz (deletes .xz)
+        r'\b7z\s+.*d\b',                              # 7z delete
+    ]
+
+    # PATTERN 5: Git destructive operations
+    git_destructive_patterns = [
+        r'\bgit\s+clean\s+.*-f\b',                    # git clean -f
+        r'\bgit\s+reset\s+.*--hard\b',               # git reset --hard
+        r'\bgit\s+checkout\s+.*--force\b',           # git checkout --force
+        r'\bgit\s+branch\s+.*-D\b',                  # git branch -D (force delete)
+        r'\bgit\s+tag\s+.*-d\b',                     # git tag -d (delete)
+        r'\bgit\s+remote\s+.*remove\b',              # git remote remove
+        r'\bgit\s+worktree\s+.*remove\b',            # git worktree remove
+        r'\bgit\s+stash\s+.*drop\b',                 # git stash drop
+        r'\bgit\s+stash\s+.*clear\b',                # git stash clear
+        r'\bgit\s+reflog\s+.*delete\b',              # git reflog delete
+        r'\bgit\s+gc\s+.*--prune\b',                 # git gc --prune
+    ]
+
+    # PATTERN 6: Package manager destructive operations
+    package_destructive_patterns = [
+        r'\bnpm\s+.*uninstall\b',                     # npm uninstall
+        r'\bnpm\s+.*remove\b',                        # npm remove
+        r'\bnpm\s+.*rm\b',                            # npm rm
+        r'\byarn\s+.*remove\b',                       # yarn remove
+        r'\bpip\s+.*uninstall\b',                     # pip uninstall
+        r'\bconda\s+.*remove\b',                      # conda remove
+        r'\bapt\s+.*remove\b',                        # apt remove
+        r'\bapt\s+.*purge\b',                         # apt purge
+        r'\byum\s+.*remove\b',                        # yum remove
+        r'\bbrew\s+.*uninstall\b',                    # brew uninstall
+        r'\bbrew\s+.*remove\b',                       # brew remove
+    ]
+
+    # PATTERN 7: Database destructive operations
+    database_destructive_patterns = [
+        r'\bdrop\s+table\b',                          # SQL DROP TABLE
+        r'\bdrop\s+database\b',                       # SQL DROP DATABASE
+        r'\bdelete\s+from\b',                         # SQL DELETE FROM
+        r'\btruncate\s+table\b',                      # SQL TRUNCATE TABLE
+        r'\bmongo.*\.drop\b',                         # MongoDB drop
+        r'\bmongo.*\.remove\b',                       # MongoDB remove
+        r'\bmongo.*\.deleteMany\b',                   # MongoDB deleteMany
+        r'\bmongo.*\.deleteOne\b',                    # MongoDB deleteOne
+    ]
+
+    # PATTERN 8: System destructive operations
+    system_destructive_patterns = [
+        r'\bkill\s+.*-9\b',                           # kill -9 (force kill)
+        r'\bkillall\b',                               # killall
+        r'\bpkill\b',                                 # pkill
+        r'\bfuser\s+.*-k\b',                          # fuser -k (kill)
+        r'\bumount\s+.*-f\b',                         # umount -f (force)
+        r'\bswapoff\b',                               # swapoff
+        r'\bfdisk\b',                                 # fdisk (disk partitioning)
+        r'\bmkfs\b',                                  # mkfs (format filesystem)
+        r'\bformat\b',                                # format command
+    ]
+
+    # PATTERN 9: Dangerous paths and wildcards
     dangerous_paths = [
         r'/',           # Root directory
         r'/\*',         # Root with wildcard
@@ -42,16 +137,59 @@ def is_dangerous_rm_command(command):
         r'~/',          # Home directory path
         r'\$HOME',      # Home environment variable
         r'\.\.',        # Parent directory references
-        r'\*',          # Wildcards in general rm -rf context
+        r'\*',          # Any wildcards
         r'\.',          # Current directory
-        r'\.\s*$',      # Current directory at end of command
+        r'\.\s*$',      # Current directory at end
+        r'/usr',        # System directories
+        r'/var',        # Variable data
+        r'/etc',        # Configuration
+        r'/bin',        # Binaries
+        r'/sbin',       # System binaries
+        r'/lib',        # Libraries
+        r'/opt',        # Optional software
+        r'/tmp/\*',     # Temp with wildcards
+        r'\.git',       # Git directories
+        r'node_modules', # Node modules
+        r'\.env',       # Environment files
     ]
-    
-    if re.search(r'\brm\s+.*-[a-z]*r\b', normalized):  # If rm has recursive flag (only actual flags)
-        for path in dangerous_paths:
-            if re.search(path, normalized):
-                return True
-    
+
+    # Check ALL patterns
+    all_patterns = (
+        rm_patterns +
+        destructive_patterns +
+        overwrite_patterns +
+        archive_destructive_patterns +
+        git_destructive_patterns +
+        package_destructive_patterns +
+        database_destructive_patterns +
+        system_destructive_patterns
+    )
+
+    # Check for any destructive pattern
+    for pattern in all_patterns:
+        if re.search(pattern, normalized):
+            return True
+
+    # Check for dangerous paths in any context
+    for path in dangerous_paths:
+        if re.search(path, normalized):
+            # Extra strict: block any command that mentions dangerous paths
+            return True
+
+    # PATTERN 10: Command chaining that might hide destructive operations
+    chain_patterns = [
+        r'&&.*\brm\b',                                # && rm
+        r'\|\|.*\brm\b',                              # || rm
+        r';.*\brm\b',                                 # ; rm
+        r'\|.*\brm\b',                                # | rm
+        r'`.*\brm\b.*`',                              # `rm` in backticks
+        r'\$\(.*\brm\b.*\)',                          # $(rm) in command substitution
+    ]
+
+    for pattern in chain_patterns:
+        if re.search(pattern, normalized):
+            return True
+
     return False
 
 def is_env_file_access(tool_name, tool_input):
@@ -318,18 +456,35 @@ def main():
             print("Use .env.sample for template files instead", file=sys.stderr)
             sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
         
-        # Check for dangerous rm -rf commands
+        # Check for ANY destructive/deletion commands - ULTRA STRICT PROTECTION
         if tool_name == 'Bash':
             command = tool_input.get('command', '')
-            
-            # Block rm -rf commands with comprehensive pattern matching
-            if is_dangerous_rm_command(command):
-                print("BLOCKED: Dangerous rm command detected and prevented", file=sys.stderr)
-                print("Safe alternatives:", file=sys.stderr) 
-                print("  • For single files: rm filename", file=sys.stderr)
-                print("  • For directories: rm -r dirname (no -f flag)", file=sys.stderr)
-                print("  • Use specific paths instead of wildcards", file=sys.stderr)
-                print("  • Consider using trash/archive instead of permanent deletion", file=sys.stderr)
+
+            # Block ALL forms of deletion and destructive operations
+            if is_dangerous_deletion_command(command):
+                print("🚫 DELETION PROTECTION: ALL destructive operations are BLOCKED", file=sys.stderr)
+                print("", file=sys.stderr)
+                print("🛡️  PROTECTED OPERATIONS:", file=sys.stderr)
+                print("   • File deletion (rm, unlink, rmdir)", file=sys.stderr)
+                print("   • Directory removal (rm -r, rm -rf)", file=sys.stderr)
+                print("   • File overwriting (>, echo >, cat >)", file=sys.stderr)
+                print("   • Truncation (truncate, :>, /dev/null)", file=sys.stderr)
+                print("   • Git destructive ops (reset --hard, clean -f)", file=sys.stderr)
+                print("   • Package removal (npm uninstall, pip uninstall)", file=sys.stderr)
+                print("   • Database drops (DROP TABLE, DELETE FROM)", file=sys.stderr)
+                print("   • System operations (kill -9, format, fdisk)", file=sys.stderr)
+                print("   • Archive destructive ops (tar --delete)", file=sys.stderr)
+                print("   • Dangerous paths (/, ~, *, .., system dirs)", file=sys.stderr)
+                print("", file=sys.stderr)
+                print("💡 SAFE ALTERNATIVES:", file=sys.stderr)
+                print("   • Use 'mv' to relocate instead of delete", file=sys.stderr)
+                print("   • Use 'cp' to backup before changes", file=sys.stderr)
+                print("   • Use '>>' to append instead of overwrite", file=sys.stderr)
+                print("   • Use specific file paths (no wildcards)", file=sys.stderr)
+                print("   • Use git operations without --force flags", file=sys.stderr)
+                print("   • Request manual confirmation for destructive operations", file=sys.stderr)
+                print("", file=sys.stderr)
+                print("🔒 This protection ensures NO accidental data loss", file=sys.stderr)
                 sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
         
         # Check for root directory structure violations

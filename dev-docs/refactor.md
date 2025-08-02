@@ -38,15 +38,10 @@ Architecture Overview
     │   ├── index.js                   # Utility exports
     │   ├── file-system/
     │   │   ├── index.js              # File system exports
-    │   │   ├── FileOperations.js    # Basic file operations
+    │   │   ├── FileOperations.js     # Basic file operations
     │   │   ├── DirectoryOperations.js # Directory operations
     │   │   ├── JsonOperations.js     # JSON file handling
     │   │   └── BackupOperations.js   # Backup functionality
-    │   ├── git/
-    │   │   ├── index.js              # Git exports
-    │   │   ├── GitDetector.js        # Git repository detection
-    │   │   ├── GitInfo.js            # Git information extraction
-    │   │   └── GitHooks.js           # Git hook management
     │   ├── project/
     │   │   ├── index.js              # Project exports
     │   │   ├── ProjectDetector.js    # Project type detection
@@ -126,11 +121,11 @@ Architecture Overview
 
     6. Create Shared Constants
 
-    Extract all hardcoded values into constants:
-    - Directory names
-    - File patterns
-    - Framework indicators
-    - Default configurations
+    Extract all hardcoded values into named constants within relevant modules:
+    - Directory names (in DirectoryGenerator.js)
+    - File patterns (in FrameworkDetector.js)
+    - Framework indicators (in FrameworkDetector.js)
+    - Default configurations (in ConfigGenerator.js)
 
     7. Implement Installation Manager
 

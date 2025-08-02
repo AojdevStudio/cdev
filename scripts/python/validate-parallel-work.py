@@ -268,14 +268,14 @@ def validate_parallel_work(worktrees_dir: Optional[Path], show_structure: bool):
     # Check if work-trees directory exists
     if not worktrees_dir.exists():
         console.print(f"[red]❌ No work-trees directory found at: {worktrees_dir}[/red]")
-        console.print("   Run spawn-agents.sh first to create agent workspaces.")
+        console.print("   Run spawn-agents.py first to create agent workspaces.")
         sys.exit(1)
 
     # Check if coordination status exists
     status_file = coordination_dir / "parallel-agent-status.json"
     if not status_file.exists():
         console.print(f"[red]❌ No coordination status found at: {status_file}[/red]")
-        console.print("   Run spawn-agents.sh first to create coordination system.")
+        console.print("   Run spawn-agents.py first to create coordination system.")
         sys.exit(1)
 
     # Discover agents
@@ -288,7 +288,7 @@ def validate_parallel_work(worktrees_dir: Optional[Path], show_structure: bool):
         display_worktree_structure(worktrees_dir)
 
     if not spawned_agents:
-        console.print("[red]❌ No spawned agents found. Run spawn-agents.sh first.[/red]")
+        console.print("[red]❌ No spawned agents found. Run spawn-agents.py first.[/red]")
         sys.exit(1)
 
     # Check agent completion status

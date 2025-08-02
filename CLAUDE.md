@@ -9,7 +9,79 @@
 - **Transform Claude Code workflows** with parallel agent coordination and advanced automation
 - **Universal task processing** from Linear tickets, markdown tasks, or plain descriptions
 - **Zero-friction setup** with one-command installation for any project type
-- **Production-ready distribution** as a global NPM package (`@aojdevstudio/cdev`)
+- **Production-ready distribution** as a global NPM package
+  (`@aojdevstudio/cdev`)
+
+## Project Structure
+
+```
+    src/
+    ├── installation/
+    │   ├── index.js                    # Main installation exports
+    │   ├── InstallationManager.js      # Core installation orchestrator
+    │   ├── validators/
+    │   │   ├── index.js               # Validation exports
+    │   │   ├── EnvironmentValidator.js # Environment & dependency validation
+    │   │   ├── DirectoryValidator.js  # Directory & permissions validation
+    │   │   ├── ProjectValidator.js    # Project type & structure validation
+    │   │   └── LinearValidator.js     # Linear API validation
+    │   ├── generators/
+    │   │   ├── index.js               # Generator exports
+    │   │   ├── DirectoryGenerator.js  # Directory structure creation
+    │   │   ├── ConfigGenerator.js     # Configuration file generation
+    │   │   ├── ScriptGenerator.js     # Script file generation
+    │   │   ├── HookGenerator.js       # Claude hook generation
+    │   │   └── TemplateGenerator.js   # Template file generation
+    │   ├── installers/
+    │   │   ├── index.js               # Installer exports
+    │   │   ├── HookInstaller.js       # Hook installation logic
+    │   │   ├── CommandInstaller.js    # Command installation logic
+    │   │   ├── AgentInstaller.js      # Agent installation logic
+    │   │   ├── WorkflowInstaller.js   # Workflow script installation
+    │   │   └── LinearInstaller.js     # Linear integration setup
+    │   └── steps/
+    │       ├── index.js               # Step exports
+    │       ├── ValidationStep.js      # Pre-installation validation
+    │       ├── StructureStep.js       # Directory structure setup
+    │       ├── TemplateStep.js        # Template copying
+    │       ├── ConfigurationStep.js   # Configuration generation
+    │       ├── PermissionStep.js      # Permission setup
+    │       └── FinalizeStep.js        # Final validation & cleanup
+    ├── utils/
+    │   ├── index.js                   # Utility exports
+    │   ├── file-system/
+    │   │   ├── index.js              # File system exports
+    │   │   ├── FileOperations.js     # Basic file operations
+    │   │   ├── DirectoryOperations.js # Directory operations
+    │   │   ├── JsonOperations.js     # JSON file handling
+    │   │   └── BackupOperations.js   # Backup functionality
+    │   ├── project/
+    │   │   ├── index.js              # Project exports
+    │   │   ├── ProjectDetector.js    # Project type detection
+    │   │   ├── PackageManager.js     # Package manager operations
+    │   │   └── FrameworkDetector.js  # Framework detection
+    │   ├── system/
+    │   │   ├── index.js              # System exports
+    │   │   ├── SystemInfo.js         # System information
+    │   │   ├── ExecutableFinder.js   # Executable path finding
+    │   │   └── PlatformUtils.js      # Platform-specific utilities
+    │   └── helpers/
+    │       ├── index.js              # Helper exports
+    │       ├── StringUtils.js        # String manipulation
+    │       ├── ProgressTracker.js    # Progress tracking
+    │       ├── RetryHandler.js       # Retry logic
+    │       └── Logger.js             # Logging utilities
+    ├── templates/
+    │   ├── configs/                  # Configuration templates
+    │   ├── scripts/                  # Script templates
+    │   ├── hooks/                    # Hook templates
+    │   └── commands/                 # Command templates
+    └── constants/
+        ├── index.js                  # All constants
+        ├── directories.js            # Directory structure constants
+        ├── frameworks.js             # Framework indicators
+        └── defaults.js               # Default values
+```
 
 ### Target Users
 
@@ -19,6 +91,10 @@ Developers using Claude Code who want to:
 - Automate quality gates and validation with intelligent hooks
 - Process any task format (Linear, markdown, plain text) seamlessly
 - Enhance their development workflows with AI-powered orchestration
+
+## Current Status
+
+- We are in the middle of a major rewrite to modularize the codebase, improve maintenability, and ensure smooth installation.
 
 ### Development Memories
 
