@@ -74,19 +74,25 @@ def is_dangerous_deletion_command(command):
         r'\b7z\s+.*d\b',                              # 7z delete
     ]
 
-    # PATTERN 5: Git destructive operations
+    # PATTERN 5: Git destructive operations (only truly dangerous ones)
     git_destructive_patterns = [
-        r'\bgit\s+clean\s+.*-f\b',                    # git clean -f
-        r'\bgit\s+reset\s+.*--hard\b',               # git reset --hard
-        r'\bgit\s+checkout\s+.*--force\b',           # git checkout --force
+        r'\bgit\s+clean\s+.*-f.*-d\b',               # git clean -fd (force delete untracked)
+        r'\bgit\s+clean\s+.*-d.*-f\b',               # git clean -df (force delete untracked)
+        r'\bgit\s+reset\s+.*--hard.*HEAD~\d+\b',     # git reset --hard HEAD~N (lose commits)
+        r'\bgit\s+reset\s+.*--hard.*@\{\d+\}\b',     # git reset --hard @{N} (lose commits)
+        r'\bgit\s+checkout\s+.*--force.*\*\b',       # git checkout --force with wildcards
         r'\bgit\s+branch\s+.*-D\b',                  # git branch -D (force delete)
         r'\bgit\s+tag\s+.*-d\b',                     # git tag -d (delete)
         r'\bgit\s+remote\s+.*remove\b',              # git remote remove
-        r'\bgit\s+worktree\s+.*remove\b',            # git worktree remove
+        r'\bgit\s+worktree\s+.*remove.*--force\b',   # git worktree remove --force
         r'\bgit\s+stash\s+.*drop\b',                 # git stash drop
         r'\bgit\s+stash\s+.*clear\b',                # git stash clear
         r'\bgit\s+reflog\s+.*delete\b',              # git reflog delete
-        r'\bgit\s+gc\s+.*--prune\b',                 # git gc --prune
+        r'\bgit\s+gc\s+.*--prune=now\b',             # git gc --prune=now (aggressive)
+        r'\bgit\s+filter-branch\b',                  # git filter-branch (rewrites history)
+        r'\bgit\s+rebase.*--force\b',                # git rebase --force
+        r'\bgit\s+push.*--force-with-lease\b',       # git push --force-with-lease
+        r'\bgit\s+push.*--force\b',                  # git push --force
     ]
 
     # PATTERN 6: Package manager destructive operations
@@ -131,26 +137,26 @@ def is_dangerous_deletion_command(command):
 
     # PATTERN 9: Dangerous paths and wildcards
     dangerous_paths = [
-        r'/',           # Root directory
-        r'/\*',         # Root with wildcard
-        r'~',           # Home directory
-        r'~/',          # Home directory path
-        r'\$HOME',      # Home environment variable
-        r'\.\.',        # Parent directory references
-        r'\*',          # Any wildcards
-        r'\.',          # Current directory
-        r'\.\s*$',      # Current directory at end
-        r'/usr',        # System directories
-        r'/var',        # Variable data
-        r'/etc',        # Configuration
-        r'/bin',        # Binaries
-        r'/sbin',       # System binaries
-        r'/lib',        # Libraries
-        r'/opt',        # Optional software
-        r'/tmp/\*',     # Temp with wildcards
-        r'\.git',       # Git directories
-        r'node_modules', # Node modules
-        r'\.env',       # Environment files
+        r'\s+/\s*$',           # Root directory as standalone argument
+        r'\s+/\*',             # Root with wildcard
+        r'\s+~\s*$',           # Home directory as standalone argument
+        r'\s+~/\*',            # Home directory with wildcard
+        r'\$HOME/\*',          # Home environment variable with wildcard
+        r'\.\./\*',            # Parent directory with wildcard
+        r'\s+\*\s*$',          # Standalone wildcards
+        r'/\*/\*',             # Multiple wildcards in path
+        r'\s+\.\s+\*',         # Current directory with wildcard (. *)
+        r'rm.*\s+\.',          # rm commands targeting current directory
+        r'/usr/\*',            # System directories with wildcards
+        r'/var/\*',            # Variable data with wildcards
+        r'/etc/\*',            # Configuration with wildcards
+        r'/bin/\*',            # Binaries with wildcards
+        r'/sbin/\*',           # System binaries with wildcards
+        r'/lib/\*',            # Libraries with wildcards
+        r'/opt/\*',            # Optional software with wildcards
+        r'/tmp/\*',            # Temp with wildcards
+        r'\.git/\*',           # Git directories with wildcards
+        r'node_modules/\*',    # Node modules with wildcards
     ]
 
     # Check ALL patterns
