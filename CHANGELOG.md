@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.1.0] - 2025-08-02
+
+### Added
+
+- 📚 docs: add installation consolidation documentation and migration guide
+- ✨ feat(agents): add specialized development agent configurations
+
+### Changed
+
+- 🔧 chore: update codebase for simplified installation approach
+
+### Removed
+
+- 🗑️ refactor: remove obsolete files and simplify codebase structure
+
+### Security
+
+- enhance safety hooks and update project documentation
+
 ### Changed
 
 - **Installation Consolidation** - Removed global installation support entirely
@@ -327,6 +347,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Documentation](https://github.com/AOJDevStudio/cdev/tree/main/docs)
 
 [Unreleased]: https://github.com/AOJDevStudio/cdev/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.0.17]: https://github.com/AOJDevStudio/cdev/compare/v0.0.15...v0.0.17
 [0.0.15]: https://github.com/AOJDevStudio/cdev/compare/v0.0.7...v0.0.15
