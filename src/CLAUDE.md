@@ -59,12 +59,15 @@ src/
 ## Files Documentation
 
 ### cli-commands.js
+
 **Purpose**: Main CLI command execution engine that handles all CDEV commands and orchestrates the parallel development workflow.
 
 **Entry Points**:
+
 - `executeCommand(args)`: Main command execution dispatcher that routes commands to appropriate handlers
 
 **Key Functions**:
+
 - `installCommand(args, options)`: Handles project initialization and installation using InteractiveInstaller
 - `cacheCommand(args, options)`: Caches Linear issues locally using Python scripts
 - `decomposeCommand(args, options)`: Decomposes Linear issues into parallel agent tasks
@@ -73,31 +76,39 @@ src/
 - `commitCommand(args, options)`: Commits and manages agent work with automated merging
 
 **Important Variables/Constants**:
+
 - Command mappings support aliases for backward compatibility (e.g., 'cache'/'get', 'decompose'/'split', 'spawn'/'run')
 
 ### cli-parser.js
+
 **Purpose**: Robust command line argument parser that handles commands, options, and positional arguments with comprehensive documentation.
 
 **Entry Points**:
+
 - `parseArgs(args)`: Main argument parsing function that returns structured command data
 - `showHelp()`: Displays comprehensive help documentation
 
 **Key Functions**:
+
 - `parseArgs(args)`: Processes command line arguments with support for long/short options and boolean flags
 - `showHelp()`: Provides detailed usage information and examples for all CDEV commands
 
 **Important Variables/Constants**:
+
 - Supports multiple argument formats: `--option=value`, `--option value`, `-o value`, boolean flags
 - Returns structured object: `{ command, options, positional }`
 
 ### config.js
+
 **Purpose**: Central configuration management system providing unified access to configuration data across the CDEV system.
 
 **Entry Points**:
+
 - `ConfigManager`: Main configuration management class
 - Module exports: `initialize()`, `get()`, `set()`, `save()`, `reset()`, `validate()`
 
 **Key Functions**:
+
 - `initialize(configPath)`: Initializes configuration system with automatic file discovery
 - `findConfigFile()`: Searches for configuration files in standard locations
 - `loadConfig()`: Loads and merges user configuration with defaults
@@ -108,17 +119,21 @@ src/
 - `validate()`: Validates required configuration keys
 
 **Important Variables/Constants**:
+
 - Search paths for config files: project root, home directory (.claude-code-hooks.json)
 - Required configuration categories: linear, git, claude
 
 ### config-defaults.js
+
 **Purpose**: Comprehensive default configuration system providing sensible defaults for all CDEV components and features.
 
 **Entry Points**:
+
 - `getDefaults()`: Returns complete default configuration object
 - `getDefaultsForCategory(category)`: Returns defaults for specific configuration category
 
 **Key Functions**:
+
 - `getDefaults()`: Provides deep-cloned default configuration
 - `getDefaultsForCategory(category)`: Retrieves category-specific defaults
 - `validateDefaults()`: Ensures all required default categories exist
@@ -127,17 +142,21 @@ src/
 - `getConfigSchema()`: Returns configuration validation schema
 
 **Important Variables/Constants**:
+
 - `defaults`: Comprehensive configuration object covering linear, git, claude, agent, deployment, validation, hooks, logging, security, performance, and paths
 - Default values include API timeouts, Git worktree settings, agent concurrency limits, security restrictions
 
 ### config-generator.js
+
 **Purpose**: Generates project-specific configuration based on detected project type and user preferences.
 
 **Entry Points**:
+
 - `generateConfig(projectPath, options)`: Main configuration generation function
 - `generateAndWriteConfig(projectPath, options)`: Generates and writes configuration to file
 
 **Key Functions**:
+
 - `generateConfig(projectPath, options)`: Creates configuration using project-type templates and variable substitution
 - `mergeConfigurations(base, overrides)`: Intelligently merges base configuration with user overrides
 - `mergeHooks(baseHooks, overrideHooks)`: Specialized hook configuration merging
@@ -145,17 +164,21 @@ src/
 - `writeConfig(filePath, config)`: Writes configuration to JSON file with directory creation
 
 **Important Variables/Constants**:
+
 - Template search paths: project-specific templates, fallback to default.json
 - Configuration output path: `.claude/settings.json`
 
 ### hook-manager.js
+
 **Purpose**: Central hook management coordinator that orchestrates categorization, selection, and organization of hooks across the CDEV installation.
 
 **Entry Points**:
+
 - `HookManager`: Main hook management class
 - `initialize()`: Complete hook system setup and organization
 
 **Key Functions**:
+
 - `initialize()`: Coordinates hook discovery, categorization, and tier-based organization
 - `ensureHookDirectories()`: Creates tier-based directory structure (tier1, tier2, tier3, utils)
 - `loadExistingHooks()`: Discovers and loads existing hook files with metadata
@@ -165,18 +188,22 @@ src/
 - `restructureHooks()`: Reorganizes hooks according to tier classification
 
 **Important Variables/Constants**:
+
 - `hooksPath`: Standard hooks directory location (.claude/hooks)
 - Tier directories: tier1 (critical), tier2 (important), tier3 (optional), utils (shared)
 - Hook components: HookCategorizer, HookSelector, HookOrganizer
 
 ### hook-categorizer.js
+
 **Purpose**: Sophisticated hook categorization engine that analyzes hooks and assigns them to appropriate tiers based on functionality and importance.
 
 **Entry Points**:
+
 - `HookCategorizer`: Main categorization class
 - `categorize(hooks)`: Main categorization process
 
 **Key Functions**:
+
 - `categorize(hooks)`: Analyzes hooks and categorizes them into tier-based buckets
 - `determineHookTier(hook)`: Multi-stage analysis to determine appropriate tier
 - `getHookCategory(hook)`: Determines functional category (validation, enforcement, etc.)
@@ -185,6 +212,7 @@ src/
 - `analyzeHookContent(content)`: Analyzes hook content for categorization hints
 
 **Important Variables/Constants**:
+
 - `categoryRules`: Comprehensive tier classification rules with keywords, patterns, and explicit lists
 - Tier 1: Critical security and validation hooks
 - Tier 2: Important quality and standards hooks
@@ -192,13 +220,16 @@ src/
 - Utils: Shared utilities and helper functions
 
 ### interactive-installer.js
+
 **Purpose**: Interactive installation interface that guides users through CDEV setup with comprehensive configuration options.
 
 **Entry Points**:
+
 - `InteractiveInstaller`: Main installer class
 - `install(targetDir, options)`: Main installation orchestration
 
 **Key Functions**:
+
 - `install(targetDir, options)`: Orchestrates complete installation process with error isolation
 - `getConfiguration()`: Interactive configuration gathering with detailed hook selection
 - `installHooks(targetDir, config)`: Installs tier-based hooks with progress tracking
@@ -210,18 +241,22 @@ src/
 - `validatePackageStructure()`: Validates package integrity before installation
 
 **Important Variables/Constants**:
+
 - Hook tier system with detailed descriptions and recommendations
 - Configuration prompts for Linear integration, engineer preferences, branch naming styles
 - Essential hooks: pre_tool_use.py, post_tool_use.py, notification.py, stop.py, subagent_stop.py
 
 ### template-engine.js
+
 **Purpose**: Powerful template processing system with variable substitution supporting multiple placeholder formats.
 
 **Entry Points**:
+
 - `processTemplate(template, variables)`: Main template processing function
 - `createProcessor(defaultVariables)`: Creates template processor with default variables
 
 **Key Functions**:
+
 - `processTemplate(template, variables)`: Recursively processes templates with variable substitution
 - `substituteVariables(str, variables)`: Handles multiple variable formats ({{var}}, ${var}, %var%)
 - `extractVariables(template)`: Analyzes templates to find required variables
@@ -230,17 +265,21 @@ src/
 - `getDefaultVariables(options)`: Generates system and project default variables
 
 **Important Variables/Constants**:
+
 - Supported variable formats: `{{variable}}`, `${variable}`, `%variable%`
 - Default variables include system info, timestamps, project details, user information
 
 ### validator.js
+
 **Purpose**: Main validation interface providing schema validation, rule-based validation, and error collection.
 
 **Entry Points**:
+
 - `Validator`: Main validation class
 - `validator`: Default validator instance
 
 **Key Functions**:
+
 - `defineSchema(schemaName, schema)`: Defines reusable validation schemas
 - `validate(data, schema)`: Validates objects against schemas with comprehensive error reporting
 - `validateField(value, fieldPath, fieldSchema)`: Validates individual fields with nested support
@@ -250,24 +289,29 @@ src/
 - `validateRequired(data, requiredFields)`: Validates presence of required fields
 
 **Important Variables/Constants**:
+
 - Integration with ValidationRules and ValidationErrorCollection
 - Support for nested object validation and dot notation paths
 - Comprehensive error reporting with field-level detail
 
 ### commands/enforce-structure.js
+
 **Purpose**: Root directory structure enforcement tool that validates and maintains clean project organization.
 
 **Entry Points**:
+
 - `StructureEnforcer`: Main enforcement class
 - CLI interface: `main()` function with command-line options
 
 **Key Functions**:
+
 - `enforce(projectPath)`: Main enforcement process with violation detection and fixing
 - `analyzeViolations(projectPath)`: Scans root directory for structure violations
 - `fixViolations(projectPath, violations)`: Automatically moves misplaced files
 - `generateReport(projectPath)`: Creates detailed compliance reports
 
 **Important Variables/Constants**:
+
 - `allowedMdFiles`: Set of documentation files permitted in root
 - `forbiddenPatterns`: Comprehensive patterns for files that should be relocated
 - `essentialRootFiles`: Critical files that must remain in root
@@ -277,23 +321,29 @@ src/
 ## Architecture Notes
 
 ### Modular Design
+
 The src/ directory follows a modular architecture with clear separation of concerns:
-- **CLI Layer**: Command parsing and execution (cli-*.js)
-- **Configuration Layer**: Config management and generation (config-*.js)
-- **Hook Management**: Comprehensive hook system (hook-*.js)
-- **Validation Layer**: Schema and rule-based validation (validation-*.js, validator.js)
-- **Installation Layer**: Interactive setup and validation (install-*.js, interactive-installer.js)
+
+- **CLI Layer**: Command parsing and execution (cli-\*.js)
+- **Configuration Layer**: Config management and generation (config-\*.js)
+- **Hook Management**: Comprehensive hook system (hook-\*.js)
+- **Validation Layer**: Schema and rule-based validation (validation-\*.js, validator.js)
+- **Installation Layer**: Interactive setup and validation (install-\*.js, interactive-installer.js)
 - **Utility Layer**: Templates, paths, and platform utilities
 
 ### Tier-Based Hook System
+
 The hook management system uses a sophisticated tier-based approach:
+
 - **Tier 1**: Critical security and validation hooks (mandatory)
 - **Tier 2**: Important quality and standards hooks (recommended)
 - **Tier 3**: Optional convenience hooks (user choice)
 - **Utils**: Shared utilities and helper functions
 
 ### Configuration Management
+
 Comprehensive configuration system supporting:
+
 - Multiple configuration file formats and locations
 - Deep merging of user overrides with defaults
 - Project-type specific templates
@@ -301,10 +351,13 @@ Comprehensive configuration system supporting:
 - Validation and schema enforcement
 
 ### Future Modularization
+
 The directory structure includes placeholder directories (installation/, templates/, utils/) for future modularization efforts to improve maintainability and organization as the codebase grows.
 
 ### Error Handling and Validation
+
 Robust error handling throughout with:
+
 - Comprehensive validation at multiple layers
 - Detailed error reporting and collection
 - Graceful degradation and recovery mechanisms

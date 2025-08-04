@@ -45,20 +45,24 @@ scripts/
 **Purpose**: Production-ready changelog automation script that follows Keep a Changelog conventions with automatic git commit analysis and manual entry modes.
 
 **Entry Points**:
+
 - `updateChangelog(options)`: Main changelog update function that coordinates the entire process
 - CLI via Commander.js with various options and commands
 
 **Key Functions**:
+
 - `getChangesFromGit()`: Analyzes git commits since last release using conventional commit patterns
 - `getChangesManually()`: Interactive prompts for manual changelog entry
 - `generateCommitMessage()`: Creates comprehensive commit messages with validation summaries
 
 **Important Variables/Constants**:
+
 - `CHANGELOG_PATH`: Path to CHANGELOG.md file in project root
 - `PACKAGE_JSON_PATH`: Path to package.json for version information
 - `PATH_MAPPINGS`: Object containing file path remapping rules for import fixes
 
 **Command Line Options**:
+
 - `--auto`: Automatically analyze git commits since last release
 - `--manual`: Interactive manual entry mode
 - `--dry-run`: Preview changes without modifying files
@@ -70,9 +74,11 @@ scripts/
 **Purpose**: Helper functions for changelog automation providing git analysis, version management, and file manipulation utilities.
 
 **Entry Points**:
+
 - Module exports providing utility functions for changelog operations
 
 **Key Functions**:
+
 - `validateVersion(version)`: Validates semantic version format using semver library
 - `getNextVersion(currentVersion, autoMode, forceMode)`: Determines next version based on commit analysis
 - `parseCommits()`: Extracts and parses git commits since last tag with conventional commit support
@@ -83,6 +89,7 @@ scripts/
 - `updateVersionLinks(content, version)`: Updates version comparison links in changelog footer
 
 **Important Variables/Constants**:
+
 - Semantic version validation patterns
 - Conventional commit type mappings
 - Keep a Changelog category ordering
@@ -92,10 +99,12 @@ scripts/
 **Purpose**: Comprehensive NPM package publishing script with validation, testing, and post-publish verification for cross-platform distribution.
 
 **Entry Points**:
+
 - `main()`: Primary execution function that orchestrates the publishing process
 - Command line script with validation and confirmation prompts
 
 **Key Functions**:
+
 - `validate_package()`: Validates package structure and required files
 - `run_tests()`: Executes test suite if available
 - `check_npm_auth()`: Verifies npm authentication status
@@ -106,11 +115,13 @@ scripts/
 - `show_post_publish_instructions()`: Displays usage instructions and next steps
 
 **Important Variables/Constants**:
+
 - `PACKAGE_NAME`: Target package name for npm registry
 - `NPM_REGISTRY`: Registry URL for package publication
 - Required files and directories arrays for validation
 
 **Command Line Options**:
+
 - `--help`: Show usage information
 - `--dry-run`: Validate package without publishing
 - `--force`: Skip confirmation prompts
@@ -120,10 +131,12 @@ scripts/
 **Purpose**: Enhanced agent commit validation and integration system that validates completion status and safely integrates agent work with coordination infrastructure.
 
 **Entry Points**:
+
 - `agent_commit()`: Main CLI command function
 - Click-based command line interface with workspace path argument
 
 **Key Functions**:
+
 - `load_agent_context(workspace_path)`: Loads and parses agent context from YAML/JSON files
 - `parse_agent_context(context)`: Extracts key information from agent context
 - `validate_agent_completion(workspace_path)`: Validates all checklist items are completed
@@ -134,6 +147,7 @@ scripts/
 - `execute_git_workflow()`: Executes git workflow to commit and merge changes
 
 **Important Variables/Constants**:
+
 - Agent validation criteria and completion tracking
 - Integration status and deployment plan structures
 - Git workflow coordination patterns
@@ -143,20 +157,24 @@ scripts/
 **Purpose**: Caches Linear issue data locally for offline decomposition using Linear GraphQL API with comprehensive error handling.
 
 **Entry Points**:
+
 - `main()`: CLI command function with issue ID argument
 - Click-based interface with format options
 
 **Key Functions**:
+
 - `fetch_linear_issue(issue_id, api_key)`: Fetches issue details from Linear API using GraphQL
 - `save_yaml(data, filepath)`: Saves data to YAML file with proper formatting
 - `process_for_yaml(data)`: Recursively processes data to use literal strings for multiline content
 
 **Important Variables/Constants**:
+
 - Linear GraphQL query structure for issue data
 - API endpoints and authentication headers
 - Cache directory structure (.linear-cache)
 
 **Dependencies**:
+
 - `ruamel.yaml`: Advanced YAML processing with preservation
 - `httpx`: Async HTTP client for API requests
 - `click`: Command line interface framework
@@ -167,16 +185,19 @@ scripts/
 **Purpose**: Exclusive ownership decomposition engine that ensures no file conflicts by analyzing operations, grouping by dependencies, and creating exclusive agent domains.
 
 **Entry Points**:
+
 - CLI command for parallel task decomposition
 - Exclusive ownership analysis and validation
 
 **Key Functions**:
+
 - File conflict analysis and prevention
 - Dependency cluster grouping
 - Agent domain creation with validation
 - Overlap detection and resolution
 
 **Important Variables/Constants**:
+
 - File operation analysis patterns
 - Dependency mapping structures
 - Agent exclusivity validation rules
@@ -186,16 +207,19 @@ scripts/
 **Purpose**: Enhanced parallel agent spawning system that creates multiple isolated Git worktrees with proper environment for parallel Claude development.
 
 **Entry Points**:
+
 - CLI command for agent spawning from deployment plans
 - Git worktree management and environment setup
 
 **Key Functions**:
+
 - `load_deployment_plan(file_path)`: Loads and parses deployment plan from JSON
 - `get_unique_agents(plan)`: Extracts unique agent IDs from deployment plan
 - Git worktree creation and isolation
 - Environment preparation for parallel development
 
 **Important Variables/Constants**:
+
 - Deployment plan structure and validation
 - Git worktree configuration
 - Agent environment setup patterns
@@ -205,10 +229,12 @@ scripts/
 **Purpose**: Security validation script for package publication that ensures no sensitive data is included in published packages.
 
 **Entry Points**:
+
 - `SecurityChecker`: Main class for security validation
 - CLI interface with output format options
 
 **Key Functions**:
+
 - Environment file validation (without deletion)
 - Sensitive file publication prevention
 - Hardcoded secret scanning in source code
@@ -216,6 +242,7 @@ scripts/
 - .npmignore and .gitignore pattern validation
 
 **Important Variables/Constants**:
+
 - Security pattern definitions
 - Sensitive file detection rules
 - Package publication validation criteria
@@ -225,16 +252,19 @@ scripts/
 **Purpose**: Parallel Claude development workflow deployment script with comprehensive orchestration and environment management.
 
 **Entry Points**:
+
 - CLI deployment command with environment options
 - Deployment orchestration and validation
 
 **Key Functions**:
+
 - `run_command(args, cwd, check)`: Command execution with error handling
 - Environment setup and validation
 - Deployment process orchestration
 - Post-deployment verification
 
 **Important Variables/Constants**:
+
 - Deployment environment configurations
 - Command execution patterns
 - Validation and verification criteria
@@ -244,16 +274,19 @@ scripts/
 **Purpose**: AST-grep based import fixer for file moves during repository cleanup with validation.
 
 **Entry Points**:
+
 - Shell script for automated import path fixing
 - AST-grep pattern matching and replacement
 
 **Key Functions**:
+
 - Configuration file import path updates (jest.config.js, babel.config.js, tsconfig.json)
 - Documentation file path corrections
 - Python import statement fixes
 - Post-fix validation with linting
 
 **Important Variables/Constants**:
+
 - AST-grep pattern definitions for different file types
 - Path mapping configurations for common moves
 - Validation command patterns
@@ -263,15 +296,18 @@ scripts/
 **Purpose**: Simple import path fixer for file moves during repository cleanup with cross-platform compatibility.
 
 **Entry Points**:
+
 - `fixAllImports()`: Main function that processes all files
 - Node.js script for automated import fixes
 
 **Key Functions**:
+
 - `fixImportsInFile(filePath)`: Processes individual files for import fixes
 - `escapeRegExp(string)`: Safely escapes regular expression special characters
 - Pattern matching for require(), import, and dynamic import statements
 
 **Important Variables/Constants**:
+
 - `PATH_MAPPINGS`: Object containing old to new path mappings
 - File pattern arrays for JavaScript/TypeScript files
 - Regular expression patterns for different import types
@@ -281,15 +317,18 @@ scripts/
 **Purpose**: JSCodeshift transform to fix import paths after file moves with comprehensive AST manipulation.
 
 **Entry Points**:
+
 - JSCodeshift transformer function for automated refactoring
 - AST-based import path modifications
 
 **Key Functions**:
+
 - AST traversal and modification for require() calls
 - Import statement path updates
 - Dynamic import expression handling
 
 **Important Variables/Constants**:
+
 - `PATH_MAPPINGS`: File move mapping configuration
 - AST node type definitions for different import patterns
 - JSCodeshift API usage patterns
@@ -299,10 +338,12 @@ scripts/
 **Purpose**: Database initialization schema for Claude Workflow with agent tracking, task management, and deployment coordination.
 
 **Entry Points**:
+
 - SQL schema definition for PostgreSQL database
 - Extension and table creation scripts
 
 **Key Database Objects**:
+
 - `agents` table: Agent tracking with status and metadata
 - `tasks` table: Task management with Linear integration
 - `deployments` table: Deployment plan tracking and coordination
@@ -310,6 +351,7 @@ scripts/
 - Triggers for automatic timestamp updates
 
 **Important Variables/Constants**:
+
 - UUID generation for primary keys
 - Status enumeration patterns
 - JSONB metadata structure
@@ -320,38 +362,48 @@ scripts/
 **Purpose**: Simple test transform for JSCodeshift development and testing.
 
 **Entry Points**:
+
 - JSCodeshift transformer for testing purposes
 - Basic file processing without modifications
 
 **Key Functions**:
+
 - File path logging for transform verification
 - No-op transformer for testing infrastructure
 
 ## Integration Patterns
 
 ### Changelog Automation
+
 The changelog system integrates with:
+
 - Git commit analysis for automatic entry generation
 - Package.json for version information
 - Keep a Changelog format conventions
 - NPM publishing workflows
 
 ### Python Script Ecosystem
+
 The Python scripts form a cohesive system for:
+
 - Linear issue processing and caching
 - Parallel agent coordination and spawning
 - Work validation and integration
 - Security and deployment automation
 
 ### Import Fixing Tools
+
 Multiple import fixing approaches provide:
+
 - AST-grep for pattern-based replacements
 - Simple regex-based fixing for basic cases
 - JSCodeshift for comprehensive AST transformations
 - Cross-platform compatibility
 
 ### Database Integration
+
 The SQL schema supports:
+
 - Agent lifecycle tracking
 - Task coordination with Linear
 - Deployment plan management
@@ -360,6 +412,7 @@ The SQL schema supports:
 ## Development Dependencies
 
 ### JavaScript/Node.js Dependencies
+
 - `commander`: CLI argument parsing and command structure
 - `inquirer`: Interactive prompts and user input
 - `chalk`: Colored terminal output
@@ -367,6 +420,7 @@ The SQL schema supports:
 - `glob`: File pattern matching and selection
 
 ### Python Dependencies (UV-based)
+
 - `pyyaml`/`ruamel.yaml`: YAML parsing and generation with preservation
 - `click`: Command-line interface framework
 - `rich`: Terminal formatting, colors, and progress indicators
@@ -374,6 +428,7 @@ The SQL schema supports:
 - `pathlib`: Enhanced path operations
 
 ### Development Tools
+
 - AST-grep: Pattern-based code transformation
 - JSCodeshift: JavaScript AST manipulation
 - PostgreSQL: Database backend for coordination
@@ -382,6 +437,7 @@ The SQL schema supports:
 ## Usage Patterns
 
 ### Changelog Workflow
+
 ```bash
 # Auto-analyze git commits and update changelog
 npm run changelog:auto
@@ -394,6 +450,7 @@ npm run changelog:preview
 ```
 
 ### Python Script Execution
+
 ```bash
 # Direct execution with UV
 ./scripts/python/script-name.py
@@ -406,6 +463,7 @@ LINEAR_API_KEY="key" ./scripts/python/cache-linear-issue.py AOJ-63
 ```
 
 ### Import Fixing
+
 ```bash
 # AST-grep based fixing
 ./scripts/fix-imports-ast-grep.sh
@@ -420,18 +478,21 @@ jscodeshift -t scripts/fix-imports.js src/ test/
 ## Quality Assurance
 
 ### Error Handling
+
 - Comprehensive error catching and reporting
 - Graceful fallbacks for API failures
 - User-friendly error messages with suggested fixes
 - Exit code consistency across scripts
 
 ### Cross-Platform Support
+
 - Shell script compatibility across Unix-like systems
 - Python UV scripts work on Windows, macOS, and Linux
 - Path handling abstraction for different OS types
 - Environment variable handling consistency
 
 ### Testing and Validation
+
 - Dry-run modes for safe testing
 - Validation steps before destructive operations
 - Rollback capabilities where applicable
