@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 
@@ -349,7 +350,7 @@ def get_claude_session_id():
                 session_id = f.read().strip()
                 if session_id:
                     return session_id
-        except:
+        except Exception:
             pass
     
     # Generate new session ID
@@ -358,26 +359,84 @@ def get_claude_session_id():
     try:
         with open(session_file, 'w') as f:
             f.write(session_id)
-    except:
+    except Exception:
         pass
     
     return session_id
 
-def main():
-    if len(sys.argv) < 3:
-        print("Usage: pre_tool_use.py <tool_name> <tool_input_json>", file=sys.stderr)
-        sys.exit(1)
-    
-    tool_name = sys.argv[1]
+def log_tool_call(tool_name, tool_input, decision, reason=None, block_message=None):
+    """Log all tool calls with their decisions to a structured JSON file."""
     try:
-        tool_input = json.loads(sys.argv[2])
-    except json.JSONDecodeError:
-        print("Error: Invalid JSON input", file=sys.stderr)
+        # Create input_data dictionary for logging
+        session_id = get_claude_session_id()
+        input_data = {
+            'tool_name': tool_name,
+            'tool_input': tool_input,
+            'session_id': session_id,
+            'hook_event_name': 'PreToolUse',
+            'decision': decision,
+            'working_directory': str(Path.cwd())
+        }
+        
+        # Add optional fields if provided
+        if reason:
+            input_data['reason'] = reason
+        if block_message:
+            input_data['block_message'] = block_message
+        
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'pre_tool_use.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+        
+        # Append new data
+        log_data.append(input_data)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
+            
+    except Exception as e:
+        # Don't let logging errors break the hook
+        print(f"Logging error: {e}", file=sys.stderr)
+
+def main():
+    try:
+        # Read input from stdin as per Claude Code hook specification
+        input_data = json.load(sys.stdin)
+        
+        # Extract tool information from the input
+        tool_name = input_data.get('tool_name', '')
+        tool_input = input_data.get('tool_input', {})
+        
+        if not tool_name:
+            print("Error: No tool_name provided in input", file=sys.stderr)
+            sys.exit(1)
+            
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON input: {e}", file=sys.stderr)
         sys.exit(1)
     
     try:
         # Check for .env file access violations
         if is_env_file_access(tool_name, tool_input):
+            block_message = 'Access to .env files containing sensitive data is prohibited'
+            log_tool_call(tool_name, tool_input, 'blocked', 'env_file_access', block_message)
+            
             print("BLOCKED: Access to .env files containing sensitive data is prohibited", file=sys.stderr)
             print("Use .env.sample for template files instead", file=sys.stderr)
             sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
@@ -388,6 +447,9 @@ def main():
 
             # Block ALL forms of deletion and destructive operations
             if is_dangerous_deletion_command(command):
+                block_message = 'Destructive command detected and blocked for data protection'
+                log_tool_call(tool_name, tool_input, 'blocked', 'dangerous_deletion_command', block_message)
+                
                 print("🚫 DELETION PROTECTION: ALL destructive operations are BLOCKED", file=sys.stderr)
                 print("", file=sys.stderr)
                 print("🛡️  PROTECTED OPERATIONS:", file=sys.stderr)
@@ -417,6 +479,9 @@ def main():
         if check_root_structure_violations(tool_name, tool_input):
             file_path = tool_input.get('file_path', '')
             filename = os.path.basename(file_path)
+            block_message = f'Root structure violation: unauthorized file {filename} in root directory'
+            log_tool_call(tool_name, tool_input, 'blocked', 'root_structure_violation', block_message)
+            
             print("🚫 ROOT STRUCTURE VIOLATION BLOCKED", file=sys.stderr)
             print(f"   File: {filename}", file=sys.stderr)
             print("   Reason: Unauthorized file in root directory", file=sys.stderr)
@@ -434,6 +499,9 @@ def main():
         if is_command_file_access(tool_name, tool_input):
             file_path = tool_input.get('file_path', '')
             filename = os.path.basename(file_path)
+            # Log as approved with warning
+            log_tool_call(tool_name, tool_input, 'approved', 'command_file_warning', f'Warning: modifying command file {filename}')
+            
             print(f"⚠️  COMMAND FILE MODIFICATION: {filename}", file=sys.stderr)
             print("   Location: .claude/commands/", file=sys.stderr)
             print("   Impact: May affect Claude's available commands", file=sys.stderr)
@@ -447,10 +515,13 @@ def main():
     
     except Exception as e:
         print(f"Pre-tool use hook error: {e}", file=sys.stderr)
+        # Log the error but don't block
+        log_tool_call(tool_name, tool_input, 'approved', 'hook_error', f'Hook error occurred: {e}')
         # Don't block on hook errors, just warn
         pass
     
-    # If we get here, the tool call is allowed
+    # If we get here, the tool call is allowed - log as approved
+    log_tool_call(tool_name, tool_input, 'approved')
     sys.exit(0)
 
 if __name__ == "__main__":
