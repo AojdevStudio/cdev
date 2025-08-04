@@ -6,9 +6,10 @@
 **Name**: @aojdevstudio/cdev (Claude Development)  
 **Purpose**: AI-powered development orchestration system for enhancing Claude Code with parallel workflows  
 **Version**: 0.0.21  
-**License**: CC-BY-NC-SA-4.0  
+**License**: CC-BY-NC-SA-4.0
 
 ### Tech Stack & Frameworks
+
 - **Primary Language**: JavaScript (Node.js ≥ 16.0.0)
 - **Secondary Language**: Python 3.11+ (for advanced scripts)
 - **Testing Framework**: Jest with multiple configurations
@@ -17,6 +18,7 @@
 - **Package Management**: NPM (with support for pnpm, yarn, bun)
 
 ### Architecture Pattern
+
 - **Modular Monolith** with clear separation of concerns
 - **Plugin-based Hook System** for extensibility
 - **Command Pattern** for CLI operations
@@ -27,6 +29,7 @@
 ### Core Application Directories
 
 #### `/src` - Source Code
+
 - **Purpose**: Contains all core application logic
 - **Key subdirectories**:
   - `installation/` - Modular installation system with validators, generators, installers
@@ -36,6 +39,7 @@
   - `constants/` - Application-wide constants
 
 #### `/scripts` - Automation Scripts
+
 - **Purpose**: Contains both JavaScript and Python scripts for various automation tasks
 - **Key components**:
   - `python/` - Advanced Python scripts for agent management, deployment, security
@@ -44,6 +48,7 @@
   - `wrappers/` - Script wrappers for cross-platform compatibility
 
 #### `/.claude` - Claude-specific Configuration
+
 - **Purpose**: Houses Claude Code integration files
 - **Key components**:
   - `agents/` - 20 specialized AI agent configurations
@@ -54,6 +59,7 @@
 ### Supporting Directories
 
 #### `/docs` - Documentation
+
 - **Purpose**: Comprehensive project documentation
 - **Categories**:
   - Architecture guides
@@ -64,6 +70,7 @@
   - PRDs and implementation plans
 
 #### `/test` - Test Suite
+
 - **Purpose**: Comprehensive test coverage
 - **Structure**:
   - Unit tests for individual modules
@@ -72,6 +79,7 @@
   - Multiple Jest configurations
 
 #### `/config` - Configuration Files
+
 - **Purpose**: Build and runtime configurations
 - **Includes**: Jest configs, Docker setup, TypeScript config, Babel config
 
@@ -80,11 +88,13 @@
 ### Core Application Files
 
 **Entry Points**:
+
 - `bin/cli.js` - Main CLI entry point for the `cdev` command
 - `src/cli-commands.js` - Command definitions and routing
 - `src/cli-parser.js` - Command-line argument parsing
 
 **Installation System** (`src/installation/`):
+
 - `InstallationManager.js` - Orchestrates the installation process
 - `validators/` - Environment, directory, project, and Linear API validation
 - `generators/` - Generate directories, configs, scripts, hooks, templates
@@ -92,12 +102,14 @@
 - `steps/` - Installation workflow steps (validation, structure, configuration)
 
 **Configuration Management**:
+
 - `src/config.js` - Main configuration loader
 - `src/config-generator.js` - Generates project-specific configs
 - `src/config-validator.js` - Validates configuration files
 - `src/config-migrator.js` - Handles config version migrations
 
 **Hook System**:
+
 - `src/hook-manager.js` - Central hook management
 - `src/hook-categorizer.js` - Categorizes hooks by purpose
 - `src/hook-organizer.js` - Organizes hooks into tiers
@@ -106,27 +118,32 @@
 ### Configuration Files
 
 **Package Configuration**:
+
 - `package.json` - NPM package definition with 30+ scripts
 - `.npmignore` - Files to exclude from NPM package
 - `.npmrc` - NPM configuration
 
 **Code Quality**:
+
 - `.eslintrc.json` - ESLint rules for JavaScript
 - `.prettierrc.json` - Code formatting rules
 - `.ruff.toml` - Python linting configuration
 - `.editorconfig` - Editor configuration
 
 **Environment**:
+
 - `.env.example` / `.env.sample` - Environment variable templates
 - Multiple Jest configs in `config/` for different test scenarios
 
 ### Data Layer
 
 **Templates** (`templates/`):
+
 - `default.json`, `react.json`, `nextjs.json`, etc. - Framework-specific templates
 - Used for generating project-appropriate configurations
 
 **Cache Storage**:
+
 - `.cache/subagent-decomposition/` - Cached decomposition results
 - `.linear-cache/` - Cached Linear issue data
 - `.ruff_cache/` - Python linting cache
@@ -134,6 +151,7 @@
 ### Testing
 
 **Test Files**:
+
 - Comprehensive unit tests for all major modules
 - `test/fixtures/` - Test data and mocks
 - `test/utils/` - Test helpers and mock factories
@@ -142,12 +160,14 @@
 ### Documentation
 
 **User Documentation**:
+
 - `README.md` - Comprehensive project overview and getting started
 - `ROADMAP.md` - Future development plans
 - `CHANGELOG.md` - Version history
 - `SECURITY.md` - Security policies
 
 **Developer Documentation**:
+
 - `docs/architecture/` - API reference, command index, hooks reference
 - `docs/guides/` - Installation, usage, and specific feature guides
 - `dev-docs/` - Internal development documentation
@@ -155,6 +175,7 @@
 ### DevOps
 
 **CI/CD**:
+
 - `.github/workflows/` - GitHub Actions for testing, publishing, code review
 - `scripts/deployment/publish.sh` - NPM publishing script
 - Docker configuration in `config/`
@@ -164,12 +185,14 @@
 This is a CLI tool, not a web API. However, it provides numerous commands:
 
 **Core Commands**:
+
 - `/init-protocol` - Initialize CDEV in a project
 - `/orchestrate` - Run concurrent sub-agents
 - `/agent-start` - Start parallel agent workflow
 - `/commit` - Create intelligent git commits
 
 **Utility Commands**:
+
 - `cdev decompose` - Break down tasks into parallel agents
 - `cdev spawn` - Create agent worktrees
 - `cdev status` - Monitor agent progress
@@ -230,11 +253,13 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 ## 6. Environment & Setup Analysis
 
 ### Required Environment Variables
+
 - `LINEAR_API_KEY` - For Linear integration
 - `CDEV_*` - Various CDEV-specific configurations
 - Standard Node.js environment variables
 
 ### Installation Process
+
 1. Run `npx @aojdevstudio/cdev@latest install`
 2. Interactive setup analyzes project
 3. Generates CLAUDE.md and configurations
@@ -242,6 +267,7 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 5. Validates installation
 
 ### Development Workflow
+
 1. Make changes to source files
 2. Run `npm run quality` for linting/formatting
 3. Run `npm test` for testing
@@ -249,6 +275,7 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 5. `npm publish` for releasing
 
 ### Production Deployment
+
 - Published as NPM package
 - Users install via npx or npm
 - No server deployment required (CLI tool)
@@ -256,10 +283,12 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 ## 7. Technology Stack Breakdown
 
 ### Runtime Environment
+
 - **Node.js** ≥ 16.0.0 (primary runtime)
 - **Python** 3.11+ with UV package manager (for advanced scripts)
 
 ### Core Dependencies
+
 - **chalk** - Terminal styling
 - **commander** - CLI framework
 - **inquirer** - Interactive prompts
@@ -268,6 +297,7 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 - **dotenv** - Environment management
 
 ### Development Tools
+
 - **Jest** - Testing framework
 - **Babel** - JavaScript transpilation
 - **ESLint** - JavaScript linting
@@ -276,6 +306,7 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 - **TypeScript** - Type checking (for development)
 
 ### Build & Deployment
+
 - **NPM Scripts** - Task automation
 - **GitHub Actions** - CI/CD
 - **Docker** - Containerization support
@@ -329,6 +360,7 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 ### Code Quality Assessment
 
 **Strengths**:
+
 - Well-organized modular architecture
 - Comprehensive test coverage
 - Clear separation of concerns
@@ -336,6 +368,7 @@ This is a CLI tool, not a web API. However, it provides numerous commands:
 - Strong typing considerations
 
 **Areas for Improvement**:
+
 - Some test files are missing (several test imports show missing modules)
 - Python and JavaScript code mixing could benefit from clearer boundaries
 - Consider migrating fully to TypeScript for better type safety

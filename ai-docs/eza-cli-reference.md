@@ -429,6 +429,7 @@ export EZA_ICON_SPACING=2   # Spaces between icon and filename
 ## Configuration
 
 Eza supports a `theme.yml` file for customizing colors and icons. Place it in:
+
 - `$EZA_CONFIG_DIR/theme.yml`
 - `$XDG_CONFIG_HOME/eza/theme.yml` (default: `~/.config/eza/theme.yml`)
 

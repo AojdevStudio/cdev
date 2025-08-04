@@ -5,14 +5,17 @@ Production-ready changelog automation system following the conventions defined i
 ## 📁 Files
 
 ### JavaScript (Legacy)
+
 - **`update-changelog.js`** - Main changelog automation script (Node.js)
 - **`utils.js`** - Helper functions for git analysis and file manipulation (Node.js)
 
 ### Python (uv Self-Contained Scripts)
+
 - **`update-changelog.py`** - Main changelog automation script (Python with uv)
 - **`utils.py`** - Helper functions for git analysis and file manipulation (Python with uv)
 
 ### Documentation
+
 - **`README.md`** - This documentation file
 
 ## 🚀 Quick Start
@@ -20,7 +23,7 @@ Production-ready changelog automation system following the conventions defined i
 ### Using uv (Recommended - Self-Contained)
 
 ```bash
-# Auto-analyze git commits and update changelog  
+# Auto-analyze git commits and update changelog
 ./scripts/changelog/update-changelog.py --auto
 
 # Manual entry mode for custom changelog entries
@@ -63,19 +66,21 @@ Main command with full control over version and mode using self-contained uv scr
 
 **Options:**
 
-- `--auto` - Automatically analyze git commits since last release  
+- `--auto` - Automatically analyze git commits since last release
 - `--manual` - Interactive mode for manual entry
 - `--dry-run` - Preview changes without modifying files
 - `--verbose` - Show detailed error information
 - `--force` - Skip all confirmation prompts for autonomous execution
 
 **Dependencies:** Automatically managed by uv inline metadata
+
 - `gitpython>=3.1.0` - Git repository operations
 - `semver>=3.0.0` - Semantic versioning
 - `click>=8.0.0` - Command-line interface
 - `colorama>=0.4.0` - Cross-platform colored output
 
 **Examples:**
+
 ```bash
 # Auto-analyze with specific version
 ./scripts/changelog/update-changelog.py 1.5.0 --auto
