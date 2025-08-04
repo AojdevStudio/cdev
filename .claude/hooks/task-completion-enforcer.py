@@ -11,13 +11,13 @@ import os
 import re
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
 
 async def enforce_task_completion(hook_input: Dict[str, Any]):
     """Main enforcement function"""
-    tool_name = hook_input.get('tool_name')
     tool_input = hook_input.get('tool_input')
     phase = hook_input.get('phase', os.environ.get('CLAUDE_HOOK_PHASE', 'unknown'))
     
@@ -324,8 +324,71 @@ async def main():
     """Main execution"""
     try:
         input_data = json.load(sys.stdin)
+        
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'task_completion_enforcer.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+        
+        # Process the enforcement logic
         await enforce_task_completion(input_data)
+        
+        # Add completion status to log entry
+        input_data['enforcement_completed'] = True
+        
+        # Append new data to log
+        log_data.append(input_data)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
+            
     except Exception as error:
+        # Log the error as well
+        try:
+            log_dir = Path.cwd() / 'logs'
+            log_dir.mkdir(parents=True, exist_ok=True)
+            log_path = log_dir / 'task_completion_enforcer.json'
+            
+            if log_path.exists():
+                with open(log_path, 'r') as f:
+                    try:
+                        log_data = json.load(f)
+                    except (json.JSONDecodeError, ValueError):
+                        log_data = []
+            else:
+                log_data = []
+            
+            timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+            error_entry = {
+                'timestamp': timestamp,
+                'error': str(error),
+                'enforcement_completed': False,
+                'critical_failure': True
+            }
+            
+            log_data.append(error_entry)
+            
+            with open(log_path, 'w') as f:
+                json.dump(log_data, f, indent=2)
+        except Exception:
+            # If logging fails, continue with original error handling
+            pass
+        
         print(json.dumps({
             'approve': False,
             'message': f'🛑 CRITICAL: Task completion enforcement failed: {error}'

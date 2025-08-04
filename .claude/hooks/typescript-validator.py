@@ -81,12 +81,10 @@ class ThreadSafeLRUCache:
 
 # Global cache instance
 validation_cache = ThreadSafeLRUCache(max_size=100, ttl=timedelta(minutes=5))
-CACHE_TTL = timedelta(minutes=5)
 
 # Configuration
 DEBUG_MODE = os.environ.get('CLAUDE_HOOKS_DEBUG') == '1'
 FAST_MODE = '--fast' in sys.argv
-ZERO_TOLERANCE = os.environ.get('CLAUDE_HOOKS_ZERO_TOLERANCE', 'true').lower() != 'false'
 
 
 class TypeScriptValidator:
@@ -104,7 +102,6 @@ class TypeScriptValidator:
 
     async def validate(self) -> Dict[str, Any]:
         """Main validation entry point"""
-        tool_name = self.hook_input.get('tool_name')
         tool_input = self.hook_input.get('tool_input')
         phase = self.hook_input.get('phase')
         
@@ -506,15 +503,78 @@ async def main():
     """Main execution"""
     try:
         input_data = json.load(sys.stdin)
+        
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'typescript_validator.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+        
+        # Run validation
         validator = TypeScriptValidator(input_data)
         result = await validator.validate()
         
+        # Add result to log entry
+        input_data['result'] = result
+        
+        # Append new data
+        log_data.append(input_data)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
+        
         print(json.dumps(result))
     except Exception as error:
-        print(json.dumps({
+        error_result = {
             'approve': False,
             'message': f'TypeScript validator error: {error}'
-        }))
+        }
+        
+        # Try to log the error as well
+        try:
+            log_dir = Path.cwd() / 'logs'
+            log_dir.mkdir(parents=True, exist_ok=True)
+            log_path = log_dir / 'typescript_validator.json'
+            
+            if log_path.exists():
+                with open(log_path, 'r') as f:
+                    try:
+                        log_data = json.load(f)
+                    except (json.JSONDecodeError, ValueError):
+                        log_data = []
+            else:
+                log_data = []
+            
+            timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+            error_entry = {
+                'timestamp': timestamp,
+                'error': str(error),
+                'result': error_result
+            }
+            
+            log_data.append(error_entry)
+            
+            with open(log_path, 'w') as f:
+                json.dump(log_data, f, indent=2)
+        except Exception:
+            # If logging fails, continue with the original error response
+            pass
+        
+        print(json.dumps(error_result))
         sys.exit(1)
 
 

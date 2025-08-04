@@ -8,6 +8,8 @@
 import json
 import re
 import sys
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
@@ -131,7 +133,6 @@ class CommitMessageValidator:
             
             # Check for imperative mood (basic check)
             first_word = subject.split()[0]
-            imperative_words = ['add', 'update', 'fix', 'remove', 'implement', 'create', 'delete', 'improve', 'refactor', 'change', 'move', 'rename']
             past_tense_words = ['added', 'updated', 'fixed', 'removed', 'implemented', 'created', 'deleted', 'improved', 'refactored', 'changed', 'moved', 'renamed']
             
             if first_word.lower() in past_tense_words:
@@ -192,8 +193,40 @@ def main():
     """Main execution"""
     try:
         input_data = json.load(sys.stdin)
+        
+        # Comprehensive logging functionality
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'commit_message_validator.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+        
+        # Process validation and get results
         validator = CommitMessageValidator(input_data)
         result = validator.validate()
+        
+        # Add validation result to log entry
+        input_data['validation_result'] = result
+        
+        # Append new data to log
+        log_data.append(input_data)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
         
         print(json.dumps(result))
     except Exception as error:

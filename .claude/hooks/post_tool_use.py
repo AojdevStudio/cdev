@@ -4,8 +4,9 @@
 # ///
 
 import json
-import sys
 import subprocess
+import sys
+from datetime import datetime
 from pathlib import Path
 
 
@@ -62,6 +63,10 @@ def main():
                     log_data = []
         else:
             log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
         
         # Append new data
         log_data.append(input_data)

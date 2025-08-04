@@ -8,6 +8,7 @@
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -25,7 +26,6 @@ class ImportOrganizer:
 
     def organize(self) -> Dict[str, Any]:
         """Main organization entry point"""
-        tool_name = self.input.get('tool_name')
         tool_input = self.input.get('tool_input', {})
         output = self.input.get('output', {})
         content = tool_input.get('content')
@@ -62,8 +62,6 @@ class ImportOrganizer:
         lines = content.split('\n')
         first_import_index = -1
         last_import_index = -1
-        has_use_client = False
-        has_use_server = False
         file_header = []
         
         # Find import boundaries and directives
@@ -72,11 +70,9 @@ class ImportOrganizer:
             
             # Check for 'use client' or 'use server' directives
             if trimmed_line in ["'use client'", '"use client"']:
-                has_use_client = True
                 file_header.append(line)
                 continue
             if trimmed_line in ["'use server'", '"use server"']:
-                has_use_server = True
                 file_header.append(line)
                 continue
             
@@ -246,8 +242,48 @@ class ImportOrganizer:
         }
 
 
+def log_import_organizer_activity(input_data, result):
+    """Log import organizer activity to a structured JSON file."""
+    try:
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'import_organizer.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp and hook event name to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        log_entry = input_data.copy()
+        log_entry['timestamp'] = timestamp
+        log_entry['hook_event_name'] = 'ImportOrganizer'
+        log_entry['result'] = result
+        log_entry['working_directory'] = str(Path.cwd())
+        
+        # Append new data
+        log_data.append(log_entry)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
+            
+    except Exception as e:
+        # Don't let logging errors break the hook
+        print(f"Logging error: {e}", file=sys.stderr)
+
 def main():
     """Main execution"""
+    input_data = None
+    result = None
+    
     try:
         input_data = json.load(sys.stdin)
         
@@ -262,6 +298,9 @@ def main():
         organizer = ImportOrganizer(input_data)
         result = organizer.organize()
         
+        # Log the activity
+        log_import_organizer_activity(input_data, result)
+        
         # Show result to user
         if result.get('modified', False):
             print(f"✅ Imports organized in {file_name}", file=sys.stderr)
@@ -273,6 +312,15 @@ def main():
             'message': result['message']
         }))
     except Exception as error:
+        # Log the error if we have input_data
+        if input_data:
+            error_result = {
+                'success': False,
+                'message': f'Import organizer error: {error}',
+                'modified': False
+            }
+            log_import_organizer_activity(input_data, error_result)
+        
         print(json.dumps({
             'message': f'Import organizer error: {error}'
         }))

@@ -20,6 +20,8 @@ import re
 import sys
 import urllib.parse
 from dataclasses import asdict, dataclass
+from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional
 
 
@@ -385,6 +387,26 @@ def hook_mode() -> Dict:
     """Claude Code hook compatibility mode"""
     try:
         input_data = json.loads(sys.stdin.read())
+        
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'api_standards_checker.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+        
         tool_input = input_data.get('tool_input', {})
         output = input_data.get('output', {})
         
@@ -394,17 +416,36 @@ def hook_mode() -> Dict:
         
         # Enhanced security check for path traversal
         if file_path and not is_safe_path(file_path):
-            return {
+            result = {
                 'approve': False,
                 'message': '🚨 Security Alert: Potentially unsafe file path detected. Path traversal attempt blocked.'
             }
+            input_data['validation_result'] = result
+            log_data.append(input_data)
+            
+            # Write back to file with formatting
+            with open(log_path, 'w') as f:
+                json.dump(log_data, f, indent=2)
+            
+            return result
         
         if not content:
-            return {'approve': True, 'message': '✅ API standards check passed'}
+            result = {'approve': True, 'message': '✅ API standards check passed'}
+            input_data['validation_result'] = result
+            log_data.append(input_data)
+            
+            # Write back to file with formatting
+            with open(log_path, 'w') as f:
+                json.dump(log_data, f, indent=2)
+            
+            return result
         
         # Validate
         checker = ApiStandardsChecker()
         violations = checker.validate_file(file_path, content)
+        
+        # Add violations to log entry
+        input_data['violations_found'] = [asdict(v) for v in violations]
         
         if violations:
             message_lines = ['⚠️  API Standards Review:']
@@ -413,14 +454,59 @@ def hook_mode() -> Dict:
             message_lines.append('')
             message_lines.append('Consider addressing these issues to maintain API consistency.')
             
-            return {
+            result = {
                 'approve': True,
                 'message': '\n'.join(message_lines)
             }
+        else:
+            result = {'approve': True, 'message': '✅ API standards check passed'}
         
-        return {'approve': True, 'message': '✅ API standards check passed'}
+        # Add result to log entry
+        input_data['validation_result'] = result
+        
+        # Append new data to log
+        log_data.append(input_data)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
+        
+        return result
         
     except Exception as e:
+        # Log the error as well
+        try:
+            log_dir = Path.cwd() / 'logs'
+            log_dir.mkdir(parents=True, exist_ok=True)
+            log_path = log_dir / 'api_standards_checker.json'
+            
+            if log_path.exists():
+                with open(log_path, 'r') as f:
+                    try:
+                        log_data = json.load(f)
+                    except (json.JSONDecodeError, ValueError):
+                        log_data = []
+            else:
+                log_data = []
+            
+            timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+            error_entry = {
+                'timestamp': timestamp,
+                'error': str(e),
+                'validation_result': {
+                    'approve': True,
+                    'message': f'API checker error: {str(e)}'
+                }
+            }
+            
+            log_data.append(error_entry)
+            
+            with open(log_path, 'w') as f:
+                json.dump(log_data, f, indent=2)
+        except Exception:
+            # If logging fails, continue with original error handling
+            pass
+        
         return {
             'approve': True,
             'message': f'API checker error: {str(e)}'

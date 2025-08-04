@@ -8,6 +8,8 @@
 import json
 import re
 import sys
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 
@@ -161,8 +163,39 @@ def main():
     """Main execution"""
     try:
         input_data = json.load(sys.stdin)
+        
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'pnpm_enforcer.json'
+        
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+        
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+        
+        # Process enforcement logic
         enforcer = PnpmEnforcer(input_data)
         result = enforcer.validate()
+        
+        # Add result to log entry
+        input_data['enforcement_result'] = result
+        
+        # Append new data to log
+        log_data.append(input_data)
+        
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
         
         print(json.dumps(result))
     except Exception as error:
