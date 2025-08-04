@@ -6,7 +6,6 @@
 
 import subprocess
 import sys
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -96,7 +95,7 @@ def request_claude_commit():
     
     # Echo a message that Claude Code can interpret as a commit request
     print(f"CLAUDE_COMMIT_REQUEST: {commit_message}")
-    print(f"🔄 Requesting Claude Code to stage and commit changes...")
+    print("🔄 Requesting Claude Code to stage and commit changes...")
 
 
 def main():

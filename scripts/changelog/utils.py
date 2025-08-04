@@ -16,16 +16,14 @@ Cross-platform compatible utility functions for git analysis and file manipulati
 """
 
 import json
-import os
 import re
-import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any, Dict, List, Optional
 
 import git
 import semver
-from colorama import Fore, Style, init
+from colorama import Fore, init
 
 # Initialize colorama for cross-platform color support
 init(autoreset=True)
@@ -106,7 +104,7 @@ def get_next_version(current_version: str, auto_mode: bool = False, force_mode: 
             return str(current_ver.bump_minor())
         else:
             return str(current_ver.bump_patch())
-    except Exception as error:
+    except Exception:
         print(f"{Fore.YELLOW}Warning: Could not auto-determine version, defaulting to patch")
         return str(semver.VersionInfo.parse(current_version).bump_patch())
 

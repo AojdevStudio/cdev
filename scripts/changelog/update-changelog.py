@@ -29,25 +29,26 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import click
-from colorama import Fore, Style, init
+from colorama import Fore, init
 
 # Import utility functions from utils.py
 try:
     from utils import (
-        validate_version,
-        parse_commits,
         format_changelog,
-        update_changelog_file,
         get_next_version,
+        parse_commits,
+        update_changelog_file,
+        validate_version,
     )
 except ImportError:
     # If utils.py is not available, we'll inline minimal functions
     print(f"{Fore.RED}Warning: Could not import utils.py. Using minimal inline functions.")
     
     import re
+    from datetime import datetime
+
     import git
     import semver
-    from datetime import datetime
     
     def validate_version(version: str) -> bool:
         try:

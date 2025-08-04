@@ -8,6 +8,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+
+## [0.1.0] - 2025-08-04
+
+### Added
+
+- 📚 docs: add comprehensive hook documentation and linter refactor plan
+- 🔧 feat: implement comprehensive logging infrastructure for all hooks
+- 📝 docs: update changelog with recent feature additions
+- 📚 docs: add comprehensive technical documentation and references
+- 📚 docs: add CLAUDE.md documentation across project directories
+- ✨ feat(commands): add comprehensive development command suite
+- ✨ feat(agents): add codebase-explorer agent for systematic code documentation
+- 📚 docs: add installation consolidation documentation and migration guide
+- ✨ feat(agents): add specialized development agent configurations
+
+### Changed
+
+- 📝 docs: update project documentation with hook logging standards
+- 🏗️ refactor: update integration map and marketing content
+- 📚 docs: update technical documentation and references
+- 🔧 refactor: enhance safety hooks and Claude settings
+- 🤖 agents: enhance agent configurations and formatting
+- migrate changelog system from JavaScript to Python
+- 🔧 refactor: enhance command configurations and safety hooks
+- 🔧 chore: update codebase for simplified installation approach
+
+### Removed
+
+- 🧹 cleanup: remove obsolete test files and deprecated scripts
+- 🗑️ cleanup: remove obsolete integration map configuration
+- 🗑️ refactor: remove obsolete files and simplify codebase structure
+
+### Fixed
+
+- 🐛 fix: correct pre_tool_use hook input handling to read from stdin
+
+### Security
+
+- enhance safety hooks and update project documentation
+
 ## [0.1.0] - 2025-08-02
 
 ### Added
@@ -347,6 +387,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Documentation](https://github.com/AOJDevStudio/cdev/tree/main/docs)
 
 [Unreleased]: https://github.com/AOJDevStudio/cdev/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.1.0]: https://github.com/AOJDevStudio/cdev/releases/tag/v0.1.0
 [0.0.17]: https://github.com/AOJDevStudio/cdev/compare/v0.0.15...v0.0.17
