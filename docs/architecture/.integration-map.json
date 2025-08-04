@@ -4,29 +4,14 @@
       "parallel_development": [
         "orchestrate",
         "agent-start",
-        "agent-status", 
+        "agent-status",
         "agent-final-validation",
         "agent-commit",
         "agent-cleanup"
       ],
-      "pull_request_flow": [
-        "commit",
-        "create-pr",
-        "pr-review", 
-        "review-merge"
-      ],
-      "project_setup": [
-        "prime",
-        "init-protocol",
-        "enforce-structure",
-        "generate-readme"
-      ],
-      "maintenance": [
-        "git-status",
-        "update-changelog",
-        "deep-search",
-        "all-tools"
-      ]
+      "pull_request_flow": ["commit", "create-pr", "pr-review", "review-merge"],
+      "project_setup": ["prime", "init-protocol", "enforce-structure", "generate-readme"],
+      "maintenance": ["git-status", "update-changelog", "deep-search", "all-tools"]
     },
     "sub_agent_mapping": {
       "git-flow-manager": ["agent-commit", "commit", "review-merge"],

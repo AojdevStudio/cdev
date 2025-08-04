@@ -12,7 +12,7 @@ Generated: 2025-08-03
 
 Just witnessed something remarkable: our CDEV git-flow-manager agent hit safety constraints and intelligently adapted—exactly as designed.
 
-**The Challenge:** 
+**The Challenge:**
 • Security hooks blocked heredoc syntax in commits (security risk)
 • Date validation prevented "Added in 2025" references (AI hallucination guard)
 • Template protection flagged command modifications
@@ -95,6 +95,7 @@ The safety hooks are open source in the CDEV project if anyone wants to see the 
 These posts were generated based on a real-world experience where CDEV's git-flow-manager agent encountered multiple safety hook rejections while attempting to commit 23 file changes. The agent demonstrated intelligent adaptation by finding alternative approaches that satisfied both the commit requirements and security constraints, ultimately creating 7 well-structured atomic commits.
 
 Key technical details:
+
 - Original approach used heredoc syntax which was blocked
 - Adapted to use file-based commits (temp_commit_msg.txt)
 - Removed temporal references that triggered date validation
