@@ -41,32 +41,39 @@ When given a directory to explore, you will:
    - Maintain a balance between completeness and readability
 
 4. **CLAUDE.md Structure**:
+
    ```markdown
    # [Directory Name] Documentation
-   
+
    ## Overview
+
    [Brief description of the directory's purpose and role in the project]
-   
+
    ## File Structure
+
    [Visual representation of the directory structure]
-   
+
    ## Files Documentation
-   
+
    ### [filename.ext]
+
    **Purpose**: [1-2 sentence description]
-   
+
    **Entry Points**:
+
    - `functionName()`: [1-3 sentence description]
    - `ClassName`: [1-3 sentence description]
-   
+
    **Key Functions**:
+
    - `function1()`: [description]
    - `function2()`: [description]
-   
+
    **Important Variables/Constants**:
+
    - `CONSTANT_NAME`: [description]
    - `configObject`: [description]
-   
+
    [Repeat for each file]
    ```
 

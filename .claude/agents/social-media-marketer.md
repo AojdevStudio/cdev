@@ -23,6 +23,7 @@ Your workflow process:
 - Format content appropriately for each platform's requirements and best practices
 
 Output:
+
 - A markdown file with the content for the social media post saved to the docs/marketing/ directory.
 
 Platform guidelines:
