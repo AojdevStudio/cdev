@@ -49,6 +49,7 @@ Added to `.claude/settings.json` under PostToolUse:
 ## Testing
 
 To test the hook:
+
 1. Make a code change
 2. Commit with: `git commit -m "feat: add new feature"`
 3. The changelog should automatically update with the new commit

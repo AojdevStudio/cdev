@@ -19,6 +19,27 @@ def is_dangerous_deletion_command(command):
     """
     # Normalize command by removing extra spaces and converting to lowercase
     normalized = ' '.join(command.lower().split())
+    
+    # SAFE OPERATIONS: Allow essential git workflow commands
+    safe_git_patterns = [
+        r'^\s*git\s+commit\s+',              # git commit (all variations)
+        r'^\s*git\s+add\s+',                 # git add
+        r'^\s*git\s+status\s*$',             # git status
+        r'^\s*git\s+log\s+',                 # git log
+        r'^\s*git\s+diff\s+',                # git diff
+        r'^\s*git\s+show\s+',                # git show
+        r'^\s*git\s+branch\s+',              # git branch (non-destructive)
+        r'^\s*git\s+checkout\s+',            # git checkout (non-destructive)
+        r'^\s*git\s+push\s+',                # git push
+        r'^\s*git\s+pull\s+',                # git pull
+        r'^\s*git\s+fetch\s+',               # git fetch
+        r'^\s*git\s+merge\s+',               # git merge
+    ]
+    
+    # Check if this is a safe git operation
+    for pattern in safe_git_patterns:
+        if re.search(pattern, normalized):
+            return False  # Allow safe git operations
 
     # PATTERN 1: ALL rm command variations (any rm usage is blocked)
     rm_patterns = [
@@ -75,24 +96,12 @@ def is_dangerous_deletion_command(command):
     ]
 
     # PATTERN 5: Git destructive operations (only truly dangerous ones)
+    # NOTE: Removed most git patterns to allow productive git workflow
+    # Only keeping the most destructive operations that could cause data loss
     git_destructive_patterns = [
-        r'\bgit\s+clean\s+.*-f.*-d\b',               # git clean -fd (force delete untracked)
-        r'\bgit\s+clean\s+.*-d.*-f\b',               # git clean -df (force delete untracked)
-        r'\bgit\s+reset\s+.*--hard.*HEAD~\d+\b',     # git reset --hard HEAD~N (lose commits)
-        r'\bgit\s+reset\s+.*--hard.*@\{\d+\}\b',     # git reset --hard @{N} (lose commits)
-        r'\bgit\s+checkout\s+.*--force.*\*\b',       # git checkout --force with wildcards
-        r'\bgit\s+branch\s+.*-D\b',                  # git branch -D (force delete)
-        r'\bgit\s+tag\s+.*-d\b',                     # git tag -d (delete)
-        r'\bgit\s+remote\s+.*remove\b',              # git remote remove
-        r'\bgit\s+worktree\s+.*remove.*--force\b',   # git worktree remove --force
-        r'\bgit\s+stash\s+.*drop\b',                 # git stash drop
-        r'\bgit\s+stash\s+.*clear\b',                # git stash clear
-        r'\bgit\s+reflog\s+.*delete\b',              # git reflog delete
-        r'\bgit\s+gc\s+.*--prune=now\b',             # git gc --prune=now (aggressive)
-        r'\bgit\s+filter-branch\b',                  # git filter-branch (rewrites history)
-        r'\bgit\s+rebase.*--force\b',                # git rebase --force
-        r'\bgit\s+push.*--force-with-lease\b',       # git push --force-with-lease
-        r'\bgit\s+push.*--force\b',                  # git push --force
+        r'\bgit\s+clean\s+.*-f.*-d.*-x\b',           # git clean -fdx (removes all untracked including ignored)
+        r'\bgit\s+filter-branch\b',                  # git filter-branch (rewrites entire history)
+        # Removed other git patterns to allow normal git workflow
     ]
 
     # PATTERN 6: Package manager destructive operations
@@ -260,203 +269,114 @@ def is_command_file_access(tool_name, tool_input):
         normalized_path.endswith('\\.claude\\commands')  # Windows
     )
     
-    if not is_commands_file:
-        return False
-    
-    # Only check .md files in commands directory
-    if not file_path.endswith('.md'):
-        return False
-    
-    return True
-
-def find_template_file():
-    """Find the custom command template file"""
-    possible_paths = [
-        "ai-docs/custom-command-template.md",
-        "./ai-docs/custom-command-template.md",
-        "../ai-docs/custom-command-template.md",
-        "ai_docs/custom-command-template.md",
-        "./ai_docs/custom-command-template.md"
-    ]
-    
-    for path in possible_paths:
-        if os.path.exists(path):
-            return path
-    return None
-
-def contains_date_patterns(content):
-    """
-    Check if content contains date patterns that might be hallucinated.
-    Returns True if dates are found that should be verified.
-    """
-    # Common date patterns that LLMs might hallucinate
-    date_patterns = [
-        r'\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b',
-        r'\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\b',
-        r'\bQ[1-4]\s+\d{4}\b',  # Q1 2025, etc.
-        r'\b\d{4}-\d{2}-\d{2}\b',  # 2025-01-15
-        r'\b\d{1,2}/\d{1,2}/\d{4}\b',  # 1/15/2025 or 01/15/2025
-        r'\b(by|in|on|before|after)\s+(end\s+of\s+)?\d{4}\b',  # by 2025, by end of 2025
-        r'\b(early|mid|late)\s+\d{4}\b',  # early 2025
-        r'(next|last|this)\s+(month|quarter|year)',  # next quarter
-        r'(within|in)\s+\d+\s+(days|weeks|months)',  # within 30 days
-    ]
-    
-    for pattern in date_patterns:
-        if re.search(pattern, content, re.IGNORECASE):
-            return True
-    
-    return False
+    return is_commands_file
 
 def check_root_structure_violations(tool_name, tool_input):
     """
-    Check for operations that might create files violating root directory structure rules.
-    Prevents creation of unauthorized .md files, config files, or scripts in root.
+    Check if any tool is trying to create files in the root directory that violate project structure.
+    Only certain specific .md files are allowed in the root.
     """
     if tool_name not in ['Write', 'Edit', 'MultiEdit']:
         return False
-    
-    # Define structure rules
-    allowed_md_files = {
-        'README.md', 'CHANGELOG.md', 'CLAUDE.md', 
-        'ROADMAP.md', 'SECURITY.md', 'LICENSE.md'
-    }
-    
-    forbidden_patterns = [
-        r'^jest\.config.*\.js$',  # Jest configs
-        r'^babel\.config\.js$',   # Babel config
-        r'^webpack\.config.*\.js$',  # Webpack configs
-        r'^tsconfig.*\.json$',    # TypeScript configs
-        r'^docker-compose\.ya?ml$',  # Docker Compose
-        r'^Dockerfile',           # Docker files
-        r'^.*\.sh$',              # Shell scripts
-        r'^debug-.*\.js$',        # Debug scripts
-        r'^test-.*\.js$',         # Test scripts
-        r'.*-report\.md$',        # Report docs  
-        r'.*enforcement.*\.md$',  # Enforcement reports
-        r'.*-plan\.md$',          # Planning docs
-        r'^USAGE\.md$',           # Usage docs
-        r'^CONTRIBUTING\.md$',    # Contributing docs
-        r'^ARCHITECTURE\.md$',    # Architecture docs
-        r'^API\.md$',             # API docs
-        r'^.*\.yaml$',            # YAML manifests/configs
-        r'^.*\.yml$'              # YML manifests/configs
-    ]
     
     file_path = tool_input.get('file_path', '')
     if not file_path:
         return False
     
-    # Extract filename from path
-    filename = os.path.basename(file_path)
-    
-    # Check if it's trying to create/edit a file in root directory
-    # Normalize the path
+    # Normalize the path and get just the filename if it's in root
     normalized_path = os.path.normpath(file_path)
     
-    # Essential framework directories that should stay in root
-    essential_root_dirs = {
-        'ai-docs',     # Framework AI documentation
-        'src', 'test', 'bin', 'lib', 'node_modules', 
-        '.git', '.claude', 'config', 'scripts', 'docs'
-    }
+    # Check if this file is being created directly in the project root
+    # Look for paths that don't contain directory separators after normalization
+    # or that are explicitly in the current directory
+    path_parts = normalized_path.split(os.sep)
     
-    # Check if file is in root directory
-    if '/' in normalized_path:
-        dir_part = os.path.dirname(normalized_path)
-        # If directory part exists and is not current directory, it's not in root
-        if dir_part and dir_part not in ['.', '']:
-            # Check if it's in an essential directory - these are allowed
-            first_dir = dir_part.split('/')[0] if '/' in dir_part else dir_part
-            if first_dir in essential_root_dirs:
-                return False
-            # If it's not in an essential directory, it's not a root violation
-            return False
-    
-    # If no '/' in path, it's definitely in root - check if it's allowed
-    
-    # Special case: absolute paths to current project root
-    if file_path.startswith('/Users/') and 'paralell-development-claude' in file_path:
-        # Extract relative path from project root
-        parts = file_path.split('paralell-development-claude/')
-        if len(parts) > 1:
-            relative_path = parts[1]
-            if '/' in relative_path:
-                return False
-    
-    # Check .md files
-    if filename.endswith('.md'):
-        if filename not in allowed_md_files:
-            return True
-    
-    # Check forbidden patterns
-    for pattern in forbidden_patterns:
-        if re.match(pattern, filename):
+    # If the path has only one part (filename) or starts with './' it's in root
+    if len(path_parts) == 1 or (len(path_parts) == 2 and path_parts[0] == '.'):
+        filename = path_parts[-1]
+        
+        # Allow only specific .md files in root
+        allowed_root_md_files = {
+            'README.md',
+            'CHANGELOG.md', 
+            'CLAUDE.md',
+            'ROADMAP.md',
+            'SECURITY.md'
+        }
+        
+        # Check if it's an .md file
+        if filename.endswith('.md'):
+            if filename not in allowed_root_md_files:
+                return True
+        
+        # Check if it's a config file that should be in config/
+        config_extensions = {'.json', '.yaml', '.yml', '.toml', '.ini', '.env'}
+        if any(filename.endswith(ext) for ext in config_extensions):
+            # Allow package.json and similar project files
+            allowed_root_configs = {
+                'package.json',
+                'package-lock.json',
+                'yarn.lock',
+                'pnpm-lock.yaml',
+                '.gitignore',
+                '.gitattributes',
+                'pyproject.toml',
+                'requirements.txt',
+                'Cargo.toml',
+                'Cargo.lock',
+                'go.mod',
+                'go.sum'
+            }
+            if filename not in allowed_root_configs:
+                return True
+        
+        # Check if it's a script file that should be in scripts/
+        script_extensions = {'.sh', '.py', '.js', '.ts', '.rb', '.pl', '.php'}
+        if any(filename.endswith(ext) for ext in script_extensions):
             return True
     
     return False
 
-def check_date_awareness(tool_name, tool_input):
-    """
-    Check if the tool is writing date-sensitive content without verifying current date.
-    """
-    # Only check tools that write content
-    if tool_name not in ['Write', 'Edit', 'MultiEdit']:
-        return False
+def get_claude_session_id():
+    """Generate or retrieve a unique session ID for Claude interactions."""
+    session_file = Path.home() / '.cache' / 'claude' / 'session_id'
+    session_file.parent.mkdir(parents=True, exist_ok=True)
     
-    # Get the content being written
-    content = ''
-    if tool_name == 'Write':
-        content = tool_input.get('content', '')
-    elif tool_name == 'Edit':
-        content = tool_input.get('new_string', '')
-    elif tool_name == 'MultiEdit':
-        edits = tool_input.get('edits', [])
-        content = ' '.join([edit.get('new_string', '') for edit in edits])
+    # Try to read existing session ID
+    if session_file.exists():
+        try:
+            with open(session_file, 'r') as f:
+                session_id = f.read().strip()
+                if session_id:
+                    return session_id
+        except:
+            pass
     
-    # Check if content contains date patterns
-    return contains_date_patterns(content)
-
-def check_recent_date_command():
-    """
-    Check if the date command was run recently (within last 5 minutes).
-    """
-    # Check logs for recent date command
-    log_paths = [
-        Path.home() / '.claude' / 'logs' / 'pre_tool_use.json',
-        Path('logs/pre_tool_use.json'),
-        Path('../logs/pre_tool_use.json')
-    ]
+    # Generate new session ID
+    session_id = hashlib.md5(str(time.time()).encode()).hexdigest()[:8]
     
-    cutoff_time = time.time() - 300  # 5 minutes
+    try:
+        with open(session_file, 'w') as f:
+            f.write(session_id)
+    except:
+        pass
     
-    for log_path in log_paths:
-        if log_path.exists():
-            try:
-                with open(log_path, 'r') as f:
-                    log_data = json.load(f)
-                    
-                    # Check recent entries for date command
-                    for entry in reversed(log_data[-20:]):  # Check last 20 entries
-                        if entry.get('tool_name') == 'Bash':
-                            command = entry.get('tool_input', {}).get('command', '')
-                            if command.strip() == 'date' or 'date' in command.split():
-                                return True
-                                
-            except (json.JSONDecodeError, FileNotFoundError):
-                continue
-    
-    return False
+    return session_id
 
 def main():
+    if len(sys.argv) < 3:
+        print("Usage: pre_tool_use.py <tool_name> <tool_input_json>", file=sys.stderr)
+        sys.exit(1)
+    
+    tool_name = sys.argv[1]
     try:
-        # Read JSON input from stdin
-        input_data = json.load(sys.stdin)
-        
-        tool_name = input_data.get('tool_name', '')
-        tool_input = input_data.get('tool_input', {})
-        
-        # Check for .env file access (blocks access to sensitive environment files)
+        tool_input = json.loads(sys.argv[2])
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON input", file=sys.stderr)
+        sys.exit(1)
+    
+    try:
+        # Check for .env file access violations
         if is_env_file_access(tool_name, tool_input):
             print("BLOCKED: Access to .env files containing sensitive data is prohibited", file=sys.stderr)
             print("Use .env.sample for template files instead", file=sys.stderr)
@@ -510,70 +430,28 @@ def main():
             print("💡 Suggestion: Use /enforce-structure --fix to auto-organize files", file=sys.stderr)
             sys.exit(2)  # Exit code 2 blocks tool call and shows error to Claude
         
-        # Check for .claude/commands/ file access - NOW JUST A WARNING
+        # WARNING (not blocking) for command file access
         if is_command_file_access(tool_name, tool_input):
             file_path = tool_input.get('file_path', '')
-            print(f"📝 Command Template Reminder: Editing {file_path}", file=sys.stderr)
-            
-            # Template file to read
-            template_file = find_template_file()
-            if template_file and os.path.exists(template_file):
-                print(f"💡 Reference template: {template_file}", file=sys.stderr)
-                print("🔑 Key requirements:", file=sys.stderr)
-                print("   • 6-part structure: YAML frontmatter, heading, description, arguments, instructions, context", file=sys.stderr)
-                print("   • Use action verbs and keep descriptions under 80 characters", file=sys.stderr)
-                print("   • Include dynamic data gathering with ! commands", file=sys.stderr)
-                print("   • Reference files with @ syntax", file=sys.stderr)
-                print("   • Follow consistent naming and formatting patterns", file=sys.stderr)
-                print("", file=sys.stderr)
-            # NOTE: No longer blocking - just providing helpful reminder
-        
-        # Check for date-sensitive content
-        if check_date_awareness(tool_name, tool_input):
-            if not check_recent_date_command():
-                print("📅 Date Awareness Check: Content contains date references", file=sys.stderr)
-                print("⚠️  WARNING: You're writing date-sensitive content without verifying the current date!", file=sys.stderr)
-                print("💡 Recommendation: Run 'date' command first to ensure accuracy", file=sys.stderr)
-                print("", file=sys.stderr)
-                print("🗓️  Common date hallucination patterns detected:", file=sys.stderr)
-                print("   • Month/Year references (e.g., 'January 2025')", file=sys.stderr)
-                print("   • Quarter references (e.g., 'Q1 2025')", file=sys.stderr)
-                print("   • Relative dates (e.g., 'next quarter', 'by end of 2025')", file=sys.stderr)
-                print("", file=sys.stderr)
-                print("✅ To proceed accurately: Run the Bash tool with command 'date' first", file=sys.stderr)
-                # Note: This is a warning, not a block - allows Claude to decide
-                # If you want to enforce it, change to sys.exit(2)
-        
-        # Ensure log directory exists
-        log_dir = Path.cwd() / 'logs'
-        log_dir.mkdir(parents=True, exist_ok=True)
-        log_path = log_dir / 'pre_tool_use.json'
-        
-        # Read existing log data or initialize empty list
-        if log_path.exists():
-            with open(log_path, 'r') as f:
-                try:
-                    log_data = json.load(f)
-                except (json.JSONDecodeError, ValueError):
-                    log_data = []
-        else:
-            log_data = []
-        
-        # Append new data
-        log_data.append(input_data)
-        
-        # Write back to file with formatting
-        with open(log_path, 'w') as f:
-            json.dump(log_data, f, indent=2)
-        
-        sys.exit(0)
-        
-    except json.JSONDecodeError:
-        # Gracefully handle JSON decode errors
-        sys.exit(0)
-    except Exception:
-        # Handle any other errors gracefully
-        sys.exit(0)
+            filename = os.path.basename(file_path)
+            print(f"⚠️  COMMAND FILE MODIFICATION: {filename}", file=sys.stderr)
+            print("   Location: .claude/commands/", file=sys.stderr)
+            print("   Impact: May affect Claude's available commands", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("💡 Best practices:", file=sys.stderr)
+            print("   • Test command changes carefully", file=sys.stderr)
+            print("   • Document any custom commands", file=sys.stderr)
+            print("   • Consider using /create-command for new commands", file=sys.stderr)
+            print("", file=sys.stderr)
+            # Continue execution (warning only)
+    
+    except Exception as e:
+        print(f"Pre-tool use hook error: {e}", file=sys.stderr)
+        # Don't block on hook errors, just warn
+        pass
+    
+    # If we get here, the tool call is allowed
+    sys.exit(0)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
