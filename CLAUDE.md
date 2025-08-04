@@ -92,6 +92,44 @@ Developers using Claude Code who want to:
 - Process any task format (Linear, markdown, plain text) seamlessly
 - Enhance their development workflows with AI-powered orchestration
 
+## Hooks
+
+**Configuring Logging**
+
+All hooks must implement logging. Every hook in the CDEV system must record every event with timestamp and session ID. All hooks must:
+
+1. Import datetime: `from datetime import datetime`
+2. Ensure logs directory exists: `log_dir = Path.cwd() / 'logs'` and `log_dir.mkdir(parents=True, exist_ok=True)`
+3. Define log file path: `log_path = log_dir / '<hook_name>.json'`
+
+```python
+        # Ensure log directory exists
+        log_dir = Path.cwd() / 'logs'
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / 'post_tool_use.json'
+
+        # Read existing log data or initialize empty list
+        if log_path.exists():
+            with open(log_path, 'r') as f:
+                try:
+                    log_data = json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    log_data = []
+        else:
+            log_data = []
+
+        # Add timestamp to the log entry
+        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
+        input_data['timestamp'] = timestamp
+
+        # Append new data
+        log_data.append(input_data)
+
+        # Write back to file with formatting
+        with open(log_path, 'w') as f:
+            json.dump(log_data, f, indent=2)
+```
+
 ## Current Status
 
 - We are in the middle of a major rewrite to modularize the codebase, improve maintenability, and ensure smooth installation.
