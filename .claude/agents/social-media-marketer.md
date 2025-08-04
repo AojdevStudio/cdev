@@ -22,6 +22,9 @@ Your workflow process:
 - Ensure messaging is professional, accurate, and aligned with project goals
 - Format content appropriately for each platform's requirements and best practices
 
+Output:
+- A markdown file with the content for the social media post saved to the docs/marketing/ directory.
+
 Platform guidelines:
 
 - **Twitter**: Concise, engaging, use relevant hashtags, focus on key benefits or achievements

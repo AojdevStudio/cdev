@@ -59,6 +59,15 @@
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/universal-linter.py"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/auto-changelog-updater.py"
+          }
+        ]
       }
     ],
     "Notification": [

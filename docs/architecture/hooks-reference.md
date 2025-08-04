@@ -29,6 +29,7 @@
 | notification.py             | 3    | System notifications                              | ✅ Yes       |
 | stop.py                     | 3    | Session cleanup                                   | ✅ Yes       |
 | post_tool_use.py            | 3    | Action logging                                    | ✅ Yes       |
+| auto-changelog-updater.py   | 3    | Auto-updates changelog after git commits          | ✅ Yes       |
 
 ## What Are Hooks?
 
@@ -391,6 +392,58 @@ Nice-to-have features for enhanced development experience.
 - Generates usage reports
 - Identifies optimization opportunities
 
+---
+
+#### 13. auto-changelog-updater.py
+
+**Purpose**: Automatically maintains project changelog after commits
+
+**What it does**:
+
+- Monitors for successful git commit commands
+- Runs changelog update script in automatic mode
+- Analyzes recent commits and categorizes them
+- Updates CHANGELOG.md following conventional format
+
+**Trigger conditions**:
+
+- Detects git commit patterns in Bash commands
+- Only runs after successful commits (exit code 0)
+- Supports various commit formats (commit -m, commit -am, amend)
+
+**Example workflow**:
+
+```bash
+# Developer makes a commit
+git commit -m "feat: add user authentication"
+
+# Hook automatically:
+1. Detects the git commit
+2. Runs scripts/changelog/update-changelog.py --auto
+3. Updates CHANGELOG.md with the new feature entry
+```
+
+**Configuration**:
+
+```json
+{
+  "matcher": "Bash",
+  "hooks": [
+    {
+      "type": "command",
+      "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/auto-changelog-updater.py"
+    }
+  ]
+}
+```
+
+**Benefits**:
+
+- Zero manual changelog maintenance
+- Consistent changelog formatting
+- Automatic semantic versioning support
+- Never forget to update changelogs
+
 ## Creating Custom Hooks
 
 ### Basic Hook Structure
@@ -646,6 +699,21 @@ router.get('/api/getUsers', fetchUsers);
 ✅ Suggestion: "Use '/api/users' for REST compliance"
 ```
 
+### Example 5: Automatic Changelog Maintenance
+
+```bash
+# Scenario: Claude commits a new feature
+Claude: "I'll commit the authentication feature"
+Command: git commit -m "feat: implement JWT authentication with refresh tokens"
+
+# Hook automation:
+✅ Commit successful
+🔄 auto-changelog-updater.py: "Automatically updating changelog..."
+📝 CHANGELOG.md updated with:
+   ### Added
+   - feat: implement JWT authentication with refresh tokens
+```
+
 ## Hook Development Best Practices
 
 ### 1. Performance Optimization
@@ -742,4 +810,4 @@ Whether you're working solo or in a team, hooks ensure that AI assistance remain
 
 _For more examples and patterns, check the [hooks directory](.claude/hooks/) in your cdev installation._
 
-**Last Updated**: July 2025
+**Last Updated**: August 2025
