@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Agent System Overhaul** - Comprehensive review and enhancement of all specialized agents
+  - **Meta-agent optimization**: Enhanced agent evaluation and recommendation workflows
+  - **Tool selection refinement**: Removed unnecessary tools from agents to improve performance and focus
+  - **Structured workflow implementation**: Added numbered steps and clear procedures to all agents
+  - **Language-specific agent improvements**: Added best practices, examples, and focused responsibilities
+  - **Output structure standardization**: Defined consistent output formats across all agents
+  - **Proactive trigger system**: Added "MUST BE USED" conditions to encourage automatic delegation
+
+- **Context7 Integration** - Enhanced documentation lookup capabilities
+  - Added Context7 tools to coding agents for seamless documentation access
+  - Improved agent context awareness and knowledge retrieval
+
+- **Linear MCP Integration** - Enhanced task management capabilities
+  - Added Linear MCP tools to task-orchestrator for improved issue management
+  - Enhanced agent coordination with external task tracking systems
+
+### Enhanced
+
+- **Agent Workflows** - Systematic improvement across all agent types
+  - **task-orchestrator.md**: Added Linear MCP tools and structured delegation workflows
+  - **test-automator.md**: Enhanced testing workflows with clear procedural steps
+  - **meta-agent.md**: Improved agent evaluation and recommendation systems
+  - **coding agents**: Added Context7 integration and language-specific best practices
+  - **specialized agents**: Refined tool selections and added structured output formats
+
+- **Agent Delegation System** - Improved automatic agent selection and usage
+  - Added proactive triggers to encourage automatic delegation based on task context
+  - Enhanced agent coordination and communication protocols
+  - Standardized agent invocation patterns and handoff procedures
+
 
 
 ## [0.1.0] - 2025-08-04
