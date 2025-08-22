@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    // MANDATORY strict mode settings - NEVER disable these
+    "strict": true, // Enable ALL strict type-checking options
+    "noImplicitAny": true, // NEVER allow implicit any
+    "strictNullChecks": true, // ALWAYS check for null/undefined
+    "strictFunctionTypes": true, // ENFORCE function type safety
+    "strictBindCallApply": true, // VALIDATE bind/call/apply usage
+    "strictPropertyInitialization": true, // REQUIRE property initialization
+    "noImplicitThis": true, // NEVER allow implicit this
+    "alwaysStrict": true, // ALWAYS use strict mode
+
+    // Additional safety checks - REQUIRED
+    "noUnusedLocals": true, // REJECT unused variables
+    "noUnusedParameters": true, // REJECT unused parameters
+    "noImplicitReturns": true, // REQUIRE explicit returns
+    "noFallthroughCasesInSwitch": true, // PREVENT switch fallthrough
+    "noUncheckedIndexedAccess": true, // ENFORCE index access safety
+    "exactOptionalPropertyTypes": true, // Strict optional property checking
+    "noImplicitOverride": true, // Require override keyword
+    "noPropertyAccessFromIndexSignature": true, // Explicit index access
+
+    // Module and compilation settings
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+
+    // Type checking for JavaScript files
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["test-typescript-task.ts", "src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+}

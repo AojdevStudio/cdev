@@ -16,6 +16,11 @@
     ],
     "deny": []
   },
+  "statusLine": {
+    "type": "command",
+    "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/status-lines/status_line_v2.py",
+    "padding": 0
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -99,6 +104,38 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/subagent_stop.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/user_prompt_sumbit.py --log-only --store-last-prompt --name-agent"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/pre_compact.py"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && uv run .claude/hooks/session_start.py"
           }
         ]
       }

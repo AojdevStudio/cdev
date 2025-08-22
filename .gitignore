@@ -88,3 +88,9 @@ archive/test-hook-mapping.js
 agent_context_*.yaml
 validation_checklist_*.txt
 task-deployment-plan.yaml
+
+# Experimental development
+experiments/
+demo-protocol-system.js
+repomix-output.xml
+test-typescript-task.ts
