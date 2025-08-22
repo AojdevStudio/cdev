@@ -220,25 +220,25 @@ The API response will include thinking, text, and tool_use blocks:
 
 ```json
 {
-    "content": [
-        {
-            "type": "thinking",
-            "thinking": "The user wants to know the current weather in Paris. I have access to a function `get_weather`...",
-            "signature": "BDaL4VrbR2Oj0hO4XpJxT28J5TILnCrrUXoKiiNBZW9P+nr8XSj1zuZzAl4egiCCpQNvfyUuFFJP5CncdYZEQPPmLxYsNrcs...."
-        },
-        {
-            "type": "text",
-            "text": "I can help you get the current weather information for Paris. Let me check that for you"
-        },
-        {
-            "type": "tool_use",
-            "id": "toolu_01CswdEQBMshySk6Y9DFKrfq",
-            "name": "get_weather",
-            "input": {
-                "location": "Paris"
-            }
-        }
-    ]
+  "content": [
+    {
+      "type": "thinking",
+      "thinking": "The user wants to know the current weather in Paris. I have access to a function `get_weather`...",
+      "signature": "BDaL4VrbR2Oj0hO4XpJxT28J5TILnCrrUXoKiiNBZW9P+nr8XSj1zuZzAl4egiCCpQNvfyUuFFJP5CncdYZEQPPmLxYsNrcs...."
+    },
+    {
+      "type": "text",
+      "text": "I can help you get the current weather information for Paris. Let me check that for you"
+    },
+    {
+      "type": "tool_use",
+      "id": "toolu_01CswdEQBMshySk6Y9DFKrfq",
+      "name": "get_weather",
+      "input": {
+        "location": "Paris"
+      }
+    }
+  ]
 }
 ```
 
@@ -283,12 +283,12 @@ The API response will now **only** include text
 
 ```json
 {
-    "content": [
-        {
-            "type": "text",
-            "text": "Currently in Paris, the temperature is 88°F (31°C)"
-        }
-    ]
+  "content": [
+    {
+      "type": "text",
+      "text": "Currently in Paris, the temperature is 88°F (31°C)"
+    }
+  ]
 }
 ```
 
@@ -333,6 +333,7 @@ Here are some important considerations for interleaved thinking:
 Tool use without interleaved thinking example shows Claude thinking once at the beginning to understand the task, making all tool use decisions upfront, and when tool results are returned, Claude immediately provides a response without additional thinking.
 
 Tool use with interleaved thinking example demonstrates how Claude can:
+
 1. Think about the task initially
 2. After receiving the calculator result, think again about what that result means
 3. Decide how to query the database based on the first result
@@ -478,20 +479,20 @@ If you need to test redacted thinking handling in your application, you can use 
 
 The Messages API handles thinking differently across Claude Sonnet 3.7 and Claude 4 models, primarily in redaction and summarization behavior.
 
-| Feature | Claude Sonnet 3.7 | Claude 4 Models |
-| --- | --- | --- |
-| **Thinking Output** | Returns full thinking output | Returns summarized thinking |
-| **Interleaved Thinking** | Not supported | Supported with `interleaved-thinking-2025-05-14` beta header |
+| Feature                  | Claude Sonnet 3.7            | Claude 4 Models                                              |
+| ------------------------ | ---------------------------- | ------------------------------------------------------------ |
+| **Thinking Output**      | Returns full thinking output | Returns summarized thinking                                  |
+| **Interleaved Thinking** | Not supported                | Supported with `interleaved-thinking-2025-05-14` beta header |
 
 ## Pricing
 
 Extended thinking uses the standard token pricing scheme:
 
-| Model | Base Input Tokens | Cache Writes | Cache Hits | Output Tokens |
-| --- | --- | --- | --- | --- |
-| Claude Opus 4 | $15 / MTok | $18.75 / MTok | $1.50 / MTok | $75 / MTok |
-| Claude Sonnet 4 | $3 / MTok | $3.75 / MTok | $0.30 / MTok | $15 / MTok |
-| Claude Sonnet 3.7 | $3 / MTok | $3.75 / MTok | $0.30 / MTok | $15 / MTok |
+| Model             | Base Input Tokens | Cache Writes  | Cache Hits   | Output Tokens |
+| ----------------- | ----------------- | ------------- | ------------ | ------------- |
+| Claude Opus 4     | $15 / MTok        | $18.75 / MTok | $1.50 / MTok | $75 / MTok    |
+| Claude Sonnet 4   | $3 / MTok         | $3.75 / MTok  | $0.30 / MTok | $15 / MTok    |
+| Claude Sonnet 3.7 | $3 / MTok         | $3.75 / MTok  | $0.30 / MTok | $15 / MTok    |
 
 The thinking process incurs charges for:
 

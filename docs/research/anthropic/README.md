@@ -12,6 +12,7 @@ This folder contains scraped documentation from docs.anthropic.com for reference
 ## Purpose
 
 These documents are collected for:
+
 - Quick reference during development
 - Understanding API capabilities and limitations
 - Implementing advanced features in Claude Code workflows
@@ -20,6 +21,7 @@ These documents are collected for:
 ## Source
 
 All content in this folder is sourced from:
+
 - Domain: docs.anthropic.com
 - Official Anthropic documentation
 

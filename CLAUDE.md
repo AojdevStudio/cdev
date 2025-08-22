@@ -94,6 +94,74 @@ Developers using Claude Code who want to:
 
 ## Hooks
 
+# Tier 1 - Critical Hooks
+
+This tier contains critical security and validation hooks that are essential for project integrity.
+
+## Hooks in this tier:
+
+- **notification.py**: Sends notifications for various events
+- **stop.py**: Handles stop events
+- **subagent_stop.py**: Handles subagent stop events
+- **pre_tool_use.py**: Runs before tool usage
+- **post_tool_use.py**: Runs after tool usage
+
+## Characteristics:
+
+- Security-focused
+- Validation and enforcement
+- Required for all projects
+- Cannot be disabled without explicit override
+
+## Usage:
+
+These hooks are automatically included in all project setups unless explicitly excluded.
+
+# Tier 2 - Important Hooks
+
+This tier contains important quality and standards hooks that improve code quality and maintainability.
+
+## Hooks in this tier:
+
+- **api-standards-checker.py**: Checks API code against standards
+- **code-quality-reporter.py**: Reports on code quality metrics
+- **universal-linter.py**: Runs linting across multiple file types
+- **import-organizer.py**: Organizes and sorts import statements
+
+## Characteristics:
+
+- Quality-focused
+- Standards enforcement
+- Recommended for most projects
+- Can be selectively disabled
+
+## Usage:
+
+These hooks are recommended for all projects but can be excluded based on project needs.
+
+# Tier 3 - Optional Hooks
+
+This tier contains optional convenience and notification hooks that provide additional functionality.
+
+## Hooks in this tier:
+
+- **commit-message-validator.py**: Validates commit message format and content
+- **typescript-validator.py**: Validates TypeScript code and type safety
+- **task-completion-enforcer.py**: Ensures tasks are completed before proceeding
+- **pnpm-enforcer.py**: Enforces use of pnpm package manager
+- **auto-changelog-updater.py**: Updates the changelog with the latest changes.
+
+## Characteristics:
+
+- Convenience features
+- Optional enhancements
+- Project-specific utilities
+- Can be freely enabled/disabled
+
+## Usage:
+
+These hooks are optional and can be selectively enabled based on project requirements and developer preferences.
+
 **Configuring Logging**
 
 All hooks must implement logging. Every hook in the CDEV system must record every event with timestamp and session ID. All hooks must:
@@ -141,3 +209,5 @@ All hooks must implement logging. Every hook in the CDEV system must record ever
 - When writing code, always add clear, descriptive comments explaining each section. Always group related items together. It is important to explain the purpose of each script, dependency, and configuration. Make it easy to understand for someone who might be overwhelmed by complexity. It should not be too verbose, but it should use complete, concise sentences that an educated person can follow.
 - For JSON-related files, make sure to create separate documentation to explain those files, because comments are not approved or allowed in JSON.
 - IMPORTANT: proactively aim to adhere to the principle "Don't Repeat Yourself" (DRY), which is a fundamental software development practice designed to eliminate code duplication and redundancy. The main idea is that each piece of knowledge or logic should exist only once in a codebase. If a particular functionality needs to be used in multiple places, it should be implemented in a single, reusable module—like a function, class, or method—and referenced wherever needed
+
+- respect the @ai-docs/naming-conventions.md
