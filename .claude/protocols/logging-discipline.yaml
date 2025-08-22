@@ -1,0 +1,132 @@
+name: logging-discipline
+version: 1.0.0
+priority: critical
+description: Stdout/stderr separation and structured logging enforcement
+source: ai-docs/stdout-stderr.md
+
+rules:
+  - id: no-console
+    severity: error
+    description: 'NO console.* statements allowed'
+    enforcement:
+      eslint:
+        rules:
+          no-console: ['error']
+      ruff:
+        rules:
+          - 'T201' # print found
+          - 'T203' # pprint found
+
+  - id: stdout-sacred
+    severity: error
+    description: 'stdout = data/protocol only, stderr = all logs'
+
+  - id: structured-logs
+    severity: error
+    description: 'Always use NDJSON format (one JSON object per line)'
+
+  - id: use-proper-logger
+    severity: error
+    description: 'Use pino for JS/TS, structlog for Python'
+
+  - id: correlation-ids
+    severity: warning
+    description: 'Attach requestId/traceId to every log line'
+
+  - id: no-secrets
+    severity: critical
+    description: 'No passwords, tokens, SSNs in logs'
+    redact_paths:
+      - password
+      - token
+      - authorization
+      - cookie
+      - ssn
+      - api_key
+      - secret
+
+contexts:
+  mcp-server:
+    stdout: 'JSON-RPC frames ONLY'
+    stderr: 'All diagnostics via logger'
+    example: |
+      // stdout: protocol only
+      process.stdout.write(JSON.stringify({jsonrpc: "2.0", result}));
+      // stderr: diagnostics
+      logger.info({ msg: 'server.start' });
+
+  cli-tool:
+    stdout: 'Pipeable data/results'
+    stderr: 'Progress, logs, errors'
+    example: |
+      // Results to stdout
+      process.stdout.write(JSON.stringify(data));
+      // Logs to stderr
+      logger.info({ msg: 'processing' });
+
+  web-api:
+    stdout: 'Usually unused'
+    stderr: 'All application logs'
+
+  test-environment:
+    stdout: 'TAP/test results for CI'
+    stderr: 'Debug information'
+
+setup:
+  javascript:
+    package: pino
+    install: npm install pino pino-pretty
+    config: |
+      import pino from 'pino';
+
+      const redact = { 
+        paths: ['password', 'token', 'authorization', 'cookie', 'ssn'], 
+        remove: true 
+      };
+
+      export const logger = pino({
+        level: process.env.LOG_LEVEL ?? 'info',
+        redact,
+        base: null,
+        timestamp: pino.stdTimeFunctions.isoTime,
+        transport: process.env.NODE_ENV === 'development'
+          ? { target: 'pino-pretty', options: { colorize: true } }
+          : undefined,
+      });
+
+  python:
+    package: structlog
+    install: pip install structlog
+    config: |
+      import logging, sys, structlog
+
+      logging.basicConfig(
+          level=logging.INFO,
+          handlers=[logging.StreamHandler(sys.stderr)],
+          format="%(message)s",
+      )
+
+      structlog.configure(
+          processors=[
+              structlog.processors.add_log_level,
+              structlog.processors.TimeStamper(fmt="iso"),
+              structlog.processors.JSONRenderer(),
+          ],
+          logger_factory=structlog.PrintLoggerFactory(file=sys.stderr),
+      )
+
+      log = structlog.get_logger()
+
+validation:
+  commands:
+    - name: 'Check for console usage'
+      run: "grep -r 'console\\.' --include='*.js' --include='*.ts' ."
+      expect: 'No output (no console statements found)'
+
+    - name: 'Check for print usage'
+      run: "grep -r '^[^#]*print(' --include='*.py' ."
+      expect: 'Only print(..., file=sys.stdout) for results'
+
+    - name: 'Verify ESLint rule'
+      run: "grep 'no-console' .eslintrc.json"
+      expect: 'Rule exists and set to error'

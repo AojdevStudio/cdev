@@ -1,12 +1,26 @@
 ---
 allowed-tools: Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(find:*), Bash(grep:*), Bash(wc:*), Bash(ls:*)
 description: Automatically update CLAUDE.md file based on recent code changes
+flags:
+  --directory: Create/update CLAUDE.md for a specific directory instead of project root
 ---
 
 # Update Claude.md File
 
+## Mode Selection
+{{if flags.directory}}
+### Directory-Specific CLAUDE.md Mode
+Updating CLAUDE.md for directory: {{flags.directory}}
+{{else}}
+### Project Root CLAUDE.md Mode
+{{endif}}
+
 ## Current Claude.md State
+{{if flags.directory}}
+@{{flags.directory}}/CLAUDE.md
+{{else}}
 @CLAUDE.md
+{{endif}}
 
 ## Git Analysis
 
@@ -48,7 +62,17 @@ description: Automatically update CLAUDE.md file based on recent code changes
 
 ## Your Task
 
+{{if flags.directory}}
+### Directory-Specific Task
+Based on the directory's CLAUDE.md (if it exists) and git analysis, create/update the CLAUDE.md for the {{flags.directory}} directory that:
+- Focuses specifically on that directory's purpose and contents
+- Documents how it relates to the rest of the project
+- Explains the internal structure and key files
+- Notes recent changes specific to that directory
+{{else}}
+### Project Root Task
 Based on the current CLAUDE.md content and all the git analysis above, create an updated CLAUDE.md file that:
+{{endif}}
 
 ## 1. Preserves Important Existing Content
 - Keep the core project description and architecture
@@ -114,7 +138,48 @@ Add a "Recent Updates" section with:
 - **Add timestamps**: Note when major updates were made
 
 ## 5. Output Format
-Provide the complete updated CLAUDE.md content, organized as:
+
+{{if flags.directory}}
+### Directory-Specific Template
+For directory-specific CLAUDE.md files, use this structure:
+
+```markdown
+# Directory Name
+
+## Overview
+[Directory purpose and responsibility]
+
+## Architecture
+[How this directory fits into the overall system]
+
+## Setup & Installation
+[Any specific setup for this directory]
+
+## Development Workflow
+[Directory-specific development processes]
+
+## API Documentation
+[APIs exposed by this directory]
+
+## File Structure
+[Explanation of files within this directory]
+
+## Recent Updates (Updated: YYYY-MM-DD)
+[Recent changes to this directory]
+
+## Important Notes
+[Key information about this directory]
+```
+
+### Directory Analysis Commands
+When analyzing a specific directory:
+!`find {{flags.directory}} -type f -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | head -20`
+!`git log --oneline -10 -- {{flags.directory}}`
+!`git diff HEAD~5 -- {{flags.directory}} | head -200`
+
+{{else}}
+### Project Root Template
+For the main project CLAUDE.md, use this structure:
 
 ```markdown
 # Project Name
@@ -142,3 +207,5 @@ Provide the complete updated CLAUDE.md content, organized as:
 
 ## Important Notes
 [Key information for developers]
+```
+{{endif}}
