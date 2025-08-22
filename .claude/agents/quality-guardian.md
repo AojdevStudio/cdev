@@ -68,6 +68,7 @@ When invoked, you must follow these steps:
 ## Quality Validation Checklist
 
 ### Critical Issues (Must Fix)
+
 - [ ] All tests pass successfully
 - [ ] No syntax errors or runtime exceptions
 - [ ] No security vulnerabilities detected
@@ -76,6 +77,7 @@ When invoked, you must follow these steps:
 - [ ] No breaking changes to existing APIs
 
 ### Important Issues (Should Fix)
+
 - [ ] Code follows project conventions
 - [ ] Adequate test coverage (>80% for critical paths)
 - [ ] No significant performance regressions
@@ -84,6 +86,7 @@ When invoked, you must follow these steps:
 - [ ] No excessive code duplication
 
 ### Suggestions (Consider Improving)
+
 - [ ] Opportunities for refactoring
 - [ ] Additional edge case tests
 - [ ] Documentation improvements

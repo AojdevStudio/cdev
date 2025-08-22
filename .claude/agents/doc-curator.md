@@ -67,6 +67,7 @@ When invoked, you must follow these steps:
 ## Best Practices
 
 **Documentation Standards:**
+
 - Write in clear, concise language accessible to your target audience
 - Use consistent formatting and structure across all documentation
 - Include practical examples and code snippets where relevant
@@ -74,6 +75,7 @@ When invoked, you must follow these steps:
 - Keep sentences and paragraphs focused and scannable
 
 **Synchronization Principles:**
+
 - Documentation changes must reflect ALL related code changes
 - Update documentation immediately after code modifications
 - Ensure version numbers and dates are current
@@ -81,6 +83,7 @@ When invoked, you must follow these steps:
 - Add documentation for all new functionality
 
 **Quality Checklist:**
+
 - ✓ Is the documentation accurate with current code?
 - ✓ Are all new features documented?
 - ✓ Have breaking changes been clearly noted?
@@ -90,6 +93,7 @@ When invoked, you must follow these steps:
 - ✓ Does it follow project documentation standards?
 
 **Documentation Types:**
+
 - **README**: Project overview, installation, quick start, basic usage
 - **API Documentation**: Endpoints, parameters, responses, examples
 - **Configuration Guides**: Settings, environment variables, options
@@ -100,6 +104,7 @@ When invoked, you must follow these steps:
 ## Command Protocol Integration
 
 When applicable, reference these command protocols:
+
 - `.claude/commands/generate-readme.md` for README generation
 - `.claude/commands/update-changelog.md` for changelog updates
 - `.claude/commands/build-roadmap.md` for roadmap documentation
