@@ -7,14 +7,14 @@
  * and organized for optimal workflow integration.
  *
  * Tier Classification System:
- * - Tier 1 (Critical): Security, validation, and enforcement hooks that are mandatory
- *   for maintaining code quality and security standards. These hooks can block operations.
+ * - Tier 1 (Critical): System control and lifecycle management hooks that are essential
+ *   for proper workflow operation. Includes notifications, stops, and tool use lifecycle.
  *
  * - Tier 2 (Important): Quality, standards, and automation hooks that significantly
  *   improve code maintainability and consistency. These are recommended for most projects.
  *
- * - Tier 3 (Optional): Convenience and notification hooks that enhance developer
- *   experience but are not essential for core functionality.
+ * - Tier 3 (Optional): Validation, enforcement, and convenience hooks that enhance
+ *   developer experience but are not essential for core functionality.
  *
  * - Utils: Shared utilities and helper functions that provide common functionality
  *   used by hooks across all tiers.
@@ -37,14 +37,15 @@ class HookCategorizer {
     // Each tier contains patterns, keywords, and explicit hook lists for accurate classification
     this.categoryRules = {
       tier1: {
-        description: 'Critical security and validation hooks',
-        keywords: ['security', 'validation', 'enforcer', 'validator', 'auth', 'permission'],
-        patterns: [/validator\.py$/, /enforcer\.py$/, /security/i],
+        description: 'Critical hooks for system control and lifecycle management',
+        keywords: ['notification', 'stop', 'tool_use', 'lifecycle', 'control', 'system'],
+        patterns: [/notification\.py$/, /stop\.py$/, /tool_use\.py$/],
         hooks: [
-          'commit-message-validator.py',
-          'typescript-validator.py',
-          'task-completion-enforcer.py',
-          'pnpm-enforcer.py',
+          'notification.py',
+          'stop.py',
+          'subagent_stop.py',
+          'pre_tool_use.py',
+          'post_tool_use.py',
         ],
       },
       tier2: {
@@ -59,15 +60,23 @@ class HookCategorizer {
         ],
       },
       tier3: {
-        description: 'Optional convenience and notification hooks',
-        keywords: ['notification', 'helper', 'utility', 'optional'],
-        patterns: [/notification\.py$/, /helper\.py$/],
+        description: 'Optional validation and convenience hooks',
+        keywords: [
+          'validator',
+          'enforcer',
+          'helper',
+          'utility',
+          'optional',
+          'changelog',
+          'updater',
+        ],
+        patterns: [/validator\.py$/, /enforcer\.py$/, /helper\.py$/, /updater\.py$/],
         hooks: [
-          'notification.py',
-          'stop.py',
-          'subagent_stop.py',
-          'pre_tool_use.py',
-          'post_tool_use.py',
+          'commit-message-validator.py',
+          'typescript-validator.py',
+          'task-completion-enforcer.py',
+          'pnpm-enforcer.py',
+          'auto-changelog-updater.py',
         ],
       },
       utils: {
@@ -108,9 +117,9 @@ class HookCategorizer {
   async categorize(hooks) {
     // Initialize tier-based categorization buckets
     const categorized = {
-      tier1: [], // Critical hooks that can block operations
-      tier2: [], // Important hooks for code quality
-      tier3: [], // Optional convenience hooks
+      tier1: [], // Critical system control and lifecycle hooks
+      tier2: [], // Important quality and standards hooks
+      tier3: [], // Optional validation and convenience hooks
       utils: [], // Shared utilities and helpers
     };
 
@@ -242,19 +251,25 @@ class HookCategorizer {
    */
   getHookDescription(hook) {
     const descriptions = {
-      'commit-message-validator.py': 'Validates commit message format and content',
+      // Tier 1 - Critical Hooks
+      'notification.py': 'Critical notification system for development events',
+      'stop.py': 'Critical system stop handler for workflow control',
+      'subagent_stop.py': 'Critical subagent lifecycle management',
+      'pre_tool_use.py': 'Critical pre-execution validation and setup',
+      'post_tool_use.py': 'Critical post-execution cleanup and logging',
+
+      // Tier 2 - Important Hooks
+      'api-standards-checker.py': 'Enforces API development standards and conventions',
+      'code-quality-reporter.py': 'Generates comprehensive code quality reports',
+      'universal-linter.py': 'Multi-language linting for consistent code style',
+      'import-organizer.py': 'Automatically organizes and optimizes import statements',
+
+      // Tier 3 - Optional Hooks
+      'commit-message-validator.py': 'Validates commit message format and conventions',
       'typescript-validator.py': 'Validates TypeScript code and type safety',
-      'task-completion-enforcer.py': 'Ensures tasks are completed before proceeding',
-      'pnpm-enforcer.py': 'Enforces use of pnpm package manager',
-      'api-standards-checker.py': 'Checks API code against standards',
-      'code-quality-reporter.py': 'Reports on code quality metrics',
-      'universal-linter.py': 'Runs linting across multiple file types',
-      'import-organizer.py': 'Organizes and sorts import statements',
-      'notification.py': 'Sends notifications for various events',
-      'stop.py': 'Handles stop events',
-      'subagent_stop.py': 'Handles subagent stop events',
-      'pre_tool_use.py': 'Runs before tool usage',
-      'post_tool_use.py': 'Runs after tool usage',
+      'task-completion-enforcer.py': 'Ensures task completion before workflow progression',
+      'pnpm-enforcer.py': 'Enforces pnpm package manager usage',
+      'auto-changelog-updater.py': 'Automatically updates changelog files',
     };
 
     return descriptions[hook.name] || this.generateDescription(hook);
