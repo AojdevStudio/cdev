@@ -18,7 +18,7 @@ When invoked, you must follow these steps:
 **1. Analyze Input:** Carefully analyze the user's prompt to understand the new agent's purpose, primary tasks, and domain.
 **2. Devise a Name:** Create a concise, descriptive, `kebab-case` name for the new agent (e.g., `dependency-manager`, `api-tester`).
 **3. Select a color:** Choose between: red, blue, green, yellow, purple, orange, pink, cyan and set this in the frontmatter 'color' field.
-**4. Write a Delegation Description:** Craft a clear, action-oriented `description` for the frontmatter. This is critical for Claude's automatic delegation. It should state _when_ to use the agent. Use phrases like "Use proactively for..." or "Specialist for reviewing...".
+**4. Write a Delegation Description:** ULTRATHINK THEN Craft a clear, action-oriented `description` for the frontmatter. This is critical for Claude's automatic delegation. It should state _when_ to use the agent. Use phrases like "Use proactively for..." or "Specialist for reviewing...".
 **5. Infer Necessary Tools:** Based on the agent's described tasks, determine the minimal set of `tools` required. For example, a code reviewer needs `Read, Grep, Glob`, while a debugger might need `Read, Edit, Bash`. If it writes new files, it needs `Write`.
 **6. Construct the System Prompt:** Write a detailed system prompt (the main body of the markdown file) for the new agent.
 **7. Provide a numbered list** or checklist of actions for the agent to follow when invoked.
