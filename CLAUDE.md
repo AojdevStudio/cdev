@@ -12,76 +12,160 @@
 - **Production-ready distribution** as a global NPM package
   (`@aojdevstudio/cdev`)
 
-## Project Structure
+## Current Project Structure
+
+**CDEV v0.0.21** - Current implementation overview based on actual codebase analysis:
+
+### Core Architecture
 
 ```
-    src/
-    ├── installation/
-    │   ├── index.js                    # Main installation exports
-    │   ├── InstallationManager.js      # Core installation orchestrator
-    │   ├── validators/
-    │   │   ├── index.js               # Validation exports
-    │   │   ├── EnvironmentValidator.js # Environment & dependency validation
-    │   │   ├── DirectoryValidator.js  # Directory & permissions validation
-    │   │   ├── ProjectValidator.js    # Project type & structure validation
-    │   │   └── LinearValidator.js     # Linear API validation
-    │   ├── generators/
-    │   │   ├── index.js               # Generator exports
-    │   │   ├── DirectoryGenerator.js  # Directory structure creation
-    │   │   ├── ConfigGenerator.js     # Configuration file generation
-    │   │   ├── ScriptGenerator.js     # Script file generation
-    │   │   ├── HookGenerator.js       # Claude hook generation
-    │   │   └── TemplateGenerator.js   # Template file generation
-    │   ├── installers/
-    │   │   ├── index.js               # Installer exports
-    │   │   ├── HookInstaller.js       # Hook installation logic
-    │   │   ├── CommandInstaller.js    # Command installation logic
-    │   │   ├── AgentInstaller.js      # Agent installation logic
-    │   │   ├── WorkflowInstaller.js   # Workflow script installation
-    │   │   └── LinearInstaller.js     # Linear integration setup
-    │   └── steps/
-    │       ├── index.js               # Step exports
-    │       ├── ValidationStep.js      # Pre-installation validation
-    │       ├── StructureStep.js       # Directory structure setup
-    │       ├── TemplateStep.js        # Template copying
-    │       ├── ConfigurationStep.js   # Configuration generation
-    │       ├── PermissionStep.js      # Permission setup
-    │       └── FinalizeStep.js        # Final validation & cleanup
-    ├── utils/
-    │   ├── index.js                   # Utility exports
-    │   ├── file-system/
-    │   │   ├── index.js              # File system exports
-    │   │   ├── FileOperations.js     # Basic file operations
-    │   │   ├── DirectoryOperations.js # Directory operations
-    │   │   ├── JsonOperations.js     # JSON file handling
-    │   │   └── BackupOperations.js   # Backup functionality
-    │   ├── project/
-    │   │   ├── index.js              # Project exports
-    │   │   ├── ProjectDetector.js    # Project type detection
-    │   │   ├── PackageManager.js     # Package manager operations
-    │   │   └── FrameworkDetector.js  # Framework detection
-    │   ├── system/
-    │   │   ├── index.js              # System exports
-    │   │   ├── SystemInfo.js         # System information
-    │   │   ├── ExecutableFinder.js   # Executable path finding
-    │   │   └── PlatformUtils.js      # Platform-specific utilities
-    │   └── helpers/
-    │       ├── index.js              # Helper exports
-    │       ├── StringUtils.js        # String manipulation
-    │       ├── ProgressTracker.js    # Progress tracking
-    │       ├── RetryHandler.js       # Retry logic
-    │       └── Logger.js             # Logging utilities
-    ├── templates/
-    │   ├── configs/                  # Configuration templates
-    │   ├── scripts/                  # Script templates
-    │   ├── hooks/                    # Hook templates
-    │   └── commands/                 # Command templates
-    └── constants/
-        ├── index.js                  # All constants
-        ├── directories.js            # Directory structure constants
-        ├── frameworks.js             # Framework indicators
-        └── defaults.js               # Default values
+bin/
+├── cli.js                          # Main CLI entry point
+
+src/
+├── cli-commands.js                 # Command execution logic
+├── cli-parser.js                   # Argument parsing
+├── interactive-installer.js       # Installation orchestrator
+├── config-*.js                    # Configuration system (6 modules)
+├── hook-*.js                      # Hook management system (5 modules)
+├── install-*.js                   # Installation utilities (2 modules)
+├── validation-*.js                # Validation system (3 modules)
+├── protocol-loader.js             # Protocol loading logic
+├── template-engine.js             # Template processing
+├── platform-utils.js              # Cross-platform utilities
+├── python-detector.js             # Python environment detection
+├── path-resolver.js               # Path resolution utilities
+├── commands/
+│   └── enforce-structure.js       # Structure enforcement command
+├── installation/                  # Modular installation system (planned)
+│   ├── generators/                # Directory structure generators
+│   ├── installers/               # Component installers
+│   ├── steps/                    # Installation steps
+│   └── validators/               # Installation validators
+├── utils/                        # Utility modules (planned expansion)
+│   ├── file-system/              # File operations
+│   ├── git/                      # Git utilities
+│   ├── helpers/                  # Helper functions
+│   ├── project/                  # Project detection
+│   └── system/                   # System utilities
+├── templates/                    # Template system
+│   ├── commands/                 # Command templates
+│   ├── configs/                  # Configuration templates
+│   ├── hooks/                    # Hook templates
+│   └── scripts/                  # Script templates
+└── constants/                    # Constants and defaults (planned)
+
+scripts/
+├── python/                       # Core Python automation scripts
+│   ├── agent-commit.py           # Intelligent commit generation
+│   ├── cache-linear-issue.py     # Linear issue caching
+│   ├── decompose-parallel.py     # Task decomposition
+│   ├── spawn-agents.py           # Agent spawning
+│   ├── monitor-agents.py         # Agent monitoring
+│   ├── integrate-parallel-work.py # Work integration
+│   ├── validate-parallel-work.py # Validation
+│   ├── resolve-conflicts.py      # Conflict resolution
+│   ├── security-check.py         # Security validation
+│   ├── deploy.py                 # Deployment automation
+│   ├── intelligent-agent-generator.py # Agent generation
+│   ├── prepublish.py             # Pre-publish checks
+│   └── postpublish.py            # Post-publish actions
+├── changelog/                    # Changelog management
+│   ├── update-changelog.py       # Automated changelog updates
+│   └── utils.py                  # Changelog utilities
+├── wrappers/                     # Script wrappers
+└── deployment/                   # Deployment scripts
+    └── publish.sh                # Publication script
+
+.claude/                          # Claude Code integration
+├── hooks/                        # Claude Code hooks (3-tier system)
+│   ├── tier1/                    # Critical hooks (always installed)
+│   ├── tier2/                    # Important hooks (recommended)
+│   ├── tier3/                    # Optional hooks (selective)
+│   ├── utils/                    # Hook utilities
+│   │   ├── llm/                  # LLM integrations (OpenAI, Anthropic)
+│   │   └── tts/                  # Text-to-speech utilities
+│   ├── pre_tool_use.py           # Pre-execution validation
+│   ├── post_tool_use.py          # Post-execution processing
+│   ├── notification.py           # Event notifications
+│   ├── stop.py                   # Session cleanup
+│   ├── subagent_stop.py          # Sub-agent cleanup
+│   ├── code-quality-reporter.py  # Code quality analysis
+│   ├── api-standards-checker.py  # API validation
+│   ├── universal-linter.py       # Multi-language linting
+│   ├── import-organizer.py       # Import management
+│   ├── typescript-validator.py   # TypeScript validation
+│   ├── task-completion-enforcer.py # Task tracking
+│   ├── commit-message-validator.py # Commit validation
+│   ├── pnpm-enforcer.py          # Package manager enforcement
+│   └── auto-changelog-updater.py # Changelog automation
+├── commands/                     # Claude Code custom commands (25+ commands)
+│   ├── init-protocol.md          # Project initialization
+│   ├── agent-start.md            # Agent workflow initiation
+│   ├── orchestrate.md            # Task orchestration
+│   ├── commit.md                 # Intelligent commits
+│   ├── use-agent.md              # Agent utilization
+│   ├── analyze-codebase.md       # Codebase analysis
+│   ├── create-pr.md              # Pull request creation
+│   ├── generate-readme.md        # Documentation generation
+│   └── [20+ additional commands] # Comprehensive command suite
+├── agents/                       # Specialized AI agents (20+ agents)
+│   ├── task-orchestrator.md      # Task coordination
+│   ├── quality-guardian.md       # Quality assurance
+│   ├── javascript-craftsman.md   # JavaScript expertise
+│   ├── typescript-expert.md      # TypeScript mastery
+│   ├── python-pro.md             # Python development
+│   ├── test-automator.md         # Automated testing
+│   ├── doc-curator.md            # Documentation management
+│   ├── auth-systems-expert.md    # Authentication systems
+│   ├── prd-writer.md             # Product requirements
+│   ├── code-reviewer.md          # Code review automation
+│   └── [15+ additional agents]   # Specialized domain experts
+├── protocols/                    # Development protocols
+│   ├── code-quality.md           # Quality standards
+│   ├── testing-standards.md      # Testing guidelines
+│   └── logging-discipline.yaml   # Logging requirements
+└── status-lines/                 # Status line components
+    ├── status_line.py             # Basic status display
+    ├── status_line_v2.py          # Enhanced status
+    ├── status_line_v3.py          # Advanced status
+    └── status_line_v4.py          # Latest status implementation
+
+templates/                        # Project configuration templates
+├── api.json                      # API project template
+├── default.json                  # Default project template
+├── nextjs.json                   # Next.js template
+├── pnpm.json                     # PNPM configuration
+├── react.json                    # React template
+└── typescript.json              # TypeScript template
+
+test/                            # Comprehensive test suite
+├── cli.test.js                  # CLI testing
+├── config-*.test.js             # Configuration tests
+├── hook-*.test.js               # Hook system tests
+├── validation-*.test.js         # Validation tests
+├── integration/                 # Integration tests
+├── fixtures/                    # Test fixtures
+└── utils/                       # Test utilities
+
+config/                          # Build and testing configuration
+├── jest.config.*.js             # Jest configurations (6 variants)
+├── tsconfig.json                # TypeScript configuration
+├── babel.config.js              # Babel configuration
+├── docker-compose.yml           # Docker setup
+├── Dockerfile                   # Container configuration
+└── nginx.conf                   # Nginx configuration
 ```
+
+### System Capabilities
+
+**Installation System**: Modular, interactive installer with project detection and customizable hook selection
+**Hook System**: 3-tier architecture (Critical/Important/Optional) with 15+ production-ready hooks
+**Command System**: 25+ custom Claude Code commands for enhanced development workflows
+**Agent System**: 20+ specialized AI agents for domain-specific tasks
+**Python Automation**: 15+ Python scripts for parallel development, Linear integration, and deployment
+**Template System**: Framework-specific project templates with intelligent detection
+**Testing Infrastructure**: Comprehensive test suite with multiple Jest configurations
 
 ### Target Users
 
@@ -198,9 +282,33 @@ All hooks must implement logging. Every hook in the CDEV system must record ever
             json.dump(log_data, f, indent=2)
 ```
 
-## Current Status
+## Current Development Status
 
-- We are in the middle of a major rewrite to modularize the codebase, improve maintenability, and ensure smooth installation.
+**v0.0.21** - Production-ready NPM package with active development
+
+### Recently Completed
+
+- ✅ **Interactive Installation System**: Fully functional with project detection and hook customization
+- ✅ **3-Tier Hook Architecture**: Critical, Important, and Optional hooks with intelligent categorization
+- ✅ **Python Script Migration**: 15+ Python automation scripts for parallel development workflows
+- ✅ **Agent System Optimization**: 20+ specialized AI agents with streamlined tool selection
+- ✅ **Command Ecosystem**: 25+ custom Claude Code commands for enhanced workflows
+- ✅ **Testing Infrastructure**: Comprehensive Jest configuration with multiple test environments
+- ✅ **NPM Package Distribution**: Published to `@aojdevstudio/cdev` with automated CI/CD
+
+### In Progress
+
+- 🔄 **Modular Installation System**: Refactoring installation components for improved maintainability
+- 🔄 **Enhanced Documentation**: Comprehensive updates to reflect current implementation
+- 🔄 **Template System Expansion**: Additional framework-specific templates
+- 🔄 **Performance Optimization**: Hook execution and agent response time improvements
+
+### Planned Features
+
+- 📋 **Enhanced Linear Integration**: Advanced ticket decomposition and tracking
+- 📋 **Web Dashboard**: Real-time agent monitoring and progress visualization
+- 📋 **Plugin Architecture**: Extensible system for custom hooks and agents
+- 📋 **Team Collaboration**: Multi-developer parallel workflow coordination
 
 ### Development Memories
 

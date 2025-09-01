@@ -1,6 +1,6 @@
 # CDEV: AI-Powered Development Orchestration System
 
-**Version**: 0.0.22  
+**Version**: 0.0.21  
 **License**: CC-BY-NC-SA-4.0  
 **Requirements**: Node.js ≥ 16.0.0  
 **Community**: [GitHub Issues](https://github.com/AOJDevStudio/cdev/issues) | [NPM Package](https://www.npmjs.com/package/@aojdevstudio/cdev)
@@ -97,12 +97,13 @@ npx @aojdevstudio/cdev@latest install
 
 # OR install as a dev dependency
 npm install --save-dev @aojdevstudio/cdev
+npx cdev install  # Then run the installer
 ```
 
 **Step 2:** Initialize in your project _(CRITICAL!)_
 
 ```bash
-/init-protocol  # Must run BEFORE any other commands!
+/init-protocol  # Must run in Claude Code BEFORE any other commands!
 ```
 
 **Step 3:** Choose your workflow:
@@ -120,9 +121,13 @@ npm install --save-dev @aojdevstudio/cdev
 # Option 1: One-time use with npx (no installation needed)
 npx @aojdevstudio/cdev@latest install
 
-# Option 2: Install as project dev dependency
+# Option 2: Install globally
+npm install -g @aojdevstudio/cdev
+cdev install  # Run installer in your project
+
+# Option 3: Install as project dev dependency
 npm install --save-dev @aojdevstudio/cdev
-# Then run: npx cdev install
+npx cdev install  # Run installer in your project
 
 # Update existing installation
 npm update @aojdevstudio/cdev
@@ -231,15 +236,19 @@ After running `/init-protocol`, choose your workflow:
 **Complete Step-by-Step Process:**
 
 ```bash
-# 1. Decompose your task into parallel agents
-cdev decompose LINEAR-123
+# 1. Cache Linear issue locally (optional but recommended)
+cdev get LINEAR-123
+# Downloads and caches issue details for offline processing
+
+# 2. Decompose your task into parallel agents
+cdev split LINEAR-123
 # Creates: deployment-plan.json with frontend, backend, test agents
 
-# 2. Spawn agents in separate Git worktrees
-cdev spawn deployment-plan.json
+# 3. Spawn agents in separate Git worktrees
+cdev run deployment-plan.json
 # Creates directories: auth_frontend/, auth_backend/, auth_tests/
 
-# 3. Open EACH directory in a SEPARATE Claude window
+# 4. Open EACH directory in a SEPARATE Claude window
 # In auth_frontend/ Claude window:
 /agent-start  # Starts the frontend agent's TDD workflow
 
@@ -249,11 +258,11 @@ cdev spawn deployment-plan.json
 # In auth_tests/ Claude window:
 /agent-start  # Starts the test agent's TDD workflow
 
-# 4. Monitor progress from your main terminal
+# 5. Monitor progress from your main terminal
 cdev status
 # Shows: ✓ Frontend: 80% complete, Backend: 60%, Tests: 40%
 
-# 5. When all agents complete their work
+# 6. When all agents complete their work
 cdev commit  # Intelligently merges all branches without conflicts
 ```
 
@@ -401,6 +410,78 @@ feat(auth): implement JWT token refresh with Redis caching
 - Update API documentation
 
 Closes: LINEAR-123
+```
+
+## 🔧 Complete CLI Command Reference
+
+### Core Installation Commands
+
+```bash
+# Install CDEV in current project
+cdev install
+
+# Initialize with project setup
+cdev init
+```
+
+### Parallel Development Workflow Commands
+
+```bash
+# Cache Linear issue for offline processing
+cdev get LINEAR-123
+cdev cache LINEAR-123  # Alias for 'get'
+
+# Decompose issue into parallel tasks
+cdev split LINEAR-123
+cdev decompose LINEAR-123  # Alias for 'split'
+
+# Spawn agents from deployment plan
+cdev run deployment-plan.json
+cdev spawn deployment-plan.json  # Alias for 'run'
+
+# Monitor agent status
+cdev status
+cdev status frontend  # Filter by agent type
+
+# Commit and integrate agent work
+cdev commit
+cdev commit workspace_name "Custom message"
+```
+
+### Built-in Help and Information
+
+```bash
+# Show comprehensive help
+cdev help
+cdev --help
+cdev -h
+
+# Show version information
+cdev --version
+cdev -v
+```
+
+### Command Aliases and Backward Compatibility
+
+CDEV maintains backward compatibility with previous command names:
+
+| New Command  | Legacy Aliases   | Purpose             |
+| ------------ | ---------------- | ------------------- |
+| `cdev get`   | `cdev cache`     | Cache Linear issues |
+| `cdev split` | `cdev decompose` | Decompose tasks     |
+| `cdev run`   | `cdev spawn`     | Spawn agents        |
+
+### Python Script Integration
+
+All parallel development commands automatically execute corresponding Python scripts:
+
+```bash
+# These CLI commands internally call Python scripts:
+cdev get LINEAR-123        # → scripts/python/cache-linear-issue.py
+cdev split LINEAR-123      # → scripts/python/decompose-parallel.py
+cdev run plan.json         # → scripts/python/spawn-agents.py
+cdev status                # → scripts/python/monitor-agents.py
+cdev commit                # → scripts/python/agent-commit.py
 ```
 
 ---
@@ -552,8 +633,9 @@ CDEV includes a powerful collection of specialized agents, each optimized for sp
 **The Task:** "Add complete user authentication with JWT tokens"
 
 ```bash
-# 1. Break it down intelligently
-cdev decompose LINEAR-789
+# 1. Cache the issue and break it down intelligently
+cdev get LINEAR-789
+cdev split LINEAR-789
 ```
 
 **CDEV creates three parallel agents:**
