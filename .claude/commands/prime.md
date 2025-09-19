@@ -1,8 +1,17 @@
 ---
 allowed-tools: Bash, Read
-description: Load essential project context by analyzing codebase structure and core docs
+description: Gain a general understanding of the codebase and project purpose
 ---
 
 # Prime
 
-Load essential project context by analyzing codebase structure with git ls-files, reading README.md and CHANGELOG.md. Use $ARGUMENTS for specific focus areas or depth levels, provide concise overview of project structure and purpose focused on what the codebase contains.
+Execute the `Workflow` and `Report` sections to understand the codebase then summarize your understanding. 
+
+## Workflow
+
+- Run `eza --tree` to understand the codebase structure and file organization.
+- Read the `README.md` file to understand the project purpose.
+
+## Report
+
+Summarize your understanding of the codebase and project purpose.
