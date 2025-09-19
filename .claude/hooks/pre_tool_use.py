@@ -68,7 +68,7 @@ def is_dangerous_deletion_command(command):
         r'\bgio\s+trash\b',                           # gio trash
         r'\bmv\s+.*\s+/dev/null',                     # move to /dev/null
         r'\bcp\s+/dev/null\b',                        # copy /dev/null (truncate)
-        r'>\s*/dev/null',                             # redirect to /dev/null
+        r'(?<!\d)>\s*/dev/null',                       # redirect to /dev/null (but not 1>/dev/null or 2>/dev/null)
         r'\btruncate\b',                              # truncate command
         r'\b:\s*>\s*[^|&;]+',                         # shell truncation (:> file)
         r'\btrue\s*>\s*[^|&;]+',                      # true > file (truncation)

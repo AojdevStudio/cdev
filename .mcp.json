@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "Bright Data": {
+            "command": "npx",
+            "args": [
+                "mcp-remote",
+                "https://mcp.brightdata.com/mcp?token=9424526a719032acbe090cc883accedb1b7eb167e89f855d78a7a0fec0aaf441"
+            ]
+        }
+    }
+}
