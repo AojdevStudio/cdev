@@ -1,0 +1,9 @@
+{
+  "session_id": "1af7cf04-7269-48e0-b9d1-ff56424f136a",
+  "prompts": [
+    "explain the commit command to me in a succinct way",
+    "/create-command commit-2.0 creates intelligent git commits by determining how many commits it has to make then using the $ amount of  git-flow-manager subagents to complete the task quickly and efficiently. ",
+    "would this push to remote",
+    "add it then "
+  ]
+}

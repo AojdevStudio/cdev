@@ -1,211 +1,261 @@
 ---
-allowed-tools: Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(find:*), Bash(grep:*), Bash(wc:*), Bash(ls:*)
-description: Automatically update CLAUDE.md file based on recent code changes
+allowed-tools: Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(find:*), Bash(grep:*), Bash(wc:*), Bash(ls:*), mcp__serena__*
+description: Update CLAUDE.md using Serena-first analysis of recent code changes
+argument-hint: [--directory target-dir]
 flags:
   --directory: Create/update CLAUDE.md for a specific directory instead of project root
 ---
 
-# Update Claude.md File
+# Update Claude.md
 
-## Mode Selection
-{{if flags.directory}}
-### Directory-Specific CLAUDE.md Mode
-Updating CLAUDE.md for directory: {{flags.directory}}
-{{else}}
-### Project Root CLAUDE.md Mode
-{{endif}}
+Use Serena-first analysis to update CLAUDE.md based on recent code changes and git history.
 
-## Current Claude.md State
-{{if flags.directory}}
-@{{flags.directory}}/CLAUDE.md
-{{else}}
-@CLAUDE.md
-{{endif}}
+## Variables
 
-## Git Analysis
+TARGET_DIRECTORY: {{if flags.directory}}{{flags.directory}}{{else}}.{{endif}}
+CLAUDE_FILE: {{if flags.directory}}{{flags.directory}}/CLAUDE.md{{else}}CLAUDE.md{{endif}}
+ANALYSIS_SCOPE: {{if flags.directory}}directory-specific{{else}}project-wide{{endif}}
 
-### Current Repository Status
-!`git status --porcelain`
+## Workflow
 
-### Recent Changes (Last 10 commits)
-!`git log --oneline -10`
+### 1. Initial Setup
+- Check Serena onboarding: `mcp__serena__check_onboarding_performed`
+- If not onboarded, complete onboarding process first
+- Use `mcp__serena__think_about_task_adherence` to validate update scope
 
-### Detailed Recent Changes
-!`git log --since="1 week ago" --pretty=format:"%h - %an, %ar : %s" --stat`
+### 2. Git Analysis
+- Get current status: !`git status --porcelain`
+- Review recent commits: !`git log --oneline -10`
+- Analyze changed files: !`git diff HEAD~5 --name-only | head -20`
+- Check key file modifications: !`git diff --name-status HEAD~10 | grep "^M" | head -10`
+- Store git insights: `mcp__serena__write_memory --memory_name="git_analysis"`
 
-### Recent Diff Analysis
-!`git diff HEAD~5 --name-only | head -20`
+### 3. Serena Codebase Analysis
+- Analyze directory structure: `mcp__serena__list_dir --relative_path="TARGET_DIRECTORY" --recursive=true`
+- For each modified file from git analysis:
+  - Get symbol overview: `mcp__serena__get_symbols_overview --relative_path="<FILE>"`
+  - Find new symbols: `mcp__serena__find_symbol --name_path="<NEW_SYMBOLS>"`
+  - Check symbol impact: `mcp__serena__find_referencing_symbols --name_path="<KEY_SYMBOLS>"`
+- Store symbol analysis: `mcp__serena__write_memory --memory_name="symbol_changes"`
 
-### Detailed Diff of Key Changes
-!`git diff HEAD~5 -- "*.js" "*.ts" "*.jsx" "*.tsx" "*.py" "*.md" "*.json" | head -200`
+### 4. Content Integration
+- Read existing CLAUDE.md file: @CLAUDE_FILE
+- Use `mcp__serena__think_about_collected_information` to validate analysis
+- Update CLAUDE.md sections based on symbol insights:
+  - Project overview with new architecture patterns
+  - Development workflow with symbol-based guidance
+  - File structure with symbol distribution
+  - Recent changes with symbol-level impact
+- Save updated CLAUDE.md to CLAUDE_FILE location
 
-### New Files Added
-!`git diff --name-status HEAD~10 | grep "^A" | head -15`
+### 5. Validation
+- Use `mcp__serena__think_about_whether_you_are_done` to verify completeness
+- Store update insights: `mcp__serena__write_memory --memory_name="claude_update_ANALYSIS_SCOPE"`
 
-### Deleted Files
-!`git diff --name-status HEAD~10 | grep "^D" | head -10`
+## Report
 
-### Modified Core Files
-!`git diff --name-status HEAD~10 | grep "^M" | grep -E "(package\.json|README|config|main|index|app)" | head -10`
+CLAUDE.md Update Complete
 
-## Project Structure Changes
-!`find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" | head -10`
+File: `CLAUDE_FILE`
+Analysis Scope: ANALYSIS_SCOPE
+Key Updates:
+- Symbol-level changes documented
+- Architecture patterns updated
+- Development workflow enhanced
+- Integration points clarified
+Memory Stored: claude_update_ANALYSIS_SCOPE
 
-## Configuration Changes
-!`git diff HEAD~10 -- package.json tsconfig.json webpack.config.js next.config.js .env* docker* | head -100`
-
-## API/Route Changes  
-!`git diff HEAD~10 -- "**/routes/**" "**/api/**" "**/controllers/**" | head -150`
-
-## Database/Model Changes
-!`git diff HEAD~10 -- "**/models/**" "**/schemas/**" "**/migrations/**" | head -100`
-
-## Your Task
-
-{{if flags.directory}}
-### Directory-Specific Task
-Based on the directory's CLAUDE.md (if it exists) and git analysis, create/update the CLAUDE.md for the {{flags.directory}} directory that:
-- Focuses specifically on that directory's purpose and contents
-- Documents how it relates to the rest of the project
-- Explains the internal structure and key files
-- Notes recent changes specific to that directory
-{{else}}
-### Project Root Task
-Based on the current CLAUDE.md content and all the git analysis above, create an updated CLAUDE.md file that:
-{{endif}}
-
-## 1. Preserves Important Existing Content
-- Keep the core project description and architecture
-- Maintain important setup instructions
-- Preserve key architectural decisions and patterns
-- Keep essential development workflow information
-
-## 2. Integrates Recent Changes
-Analyze the git diff and logs to identify:
-- **New Features**: What new functionality was added?
-- **API Changes**: New endpoints, modified routes, updated parameters
-- **Configuration Updates**: Changes to build tools, dependencies, environment variables
-- **File Structure Changes**: New directories, moved files, deleted components
-- **Database Changes**: New models, schema updates, migrations
-- **Bug Fixes**: Important fixes that affect how the system works
-- **Refactoring**: Significant code reorganization or architectural changes
-
-## 3. Updates Key Sections
-Intelligently update these CLAUDE.md sections:
-
-### Project Overview
-- Update description if scope changed
-- Note new technologies or frameworks added
-- Update version information
-
-### Architecture
-- Document new architectural patterns
-- Note significant structural changes
-- Update component relationships
-
-### Setup Instructions  
-- Add new environment variables
-- Update installation steps if dependencies changed
-- Note new configuration requirements
-
-### API Documentation
-- Add new endpoints discovered in routes
-- Update existing endpoint documentation
-- Note authentication or parameter changes
-
-### Development Workflow
-- Update based on new scripts in package.json
-- Note new development tools or processes
-- Update testing procedures if changed
-
-### Recent Changes Section
-Add a "Recent Updates" section with:
-- Summary of major changes from git analysis
-- New features and their impact
-- Important bug fixes
-- Breaking changes developers should know about
-
-### File Structure
-- Update directory explanations for new folders
-- Note relocated or reorganized files
-- Document new important files
-
-## 4. Smart Content Management
-- **Don't duplicate**: Avoid repeating information already well-documented
-- **Prioritize relevance**: Focus on changes that affect how developers work with the code
-- **Keep it concise**: Summarize rather than listing every small change
-- **Maintain structure**: Follow existing CLAUDE.md organization
-- **Add timestamps**: Note when major updates were made
-
-## 5. Output Format
+## Template Structure
 
 {{if flags.directory}}
-### Directory-Specific Template
-For directory-specific CLAUDE.md files, use this structure:
-
+### Directory-Specific CLAUDE.md Template
 ```markdown
 # Directory Name
 
 ## Overview
-[Directory purpose and responsibility]
+[Directory purpose and responsibility based on symbol analysis]
 
 ## Architecture
-[How this directory fits into the overall system]
-
-## Setup & Installation
-[Any specific setup for this directory]
+[How directory symbols integrate with the project]
 
 ## Development Workflow
-[Directory-specific development processes]
+[Symbol-based development processes]
 
-## API Documentation
-[APIs exposed by this directory]
+## Dev Notes
+- Code quality refer to @ai-docs/code-quality.md
+- Logging discipline rules refer to @ai-docs/logging-discipline.md
+- Naming conventions refer to @ai-docs/naming-conventions.md
 
 ## File Structure
-[Explanation of files within this directory]
+[Key symbols and their locations]
 
 ## Recent Updates (Updated: YYYY-MM-DD)
-[Recent changes to this directory]
-
-## Important Notes
-[Key information about this directory]
+[Symbol-level changes and impact]
 ```
-
-### Directory Analysis Commands
-When analyzing a specific directory:
-!`find {{flags.directory}} -type f -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" | head -20`
-!`git log --oneline -10 -- {{flags.directory}}`
-!`git diff HEAD~5 -- {{flags.directory}} | head -200`
-
 {{else}}
-### Project Root Template
-For the main project CLAUDE.md, use this structure:
+### Project Root CLAUDE.md Template
 
 ```markdown
-# Project Name
+# {PROJECT_NAME} - CLAUDE.md
 
-## Overview
-[Updated project description]
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Architecture
-[Updated architecture information]
+# CRITICAL: SERENA-FIRST RULE - READ THIS FIRST
+  BEFORE doing ANYTHING else, when you see ANY code development scenario:
+  - STOP and check if Serena MCP is available & IF onboarding is performed
+  - Use Serena MCP Workflow Guidelines to explore code structure
+  - Use Symbol-Based Code Navigation to understand context
+  - Use Efficient Code Modification patterns
+  - Always: Store insights with memory management
+VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with Serena-First Development Approach.
 
-## Setup & Installation
-[Updated setup instructions]
+## Project Overview
+{PROJECT_DESCRIPTION}
 
-## Development Workflow
-[Updated development processes]
+**Status**: {PROJECT_STATUS}
+**Tech Stack**: {TECH_STACK}
 
-## API Documentation
-[Updated API information]
+## Development Commands
 
-## File Structure
-[Updated directory explanations]
+### Serena-First Development Approach
+- **Before debugging**: Use Serena workflows to explore structure
+- **Before modifying**: Use symbol navigation to understand context
+- **Always**: Store insights with memory management
 
-## Recent Updates (Updated: YYYY-MM-DD)
-[Summary of recent changes]
+### Core Commands
+- **Never read entire files**: Use symbol overview first, then targeted `find_symbol`
+- **Symbol-first approach**: Navigate by functions/classes, not file browsing
+- **Memory-driven**: Store insights across sessions for faster future work
+- **Think before acting**: Use reflection tools before major changes
 
-## Important Notes
-[Key information for developers]
+## Serena MCP Core Commands & Workflow Patterns
+
+This section defines the core Serena commands and shows how to combine them into effective workflows. Avoid reading full files and prefer these symbol-based patterns.
+
+### 1. Core Commands Reference
+
+#### Exploration & Navigation
+```bash
+# Get a high-level overview of a file's structure (classes, functions)
+mcp__serena__get_symbols_overview --relative_path="<PATH/TO/FILE>"
+
+# List files and directories
+mcp__serena__list_dir --relative_path="<PATH>" --recursive=true
+
+# Find files by a name pattern
+mcp__serena__find_file --file_mask="*.<EXT>" --relative_path="<PATH>"
+
+# Find a specific function/class by name (use include_body=true only when ready to edit)
+mcp__serena__find_symbol --name_path="<SYMBOL_NAME>" --include_body=false
+
+# Find where a symbol is used
+mcp__serena__find_referencing_symbols --name_path="<SYMBOL_NAME>"
+
+# Search for a raw text pattern across code files
+mcp__serena__search_for_pattern --substring_pattern="<PATTERN>"
+```
+
+#### Code Modification
+```bash
+# Replace the body of an entire function or class
+mcp__serena__replace_symbol_body --name_path="<FUNCTION_NAME>" --relative_path="<PATH/TO/FILE>"
+
+# Insert code after a specific symbol
+mcp__serena__insert_after_symbol --name_path="<ANCHOR_SYMBOL>" --relative_path="<PATH/TO/FILE>"
+
+# Insert code before a specific symbol (e.g., for imports)
+mcp__serena__insert_before_symbol --name_path="<FIRST_SYMBOL_IN_FILE>" --relative_path="<PATH/TO/FILE>"
+```
+
+#### Memory & Reflection
+```bash
+# Store insights for future sessions
+mcp__serena__write_memory --memory_name="<MEMORY_NAME>" --content="<INSIGHT_TEXT>"
+
+# Review stored insights
+mcp__serena__list_memories
+mcp__serena__read_memory --memory_file_name="<MEMORY_FILE_NAME>"
+
+# Reflect on collected information and task adherence
+mcp__serena__think_about_collected_information
+mcp__serena__think_about_task_adherence
+```
+
+### 2. Workflow Patterns
+
+#### Initial Codebase Onboarding
+```bash
+# 1. Ensure Serena is ready
+mcp__serena__check_onboarding_performed
+
+# 2. Get the project layout
+mcp__serena__list_dir --relative_path="." --recursive=false
+mcp__serena__list_dir --relative_path="<SRC_DIR>" --recursive=true
+
+# 3. Get a high-level overview of key files (do NOT read them)
+mcp__serena__get_symbols_overview --relative_path="<PATH/TO/KEY_FILE_1>"
+mcp__serena__get_symbols_overview --relative_path="<PATH/TO/KEY_FILE_2>"
+```
+
+#### Investigating a Feature or Bug
+```bash
+# 1. Find relevant symbols related to the feature
+mcp__serena__find_symbol --name_path="<FEATURE_NAME>*" --substring_matching=true
+
+# 2. Understand how a key function is used
+mcp__serena__find_referencing_symbols --name_path="<KEY_FUNCTION>"
+
+# 3. Examine the function's implementation only when necessary
+mcp__serena__find_symbol --name_path="<KEY_FUNCTION>" --include_body=true
+```
+
+#### Safely Modifying Code
+```bash
+# 1. Find all references before changing a function to understand the impact
+mcp__serena__find_referencing_symbols --name_path="<FUNCTION_TO_CHANGE>"
+
+# 2. Replace the function body with the updated implementation
+mcp__serena__replace_symbol_body --name_path="<FUNCTION_TO_CHANGE>" --relative_path="<PATH/TO/FILE>"
+
+# 3. Add a new helper function after an existing one
+mcp__serena__insert_after_symbol --name_path="<EXISTING_FUNCTION>" --relative_path="<PATH/TO/FILE>"
+```
+
+## {DOMAIN_NAME} Guidelines
+
+## Instruction for Code Comments (All Languages)
+
+- YOU MUST comment code for readability and intent, NOT for restating the obvious. Every file must start with a short header comment describing its purpose. Every public function, class, or API must have a docblock that explains what it does, its inputs, its outputs, and edge cases.
+
+**JavaScript/TypeScript**: Use JSDoc/TSDoc format with @fileoverview, @param, @returns, @example.
+**Python**: Use PEP 257 docstrings with triple quotes; include a one-line summary, parameters, returns, and example usage.
+**All languages**: Explain why a decision was made, list invariants/assumptions, and add examples where useful. Keep comments updated when code changes.
+
+**Rule of thumb**: ALWAYS comment intent, constraints, and non-obvious logic. Code shows “what,” comments explain “why.”
+
+## Compatibility & Migration Policy (Out-with-the-old)
+
+**Default stance:** We do **not** preserve backward compatibility. When a change is requested, replace the old behavior with the new approach. Remove obsolete code, flags, and interfaces immediately unless the request explicitly says "keep legacy support."
+
+### Rules for Agents & Tools
+- **BREAK-FIRST mindset:** Prefer deletion and simplification over shims/adapters. No polyfills, toggles, or compatibility layers unless explicitly requested.
+- **Single source of truth:** The **latest** interface/spec supersedes all prior versions. Do not consult or retain deprecated variants.
+- **Migration over coexistence:** Write **forward-only** migrations. Do **not** add down-migrations unless explicitly requested.
+- **Delete deprecated code now:** No deprecation windows. Remove old functions, types, env vars, config keys, and documentation in the same change.
+- **Update all call sites:** Rename/replace and fix usages across the repo; do not leave aliases.
+- **Tests follow the new world:** Update or replace tests to encode the new behavior. Delete tests that only assert legacy behavior.
+
+### Versioning & Communication
+- **Docs header:** Update the HTML header stamp on modified docs: `<!-- vMAJOR.MINOR | YYYY-MM-DD -->` and increment **MAJOR** on any breaking change.
+- **Commit prefix:** Start the commit title with `BREAKING:` when the change removes/renames public symbols, config, or endpoints.
+- **Changelog note:** Add a concise migration note (what changed, one-liner on how to migrate) in the relevant README or module doc.
+
+### Examples (apply literally)
+- **API surface:** If `getPatient()` becomes `fetchPatient()`, **remove** `getPatient()` and update all imports/usages; **no wrappers**.
+- **Config keys:** If `RECALL_WINDOW_DAYS` becomes `RECALL_WINDOW`, migrate values and **delete** the old key and its references.
+- **Data models:** If a column is renamed, write a one-off script to migrate; **do not** keep both columns.
+
+> If you need compatibility, the request must say so explicitly. Otherwise, assume **out with the old, in with the new**.
+
 ```
 {{endif}}

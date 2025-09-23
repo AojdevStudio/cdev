@@ -25,7 +25,7 @@ The context7 MCP tools (`mcp__context7__resolve-library-id` and `mcp__context7__
 - **Status**: Already includes context7 tools
 - **Current tools**: Includes both resolve-library-id and get-library-docs
 
-### 2. typescript-expert.md ✅
+### 2. v2-typescript-expert.md ✅
 
 - **Status**: Already includes context7 tools
 - **Current tools**: Includes both resolve-library-id and get-library-docs

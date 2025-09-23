@@ -53,7 +53,7 @@ gh_actions_monitor_protocol:
       
       build_errors:
         patterns: ["build failed", "compilation error", "module not found"]
-        agent: "javascript-craftsman or typescript-expert or python-pro"
+        agent: "javascript-craftsman or v2-typescript-expert or python-pro"
         action: "Resolve build/compilation issues"
       
       lint_violations:
@@ -86,7 +86,7 @@ gh_actions_monitor_protocol:
     
     - trigger: "build errors detected"
       action: |
-        Use the appropriate language agent (javascript-craftsman, typescript-expert, or python-pro)
+        Use the appropriate language agent (javascript-craftsman, v2-typescript-expert, or python-pro)
         to resolve compilation and build issues.
     
     - trigger: "workflow configuration issues"
@@ -114,7 +114,7 @@ gh_actions_monitor_protocol:
 - Analyze the failure logs to categorize the type of issue
 - Based on the failure type, use the Task tool to spawn the appropriate sub-agent:
   - **Test failures**: Use the test-automator sub-agent to fix failing tests
-  - **Build errors**: Use the javascript-craftsman, typescript-expert, or python-pro sub-agent based on the language
+  - **Build errors**: Use the javascript-craftsman, v2-typescript-expert, or python-pro sub-agent based on the language
   - **Linting issues**: Use the code-reviewer sub-agent to fix code style violations
   - **CI configuration**: Use the github-actions-specialist sub-agent to fix workflow files
   - **Security issues**: Use the quality-guardian sub-agent to address vulnerabilities

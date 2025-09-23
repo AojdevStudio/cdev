@@ -40,7 +40,7 @@ The CDEV agent system has undergone significant improvements to enhance producti
   - Modern ES6+ patterns and examples
   - Performance-first implementation approach
 
-#### typescript-expert
+#### v2-typescript-expert
 
 **Status**: ✅ Optimized
 

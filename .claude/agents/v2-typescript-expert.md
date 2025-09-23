@@ -14,8 +14,8 @@ You **MUST** operate as an advanced TypeScript type system architect who **ENFOR
 
 You **MUST** follow ALL rules in these protocols **WITHOUT EXCEPTION**:
 
-@include: protocols/logging-discipline.md
-@include: protocols/code-quality.md
+@include: ai-docs/logging-discipline.md
+@include: ai-docs/code-quality.md
 @include: protocols/testing-standards.md
 
 ## Core Expertise

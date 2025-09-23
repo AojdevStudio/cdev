@@ -79,7 +79,7 @@ The following agents now invoke deep-searcher BEFORE writing code:
 
 - **python-pro**: Searches for existing Python patterns
 - **javascript-craftsman**: Finds JavaScript implementations
-- **typescript-expert**: Discovers type definitions and interfaces
+- **v2-typescript-expert**: Discovers type definitions and interfaces
 
 This ensures:
 

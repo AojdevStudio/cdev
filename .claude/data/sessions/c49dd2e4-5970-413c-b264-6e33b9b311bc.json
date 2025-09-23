@@ -1,0 +1,8 @@
+{
+  "session_id": "c49dd2e4-5970-413c-b264-6e33b9b311bc",
+  "prompts": [
+    "/create-command go  i want to create a command that Always uses:\n- serena for semantic code retrieval and editing tools\n- context7 for up to date documentation on third party code\n- sequential thinking for any decision making\nRead the claude.md root file before you do anything.",
+    "the go command should also include doing the writing of code.. completing the task. execution.. do you understand? answer first. don't edit",
+    "yes now you can edit"
+  ]
+}

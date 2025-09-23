@@ -12,275 +12,137 @@
 - **Production-ready distribution** as a global NPM package
   (`@aojdevstudio/cdev`)
 
-## Current Project Structure
+# {PROJECT_NAME} - CLAUDE.md
 
-**CDEV v0.0.21** - Current implementation overview based on actual codebase analysis:
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-### Core Architecture
+# CRITICAL: SERENA-FIRST RULE - READ THIS FIRST
+  BEFORE doing ANYTHING else, when you see ANY code development scenario:
+  - STOP and check if Serena MCP is available & IF onboarding is performed
+  - Use Serena MCP Workflow Guidelines to explore code structure
+  - Use Symbol-Based Code Navigation to understand context
+  - Use Efficient Code Modification patterns
+  - Always: Store insights with memory management
+VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with Serena-First Development Approach.
 
-```
-bin/
-├── cli.js                          # Main CLI entry point
+## Project Overview
+{PROJECT_DESCRIPTION}
 
-src/
-├── cli-commands.js                 # Command execution logic
-├── cli-parser.js                   # Argument parsing
-├── interactive-installer.js       # Installation orchestrator
-├── config-*.js                    # Configuration system (6 modules)
-├── hook-*.js                      # Hook management system (5 modules)
-├── install-*.js                   # Installation utilities (2 modules)
-├── validation-*.js                # Validation system (3 modules)
-├── protocol-loader.js             # Protocol loading logic
-├── template-engine.js             # Template processing
-├── platform-utils.js              # Cross-platform utilities
-├── python-detector.js             # Python environment detection
-├── path-resolver.js               # Path resolution utilities
-├── commands/
-│   └── enforce-structure.js       # Structure enforcement command
-├── installation/                  # Modular installation system (planned)
-│   ├── generators/                # Directory structure generators
-│   ├── installers/               # Component installers
-│   ├── steps/                    # Installation steps
-│   └── validators/               # Installation validators
-├── utils/                        # Utility modules (planned expansion)
-│   ├── file-system/              # File operations
-│   ├── git/                      # Git utilities
-│   ├── helpers/                  # Helper functions
-│   ├── project/                  # Project detection
-│   └── system/                   # System utilities
-├── templates/                    # Template system
-│   ├── commands/                 # Command templates
-│   ├── configs/                  # Configuration templates
-│   ├── hooks/                    # Hook templates
-│   └── scripts/                  # Script templates
-└── constants/                    # Constants and defaults (planned)
+**Status**: {PROJECT_STATUS}
+**Tech Stack**: {TECH_STACK}
 
-scripts/
-├── python/                       # Core Python automation scripts
-│   ├── agent-commit.py           # Intelligent commit generation
-│   ├── cache-linear-issue.py     # Linear issue caching
-│   ├── decompose-parallel.py     # Task decomposition
-│   ├── spawn-agents.py           # Agent spawning
-│   ├── monitor-agents.py         # Agent monitoring
-│   ├── integrate-parallel-work.py # Work integration
-│   ├── validate-parallel-work.py # Validation
-│   ├── resolve-conflicts.py      # Conflict resolution
-│   ├── security-check.py         # Security validation
-│   ├── deploy.py                 # Deployment automation
-│   ├── intelligent-agent-generator.py # Agent generation
-│   ├── prepublish.py             # Pre-publish checks
-│   └── postpublish.py            # Post-publish actions
-├── changelog/                    # Changelog management
-│   ├── update-changelog.py       # Automated changelog updates
-│   └── utils.py                  # Changelog utilities
-├── wrappers/                     # Script wrappers
-└── deployment/                   # Deployment scripts
-    └── publish.sh                # Publication script
+## Development Commands
 
-.claude/                          # Claude Code integration
-├── hooks/                        # Claude Code hooks (3-tier system)
-│   ├── tier1/                    # Critical hooks (always installed)
-│   ├── tier2/                    # Important hooks (recommended)
-│   ├── tier3/                    # Optional hooks (selective)
-│   ├── utils/                    # Hook utilities
-│   │   ├── llm/                  # LLM integrations (OpenAI, Anthropic)
-│   │   └── tts/                  # Text-to-speech utilities
-│   ├── pre_tool_use.py           # Pre-execution validation
-│   ├── post_tool_use.py          # Post-execution processing
-│   ├── notification.py           # Event notifications
-│   ├── stop.py                   # Session cleanup
-│   ├── subagent_stop.py          # Sub-agent cleanup
-│   ├── code-quality-reporter.py  # Code quality analysis
-│   ├── api-standards-checker.py  # API validation
-│   ├── universal-linter.py       # Multi-language linting
-│   ├── import-organizer.py       # Import management
-│   ├── typescript-validator.py   # TypeScript validation
-│   ├── task-completion-enforcer.py # Task tracking
-│   ├── commit-message-validator.py # Commit validation
-│   ├── pnpm-enforcer.py          # Package manager enforcement
-│   └── auto-changelog-updater.py # Changelog automation
-├── commands/                     # Claude Code custom commands (25+ commands)
-│   ├── init-protocol.md          # Project initialization
-│   ├── agent-start.md            # Agent workflow initiation
-│   ├── orchestrate.md            # Task orchestration
-│   ├── commit.md                 # Intelligent commits
-│   ├── use-agent.md              # Agent utilization
-│   ├── analyze-codebase.md       # Codebase analysis
-│   ├── create-pr.md              # Pull request creation
-│   ├── generate-readme.md        # Documentation generation
-│   └── [20+ additional commands] # Comprehensive command suite
-├── agents/                       # Specialized AI agents (20+ agents)
-│   ├── task-orchestrator.md      # Task coordination
-│   ├── quality-guardian.md       # Quality assurance
-│   ├── javascript-craftsman.md   # JavaScript expertise
-│   ├── typescript-expert.md      # TypeScript mastery
-│   ├── python-pro.md             # Python development
-│   ├── test-automator.md         # Automated testing
-│   ├── doc-curator.md            # Documentation management
-│   ├── auth-systems-expert.md    # Authentication systems
-│   ├── prd-writer.md             # Product requirements
-│   ├── code-reviewer.md          # Code review automation
-│   └── [15+ additional agents]   # Specialized domain experts
-├── protocols/                    # Development protocols
-│   ├── code-quality.md           # Quality standards
-│   ├── testing-standards.md      # Testing guidelines
-│   └── logging-discipline.yaml   # Logging requirements
-└── status-lines/                 # Status line components
-    ├── status_line.py             # Basic status display
-    ├── status_line_v2.py          # Enhanced status
-    ├── status_line_v3.py          # Advanced status
-    └── status_line_v4.py          # Latest status implementation
+### Serena-First Development Approach
+- **Before debugging**: Use Serena workflows to explore structure
+- **Before modifying**: Use symbol navigation to understand context
+- **Always**: Store insights with memory management
 
-templates/                        # Project configuration templates
-├── api.json                      # API project template
-├── default.json                  # Default project template
-├── nextjs.json                   # Next.js template
-├── pnpm.json                     # PNPM configuration
-├── react.json                    # React template
-└── typescript.json              # TypeScript template
+### Core Commands
+- **Never read entire files**: Use symbol overview first, then targeted `find_symbol`
+- **Symbol-first approach**: Navigate by functions/classes, not file browsing
+- **Memory-driven**: Store insights across sessions for faster future work
+- **Think before acting**: Use reflection tools before major changes
 
-test/                            # Comprehensive test suite
-├── cli.test.js                  # CLI testing
-├── config-*.test.js             # Configuration tests
-├── hook-*.test.js               # Hook system tests
-├── validation-*.test.js         # Validation tests
-├── integration/                 # Integration tests
-├── fixtures/                    # Test fixtures
-└── utils/                       # Test utilities
+## Serena MCP Core Commands & Workflow Patterns
 
-config/                          # Build and testing configuration
-├── jest.config.*.js             # Jest configurations (6 variants)
-├── tsconfig.json                # TypeScript configuration
-├── babel.config.js              # Babel configuration
-├── docker-compose.yml           # Docker setup
-├── Dockerfile                   # Container configuration
-└── nginx.conf                   # Nginx configuration
+This section defines the core Serena commands and shows how to combine them into effective workflows. Avoid reading full files and prefer these symbol-based patterns.
+
+### 1. Core Commands Reference
+
+#### Exploration & Navigation
+```bash
+# Get a high-level overview of a file's structure (classes, functions)
+mcp__serena__get_symbols_overview --relative_path="<PATH/TO/FILE>"
+
+# List files and directories
+mcp__serena__list_dir --relative_path="<PATH>" --recursive=true
+
+# Find files by a name pattern
+mcp__serena__find_file --file_mask="*.<EXT>" --relative_path="<PATH>"
+
+# Find a specific function/class by name (use include_body=true only when ready to edit)
+mcp__serena__find_symbol --name_path="<SYMBOL_NAME>" --include_body=false
+
+# Find where a symbol is used
+mcp__serena__find_referencing_symbols --name_path="<SYMBOL_NAME>"
+
+# Search for a raw text pattern across code files
+mcp__serena__search_for_pattern --substring_pattern="<PATTERN>"
 ```
 
-### System Capabilities
+#### Code Modification
+```bash
+# Replace the body of an entire function or class
+mcp__serena__replace_symbol_body --name_path="<FUNCTION_NAME>" --relative_path="<PATH/TO/FILE>"
 
-**Installation System**: Modular, interactive installer with project detection and customizable hook selection
-**Hook System**: 3-tier architecture (Critical/Important/Optional) with 15+ production-ready hooks
-**Command System**: 25+ custom Claude Code commands for enhanced development workflows
-**Agent System**: 20+ specialized AI agents for domain-specific tasks
-**Python Automation**: 15+ Python scripts for parallel development, Linear integration, and deployment
-**Template System**: Framework-specific project templates with intelligent detection
-**Testing Infrastructure**: Comprehensive test suite with multiple Jest configurations
+# Insert code after a specific symbol
+mcp__serena__insert_after_symbol --name_path="<ANCHOR_SYMBOL>" --relative_path="<PATH/TO/FILE>"
 
-### Target Users
-
-Developers using Claude Code who want to:
-
-- Work on multiple parts of features simultaneously through parallel agents
-- Automate quality gates and validation with intelligent hooks
-- Process any task format (Linear, markdown, plain text) seamlessly
-- Enhance their development workflows with AI-powered orchestration
-
-## Hooks
-
-# Tier 1 - Critical Hooks
-
-This tier contains critical security and validation hooks that are essential for project integrity.
-
-## Hooks in this tier:
-
-- **notification.py**: Sends notifications for various events
-- **stop.py**: Handles stop events
-- **subagent_stop.py**: Handles subagent stop events
-- **pre_tool_use.py**: Runs before tool usage
-- **post_tool_use.py**: Runs after tool usage
-
-## Characteristics:
-
-- Security-focused
-- Validation and enforcement
-- Required for all projects
-- Cannot be disabled without explicit override
-
-## Usage:
-
-These hooks are automatically included in all project setups unless explicitly excluded.
-
-# Tier 2 - Important Hooks
-
-This tier contains important quality and standards hooks that improve code quality and maintainability.
-
-## Hooks in this tier:
-
-- **api-standards-checker.py**: Checks API code against standards
-- **code-quality-reporter.py**: Reports on code quality metrics
-- **universal-linter.py**: Runs linting across multiple file types
-- **import-organizer.py**: Organizes and sorts import statements
-
-## Characteristics:
-
-- Quality-focused
-- Standards enforcement
-- Recommended for most projects
-- Can be selectively disabled
-
-## Usage:
-
-These hooks are recommended for all projects but can be excluded based on project needs.
-
-# Tier 3 - Optional Hooks
-
-This tier contains optional convenience and notification hooks that provide additional functionality.
-
-## Hooks in this tier:
-
-- **commit-message-validator.py**: Validates commit message format and content
-- **typescript-validator.py**: Validates TypeScript code and type safety
-- **task-completion-enforcer.py**: Ensures tasks are completed before proceeding
-- **pnpm-enforcer.py**: Enforces use of pnpm package manager
-- **auto-changelog-updater.py**: Updates the changelog with the latest changes.
-
-## Characteristics:
-
-- Convenience features
-- Optional enhancements
-- Project-specific utilities
-- Can be freely enabled/disabled
-
-## Usage:
-
-These hooks are optional and can be selectively enabled based on project requirements and developer preferences.
-
-**Configuring Logging**
-
-All hooks must implement logging. Every hook in the CDEV system must record every event with timestamp and session ID. All hooks must:
-
-1. Import datetime: `from datetime import datetime`
-2. Ensure logs directory exists: `log_dir = Path.cwd() / 'logs'` and `log_dir.mkdir(parents=True, exist_ok=True)`
-3. Define log file path: `log_path = log_dir / '<hook_name>.json'`
-
-```python
-        # Ensure log directory exists
-        log_dir = Path.cwd() / 'logs'
-        log_dir.mkdir(parents=True, exist_ok=True)
-        log_path = log_dir / 'post_tool_use.json'
-
-        # Read existing log data or initialize empty list
-        if log_path.exists():
-            with open(log_path, 'r') as f:
-                try:
-                    log_data = json.load(f)
-                except (json.JSONDecodeError, ValueError):
-                    log_data = []
-        else:
-            log_data = []
-
-        # Add timestamp to the log entry
-        timestamp = datetime.now().strftime("%b %d, %I:%M%p").lower()
-        input_data['timestamp'] = timestamp
-
-        # Append new data
-        log_data.append(input_data)
-
-        # Write back to file with formatting
-        with open(log_path, 'w') as f:
-            json.dump(log_data, f, indent=2)
+# Insert code before a specific symbol (e.g., for imports)
+mcp__serena__insert_before_symbol --name_path="<FIRST_SYMBOL_IN_FILE>" --relative_path="<PATH/TO/FILE>"
 ```
+
+#### Memory & Reflection
+```bash
+# Store insights for future sessions
+mcp__serena__write_memory --memory_name="<MEMORY_NAME>" --content="<INSIGHT_TEXT>"
+
+# Review stored insights
+mcp__serena__list_memories
+mcp__serena__read_memory --memory_file_name="<MEMORY_FILE_NAME>"
+
+# Reflect on collected information and task adherence
+mcp__serena__think_about_collected_information
+mcp__serena__think_about_task_adherence
+```
+
+### 2. Workflow Patterns
+
+#### Initial Codebase Onboarding
+```bash
+# 1. Ensure Serena is ready
+mcp__serena__check_onboarding_performed
+
+# 2. Get the project layout
+mcp__serena__list_dir --relative_path="." --recursive=false
+mcp__serena__list_dir --relative_path="<SRC_DIR>" --recursive=true
+
+# 3. Get a high-level overview of key files (do NOT read them)
+mcp__serena__get_symbols_overview --relative_path="<PATH/TO/KEY_FILE_1>"
+mcp__serena__get_symbols_overview --relative_path="<PATH/TO/KEY_FILE_2>"
+```
+
+#### Investigating a Feature or Bug
+```bash
+# 1. Find relevant symbols related to the feature
+mcp__serena__find_symbol --name_path="<FEATURE_NAME>*" --substring_matching=true
+
+# 2. Understand how a key function is used
+mcp__serena__find_referencing_symbols --name_path="<KEY_FUNCTION>"
+
+# 3. Examine the function's implementation only when necessary
+mcp__serena__find_symbol --name_path="<KEY_FUNCTION>" --include_body=true
+```
+
+#### Safely Modifying Code
+```bash
+# 1. Find all references before changing a function to understand the impact
+mcp__serena__find_referencing_symbols --name_path="<FUNCTION_TO_CHANGE>"
+
+# 2. Replace the function body with the updated implementation
+mcp__serena__replace_symbol_body --name_path="<FUNCTION_TO_CHANGE>" --relative_path="<PATH/TO/FILE>"
+
+# 3. Add a new helper function after an existing one
+mcp__serena__insert_after_symbol --name_path="<EXISTING_FUNCTION>" --relative_path="<PATH/TO/FILE>"
+```
+
+## {DOMAIN_NAME} Guidelines
+{DOMAIN_GUIDELINES}
+
+## Quality Standards
+[Serena-enhanced quality patterns]
+
 
 ## Current Development Status
 

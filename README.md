@@ -11,7 +11,7 @@
 [![GitHub CI](https://img.shields.io/github/actions/workflow/status/AOJDevStudio/cdev/ci.yml?branch=main&label=CI)](https://github.com/AOJDevStudio/cdev/actions)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![Node.js Version](https://img.shields.io/node/v/@aojdevstudio/cdev.svg)](https://nodejs.org/)
-
+[![Claude Code Commands](https://img.shields.io/badge/Commands-37%20Development%20Tools-blue.svg)](#-smart-commands-that-understand-you)
 ---
 
 ## What is CDEV?
@@ -571,7 +571,7 @@ CDEV includes a powerful collection of specialized agents, each optimized for sp
 **🔨 Core Development Agents**
 
 - **javascript-craftsman**: ES6+ expert with DRY enforcement and modern patterns
-- **typescript-expert**: Advanced type system specialist with migration tools
+- **v2-typescript-expert**: Advanced type system specialist with migration tools
 - **python-pro**: Comprehensive Python expert with Jupyter notebook support
 - **test-automator**: Automated testing with 6-step TDD workflows
 

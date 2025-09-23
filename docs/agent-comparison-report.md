@@ -2,7 +2,7 @@
 
 ## Test Task: Type-Safe EventEmitter Implementation
 
-### Agent v1 (Original typescript-expert.md) - Completed ✅
+### Agent v1 (Original typescript-expert.md) - [DEPRECATED] ✅
 
 **Approach:**
 
@@ -66,7 +66,7 @@ class TypedEventEmitter<T extends EventMap> {
 ### Benefits Observed:
 
 1. **Logging Discipline Enforcement:**
-   - Both agents would follow `protocols/logging-discipline.md`
+   - Both agents would follow `ai-docs/logging-discipline.md`
    - No console.log statements in generated code
    - Proper error handling without stdout pollution
 

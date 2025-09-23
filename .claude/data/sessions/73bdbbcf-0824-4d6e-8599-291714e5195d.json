@@ -1,0 +1,6 @@
+{
+  "session_id": "73bdbbcf-0824-4d6e-8599-291714e5195d",
+  "prompts": [
+    "/create-command Data Commander performs issue analysis from GitHub and uses the GitHub CLI to create an issue and generate a technical specification based on that issue.\n\nIt then attempts to understand the codebase and generate a technical specification that we can implement."
+  ]
+}

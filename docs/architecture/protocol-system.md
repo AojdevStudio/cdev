@@ -26,14 +26,16 @@ This led to:
 
 ```
 .claude/
-├── protocols/                    # Shared protocol modules
-│   ├── logging-discipline.md    # stdout/stderr rules, no console.log
+├── protocols/                    # Agent-specific protocol modules
 │   ├── logging-discipline.yaml  # YAML version with metadata
-│   ├── code-quality.md          # DRY, SOLID principles
 │   └── testing-standards.md     # TDD, coverage requirements
+├── ai-docs/                     # General documentation & protocols
+│   ├── logging-discipline.md    # stdout/stderr rules, no console.log
+│   ├── code-quality.md          # DRY, SOLID principles
+│   └── [other documentation]    # Additional AI guidance
 ├── agents/
-│   ├── typescript-expert.md     # Original bloated version (322 lines)
-│   ├── typescript-expert-v2.md  # Option 2: @include version (139 lines)
+│   ├── typescript-expert.md     # Original bloated version (322 lines) [DEPRECATED]
+│   ├── v2-typescript-expert.md  # Current version: @include version (139 lines)
 │   └── typescript-expert.yaml   # Option 1: YAML manifest (95 lines)
 └── src/
     └── protocol-loader.js        # Protocol assembly engine
@@ -48,8 +50,8 @@ This led to:
 ```markdown
 ## Active Protocols
 
-@include: protocols/logging-discipline.md
-@include: protocols/code-quality.md
+@include: ai-docs/logging-discipline.md
+@include: ai-docs/code-quality.md
 @include: protocols/testing-standards.md
 
 ## Core Expertise
@@ -72,7 +74,7 @@ This led to:
 **How it works**: YAML manifests define agent configuration, protocols are assembled programmatically.
 
 ```yaml
-name: typescript-expert
+name: v2-typescript-expert
 version: 1.0.0
 protocols:
   - logging-discipline@1.0.0 # Versioned protocols
@@ -106,7 +108,7 @@ const loader = new ProtocolLoader();
 const processed = await loader.processIncludes('agent.md');
 
 // Option 1: Assemble from YAML
-const assembled = await loader.assembleAgent('typescript-expert');
+const assembled = await loader.assembleAgent('v2-typescript-expert');
 ```
 
 ## File Size Comparison

@@ -1,0 +1,12 @@
+{
+  "session_id": "3bebf51f-81d8-48d0-9cef-4dfa150d5e9b",
+  "prompts": [
+    "read this .claude/commands/update-docs.md",
+    "i want this command to be edited to follow our @ai-docs/custom-command-template.md ",
+    "create a count-commands script similar to this scripts/count-agents.sh so that we run it and it updates our readme",
+    "i want to update the @.claude/commands/generate-readme.md to use the @agent-doc-curator and it should build a readme that follows the template it @ai-docs/readme-template.yaml and also it should now not to have business specific references in the ReadMe or any .env and credentials or IDs in the readme. ",
+    "hey is the gitflow manager allowedd to push code to remote? ",
+    "also is the commit command allowed to push things to remote?",
+    "/commit "
+  ]
+}
