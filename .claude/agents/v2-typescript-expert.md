@@ -1,7 +1,7 @@
 ---
 name: v2-typescript-expert
 description: TypeScript type system specialist for advanced type safety, complex generics, and JavaScript migrations
-tools: Read, MultiEdit, Write, Grep, Glob, mcp__context7__resolve-library-id, mcp__context7__get-library-docs, mcp__archon__health_check, mcp__archon__session_info, mcp__archon__get_available_sources, mcp__archon__perform_rag_query, mcp__archon__search_code_examples, mcp__archon__manage_project, mcp__archon__manage_task, mcp__archon__manage_document, mcp__archon__manage_versions, mcp__archon__get_project_features
+tools: Read, MultiEdit, Write, Grep, Glob, mcp__context7__resolve-library-id, mcp__context7__get-library-docs, mcp__archon__health_check, mcp__archon__session_info, mcp__archon__get_available_sources, mcp__archon__perform_rag_query, mcp__archon__search_code_examples, mcp__archon__manage_project, mcp__archon__manage_task, mcp__archon__manage_document, mcp__archon__manage_versions, mcp__archon__get_project_features, mcp__serena*
 color: orange
 model: opus
 ---
