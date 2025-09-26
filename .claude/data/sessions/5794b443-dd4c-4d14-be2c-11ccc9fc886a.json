@@ -1,0 +1,11 @@
+{
+  "session_id": "5794b443-dd4c-4d14-be2c-11ccc9fc886a",
+  "prompts": [
+    "the update docs command should focus on docs in the @docs/ directory of a repo. it should not worry about claude.md and readme.md in the root directory we have specific commands for that one. ",
+    "the point is not fully captured. your structure template reads like a changelog. that's not the intent. we might already have docs in our docs folder that need one or two line updates, a function changed, a framework changed, we need to update an API endpoint, so that developers are kept up to speed, we might change something architectural. and then we need to create a doc, but likely we will be updating existing documentation with this command. so it would have to intake what is existing. it should be using our docs-curator subagent. ",
+    "what if i haven't committed things to git yet?",
+    "/commit ",
+    "in the commit command this is suppsoed to be a reporting template that should be followed. as you can see you didn't follow it: Intelligent Commit Complete\n\nStrategy: `STRATEGY_MODE` (auto-detected based on formatting hook analysis)\nFiles: `COMMIT_COUNT` commits created and executed\nTopic: Hook-aware commit processing with adaptive strategy selection\nKey Components:\n- Automatic strategy detection preventing formatting hook conflicts\n- Conventional commit messages with appropriate emoji\n- Pre-commit validation and quality gates\n- Atomic commit splitting for logical organization\n- GitHub/Linear issue integration\n- Clean working directory achieved without conflicts",
+    "well you dind't follow it why? maybe the command needs to be a bit clearer. ."
+  ]
+}

@@ -24,6 +24,7 @@ HOOK_ANALYSIS: auto-performed
 - Auto-stage modified files if none staged, analyze changes for atomic splitting
 - Execute commits using detected strategy with conventional messages and emoji
 - Include issue references for GitHub/Linear integration when applicable
+- **CRITICAL**: Output the final report using the EXACT template format in the Report section, replacing placeholder variables with actual values
 
 ## Workflow:
 
@@ -41,13 +42,16 @@ HOOK_ANALYSIS: auto-performed
 12. Include issue references in commit body for automatic linking
 13. Execute `!git commit` with generated messages
 14. Display commit summary using `!git log --oneline -1`
+15. **Generate final report using the EXACT template format, replacing `STRATEGY_MODE` with the actual strategy (PARALLEL/COORDINATED/HYBRID) and `COMMIT_COUNT` with the number of commits created**
 
-## Report:
+## Report Template (MUST USE THIS EXACT FORMAT):
+
+**IMPORTANT**: The git-flow-manager agent MUST output the following report format, replacing the placeholder variables with actual values:
 
 Intelligent Commit Complete
 
-Strategy: `STRATEGY_MODE` (auto-detected based on formatting hook analysis)
-Files: `COMMIT_COUNT` commits created and executed
+Strategy: `STRATEGY_MODE` (replace with: PARALLEL, COORDINATED, or HYBRID)
+Files: `COMMIT_COUNT` (replace with: actual number of commits created)
 Topic: Hook-aware commit processing with adaptive strategy selection
 Key Components:
 - Automatic strategy detection preventing formatting hook conflicts
@@ -56,6 +60,8 @@ Key Components:
 - Atomic commit splitting for logical organization
 - GitHub/Linear issue integration
 - Clean working directory achieved without conflicts
+
+**Note to Agent**: This is a REQUIRED output template. You must replace `STRATEGY_MODE` with the actual strategy used and `COMMIT_COUNT` with the actual number of commits created.
 
 ## Relevant Files:
 

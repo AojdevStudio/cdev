@@ -4,6 +4,7 @@ description: Update CLAUDE.md using Serena-first analysis of recent code changes
 argument-hint: [--directory target-dir]
 flags:
   --directory: Create/update CLAUDE.md for a specific directory instead of project root
+model: claude-sonnet-4-0
 ---
 
 # Update Claude.md
@@ -19,11 +20,13 @@ ANALYSIS_SCOPE: {{if flags.directory}}directory-specific{{else}}project-wide{{en
 ## Workflow
 
 ### 1. Initial Setup
+
 - Check Serena onboarding: `mcp__serena__check_onboarding_performed`
 - If not onboarded, complete onboarding process first
 - Use `mcp__serena__think_about_task_adherence` to validate update scope
 
 ### 2. Git Analysis
+
 - Get current status: !`git status --porcelain`
 - Review recent commits: !`git log --oneline -10`
 - Analyze changed files: !`git diff HEAD~5 --name-only | head -20`
@@ -31,6 +34,7 @@ ANALYSIS_SCOPE: {{if flags.directory}}directory-specific{{else}}project-wide{{en
 - Store git insights: `mcp__serena__write_memory --memory_name="git_analysis"`
 
 ### 3. Serena Codebase Analysis
+
 - Analyze directory structure: `mcp__serena__list_dir --relative_path="TARGET_DIRECTORY" --recursive=true`
 - For each modified file from git analysis:
   - Get symbol overview: `mcp__serena__get_symbols_overview --relative_path="<FILE>"`
@@ -39,16 +43,15 @@ ANALYSIS_SCOPE: {{if flags.directory}}directory-specific{{else}}project-wide{{en
 - Store symbol analysis: `mcp__serena__write_memory --memory_name="symbol_changes"`
 
 ### 4. Content Integration
+
 - Read existing CLAUDE.md file: @CLAUDE_FILE
 - Use `mcp__serena__think_about_collected_information` to validate analysis
-- Update CLAUDE.md sections based on symbol insights:
+- Update CLAUDE.md based on @ai-docs/serena-enhanced-claude-template.md:
   - Project overview with new architecture patterns
-  - Development workflow with symbol-based guidance
-  - File structure with symbol distribution
-  - Recent changes with symbol-level impact
 - Save updated CLAUDE.md to CLAUDE_FILE location
 
 ### 5. Validation
+
 - Use `mcp__serena__think_about_whether_you_are_done` to verify completeness
 - Store update insights: `mcp__serena__write_memory --memory_name="claude_update_ANALYSIS_SCOPE"`
 
@@ -59,11 +62,12 @@ CLAUDE.md Update Complete
 File: `CLAUDE_FILE`
 Analysis Scope: ANALYSIS_SCOPE
 Key Updates:
-- Symbol-level changes documented
+
+- Symbol-level changes documented in serena memory
 - Architecture patterns updated
 - Development workflow enhanced
 - Integration points clarified
-Memory Stored: claude_update_ANALYSIS_SCOPE
+  Memory Stored: claude_update_ANALYSIS_SCOPE
 
 ## Template Reference
 
@@ -72,9 +76,10 @@ Use the comprehensive template from: @ai-docs/serena-enhanced-claude-template.md
 ### Template Selection Logic
 
 {{if flags.directory}}
+
 - Apply directory-specific template sections from the referenced file
 - Focus on symbol-based architecture and development workflow patterns
-{{else}}
+  {{else}}
 - Apply full project root template structure from the referenced file
 - Include all Serena-first development patterns and core command references
-{{endif}}
+  {{endif}}
